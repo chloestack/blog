@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://pistamond.dev"),
+  metadataBase: new URL("https://blog.pistamond.dev"),
   title: { default: "pistamond.log — 소프트웨어를 만들며 배운 것들", template: "%s · pistamond.log" },
   description: "소프트웨어의 구조, 인터페이스, 운영에 관한 기술 블로그. 결과보다 그 결과에 도착한 판단을 기록합니다.",
   keywords: ["기술 블로그", "소프트웨어 엔지니어링", "프론트엔드", "시스템 디자인", "개발"],
