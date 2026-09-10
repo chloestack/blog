@@ -64,7 +64,8 @@ export function getAllPosts(): Post[] {
     .filter((file) => file.endsWith(".md"))
     .map(readPostFile)
     .filter((post): post is Post => post !== null)
-    .sort((a, b) => b.date.localeCompare(a.date));
+    // 같은 날 올라온 글끼리도 순서가 흔들리지 않도록 slug로 한 번 더 가른다.
+    .sort((a, b) => b.date.localeCompare(a.date) || a.slug.localeCompare(b.slug));
 }
 
 export function getPostBySlug(slug: string): Post | null {
