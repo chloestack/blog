@@ -29,25 +29,51 @@ async function render(pathname = "/") {
   );
 }
 
-test("server-renders the technology blog homepage", async () => {
+test("server-renders the blog homepage", async () => {
   const response = await render();
   assert.equal(response.status, 200);
   assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
   const html = await response.text();
   assert.match(html, /<html lang="ko">/i);
   assert.match(html, /<title>pistamond\.log/);
-  assert.match(html, /만들면서 이해한 것들을/);
   assert.match(html, /최근 기록/);
-  assert.match(html, /주제별 찾아보기/);
   assert.doesNotMatch(html, /codex-preview|SkeletonPreview|react-loading-skeleton/);
 });
 
-// 홈에는 최신 글 7건(대표 1 + 목록 6)만 실린다. 그 범위 안의 글은 빠짐없이 보여야 한다.
-test("every recent post in the repository is public on the homepage", async () => {
-  const posts = readPosts().slice(0, 7);
+/**
+ * 이 사이트는 한때 템플릿에서 나온 가짜 글과 지어낸 소개 문구로 채워져 있었다.
+ * 실제로 쓰지 않은 문장이 다시 지면에 올라오지 않도록 여기서 막는다.
+ */
+test("no placeholder copy or fake sections are served", async () => {
+  const html = await (await render()).text();
+
+  const banned = [
+    "VOL. 01",
+    "ENGINEERING NOTES",
+    "FEATURED ESSAY",
+    "만들면서 이해한 것들을",
+    "결과보다 그 결과에 도착한 판단",
+    "생각이 달라지면 글도 고칩니다",
+    "코드 바깥의 판단까지",
+    "pistamond는 제품을 만들고",
+    "Seoul, KR",
+    "Built with curiosity",
+    "새 글을 천천히 받아보세요",
+    "구독하기",
+    "boundary.ts",
+    "abstractions are decisions",
+  ];
+  for (const phrase of banned) {
+    assert.ok(!html.includes(phrase), `placeholder copy is back on the homepage: ${phrase}`);
+  }
+});
+
+test("every post in the repository is public on the homepage", async () => {
+  const posts = readPosts();
   const html = await (await render()).text();
 
   for (const post of posts) {
     assert.ok(html.includes(post.title), `post missing from homepage: ${post.title}`);
   }
+  if (posts.length === 0) assert.match(html, /아직 공개된 글이 없습니다/);
 });
