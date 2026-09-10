@@ -72,14 +72,6 @@ export function getPostBySlug(slug: string): Post | null {
   return getAllPosts().find((post) => post.slug === slug) ?? null;
 }
 
-export function categoryCounts(posts: Post[]): [string, string][] {
-  const counts = new Map<string, number>();
-  for (const post of posts) counts.set(post.category, (counts.get(post.category) ?? 0) + 1);
-  return [...counts.entries()]
-    .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
-    .map(([category, count]) => [category, String(count).padStart(2, "0")]);
-}
-
 // marked 인스턴스를 매번 만들면 확장 등록 비용이 반복된다. 모듈 스코프에 하나만 둔다.
 const marked = new Marked({ gfm: true, breaks: false });
 
@@ -89,4 +81,32 @@ export function renderMarkdown(body: string): string {
 
 export function postHref(slug: string): string {
   return `/posts/${encodeURIComponent(slug)}`;
+}
+
+/**
+ * 목록/필터는 클라이언트에서 돌아간다. 본문까지 넘기면 RSC 페이로드가 글 전체만큼
+ * 커지므로, 카드에 실제로 그려지는 값만 서버에서 미리 계산해 내려보낸다.
+ */
+export type PostCard = {
+  slug: string;
+  href: string;
+  title: string;
+  date: string;
+  category: string;
+  excerpt: string;
+  tone: string;
+  minutes: string;
+};
+
+export function toCard(post: Post): PostCard {
+  return {
+    slug: post.slug,
+    href: postHref(post.slug),
+    title: post.title,
+    date: post.date,
+    category: post.category,
+    excerpt: post.excerpt,
+    tone: toneFor(post.category),
+    minutes: readingTime(post.body),
+  };
 }
