@@ -79,3 +79,12 @@ API도 원화 정가가 없습니다. 달러로 청구되고 개인 결제라면
 - 결론은 보통 "무엇이 더 낫다"가 아니라 **"어디에 무엇으로 충분하다"**로 나옵니다.
 
 직접 재보신 적 있으신가요? 어떤 기준으로 채점하셨는지 궁금합니다.
+
+---
+
+**출처**
+
+1. [SWE-bench](https://www.swebench.com/) — 실제 GitHub 이슈로 채점하는 코딩 벤치마크. 본문에서 말한 "공개 벤치마크"의 대표격입니다.
+2. [Aider polyglot 코딩 리더보드](https://aider.chat/docs/leaderboards/) — 여러 언어에 걸쳐 편집 성공률을 재는 리더보드.
+3. [Anthropic API 가격 문서](https://platform.claude.com/docs/en/about-claude/pricing) — Claude 모델 단가.
+4. [OpenAI API 가격](https://developers.openai.com/api/docs/pricing) — OpenAI 모델 단가.

@@ -1,11 +1,9 @@
 ---
 title: "ShedLock으로 Spring @Scheduled 분산 잠금 구현하기"
 date: "2026-09-11"
-publishedAt: ""
 category: "Spring"
 tags: ["ShedLock으로 Spring @Scheduled 분산 잠금 구현하기", "Spring", "ShedLock", "Scheduled"]
 excerpt: "수평 확장(horizontal scaling)이 보편화된 현재 서비스 환경에서 @Scheduled 애노테이션은 의외로 위험한 존재가 될 수 있습니다."
-status: "draft"
 ---
 
 ## 목차
@@ -291,7 +289,13 @@ ShedLock을 적용한 뒤 자연스럽게 이어지는 주제는 **배치 작업
 
 규모가 더 커지거나 복잡한 요구사항이 생겼을 때는 **Quartz Scheduler의 클러스터 모드**나, 인프라 수준에서 실행 보장을 제공하는 **Kubernetes CronJob**, 또는 비동기 작업 큐 기반의 **Celery(Python)나 Sidekiq(Ruby) 유사 패턴의 Spring + Redis 큐** 방식으로 마이그레이션하는 경로를 검토할 수 있습니다.
 
-[관련글:Spring @Scheduled 활용법]
-[관련글:Redis 분산 잠금 구현]
-
 공식 문서: [ShedLock GitHub Repository](https://github.com/lukas-krecan/ShedLock)
+
+---
+
+**출처**
+
+1. [lukas-krecan/ShedLock](https://github.com/lukas-krecan/ShedLock) — 공식 저장소. 프로바이더별 설정과 주의사항.
+2. [Spring Framework, Task Execution and Scheduling](https://docs.spring.io/spring-framework/reference/integration/scheduling.html) — `@Scheduled`의 실행 모델.
+3. [Spring Boot, Task Execution and Scheduling](https://docs.spring.io/spring-boot/reference/features/task-execution-and-scheduling.html) — 스케줄러 스레드 풀 설정.
+4. [Redis, Distributed Locks](https://redis.io/docs/latest/develop/use/patterns/distributed-locks/) — 잠금의 안전성 한계를 이해하는 데 필요한 배경.

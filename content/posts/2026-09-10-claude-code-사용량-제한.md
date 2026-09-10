@@ -75,3 +75,12 @@ Anthropic 지원 문서 어디에도 "Pro는 하루 N개"라는 표가 없습니
 - 가장 효과 큰 대응은 **세션 분리**, 그다음이 캐싱·effort·읽기 범위입니다.
 
 여러분은 어떤 작업을 할 때 한도에 걸리시나요? 쓰는 플랜도 같이 알려주시면 서로 비교가 될 것 같습니다.
+
+---
+
+**출처**
+
+1. [claude.com/ko/pricing](https://claude.com/ko/pricing) — 플랜별 표시가와 한도 안내.
+2. [Claude Code 비용 관리 문서](https://code.claude.com/docs/en/costs) — 무엇이 토큰을 먹는지에 대한 공식 설명.
+3. [Anthropic, Prompt caching](https://platform.claude.com/docs/en/build-with-claude/prompt-caching) — 캐시된 부분이 어떻게 계산되는지.
+4. [Anthropic, Context windows](https://platform.claude.com/docs/en/build-with-claude/context-windows) — 컨텍스트 윈도가 한도 소모에 미치는 영향.

@@ -64,3 +64,12 @@ excerpt: "둘 다 실부담 월 3만 원 남짓입니다. 그래서 가격은 �
 그리고 이런 비교에서 진짜 조심해야 할 게 하나 있는데, 그건 다음 글에서 다룹니다 — 개발자가 **자기 생산성을 스스로 측정하는 데 매우 서툴다**는 실험 결과가 있습니다.
 
 여러분은 어느 쪽을 주로 쓰시나요? 그리고 "이 작업만큼은 반대쪽이 낫더라" 하는 경험이 있으신가요?
+
+---
+
+**출처**
+
+1. [cursor.com/pricing](https://cursor.com/pricing) — Cursor 플랜과 표시가.
+2. [claude.com/ko/pricing](https://claude.com/ko/pricing) — Claude 플랜과 표시가.
+3. [Claude Code 비용 관리 문서](https://code.claude.com/docs/en/costs) — Claude Code의 비용 구조.
+4. [METR, Measuring the Impact of Early-2025 AI on Experienced Open-Source Developer Productivity](https://metr.org/blog/2025-07-10-early-2025-ai-experienced-os-dev-study/) — "도구를 쓰면 빨라진다"는 직관을 검증한 실험. 어느 쪽을 고르든 함께 읽을 만합니다.

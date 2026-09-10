@@ -1,11 +1,9 @@
 ---
 title: "Kaniko로 Kubernetes 내 안전한 이미지 빌드 파이프라인 구성하기"
 date: "2026-09-11"
-publishedAt: ""
 category: "DevOps"
 tags: ["Kaniko로 Kubernetes 클러스터 내 안전한 컨테이너 이미지 빌드 파이프라인 구성하기", "DevOps", "Kaniko", "Kubernetes"]
 excerpt: "Kubernetes 클러스터에서 컨테이너 이미지를 빌드해야 하는 상황은 현대 CI/CD 파이프라인에서 매우 흔하게 맞닥뜨리는 과제입니다."
-status: "draft"
 ---
 
 ## 목차
@@ -337,6 +335,11 @@ Kaniko를 도입한 이후 자연스럽게 고려하게 되는 심화 주제들�
 
 공식 문서와 최신 릴리즈 정보는 [Kaniko GitHub 저장소](https://github.com/GoogleContainerTools/kaniko)에서 확인할 수 있으며, Tekton Hub의 [Kaniko Task](https://hub.tekton.dev/tekton/task/kaniko)도 파이프라인 통합 시 참고할 만한 자료입니다.
 
-[관련글:Kubernetes PodSecurityAdmission]
-[관련글:Tekton 파이프라인]
-[관련글:컨테이너 이미지 보안]
+---
+
+**출처**
+
+1. [GoogleContainerTools/kaniko](https://github.com/GoogleContainerTools/kaniko) — 공식 저장소. 플래그와 캐시 옵션의 1차 출처.
+2. [Kubernetes, Images](https://kubernetes.io/docs/concepts/containers/images/) — 레지스트리 인증과 이미지 풀 시크릿.
+3. [BuildKit 문서](https://docs.docker.com/build/buildkit/) — 본문에서 비교한 대안. 캐시 구조가 어떻게 다른지.
+4. [Tekton Pipelines 문서](https://tekton.dev/docs/pipelines/) — 파이프라인에 붙일 때 참고할 실행 모델.

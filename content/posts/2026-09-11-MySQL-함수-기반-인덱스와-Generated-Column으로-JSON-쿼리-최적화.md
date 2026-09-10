@@ -1,11 +1,9 @@
 ---
 title: "MySQL 함수 기반 인덱스와 Generated Column으로 JSON 쿼리 최적화"
 date: "2026-09-11"
-publishedAt: ""
 category: "Database"
 tags: ["MySQL 함수 기반 인덱스와 Generated Column으로 JSON 쿼리 최적화하기", "Database", "MySQL", "Generated", "Column", "JSON"]
 excerpt: "MySQL 5.7.8에서 공식 JSON 타입이 도입된 이후, 관계형 데이터베이스에서 유연한 스키마를 다루려는 수요가 크게 늘었습니다."
-status: "draft"
 ---
 
 ## 목차
@@ -326,7 +324,13 @@ Generated Column 기반 인덱스의 가장 흔한 실수는 **표현식 불일�
 
 Generated Column 인덱스를 적용한 뒤 성능 이슈가 남아있다면, 파티셔닝과 함께 사용하는 것을 검토해볼 수 있습니다. 예를 들어 `created_at` 기준으로 범위 파티셔닝을 적용하고, 각 파티션 내에서 Generated Column 인덱스를 활용하면 파티션 프루닝과 인덱스 효율을 동시에 얻을 수 있습니다. 또한 MySQL 8.0.17부터 지원되는 **멀티밸류 인덱스(Multi-Valued Index)**는 JSON 배열 내 개별 요소에 인덱스를 적용하는 새로운 방법으로, `MEMBER OF` 연산자와 함께 JSON 배열을 다루는 쿼리에서 활용할 수 있습니다. 더 복잡한 JSON 분석이 필요하다면 ClickHouse나 Apache Druid 같은 OLAP 엔진 또는 Elasticsearch로의 역할 분담을 고려해볼 시점입니다.
 
-[관련글:MySQL InnoDB 인덱스 구조]
-[관련글:MySQL 파티셔닝 전략]
-
 공식 MySQL 문서에서 Generated Column과 함수 기반 인덱스 관련 내용을 직접 확인할 수 있습니다: https://dev.mysql.com/doc/refman/8.0/en/create-table-generated-columns.html
+
+---
+
+**출처**
+
+1. [MySQL 8.0 Reference — CREATE TABLE and Generated Columns](https://dev.mysql.com/doc/refman/8.0/en/create-table-generated-columns.html) — VIRTUAL/STORED의 정의와 제약.
+2. [MySQL 8.0 Reference — CREATE INDEX](https://dev.mysql.com/doc/refman/8.0/en/create-index.html) — 함수 기반 인덱스 문법과 조건.
+3. [MySQL 8.0 Reference — The JSON Data Type](https://dev.mysql.com/doc/refman/8.0/en/json.html) — JSON 타입의 저장 형식.
+4. [MySQL 8.0 Reference — JSON 검색 함수](https://dev.mysql.com/doc/refman/8.0/en/json-search-functions.html) — `->>`와 `JSON_EXTRACT`의 동치 관계.

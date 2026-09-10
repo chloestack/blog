@@ -1,11 +1,9 @@
 ---
 title: "Java parallel() 병렬 스트림 성능 함정과 ForkJoinPool 전략"
 date: "2026-09-11"
-publishedAt: ""
 category: "Java"
 tags: ["Java Stream parallel() 병렬 처리 성능 함정과 ForkJoinPool 활용 전략", "Java", "parallel", "ForkJoinPool"]
 excerpt: "Java 8의 Stream API가 등장했을 때, parallel() 메서드는 개발자들에게 병렬 처리의 민주화를 약속했습니다. .stream() 대신 .parallelStream()을 입력하거나, 스트림 중간에 ."
-status: "draft"
 ---
 
 ## 목차
@@ -378,6 +376,10 @@ WebFlux 기반 서비스에서 `parallelStream()`을 호출하면, 이벤트 루
 
 성능 측정 도구로는 [JMH(Java Microbenchmark Harness)](https://github.com/openjdk/jmh)를 활용하십시오. 병렬 스트림이 실제로 이득을 주는지, 어느 데이터 크기에서 교차점이 발생하는지를 정량적으로 확인할 수 있습니다. 공식 레퍼런스로는 [OpenJDK ForkJoinPool API 문서](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/ForkJoinPool.html)와 [Java Stream 패키지 사양](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/stream/package-summary.html)을 참고하십시오.
 
-[관련글:Java Virtual Threads 가상 스레드]
-[관련글:CompletableFuture 비동기 처리]
-[관련글:Java Stream API 성능 최적화]
+---
+
+**출처**
+
+1. [OpenJDK, ForkJoinPool API 문서](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/ForkJoinPool.html) — 공용 풀의 기본 병렬도와 동작 규칙.
+2. [java.util.stream 패키지 사양](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/stream/package-summary.html) — 병렬 스트림의 순서 보장, 부작용, 결합성 요구사항.
+3. [JMH (Java Microbenchmark Harness)](https://github.com/openjdk/jmh) — 본문의 교차점을 직접 재려면 필요한 도구.

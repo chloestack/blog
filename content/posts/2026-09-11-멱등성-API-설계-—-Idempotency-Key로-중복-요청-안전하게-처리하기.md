@@ -1,11 +1,9 @@
 ---
 title: "멱등성 API 설계 — Idempotency Key로 중복 요청 안전하게 처리하기"
 date: "2026-09-11"
-publishedAt: ""
 category: "Architecture"
 tags: ["멱등성 API 설계 — Idempotency Key로 분산 시스템 중복 요청 안전하게 처리하기", "Architecture", "API", "Idempotency", "Key"]
 excerpt: "분산 시스템에서 네트워크 장애나 타임아웃으로 인해 동일한 요청이 중복 처리되는 문제를 멱등성(Idempotency) API 설계로 안전하게 해결할 수 있습니다."
-status: "draft"
 ---
 
 ## 목차
@@ -364,5 +362,10 @@ Idempotency Key 패턴을 이해했다면, 관련된 두 가지 심화 주제를
 
 공식 참고 자료로는 [Stripe Idempotent Requests 문서](https://stripe.com/docs/api/idempotent_requests)와 [IETF Idempotency-Key 헤더 초안](https://datatracker.ietf.org/doc/draft-ietf-httpapi-idempotency-key-header/)을 권장합니다. 두 문서 모두 이론과 실제 서비스 경험이 결합된 높은 수준의 설계 결정을 담고 있습니다.
 
-[관련글:분산 사가 패턴]
-[관련글:Transactional Outbox 패턴]
+---
+
+**출처**
+
+1. [Stripe API, Idempotent requests](https://stripe.com/docs/api/idempotent_requests) — 실제 운영 중인 구현의 규칙과 보관 기간.
+2. [IETF, The Idempotency-Key HTTP Header Field (draft)](https://datatracker.ietf.org/doc/draft-ietf-httpapi-idempotency-key-header/) — 표준화 진행 중인 헤더 사양.
+3. [RFC 9110, HTTP Semantics — 9.2.2 Idempotent Methods](https://www.rfc-editor.org/rfc/rfc9110.html) — 멱등 메서드의 규범적 정의.

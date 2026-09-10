@@ -105,3 +105,12 @@ Max 20x의 세전 $200은 **Opus 5 출력 약 800만 토큰**어치입니다. �
 - 총 사용량이 아니라 **한 번에 몰아 쓰는 양**이 판단 기준입니다.
 
 여러분은 어떤 플랜을 쓰고 계신가요? 그리고 한도에 걸리는 건 보통 어떤 작업을 할 때인가요?
+
+---
+
+**출처**
+
+1. [claude.com/ko/pricing](https://claude.com/ko/pricing) — 플랜별 표시가. 한국어 페이지에서도 달러로 표시된다는 근거.
+2. [Claude Code 비용 관리 문서](https://code.claude.com/docs/en/costs) — Claude Code의 토큰 소비와 비용 관리 방법.
+3. [Anthropic, Prompt caching](https://platform.claude.com/docs/en/build-with-claude/prompt-caching) — 본문에서 말한 캐싱이 한도 계산에 어떻게 반영되는지.
+4. [Anthropic API, Rate limits](https://platform.claude.com/docs/en/api/rate-limits) — API 쪽 한도 체계. 구독 플랜과는 별개지만 비교 기준이 됩니다.
