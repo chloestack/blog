@@ -58,8 +58,8 @@ nav a:hover, footer a:not(.wordmark):hover { color: var(--accent); border-color:
 .rail-list button.is-active { border-left-color: var(--accent); background: var(--accent-soft); color: var(--accent); }
 .rail-list button.is-active .rail-count { color: var(--accent); }
 /* 행 구분선은 이 열의 폭을 그대로 따라간다. 기둥(1222px)에서 레일과 간격을 빼면
-   1,004px이 남는데, 그 길이로 선을 긋기엔 너무 멀리 뻗는다. 1.3으로 나눠 묶는다. */
-.post-list { border-top: 1px solid var(--line); max-width: 772px; }
+   1,004px이 남는데, 그 길이로 선을 긋기엔 너무 멀리 뻗는다. 조금 못 미치게 묶는다. */
+.post-list { border-top: 1px solid var(--line); max-width: 911px; }
 .post-row { --row-color: var(--accent); padding: 1.65rem 0; border-bottom: 1px solid var(--line); transition: background .15s; }
 .post-row.blue { --row-color: var(--blue); } .post-row.clay { --row-color: var(--clay); } .post-row.plum { --row-color: var(--plum); } .post-row.olive { --row-color: var(--olive); } .post-row.rose { --row-color: var(--rose); }
 .post-row:hover { background: rgba(248,250,251,.55); }
@@ -69,7 +69,7 @@ nav a:hover, footer a:not(.wordmark):hover { color: var(--accent); border-color:
 .when-clock { color: var(--row-color); font-size: .68rem; font-weight: 500; }
 .post-body h3 { margin: .65rem 0 .45rem; font-family: var(--head); font-size: 1.18rem; line-height: 1.45; letter-spacing: -.025em; }
 .post-row:hover .post-body h3 a { color: var(--row-color); }
-.post-body p { max-width: 72ch; color: var(--ink-2); font-size: .84rem; }
+.post-body p { max-width: 85ch; color: var(--ink-2); font-size: .84rem; }
 
 footer { display: grid; gap: 2.2rem; padding: 2.6rem 0 3rem; border-top: 1px solid var(--line); color: var(--ink-3); font-family: var(--mono); font-size: .64rem; }
 .footer-top { display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr); gap: 2.4rem; }
