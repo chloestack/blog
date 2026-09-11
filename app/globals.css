@@ -58,11 +58,11 @@ nav a:hover, footer > a:hover { color: var(--accent); border-color: var(--accent
 .rail-list button.is-active { border-left-color: var(--accent); background: var(--accent-soft); color: var(--accent); }
 .rail-list button.is-active .rail-count { color: var(--accent); }
 .post-list { border-top: 1px solid var(--line); }
-.post-row { --row-color: var(--accent); display: grid; grid-template-columns: 74px minmax(0, 1fr); gap: 1.2rem; padding: 1.65rem 0; border-bottom: 1px solid var(--line); transition: background .15s; }
+.post-row { --row-color: var(--accent); padding: 1.65rem 0; border-bottom: 1px solid var(--line); transition: background .15s; }
 .post-row.blue { --row-color: var(--blue); } .post-row.clay { --row-color: var(--clay); } .post-row.plum { --row-color: var(--plum); } .post-row.olive { --row-color: var(--olive); } .post-row.rose { --row-color: var(--rose); }
 .post-row:hover { background: rgba(248,250,251,.55); }
-/* 순번 대신 발행 날짜와 시각. 목록에서 가장 먼저 읽히도록 본문 색을 쓴다. */
-.post-when { display: grid; gap: .1rem; padding-top: .1rem; font-family: var(--mono); }
+/* 순번 대신 발행 날짜와 시각. 카테고리 옆에 붙고, 본문 색이라 옅어지지 않는다. */
+.post-when { display: inline-flex; align-items: baseline; gap: .45rem; font-family: var(--mono); }
 .when-day { color: var(--ink); font-size: .72rem; font-weight: 600; letter-spacing: -.02em; }
 .when-clock { color: var(--row-color); font-size: .68rem; font-weight: 500; }
 .post-body h3 { margin: .65rem 0 .45rem; font-family: var(--head); font-size: 1.18rem; line-height: 1.45; letter-spacing: -.025em; }
@@ -86,7 +86,6 @@ footer { display: flex; align-items: center; justify-content: space-between; gap
 @media (max-width: 700px) {
   .wrap { width: min(100% - 2rem, 860px); }
   .site-header nav { gap: .85rem; }
-  .post-row { grid-template-columns: 66px 1fr; gap: .8rem; }
   footer { align-items: flex-start; flex-wrap: wrap; }
   footer p { order: 3; width: 100%; }
 }

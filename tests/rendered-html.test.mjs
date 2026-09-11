@@ -155,8 +155,11 @@ test("the homepage lists posts newest first, by publish time", async () => {
 test("rows are stamped with the publish time instead of a running number", async () => {
   const home = await (await render()).text();
   assert.doesNotMatch(home, /class="post-number"/);
-  assert.match(home, /class="when-day">2026\.\d{2}\.\d{2}</);
-  assert.match(home, /class="when-clock">\d{2}:\d{2}</);
+  // 날짜와 시각은 줄 맨 앞이 아니라 카테고리 태그 바로 옆에 붙는다.
+  assert.match(
+    home,
+    /<div class="label-row"><span class="tag [a-z]+">[A-Z]+<\/span><span class="post-when"><span class="when-day">2026\.\d{2}\.\d{2}<\/span><span class="when-clock">\d{2}:\d{2}</,
+  );
 
   const posts = readPosts();
   if (posts.length === 0) return;

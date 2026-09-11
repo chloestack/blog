@@ -59,12 +59,11 @@ export function PostBrowser({ posts }: { posts: PostCard[] }) {
             <div className="post-list">
               {visible.map((post) => (
                 <article className={`post-row ${post.tone}`} key={post.slug}>
-                  <div className="post-when">
-                    <span className="when-day">{formatDate(post.date)}</span>
-                    <span className="when-clock">{post.time}</span>
-                  </div>
                   <div className="post-body">
-                    <div className="label-row"><span className={`tag ${post.tone}`}>{post.category.toUpperCase()}</span></div>
+                    <div className="label-row">
+                      <span className={`tag ${post.tone}`}>{post.category.toUpperCase()}</span>
+                      <span className="post-when"><span className="when-day">{formatDate(post.date)}</span><span className="when-clock">{post.time}</span></span>
+                    </div>
                     <h3><Link href={post.href}>{post.title}</Link></h3>
                     {post.excerpt ? <p>{post.excerpt}</p> : null}
                   </div>
