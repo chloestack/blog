@@ -16,7 +16,8 @@ function readPosts() {
       const slug = file.replace(/\.md$/, "");
       return { slug, title: String(data.title ?? ""), date: String(data.date ?? slug.slice(0, 10)) };
     })
-    .sort((a, b) => b.date.localeCompare(a.date));
+    // 사이트와 같은 기준: 발행 시각 내림차순, 같은 시각이면 slug.
+    .sort((a, b) => b.date.localeCompare(a.date) || a.slug.localeCompare(b.slug));
 }
 
 async function render(pathname = "/") {
@@ -37,7 +38,10 @@ test("server-renders the blog homepage", async () => {
   const html = await response.text();
   assert.match(html, /<html lang="ko">/i);
   assert.match(html, /<title>blog\.pistamond/);
-  assert.match(html, /최근 기록/);
+  // 목록 위의 "최근 기록" 제목은 걷어냈다. 날짜순 목록이 바로 아래에 있어 제목이
+  // 하는 일이 없었다. 섹션 이름은 aria-label로만 남는다.
+  assert.doesNotMatch(html, /최근 기록/);
+  assert.match(html, /<section class="articles"[^>]*aria-label="글 목록"/);
   // 카테고리는 목록 위가 아니라 왼쪽 레일에서만 나온다.
   assert.match(html, /class="category-rail"/);
   assert.doesNotMatch(html, /class="filter-bar"/);
@@ -106,4 +110,40 @@ test("every page closes with the naver analytics tag", async () => {
     const document = html.slice(0, bodyEnd);
     assert.equal(document.split("wcs_do()").length - 1, 1, `analytics tag is duplicated: ${pathname}`);
   }
+});
+
+/**
+ * 글을 다 읽은 사람에게 다음 행선지를 준다. 같은 카테고리를 먼저 채우되,
+ * 자기 자신이 그 목록에 다시 나오면 안 된다.
+ */
+test("an article ends with related posts that exclude itself", async () => {
+  const posts = readPosts();
+  if (posts.length < 2) return;
+
+  const [post] = posts;
+  const html = await (await render(`/posts/${encodeURIComponent(post.slug)}`)).text();
+  const section = html.slice(html.indexOf('class="related"'), html.indexOf("<footer"));
+
+  assert.ok(section.includes("관련 글"), "related section is missing from the article");
+  const links = [...section.matchAll(/href="\/posts\/([^"]+)"/g)].map((match) => decodeURIComponent(match[1]));
+  assert.ok(links.length > 0 && links.length <= 4, `unexpected related count: ${links.length}`);
+  assert.ok(!links.includes(post.slug), "the article links to itself as a related post");
+  assert.equal(new Set(links).size, links.length, "related posts are duplicated");
+});
+
+/**
+ * 날짜에는 시각까지 적는다. 하루에 여러 편이 올라오는 블로그라, 날짜만 있으면
+ * 같은 날 글의 순서가 파일명 순으로 흩어졌다.
+ */
+test("the homepage lists posts newest first, by publish time", async () => {
+  const posts = readPosts();
+  if (posts.length < 2) return;
+
+  for (const post of posts) {
+    assert.match(post.date, /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$/, `post has no publish time: ${post.slug}`);
+  }
+
+  const html = await (await render()).text();
+  const listed = [...html.matchAll(/<h3><a href="\/posts\/([^"]+)"/g)].map((match) => decodeURIComponent(match[1]));
+  assert.deepEqual(listed, posts.map((post) => post.slug));
 });

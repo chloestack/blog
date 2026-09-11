@@ -1,6 +1,6 @@
 ---
 title: "Claude Code, Pro면 충분할까? Max는 언제 필요할까"
-date: "2026-09-10"
+date: "2026-09-10 20:42"
 category: "Tools"
 tags: ["Claude Code", "개발 도구", "비용"]
 excerpt: "한국에는 원화 정가가 없습니다. 부가세와 카드 수수료까지 넣은 실제 월 부담액을 먼저 계산하고, 플랜을 가르는 진짜 기준을 봅니다."

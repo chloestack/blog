@@ -1,6 +1,6 @@
 ---
 title: "파일 업로드 아키텍처 — multipart와 스트리밍 방식 비교"
-date: "2026-09-11"
+date: "2026-09-11 12:10"
 category: "Architecture"
 tags: ["Architecture", "File Upload", "multipart/form-data", "Streaming", "HTTP"]
 excerpt: "웹 서비스의 파일 업로드는 multipart/form-data로 구현하는 것이 관례지만, 대용량 파일에서는 스트리밍 방식이 메모리와 응답 시간을 근본적으로 바꿉니다. 두 방식의 동작 원리와 선택 기준을 정리합니다."

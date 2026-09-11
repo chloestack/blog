@@ -1,6 +1,6 @@
 ---
 title: "멱등성 API 설계 — Idempotency Key로 중복 요청 안전하게 처리하기"
-date: "2026-09-11"
+date: "2026-09-11 07:36"
 category: "Architecture"
 tags: ["멱등성 API 설계 — Idempotency Key로 분산 시스템 중복 요청 안전하게 처리하기", "Architecture", "API", "Idempotency", "Key"]
 excerpt: "분산 시스템에서 네트워크 장애나 타임아웃으로 인해 동일한 요청이 중복 처리되는 문제를 멱등성(Idempotency) API 설계로 안전하게 해결할 수 있습니다."

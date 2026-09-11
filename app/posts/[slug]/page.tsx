@@ -28,7 +28,7 @@ export async function generateMetadata({
       description: post.excerpt,
       url: postHref(post.slug),
       type: "article",
-      publishedTime: post.date,
+      publishedTime: post.publishedAt,
     },
   };
 }

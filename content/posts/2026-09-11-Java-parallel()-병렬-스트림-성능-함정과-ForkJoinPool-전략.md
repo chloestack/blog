@@ -1,6 +1,6 @@
 ---
 title: "Java parallel() 병렬 스트림 성능 함정과 ForkJoinPool 전략"
-date: "2026-09-11"
+date: "2026-09-11 07:07"
 category: "Java"
 tags: ["Java Stream parallel() 병렬 처리 성능 함정과 ForkJoinPool 활용 전략", "Java", "parallel", "ForkJoinPool"]
 excerpt: "Java 8의 Stream API가 등장했을 때, parallel() 메서드는 개발자들에게 병렬 처리의 민주화를 약속했습니다. .stream() 대신 .parallelStream()을 입력하거나, 스트림 중간에 ."

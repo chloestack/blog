@@ -28,9 +28,7 @@ export function PostBrowser({ posts }: { posts: PostCard[] }) {
   const visible = active === ALL ? posts : posts.filter((post) => post.category === active);
 
   return (
-    <section className="articles" id="articles" aria-labelledby="latest-title">
-      <div className="section-heading"><h2 id="latest-title">최근 기록</h2></div>
-
+    <section className="articles" id="articles" aria-label="글 목록">
       <div className={topics.length > 0 ? "articles-layout" : "articles-layout no-rail"}>
         {topics.length > 0 ? (
           <aside className="category-rail" aria-labelledby="category-title">

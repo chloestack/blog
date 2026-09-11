@@ -1,6 +1,6 @@
 ---
 title: "ShedLock으로 Spring @Scheduled 분산 잠금 구현하기"
-date: "2026-09-11"
+date: "2026-09-11 07:19"
 category: "Spring"
 tags: ["ShedLock으로 Spring @Scheduled 분산 잠금 구현하기", "Spring", "ShedLock", "Scheduled"]
 excerpt: "수평 확장(horizontal scaling)이 보편화된 현재 서비스 환경에서 @Scheduled 애노테이션은 의외로 위험한 존재가 될 수 있습니다."

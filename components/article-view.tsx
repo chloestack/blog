@@ -1,9 +1,10 @@
 import Link from "next/link";
-import { readingTime, renderMarkdown, toneFor, type Post } from "@/lib/posts";
+import { getRelatedPosts, readingTime, renderMarkdown, toneFor, type Post } from "@/lib/posts";
 
 export function ArticleView({ post }: { post: Post }) {
   const tone = toneFor(post.category);
   const date = post.date.replaceAll("-", ".");
+  const related = getRelatedPosts(post);
 
   return (
     <main>
@@ -28,6 +29,22 @@ export function ArticleView({ post }: { post: Post }) {
             <div className="article-tags">{post.tags.map((tag) => <span key={tag}>#{tag}</span>)}</div>
           ) : null}
         </article>
+
+        {related.length > 0 ? (
+          <aside className="related" aria-labelledby="related-title">
+            <h2 className="related-title" id="related-title">관련 글</h2>
+            <ul className="related-list">
+              {related.map((item) => (
+                <li key={item.slug}>
+                  <Link href={item.href}>
+                    <span className="label-row"><span className={`tag ${item.tone}`}>{item.category.toUpperCase()}</span><span className="meta">{item.date.replaceAll("-", ".")}</span></span>
+                    <span className="related-name">{item.title}</span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </aside>
+        ) : null}
 
         <footer>
           <Link className="wordmark footer-mark" href="/"><span className="mark">P</span><span>blog.pistamond</span></Link>

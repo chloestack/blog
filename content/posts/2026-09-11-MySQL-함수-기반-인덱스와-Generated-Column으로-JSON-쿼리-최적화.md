@@ -1,6 +1,6 @@
 ---
 title: "MySQL 함수 기반 인덱스와 Generated Column으로 JSON 쿼리 최적화"
-date: "2026-09-11"
+date: "2026-09-11 07:26"
 category: "Database"
 tags: ["MySQL 함수 기반 인덱스와 Generated Column으로 JSON 쿼리 최적화하기", "Database", "MySQL", "Generated", "Column", "JSON"]
 excerpt: "MySQL 5.7.8에서 공식 JSON 타입이 도입된 이후, 관계형 데이터베이스에서 유연한 스키마를 다루려는 수요가 크게 늘었습니다."

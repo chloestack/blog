@@ -20,12 +20,17 @@
 ```yaml
 ---
 title: "글 제목"
-date: "2026-09-10"        # 작성일이자 공개일. 목록 정렬 기준
+date: "2026-09-10 07:19"  # 발행 시각(KST). 목록은 이 값의 내림차순
 category: "Spring"
 tags: ["Spring Boot"]
 excerpt: "목록에 쓰이는 한 문단"
 ---
 ```
+
+`date`는 `YYYY-MM-DD HH:MM` 형식입니다. 하루에 여러 편이 올라오므로 날짜만 적으면
+같은 날 글의 순서가 파일명 순으로 흩어집니다. 글을 만드는
+`~/workspace/mcp/tistory-writer/blog_repo.py`가 파일을 쓰는 시각을 함께 적습니다.
+시각이 없는 글은 그날 00:00으로 보고, 같은 시각인 글끼리는 파일명 순입니다.
 
 `status`, `publishedAt` 필드는 더 이상 쓰이지 않습니다. 남아 있어도 무시됩니다.
 

@@ -6,10 +6,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const posts = getAllPosts();
 
   return [
-    { url: base, lastModified: posts[0]?.date || undefined, changeFrequency: "weekly" },
+    { url: base, lastModified: posts[0]?.publishedAt || undefined, changeFrequency: "weekly" },
     ...posts.map((post) => ({
       url: `${base}/posts/${encodeURIComponent(post.slug)}`,
-      lastModified: post.date,
+      lastModified: post.publishedAt,
     })),
   ];
 }
