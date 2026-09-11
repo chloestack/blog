@@ -8,6 +8,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "/" },
   openGraph: { title: "blog.pistamond", url: "/", siteName: "blog.pistamond", locale: "ko_KR", type: "website" },
   twitter: { card: "summary", title: "blog.pistamond" },
+  verification: { other: { "naver-site-verification": "230557197f1de53a7987731b9ebbbedc8163acfb" } },
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
