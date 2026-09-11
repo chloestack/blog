@@ -5,6 +5,8 @@ import { useMemo, useState } from "react";
 import type { PostCard } from "@/lib/posts";
 
 const ALL = "전체";
+/** 도구 이야기는 주제라기보다 곁가지라 개수와 상관없이 레일 맨 아래에 둔다. */
+const PINNED_LAST = "Tools";
 
 function formatDate(value: string): string {
   return value.replaceAll("-", ".");
@@ -17,7 +19,10 @@ export function PostBrowser({ posts }: { posts: PostCard[] }) {
   const topics = useMemo(() => {
     const counts = new Map<string, number>();
     for (const post of posts) counts.set(post.category, (counts.get(post.category) ?? 0) + 1);
-    return [...counts.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+    return [...counts.entries()].sort((a, b) => {
+      if ((a[0] === PINNED_LAST) !== (b[0] === PINNED_LAST)) return a[0] === PINNED_LAST ? 1 : -1;
+      return b[1] - a[1] || a[0].localeCompare(b[0]);
+    });
   }, [posts]);
 
   const visible = active === ALL ? posts : posts.filter((post) => post.category === active);

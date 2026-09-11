@@ -1,7 +1,7 @@
 ---
 title: "Cursor vs Claude Code, 실제로 뭐가 더 편할까"
 date: "2026-09-10"
-category: "Tooling"
+category: "Tools"
 tags: ["Cursor", "Claude Code", "개발 도구"]
 excerpt: "둘 다 실부담 월 3만 원 남짓입니다. 그래서 가격은 기준이 못 됩니다. 진짜 차이는 '코드를 누가 읽느냐'에 있습니다."
 ---
