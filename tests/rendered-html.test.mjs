@@ -13,7 +13,8 @@ function readPosts() {
     .filter((file) => file.endsWith(".md"))
     .map((file) => {
       const { data } = matter(fs.readFileSync(path.join(POSTS_DIR.pathname, file), "utf8"));
-      return { title: String(data.title ?? ""), date: String(data.date ?? file.slice(0, 10)) };
+      const slug = file.replace(/\.md$/, "");
+      return { slug, title: String(data.title ?? ""), date: String(data.date ?? slug.slice(0, 10)) };
     })
     .sort((a, b) => b.date.localeCompare(a.date));
 }
@@ -79,4 +80,30 @@ test("every post in the repository is public on the homepage", async () => {
     assert.ok(html.includes(post.title), `post missing from homepage: ${post.title}`);
   }
   if (posts.length === 0) assert.match(html, /아직 공개된 글이 없습니다/);
+});
+
+/**
+ * 네이버 애널리틱스(wcs) 태그는 루트 레이아웃이 </body> 바로 앞에 한 번만 넣는다.
+ * 새 페이지를 만들 때 붙이는 것을 잊어도 되도록 만든 규칙이라, 페이지마다
+ * 실제로 따라붙는지 여기서 지킨다.
+ */
+test("every page closes with the naver analytics tag", async () => {
+  const posts = readPosts();
+  const pages = ["/", ...posts.slice(0, 1).map((post) => `/posts/${encodeURIComponent(post.slug)}`)];
+
+  for (const pathname of pages) {
+    const html = await (await render(pathname)).text();
+    const loader = html.indexOf('src="//wcs.pstatic.net/wcslog.js"');
+    const account = html.indexOf('wcs_add["wa"] = "2d2e2d4e62aa6e"');
+    const bodyEnd = html.indexOf("</body>");
+
+    assert.ok(loader > 0, `analytics loader missing: ${pathname}`);
+    assert.ok(account > loader, `analytics account id missing or before the loader: ${pathname}`);
+    assert.ok(account < bodyEnd, `analytics tag is not inside the body: ${pathname}`);
+    // 본문 다음, 프레임워크 부트스트랩 앞. 즉 페이지가 그리는 마지막 것.
+    assert.ok(loader > html.indexOf("</main>"), `analytics tag runs before the page content: ${pathname}`);
+    // RSC 페이로드에도 같은 문자열이 실리므로, 문서 부분만 놓고 센다.
+    const document = html.slice(0, bodyEnd);
+    assert.equal(document.split("wcs_do()").length - 1, 1, `analytics tag is duplicated: ${pathname}`);
+  }
 });
