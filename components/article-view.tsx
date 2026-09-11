@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { SiteFooter } from "@/components/site-footer";
 import { getRelatedPosts, renderMarkdown, toneFor, type Post } from "@/lib/posts";
 
 export function ArticleView({ post }: { post: Post }) {
@@ -47,12 +48,7 @@ export function ArticleView({ post }: { post: Post }) {
           </aside>
         ) : null}
 
-        <footer>
-          <Link className="wordmark footer-mark" href="/"><span className="mark">P</span><span>blog.pistamond</span></Link>
-          <p>© 2026 pistamond. Built with curiosity.</p>
-          <a href="mailto:contact@pistamond.dev">contact@pistamond.dev</a>
-          <Link href="/#articles">목록으로 ←</Link>
-        </footer>
+        <SiteFooter homeHref="/" backHref="/#articles" backLabel="목록으로 ←" />
       </div>
     </main>
   );

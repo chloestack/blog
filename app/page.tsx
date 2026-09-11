@@ -1,4 +1,5 @@
 import { PostBrowser } from "@/components/post-browser";
+import { SiteFooter } from "@/components/site-footer";
 import { getAllPosts, toCard } from "@/lib/posts";
 
 export default function Home() {
@@ -16,12 +17,7 @@ export default function Home() {
       <div className="wrap wide" id="top">
         <PostBrowser posts={posts} />
 
-        <footer>
-          <a className="wordmark footer-mark" href="#top"><span className="mark">P</span><span>blog.pistamond</span></a>
-          <p>© 2026 pistamond</p>
-          <a href="mailto:contact@pistamond.dev">contact@pistamond.dev</a>
-          <a href="#top">맨 위로 ↑</a>
-        </footer>
+        <SiteFooter homeHref="#top" backHref="#top" backLabel="맨 위로 ↑" />
       </div>
     </main>
   );

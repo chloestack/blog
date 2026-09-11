@@ -195,16 +195,41 @@ test("every page describes itself for search results and share cards", async () 
   assert.match(robots, /Sitemap: https:\/\/blog\.pistamond\.dev\/sitemap\.xml/);
 });
 
-/** 연락처는 모든 페이지 푸터에 있고, 눌러서 바로 메일을 쓸 수 있어야 한다. */
-test("the footer carries the contact address", async () => {
+/**
+ * 푸터는 세 페이지가 같은 컴포넌트를 쓴다. 소개, 라벨 붙은 연락처, 개인정보처리방침
+ * 링크가 어느 페이지에서도 빠지지 않아야 한다.
+ */
+test("the footer introduces the site and labels the contact address", async () => {
   const posts = readPosts();
-  const pages = ["/", ...posts.slice(0, 1).map((post) => `/posts/${encodeURIComponent(post.slug)}`)];
+  const pages = ["/", "/privacy", ...posts.slice(0, 1).map((post) => `/posts/${encodeURIComponent(post.slug)}`)];
 
   for (const pathname of pages) {
     const html = await (await render(pathname)).text();
     const footer = html.slice(html.indexOf("<footer"), html.indexOf("</footer>"));
+    assert.match(footer, /About/, `no about section: ${pathname}`);
+    assert.match(footer, /Java\/Spring 기반 백엔드 개발과/, `no about copy: ${pathname}`);
+    assert.match(footer, /Contact · 연락처/, `the contact address has no label: ${pathname}`);
     assert.match(footer, /<a href="mailto:contact@pistamond\.dev">contact@pistamond\.dev<\/a>/, `no contact address: ${pathname}`);
+    assert.match(footer, /href="\/privacy">개인정보처리방침</, `no privacy link: ${pathname}`);
   }
+});
+
+/** 개인정보처리방침은 별도 페이지로 서고, 실제로 쓰는 외부 서비스를 밝힌다. */
+test("the privacy policy stands on its own page", async () => {
+  const response = await render("/privacy");
+  assert.equal(response.status, 200);
+  const html = await response.text();
+
+  assert.match(html, /<title>개인정보처리방침 · blog\.pistamond/);
+  assert.match(html, /<h1[^>]*>개인정보처리방침</);
+  const sections = [...html.matchAll(/<h2>(\d)\. /g)].map((match) => match[1]);
+  assert.deepEqual(sections, ["1", "2", "3", "4", "5", "6", "7", "8"]);
+  assert.match(html, /네이버 애널리틱스/, "the policy hides the analytics it actually runs");
+  assert.match(html, /mailto:contact@pistamond\.dev/);
+  assert.match(html, /시행일: 2026년 9월 1일/);
+
+  const sitemap = await (await render("/sitemap.xml")).text();
+  assert.match(sitemap, /https:\/\/blog\.pistamond\.dev\/privacy/);
 });
 
 /** 탭 아이콘. 링크 태그가 없으면 브라우저는 빈 아이콘을 쓴다. */
