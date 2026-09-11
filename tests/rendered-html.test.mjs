@@ -168,3 +168,29 @@ test("rows are stamped with the publish time instead of a running number", async
   assert.doesNotMatch(head, /\d+분/, "reading time is back on the article");
   assert.match(head, /<span class="meta">2026\.\d{2}\.\d{2} \d{2}:\d{2}<\/span>/);
 });
+
+/**
+ * 검색 결과와 공유 카드에 나가는 설명. 글 페이지는 루트의 설명을 물려받지 않고
+ * 자기 발췌문으로 덮어써야 하고, openGraph는 통째로 대체되는 값이라
+ * siteName·locale이 조용히 빠지기 쉽다.
+ */
+test("every page describes itself for search results and share cards", async () => {
+  const head = (await (await render()).text()).split("</head>")[0];
+  for (const attr of ['name="description"', 'property="og:description"', 'name="twitter:description"']) {
+    assert.match(head, new RegExp(`<meta ${attr} content="소프트웨어의 구조`), `homepage is missing ${attr}`);
+  }
+
+  const posts = readPosts();
+  if (posts.length === 0) return;
+  const article = (await (await render(`/posts/${encodeURIComponent(posts[0].slug)}`)).text()).split("</head>")[0];
+  assert.doesNotMatch(article, /content="소프트웨어의 구조[^"]*"/, "the article reuses the site description");
+  for (const attr of ['name="description"', 'property="og:description"', 'name="twitter:description"']) {
+    assert.match(article, new RegExp(`<meta ${attr} content="[^"]+"`), `article is missing ${attr}`);
+  }
+  assert.match(article, /property="og:site_name" content="blog\.pistamond"/);
+  assert.match(article, /property="og:locale" content="ko_KR"/);
+
+  const robots = await (await render("/robots.txt")).text();
+  assert.match(robots, /User-Agent: \*/i);
+  assert.match(robots, /Sitemap: https:\/\/blog\.pistamond\.dev\/sitemap\.xml/);
+});
