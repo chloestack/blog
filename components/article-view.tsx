@@ -9,7 +9,7 @@ export function ArticleView({ post }: { post: Post }) {
     <main>
       <header className="site-header">
         <div className="wrap header-inner">
-          <Link className="wordmark" href="/" aria-label="pistamond.log 홈"><span className="mark">P</span><span>pistamond.log</span></Link>
+          <Link className="wordmark" href="/" aria-label="blog.pistamond 홈"><span className="mark">P</span><span>blog.pistamond</span></Link>
           <nav aria-label="주요 메뉴"><Link href="/#articles">글</Link><Link href="/#topics">주제</Link><Link href="/#about">소개</Link></nav>
         </div>
       </header>
@@ -30,7 +30,7 @@ export function ArticleView({ post }: { post: Post }) {
         </article>
 
         <footer>
-          <Link className="wordmark footer-mark" href="/"><span className="mark">P</span><span>pistamond.log</span></Link>
+          <Link className="wordmark footer-mark" href="/"><span className="mark">P</span><span>blog.pistamond</span></Link>
           <p>© 2026 pistamond. Built with curiosity.</p><Link href="/#articles">목록으로 ←</Link>
         </footer>
       </div>

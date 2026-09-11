@@ -1,4 +1,4 @@
-# pistamond.log
+# blog.pistamond
 
 `pistamond.dev`에서 운영하는 한국어 기술 블로그입니다. 소프트웨어의 구조,
 인터페이스, 운영 과정에서 내린 판단을 기록합니다.

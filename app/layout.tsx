@@ -3,10 +3,10 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://blog.pistamond.dev"),
-  title: { default: "pistamond.log", template: "%s · pistamond.log" },
+  title: { default: "blog.pistamond", template: "%s · blog.pistamond" },
   alternates: { canonical: "/" },
-  openGraph: { title: "pistamond.log", url: "/", siteName: "pistamond.log", locale: "ko_KR", type: "website" },
-  twitter: { card: "summary", title: "pistamond.log" },
+  openGraph: { title: "blog.pistamond", url: "/", siteName: "blog.pistamond", locale: "ko_KR", type: "website" },
+  twitter: { card: "summary", title: "blog.pistamond" },
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

@@ -55,12 +55,12 @@ nav a:hover, footer > a:hover { color: var(--accent); border-color: var(--accent
 .filter-bar button.is-active { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); }
 .filter-bar button.is-active span { color: var(--accent); }
 .post-list { border-top: 1px solid var(--line); }
-.post-row { --row-color: var(--accent); display: grid; grid-template-columns: 56px 1fr 56px; gap: 1.2rem; padding: 1.65rem 0; border-bottom: 1px solid var(--line); transition: background .15s, padding .15s; }
+.post-row { --row-color: var(--accent); display: grid; grid-template-columns: 56px 1fr 56px; gap: 1.2rem; padding: 1.65rem 0; border-bottom: 1px solid var(--line); transition: background .15s; }
 .post-row.blue { --row-color: var(--blue); } .post-row.clay { --row-color: var(--clay); } .post-row.plum { --row-color: var(--plum); } .post-row.olive { --row-color: var(--olive); } .post-row.rose { --row-color: var(--rose); }
-.post-row:hover { padding-left: .75rem; padding-right: .75rem; background: rgba(248,250,251,.55); }
+.post-row:hover { background: rgba(248,250,251,.55); }
 .post-number { padding-top: .14rem; color: var(--row-color); font-family: var(--mono); font-size: .7rem; }
 .post-body h3 { margin: .65rem 0 .45rem; font-family: var(--head); font-size: 1.18rem; line-height: 1.45; letter-spacing: -.025em; }
-.post-body h3 a:hover { color: var(--row-color); }
+.post-row:hover .post-body h3 a { color: var(--row-color); }
 .post-body p { max-width: 62ch; color: var(--ink-2); font-size: .84rem; }
 .post-time { display: flex; flex-direction: column; align-items: flex-end; justify-content: space-between; color: var(--ink-3); font-family: var(--mono); font-size: .65rem; }
 .arrow { color: var(--row-color); font-size: 1rem; }
