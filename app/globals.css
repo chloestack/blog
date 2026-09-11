@@ -112,7 +112,11 @@ footer { display: flex; align-items: center; justify-content: space-between; gap
 
 .article-tags { display: flex; flex-wrap: wrap; gap: .55rem; margin-top: 3rem; color: var(--ink-3); font-family: var(--mono); font-size: .66rem; }
 
-.prose { max-width: 74ch; margin-top: 2.6rem; color: var(--ink-2); }
+/* 글줄은 74ch로 묶되 폭 제한은 본문 요소에만 건다. 가로선을 긋는 요소(hr, h2)는
+   기둥 전체를 쓰게 두어야 머리말 아래 선과 같은 폭으로 떨어진다. */
+.prose { margin-top: 2.6rem; color: var(--ink-2); }
+.prose > * { max-width: 74ch; }
+.prose > hr, .prose > h2 { max-width: none; }
 .prose h2 { margin: 3.2rem 0 1rem; padding-top: 1.4rem; border-top: 1px solid var(--line-2); font-family: var(--head); font-size: 1.5rem; font-weight: 800; line-height: 1.4; letter-spacing: -.035em; color: var(--ink); }
 .prose h3 { margin: 2.1rem 0 .75rem; font-family: var(--head); font-size: 1.1rem; font-weight: 700; letter-spacing: -.025em; color: var(--ink); }
 .prose h4 { margin: 1.6rem 0 .6rem; font-size: .95rem; font-weight: 600; color: var(--ink); }
