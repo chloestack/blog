@@ -194,3 +194,15 @@ test("every page describes itself for search results and share cards", async () 
   assert.match(robots, /User-Agent: \*/i);
   assert.match(robots, /Sitemap: https:\/\/blog\.pistamond\.dev\/sitemap\.xml/);
 });
+
+/** 연락처는 모든 페이지 푸터에 있고, 눌러서 바로 메일을 쓸 수 있어야 한다. */
+test("the footer carries the contact address", async () => {
+  const posts = readPosts();
+  const pages = ["/", ...posts.slice(0, 1).map((post) => `/posts/${encodeURIComponent(post.slug)}`)];
+
+  for (const pathname of pages) {
+    const html = await (await render(pathname)).text();
+    const footer = html.slice(html.indexOf("<footer"), html.indexOf("</footer>"));
+    assert.match(footer, /<a href="mailto:contact@pistamond\.dev">contact@pistamond\.dev<\/a>/, `no contact address: ${pathname}`);
+  }
+});

@@ -88,6 +88,7 @@ footer { display: flex; align-items: center; justify-content: space-between; gap
   .site-header nav { gap: .85rem; }
   footer { align-items: flex-start; flex-wrap: wrap; }
   footer p { order: 3; width: 100%; }
+  footer a[href^="mailto:"] { order: 4; }
 }
 
 @media (max-width: 420px) {

@@ -18,7 +18,9 @@ export default function Home() {
 
         <footer>
           <a className="wordmark footer-mark" href="#top"><span className="mark">P</span><span>blog.pistamond</span></a>
-          <p>© 2026 pistamond</p><a href="#top">맨 위로 ↑</a>
+          <p>© 2026 pistamond</p>
+          <a href="mailto:contact@pistamond.dev">contact@pistamond.dev</a>
+          <a href="#top">맨 위로 ↑</a>
         </footer>
       </div>
     </main>

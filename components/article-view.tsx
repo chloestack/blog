@@ -49,7 +49,9 @@ export function ArticleView({ post }: { post: Post }) {
 
         <footer>
           <Link className="wordmark footer-mark" href="/"><span className="mark">P</span><span>blog.pistamond</span></Link>
-          <p>© 2026 pistamond. Built with curiosity.</p><Link href="/#articles">목록으로 ←</Link>
+          <p>© 2026 pistamond. Built with curiosity.</p>
+          <a href="mailto:contact@pistamond.dev">contact@pistamond.dev</a>
+          <Link href="/#articles">목록으로 ←</Link>
         </footer>
       </div>
     </main>
