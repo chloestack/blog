@@ -7,13 +7,13 @@ export default function Home() {
   return (
     <main>
       <header className="site-header">
-        <div className="wrap header-inner">
+        <div className="wrap wide header-inner">
           <a className="wordmark" href="#top" aria-label="blog.pistamond 홈"><span className="mark">P</span><span>blog.pistamond</span></a>
           <nav aria-label="주요 메뉴"><a href="#articles">글</a><a href="#topics">주제</a></nav>
         </div>
       </header>
 
-      <div className="wrap" id="top">
+      <div className="wrap wide" id="top">
         <PostBrowser posts={posts} />
 
         <footer>

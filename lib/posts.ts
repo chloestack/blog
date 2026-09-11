@@ -95,7 +95,6 @@ export type PostCard = {
   category: string;
   excerpt: string;
   tone: string;
-  minutes: string;
 };
 
 export function toCard(post: Post): PostCard {
@@ -107,6 +106,5 @@ export function toCard(post: Post): PostCard {
     category: post.category,
     excerpt: post.excerpt,
     tone: toneFor(post.category),
-    minutes: readingTime(post.body),
   };
 }

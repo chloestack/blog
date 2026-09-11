@@ -30,42 +30,48 @@ export function PostBrowser({ posts }: { posts: PostCard[] }) {
       <section className="articles" id="articles" aria-labelledby="latest-title">
         <div className="section-heading"><h2 id="latest-title">최근 기록</h2></div>
 
-        {topics.length > 0 ? (
-          <div className="filter-bar" role="group" aria-label="주제로 거르기">
-            {[ALL, ...topics.map(([topic]) => topic)].map((topic) => (
-              <button
-                key={topic}
-                type="button"
-                className={topic === active ? "is-active" : undefined}
-                aria-pressed={topic === active}
-                onClick={() => setActive(topic)}
-              >
-                {topic}
-                <span>{topic === ALL ? posts.length : topics.find(([name]) => name === topic)![1]}</span>
-              </button>
-            ))}
-          </div>
-        ) : null}
+        <div className={topics.length > 0 ? "articles-layout" : "articles-layout no-rail"}>
+          {topics.length > 0 ? (
+            <aside className="category-rail" aria-labelledby="category-title">
+              <h3 className="rail-title" id="category-title">카테고리</h3>
+              <div className="rail-list" role="group" aria-label="카테고리로 거르기">
+                {[[ALL, posts.length] as const, ...topics].map(([topic, count]) => (
+                  <button
+                    key={topic}
+                    type="button"
+                    className={topic === active ? "is-active" : undefined}
+                    aria-pressed={topic === active}
+                    onClick={() => setActive(topic)}
+                  >
+                    <span className="rail-name">{topic}</span>
+                    <span className="rail-count">{String(count).padStart(2, "0")}</span>
+                  </button>
+                ))}
+              </div>
+            </aside>
+          ) : null}
 
-        {posts.length === 0 ? (
-          <p className="empty-note">아직 공개된 글이 없습니다.</p>
-        ) : visible.length === 0 ? (
-          <p className="empty-note">{active} 주제의 글이 아직 없습니다.</p>
-        ) : (
-          <div className="post-list">
-            {visible.map((post, index) => (
-              <article className={`post-row ${post.tone}`} key={post.slug}>
-                <div className="post-number">{String(index + 1).padStart(2, "0")}</div>
-                <div className="post-body">
-                  <div className="label-row"><span className={`tag ${post.tone}`}>{post.category.toUpperCase()}</span><span className="meta">{formatDate(post.date)}</span></div>
-                  <h3><Link href={post.href}>{post.title}</Link></h3>
-                  {post.excerpt ? <p>{post.excerpt}</p> : null}
-                </div>
-                <div className="post-time"><span>{post.minutes}</span><span className="arrow" aria-hidden="true">↗</span></div>
-              </article>
-            ))}
+          <div className="articles-main">
+            {posts.length === 0 ? (
+              <p className="empty-note">아직 공개된 글이 없습니다.</p>
+            ) : visible.length === 0 ? (
+              <p className="empty-note">{active} 주제의 글이 아직 없습니다.</p>
+            ) : (
+              <div className="post-list">
+                {visible.map((post, index) => (
+                  <article className={`post-row ${post.tone}`} key={post.slug}>
+                    <div className="post-number">{String(index + 1).padStart(2, "0")}</div>
+                    <div className="post-body">
+                      <div className="label-row"><span className={`tag ${post.tone}`}>{post.category.toUpperCase()}</span><span className="meta">{formatDate(post.date)}</span></div>
+                      <h3><Link href={post.href}>{post.title}</Link></h3>
+                      {post.excerpt ? <p>{post.excerpt}</p> : null}
+                    </div>
+                  </article>
+                ))}
+              </div>
+            )}
           </div>
-        )}
+        </div>
       </section>
 
       {topics.length > 0 ? (

@@ -10,13 +10,13 @@ export function ArticleView({ post }: { post: Post }) {
       <header className="site-header">
         <div className="wrap header-inner">
           <Link className="wordmark" href="/" aria-label="blog.pistamond 홈"><span className="mark">P</span><span>blog.pistamond</span></Link>
-          <nav aria-label="주요 메뉴"><Link href="/#articles">글</Link><Link href="/#topics">주제</Link><Link href="/#about">소개</Link></nav>
         </div>
       </header>
 
       <div className="wrap">
         <article className="article">
           <div className="article-head">
+            <Link className="back-link" href="/#articles">← 목록으로</Link>
             <div className="label-row"><span className={`tag ${tone}`}>{post.category.toUpperCase()}</span><span className="meta">{date} · {readingTime(post.body)}</span></div>
             <h1>{post.title}</h1>
             {post.excerpt ? <p className="lede">{post.excerpt}</p> : null}

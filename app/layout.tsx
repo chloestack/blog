@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { NaverAnalytics } from "@/components/analytics";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -10,5 +11,6 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <html lang="ko"><body>{children}</body></html>;
+  // 측정 태그는 </body> 바로 앞, 페이지 내용 다음에 온다.
+  return <html lang="ko"><body>{children}<NaverAnalytics /></body></html>;
 }

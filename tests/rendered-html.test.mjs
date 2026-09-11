@@ -35,8 +35,11 @@ test("server-renders the blog homepage", async () => {
   assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
   const html = await response.text();
   assert.match(html, /<html lang="ko">/i);
-  assert.match(html, /<title>pistamond\.log/);
+  assert.match(html, /<title>blog\.pistamond/);
   assert.match(html, /최근 기록/);
+  // 카테고리는 목록 위가 아니라 왼쪽 레일에서만 나온다.
+  assert.match(html, /class="category-rail"/);
+  assert.doesNotMatch(html, /class="filter-bar"/);
   assert.doesNotMatch(html, /codex-preview|SkeletonPreview|react-loading-skeleton/);
 });
 
