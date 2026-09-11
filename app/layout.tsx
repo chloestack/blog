@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { AdSense, ADSENSE_CLIENT } from "@/components/adsense";
 import { NaverAnalytics } from "@/components/analytics";
 import "./globals.css";
 
@@ -24,10 +25,16 @@ export const metadata: Metadata = {
     type: "website",
   },
   twitter: { card: "summary", title: "blog.pistamond", description: DESCRIPTION },
-  verification: { other: { "naver-site-verification": "230557197f1de53a7987731b9ebbbedc8163acfb" } },
+  verification: {
+    other: {
+      "naver-site-verification": "230557197f1de53a7987731b9ebbbedc8163acfb",
+      // 애드센스가 사이트 소유권을 확인하는 표식. 광고를 받아 오는 로더는 <AdSense />에 있다.
+      "google-adsense-account": ADSENSE_CLIENT,
+    },
+  },
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   // 측정 태그는 </body> 바로 앞, 페이지 내용 다음에 온다.
-  return <html lang="ko"><body>{children}<NaverAnalytics /></body></html>;
+  return <html lang="ko"><body>{children}<AdSense /><NaverAnalytics /></body></html>;
 }

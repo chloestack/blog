@@ -63,6 +63,7 @@ export default function PrivacyPage() {
             <p>현재 사이트가 이용하고 있는 외부 서비스는 다음과 같습니다.</p>
             <ul>
               <li><strong>네이버 애널리틱스</strong> — 방문 통계 분석. 방문 기록과 쿠키를 수집합니다.</li>
+              <li><strong>Google AdSense</strong> — 광고 게재. 광고 제공과 성과 측정을 위해 쿠키를 사용할 수 있습니다.</li>
               <li><strong>Vercel</strong> — 사이트 호스팅. 요청 처리 과정에서 접속 기록이 남습니다.</li>
             </ul>
             <p>

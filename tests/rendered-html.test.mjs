@@ -270,3 +270,33 @@ test("the blog publishes a valid RSS feed", async () => {
   const home = await (await render()).text();
   assert.match(home, /<link rel="alternate" type="application\/rss\+xml" href="[^"]*\/rss\.xml"/);
 });
+
+/**
+ * 애드센스도 측정 태그와 같은 규칙이다 — 루트 레이아웃이 한 번만 넣고, 페이지마다
+ * 손으로 붙이지 않는다. 소유권 표식(meta)과 광고 로더가 둘 다 있어야 하고,
+ * ads.txt가 없으면 구글은 이 게시자를 이 도메인의 판매자로 인정하지 않는다.
+ */
+test("every page carries the adsense tag, and ads.txt names the publisher", async () => {
+  const posts = readPosts();
+  const pages = ["/", "/privacy", ...posts.slice(0, 1).map((post) => `/posts/${encodeURIComponent(post.slug)}`)];
+
+  for (const pathname of pages) {
+    const html = await (await render(pathname)).text();
+    const head = html.split("</head>")[0];
+    assert.match(head, /name="google-adsense-account" content="ca-pub-3822322592120078"/, `no adsense account meta: ${pathname}`);
+    // RSC 페이로드에도 같은 주소가 실리므로 문서 부분만 놓고 센다.
+    const document = html.slice(0, html.indexOf("</body>"));
+    assert.match(document, /adsbygoogle\.js\?client=ca-pub-3822322592120078/, `no adsense loader: ${pathname}`);
+    assert.equal(
+      document.split("pagead/js/adsbygoogle.js").length - 1,
+      1,
+      `the adsense loader is duplicated: ${pathname}`,
+    );
+  }
+
+  const adsTxt = fs.readFileSync(new URL("../public/ads.txt", import.meta.url), "utf8").trim();
+  assert.equal(adsTxt, "google.com, pub-3822322592120078, DIRECT, f08c47fec0942fa0");
+
+  const privacy = await (await render("/privacy")).text();
+  assert.match(privacy, /Google AdSense/, "the policy hides the ads it actually serves");
+});
