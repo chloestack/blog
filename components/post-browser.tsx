@@ -10,7 +10,7 @@ function formatDate(value: string): string {
   return value.replaceAll("-", ".");
 }
 
-/** 목록과 주제 그리드는 같은 필터를 공유해야 하므로 한 컴포넌트가 함께 들고 있는다. */
+/** 왼쪽 카테고리 레일과 목록이 같은 필터를 공유하므로 한 컴포넌트가 함께 들고 있는다. */
 export function PostBrowser({ posts }: { posts: PostCard[] }) {
   const [active, setActive] = useState(ALL);
 
@@ -22,77 +22,52 @@ export function PostBrowser({ posts }: { posts: PostCard[] }) {
 
   const visible = active === ALL ? posts : posts.filter((post) => post.category === active);
 
-  // 같은 주제를 다시 누르면 필터가 풀리는 편이 토글로 자연스럽다.
-  const toggle = (topic: string) => setActive((current) => (current === topic ? ALL : topic));
-
   return (
-    <>
-      <section className="articles" id="articles" aria-labelledby="latest-title">
-        <div className="section-heading"><h2 id="latest-title">최근 기록</h2></div>
+    <section className="articles" id="articles" aria-labelledby="latest-title">
+      <div className="section-heading"><h2 id="latest-title">최근 기록</h2></div>
 
-        <div className={topics.length > 0 ? "articles-layout" : "articles-layout no-rail"}>
-          {topics.length > 0 ? (
-            <aside className="category-rail" aria-labelledby="category-title">
-              <h3 className="rail-title" id="category-title">카테고리</h3>
-              <div className="rail-list" role="group" aria-label="카테고리로 거르기">
-                {[[ALL, posts.length] as const, ...topics].map(([topic, count]) => (
-                  <button
-                    key={topic}
-                    type="button"
-                    className={topic === active ? "is-active" : undefined}
-                    aria-pressed={topic === active}
-                    onClick={() => setActive(topic)}
-                  >
-                    <span className="rail-name">{topic}</span>
-                    <span className="rail-count">{String(count).padStart(2, "0")}</span>
-                  </button>
-                ))}
-              </div>
-            </aside>
-          ) : null}
+      <div className={topics.length > 0 ? "articles-layout" : "articles-layout no-rail"}>
+        {topics.length > 0 ? (
+          <aside className="category-rail" aria-labelledby="category-title">
+            <h3 className="rail-title" id="category-title">카테고리</h3>
+            <div className="rail-list" role="group" aria-label="카테고리로 거르기">
+              {[[ALL, posts.length] as const, ...topics].map(([topic, count]) => (
+                <button
+                  key={topic}
+                  type="button"
+                  className={topic === active ? "is-active" : undefined}
+                  aria-pressed={topic === active}
+                  onClick={() => setActive(topic)}
+                >
+                  <span className="rail-name">{topic}</span>
+                  <span className="rail-count">{String(count).padStart(2, "0")}</span>
+                </button>
+              ))}
+            </div>
+          </aside>
+        ) : null}
 
-          <div className="articles-main">
-            {posts.length === 0 ? (
-              <p className="empty-note">아직 공개된 글이 없습니다.</p>
-            ) : visible.length === 0 ? (
-              <p className="empty-note">{active} 주제의 글이 아직 없습니다.</p>
-            ) : (
-              <div className="post-list">
-                {visible.map((post, index) => (
-                  <article className={`post-row ${post.tone}`} key={post.slug}>
-                    <div className="post-number">{String(index + 1).padStart(2, "0")}</div>
-                    <div className="post-body">
-                      <div className="label-row"><span className={`tag ${post.tone}`}>{post.category.toUpperCase()}</span><span className="meta">{formatDate(post.date)}</span></div>
-                      <h3><Link href={post.href}>{post.title}</Link></h3>
-                      {post.excerpt ? <p>{post.excerpt}</p> : null}
-                    </div>
-                  </article>
-                ))}
-              </div>
-            )}
-          </div>
+        <div className="articles-main">
+          {posts.length === 0 ? (
+            <p className="empty-note">아직 공개된 글이 없습니다.</p>
+          ) : visible.length === 0 ? (
+            <p className="empty-note">{active} 주제의 글이 아직 없습니다.</p>
+          ) : (
+            <div className="post-list">
+              {visible.map((post, index) => (
+                <article className={`post-row ${post.tone}`} key={post.slug}>
+                  <div className="post-number">{String(index + 1).padStart(2, "0")}</div>
+                  <div className="post-body">
+                    <div className="label-row"><span className={`tag ${post.tone}`}>{post.category.toUpperCase()}</span><span className="meta">{formatDate(post.date)}</span></div>
+                    <h3><Link href={post.href}>{post.title}</Link></h3>
+                    {post.excerpt ? <p>{post.excerpt}</p> : null}
+                  </div>
+                </article>
+              ))}
+            </div>
+          )}
         </div>
-      </section>
-
-      {topics.length > 0 ? (
-        <section className="topics" id="topics" aria-labelledby="topics-title">
-          <div className="section-heading compact"><h2 id="topics-title">주제별 찾아보기</h2></div>
-          <div className="topic-grid">
-            {topics.map(([topic, count]) => (
-              <a
-                key={topic}
-                href="#articles"
-                className={topic === active ? "is-active" : undefined}
-                aria-current={topic === active ? "true" : undefined}
-                onClick={() => toggle(topic)}
-              >
-                <span>{topic}</span>
-                <span>{String(count).padStart(2, "0")}</span>
-              </a>
-            ))}
-          </div>
-        </section>
-      ) : null}
-    </>
+      </div>
+  </section>
   );
 }

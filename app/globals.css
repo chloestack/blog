@@ -69,14 +69,6 @@ nav a:hover, footer > a:hover { color: var(--accent); border-color: var(--accent
 .post-row:hover .post-body h3 a { color: var(--row-color); }
 .post-body p { max-width: 62ch; color: var(--ink-2); font-size: .84rem; }
 
-.topics { padding: 4.6rem 0; border-bottom: 1px solid var(--line); }
-.section-heading.compact { margin-bottom: 1.5rem; }
-.topic-grid { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid var(--line); border-left: 1px solid var(--line); }
-.topic-grid a { display: flex; justify-content: space-between; min-height: 92px; padding: 1.15rem; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); background: rgba(248,250,251,.42); font-family: var(--head); font-weight: 700; transition: color .15s, background .15s; }
-.topic-grid a span:last-child { color: var(--ink-3); font-family: var(--mono); font-size: .65rem; font-weight: 400; }
-.topic-grid a:hover { color: var(--accent); background: var(--accent-soft); }
-.topic-grid a.is-active { color: var(--accent); background: var(--accent-soft); box-shadow: inset 2px 0 0 var(--accent); }
-
 footer { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 2rem 0 3rem; border-top: 1px solid var(--line); color: var(--ink-3); font-family: var(--mono); font-size: .64rem; }
 .footer-mark { color: var(--ink); font-size: .74rem; }
 .footer-mark .mark { width: 22px; height: 22px; }
@@ -95,14 +87,12 @@ footer { display: flex; align-items: center; justify-content: space-between; gap
   .wrap { width: min(100% - 2rem, 860px); }
   .site-header nav { gap: .85rem; }
   .post-row { grid-template-columns: 35px 1fr; gap: .75rem; }
-  .topic-grid { grid-template-columns: repeat(2, 1fr); }
   footer { align-items: flex-start; flex-wrap: wrap; }
   footer p { order: 3; width: 100%; }
 }
 
 @media (max-width: 420px) {
   .wordmark > span:last-child { display: none; }
-  .topic-grid { grid-template-columns: 1fr; }
 }
 
 /* ---------- 글 상세 ---------- */
