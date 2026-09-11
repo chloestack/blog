@@ -28,14 +28,6 @@ export function toneFor(category: string): string {
   return TONES[hash % TONES.length];
 }
 
-/** 한글 산문 기준 분당 약 500자. 코드 블록은 읽는 속도가 달라 절반만 센다. */
-export function readingTime(body: string): string {
-  const prose = body.replace(/```[\s\S]*?```/g, "");
-  const code = body.length - prose.length;
-  const minutes = Math.max(1, Math.round((prose.length + code / 2) / 500));
-  return `${minutes}분`;
-}
-
 /**
  * frontmatter의 `date`는 "2026-09-11" 또는 "2026-09-11 07:36" 두 가지로 들어온다.
  * 하루에 여러 편이 올라오므로 날짜만으로는 순서가 정해지지 않아, 글을 만드는 쪽에서
@@ -130,6 +122,8 @@ export type PostCard = {
   href: string;
   title: string;
   date: string;
+  /** HH:MM. 목록에서 날짜 아래에 함께 찍는다. */
+  time: string;
   category: string;
   excerpt: string;
   tone: string;
@@ -141,6 +135,7 @@ export function toCard(post: Post): PostCard {
     href: postHref(post.slug),
     title: post.title,
     date: post.date,
+    time: post.publishedAt.slice(11, 16),
     category: post.category,
     excerpt: post.excerpt,
     tone: toneFor(post.category),

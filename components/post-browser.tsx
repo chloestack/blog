@@ -57,11 +57,14 @@ export function PostBrowser({ posts }: { posts: PostCard[] }) {
             <p className="empty-note">{active} 주제의 글이 아직 없습니다.</p>
           ) : (
             <div className="post-list">
-              {visible.map((post, index) => (
+              {visible.map((post) => (
                 <article className={`post-row ${post.tone}`} key={post.slug}>
-                  <div className="post-number">{String(index + 1).padStart(2, "0")}</div>
+                  <div className="post-when">
+                    <span className="when-day">{formatDate(post.date)}</span>
+                    <span className="when-clock">{post.time}</span>
+                  </div>
                   <div className="post-body">
-                    <div className="label-row"><span className={`tag ${post.tone}`}>{post.category.toUpperCase()}</span><span className="meta">{formatDate(post.date)}</span></div>
+                    <div className="label-row"><span className={`tag ${post.tone}`}>{post.category.toUpperCase()}</span></div>
                     <h3><Link href={post.href}>{post.title}</Link></h3>
                     {post.excerpt ? <p>{post.excerpt}</p> : null}
                   </div>

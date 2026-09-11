@@ -147,3 +147,21 @@ test("the homepage lists posts newest first, by publish time", async () => {
   const listed = [...html.matchAll(/<h3><a href="\/posts\/([^"]+)"/g)].map((match) => decodeURIComponent(match[1]));
   assert.deepEqual(listed, posts.map((post) => post.slug));
 });
+
+/**
+ * 목록 왼쪽에 있던 01, 02… 는 순위도 번호도 아닌 그냥 줄 번호였다. 그 자리에
+ * 발행 날짜와 시각을 넣었고, 글 상세의 "N분" 예상 독서 시간은 뺐다.
+ */
+test("rows are stamped with the publish time instead of a running number", async () => {
+  const home = await (await render()).text();
+  assert.doesNotMatch(home, /class="post-number"/);
+  assert.match(home, /class="when-day">2026\.\d{2}\.\d{2}</);
+  assert.match(home, /class="when-clock">\d{2}:\d{2}</);
+
+  const posts = readPosts();
+  if (posts.length === 0) return;
+  const article = await (await render(`/posts/${encodeURIComponent(posts[0].slug)}`)).text();
+  const head = article.slice(article.indexOf('class="article-head"'), article.indexOf("</h1>")).replaceAll("<!-- -->", "");
+  assert.doesNotMatch(head, /\d+분/, "reading time is back on the article");
+  assert.match(head, /<span class="meta">2026\.\d{2}\.\d{2} \d{2}:\d{2}<\/span>/);
+});

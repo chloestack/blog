@@ -1,9 +1,10 @@
 import Link from "next/link";
-import { getRelatedPosts, readingTime, renderMarkdown, toneFor, type Post } from "@/lib/posts";
+import { getRelatedPosts, renderMarkdown, toneFor, type Post } from "@/lib/posts";
 
 export function ArticleView({ post }: { post: Post }) {
   const tone = toneFor(post.category);
   const date = post.date.replaceAll("-", ".");
+  const time = post.publishedAt.slice(11, 16);
   const related = getRelatedPosts(post);
 
   return (
@@ -18,7 +19,7 @@ export function ArticleView({ post }: { post: Post }) {
         <article className="article">
           <div className="article-head">
             <Link className="back-link" href="/#articles">← 목록으로</Link>
-            <div className="label-row"><span className={`tag ${tone}`}>{post.category.toUpperCase()}</span><span className="meta">{date} · {readingTime(post.body)}</span></div>
+            <div className="label-row"><span className={`tag ${tone}`}>{post.category.toUpperCase()}</span><span className="meta">{date} {time}</span></div>
             <h1>{post.title}</h1>
             {post.excerpt ? <p className="lede">{post.excerpt}</p> : null}
           </div>
