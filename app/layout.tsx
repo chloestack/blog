@@ -12,6 +12,9 @@ export const metadata: Metadata = {
   title: { default: "blog.pistamond", template: "%s · blog.pistamond" },
   description: DESCRIPTION,
   alternates: { canonical: "/" },
+  // 헤더 워드마크와 같은 표식을 탭에도 세운다. 링크 태그가 없으면 브라우저는
+  // /favicon.ico를 찾다 실패하고 빈 아이콘을 쓴다.
+  icons: { icon: "/favicon.svg" },
   openGraph: {
     title: "blog.pistamond",
     description: DESCRIPTION,

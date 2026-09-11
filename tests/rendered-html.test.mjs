@@ -206,3 +206,14 @@ test("the footer carries the contact address", async () => {
     assert.match(footer, /<a href="mailto:contact@pistamond\.dev">contact@pistamond\.dev<\/a>/, `no contact address: ${pathname}`);
   }
 });
+
+/** 탭 아이콘. 링크 태그가 없으면 브라우저는 빈 아이콘을 쓴다. */
+test("every page points the browser tab at the P mark", async () => {
+  const posts = readPosts();
+  const pages = ["/", ...posts.slice(0, 1).map((post) => `/posts/${encodeURIComponent(post.slug)}`)];
+
+  for (const pathname of pages) {
+    const html = await (await render(pathname)).text();
+    assert.match(html, /<link rel="icon" href="[^"]*\/favicon\.svg"/, `no tab icon: ${pathname}`);
+  }
+});
