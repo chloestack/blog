@@ -242,3 +242,31 @@ test("every page points the browser tab at the P mark", async () => {
     assert.match(html, /<link rel="icon" href="[^"]*\/favicon\.svg"/, `no tab icon: ${pathname}`);
   }
 });
+
+/**
+ * RSS 피드. 리더와 검색엔진이 새 글을 빨리 집어가는 통로이고, 네이버
+ * 서치어드바이저에도 이 주소를 넣는다.
+ */
+test("the blog publishes a valid RSS feed", async () => {
+  const response = await render("/rss.xml");
+  assert.equal(response.status, 200);
+  assert.match(response.headers.get("content-type") ?? "", /application\/rss\+xml/);
+  const xml = await response.text();
+
+  const posts = readPosts();
+  const items = [...xml.matchAll(/<item>[\s\S]*?<\/item>/g)].map((match) => match[0]);
+  assert.equal(items.length, posts.length, "the feed and the repository disagree on how many posts exist");
+
+  for (const item of items) {
+    assert.match(item, /<link>https:\/\/blog\.pistamond\.dev\/posts\//);
+    assert.match(item, /<guid isPermaLink="true">/);
+    // RFC 822. 리더가 못 읽으면 글 순서가 무너진다.
+    assert.match(item, /<pubDate>[A-Z][a-z]{2}, \d{2} [A-Z][a-z]{2} \d{4} \d{2}:\d{2}:\d{2} GMT<\/pubDate>/);
+  }
+  // 제목과 발췌문에 &, < 가 섞여도 문서가 깨지면 안 된다.
+  assert.doesNotMatch(xml.replace(/&(amp|lt|gt|quot|apos);/g, ""), /&/);
+  assert.match(xml, /<atom:link href="https:\/\/blog\.pistamond\.dev\/rss\.xml" rel="self"/);
+
+  const home = await (await render()).text();
+  assert.match(home, /<link rel="alternate" type="application\/rss\+xml" href="[^"]*\/rss\.xml"/);
+});

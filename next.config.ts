@@ -5,6 +5,7 @@ const nextConfig: NextConfig = {
   outputFileTracingIncludes: {
     "/": ["./content/**/*"],
     "/sitemap.xml": ["./content/**/*"],
+    "/rss.xml": ["./content/**/*"],
     "/posts/[slug]": ["./content/**/*"],
   },
 };
