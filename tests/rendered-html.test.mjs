@@ -300,3 +300,39 @@ test("every page carries the adsense tag, and ads.txt names the publisher", asyn
   const privacy = await (await render("/privacy")).text();
   assert.match(privacy, /Google AdSense/, "the policy hides the ads it actually serves");
 });
+
+/**
+ * 한국어 글은 범위를 "10~20%"처럼 물결표로 쓴다. GFM 기본값은 물결표 하나도
+ * 취소선으로 읽어서, 한 문단에 범위가 두 번 나오면 그 사이가 통째로 그어졌다.
+ * 취소선은 ~~ 두 개일 때만 인정한다.
+ */
+test("a single tilde in a range is text, not strikethrough", async () => {
+  const [file] = fs
+    .readdirSync(POSTS_DIR)
+    .filter((name) => name.endsWith(".md"))
+    .filter((name) => /\d~\d[^\n]*\d~\d/.test(fs.readFileSync(path.join(POSTS_DIR.pathname, name), "utf8")));
+  if (!file) return;
+
+  const html = await (await render(`/posts/${encodeURIComponent(file.replace(/\.md$/, ""))}`)).text();
+  const prose = html.slice(html.indexOf('class="prose"'), html.indexOf("</article>"));
+  assert.doesNotMatch(prose, /\d<del>/, "a tilde range turned into strikethrough");
+  assert.match(prose, /\d~\d/);
+});
+
+/**
+ * mermaid 블록은 코드 블록이 아니라 도식 자리로 나간다. 원문은 그대로 담겨 있어서
+ * 스크립트가 돌기 전이나 실패했을 때도 읽을 수 있다.
+ */
+test("mermaid blocks become diagram placeholders", async () => {
+  const [file] = fs
+    .readdirSync(POSTS_DIR)
+    .filter((name) => name.endsWith(".md"))
+    .filter((name) => /^```mermaid/m.test(fs.readFileSync(path.join(POSTS_DIR.pathname, name), "utf8")));
+  if (!file) return;
+
+  const html = await (await render(`/posts/${encodeURIComponent(file.replace(/\.md$/, ""))}`)).text();
+  const prose = html.slice(html.indexOf('class="prose"'), html.indexOf("</article>"));
+  assert.match(prose, /<figure class="diagram"><pre class="mermaid">/);
+  assert.doesNotMatch(prose, /class="language-mermaid"/);
+  assert.doesNotMatch(prose, /<pre class="mermaid">[^<]*<(?!\/pre>)/, "diagram source is not escaped");
+});

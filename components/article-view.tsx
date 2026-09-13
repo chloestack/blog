@@ -1,6 +1,7 @@
 import Link from "next/link";
+import { MermaidDiagrams } from "@/components/mermaid-diagrams";
 import { SiteFooter } from "@/components/site-footer";
-import { getRelatedPosts, renderMarkdown, toneFor, type Post } from "@/lib/posts";
+import { getRelatedPosts, hasDiagrams, renderMarkdown, toneFor, type Post } from "@/lib/posts";
 
 export function ArticleView({ post }: { post: Post }) {
   const tone = toneFor(post.category);
@@ -26,6 +27,7 @@ export function ArticleView({ post }: { post: Post }) {
           </div>
 
           <div className="prose" dangerouslySetInnerHTML={{ __html: renderMarkdown(post.body) }} />
+          {hasDiagrams(post.body) ? <MermaidDiagrams /> : null}
 
           {post.tags.length > 0 ? (
             <div className="article-tags">{post.tags.map((tag) => <span key={tag}>#{tag}</span>)}</div>

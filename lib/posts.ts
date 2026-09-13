@@ -105,6 +105,33 @@ export function getRelatedPosts(post: Post, limit = 4): PostCard[] {
 // marked 인스턴스를 매번 만들면 확장 등록 비용이 반복된다. 모듈 스코프에 하나만 둔다.
 const marked = new Marked({ gfm: true, breaks: false });
 
+function escapeHtml(value: string): string {
+  return value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
+marked.use({
+  tokenizer: {
+    // GFM은 물결표 하나(~text~)도 취소선으로 읽는다. 한국어 글은 "10~20%"처럼
+    // 범위를 물결표로 쓰므로 한 문단에 두 번 나오면 그 사이가 통째로 그어진다.
+    // 취소선은 ~~text~~ 만 인정하고, 나머지는 undefined를 돌려 글자로 남긴다.
+    del(src) {
+      return src.startsWith("~~") ? false : undefined;
+    },
+  },
+  renderer: {
+    // mermaid 블록은 서버에서는 원문을 담아 두고, 브라우저에서 그림으로 바꾼다
+    // (components/mermaid-diagrams.tsx). 스크립트가 돌지 않아도 원문은 읽힌다.
+    code({ text, lang }) {
+      if (lang?.trim() !== "mermaid") return false;
+      return `<figure class="diagram"><pre class="mermaid">${escapeHtml(text)}</pre></figure>\n`;
+    },
+  },
+});
+
+export function hasDiagrams(body: string): boolean {
+  return /^\s*```\s*mermaid\b/m.test(body);
+}
+
 export function renderMarkdown(body: string): string {
   return marked.parse(body, { async: false });
 }
