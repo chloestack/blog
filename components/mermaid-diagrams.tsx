@@ -2,6 +2,17 @@
 
 import { useEffect } from "react";
 
+// 본문 폭을 채우도록 늘리되, 원래 크기의 이 배수까지만. 상자 서너 개짜리 도식을
+// 끝까지 늘리면 라벨이 본문 글자의 두 배가 되어 글보다 도식이 더 크게 읽힌다.
+const MAX_UPSCALE = 1.25;
+
+/** mermaid가 붙인 원래 폭(style max-width)을 기준으로 늘어날 상한을 건다. */
+function fitToColumn(svg: SVGSVGElement | null) {
+  if (!svg) return;
+  const natural = parseFloat(svg.style.maxWidth);
+  svg.style.maxWidth = Number.isFinite(natural) ? `min(100%, ${Math.round(natural * MAX_UPSCALE)}px)` : "100%";
+}
+
 /**
  * 본문의 `<pre class="mermaid">`를 SVG로 바꾼다. mermaid는 수백 KB라 도식이 있는
  * 글에서만 이 컴포넌트를 두고, 그 안에서도 동적 import로 따로 받는다.
@@ -68,6 +79,7 @@ export function MermaidDiagrams() {
           const { svg } = await mermaid.render(`diagram-${index}-${Date.now()}`, source);
           if (cancelled) return;
           node.innerHTML = svg;
+          fitToColumn(node.querySelector("svg"));
           node.dataset.rendered = "true";
         } catch (error) {
           // 문법이 틀린 도식은 원문 코드로 남긴다. 빈 칸이나 폭탄 아이콘보다 낫다.
