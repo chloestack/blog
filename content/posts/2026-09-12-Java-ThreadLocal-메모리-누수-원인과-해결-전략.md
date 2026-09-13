@@ -418,24 +418,3 @@ JDK 21로 마이그레이션하면서 가상 스레드를 도입할 때 `ThreadL
 | 컨텍스트 범위 | 요청 단위 격리 | 서비스 전반 공유 → 의존성 주입 |
 | 비동기 전파 필요 | TTL로 보완 가능 | 복잡한 체인 → Reactor Context |
 | 라이브러리 통합 | 기존 프레임워크 연계 | 신규 프로젝트 → ScopedValue 검토 |
-
----
-
-### 다음 단계: 심화 학습 방향
-
-`ThreadLocal`을 더 깊이 이해하고 싶다면 OpenJDK 소스 코드에서 `java.lang.ThreadLocal` 클래스, 특히 `ThreadLocalMap`의 `expungeStaleEntry()` 메서드를 직접 분석하는 것을 권장합니다. 이 메서드가 stale entry를 어떤 조건과 타이밍에 정리하는지 이해하면 왜 명시적 `remove()`가 필수인지 납득하게 됩니다.
-
-비동기 컨텍스트 전파에 관심이 있다면 알리바바 TTL 프로젝트(https://github.com/alibaba/transmittable-thread-local)의 구현 원리와 Spring의 `TaskDecorator` 인터페이스를 통한 컨텍스트 전파 방법을 함께 살펴보시기 바랍니다. JDK 21 이상을 사용하고 있다면 JEP 446(Scoped Values, https://openjdk.org/jeps/446)과 JEP 453(Structured Concurrency, https://openjdk.org/jeps/453)을 조합하여 이해하면 현대 자바 동시성 프로그래밍의 흐름을 한 단계 깊이 파악할 수 있습니다.
-
-| 심화 주제 | 핵심 학습 내용 | 참고 자료 |
-|---|---|---|
-| ThreadLocalMap 내부 | expungeStaleEntry, replaceStaleEntry 로직 | OpenJDK 소스 |
-| TTL 원리 | 태스크 제출 시점 캡처·복원 메커니즘 | GitHub alibaba/TTL |
-| Scoped Values | 불변 컨텍스트 전파, 가상 스레드 최적화 | JEP 446 |
-| Structured Concurrency | 구조적 동시성 + ScopedValue 결합 패턴 | JEP 453 |
-| Metaspace 분석 | 클래스 로더 누수 진단, MAT 활용법 | Eclipse MAT 공식 문서 |
-
-[관련글:Java Virtual Thread 적용]
-[관련글:Spring Security ThreadLocal]
-
----

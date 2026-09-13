@@ -320,14 +320,6 @@ Microkernel 아키텍처는 코어 시스템을 최소화하고 기능을 독립
 
 Microkernel 아키텍처는 기능 추가가 빈번하고, 외부 개발자나 다른 팀이 플러그인을 독립적으로 개발·배포해야 하며, 단일 프로세스 안에서의 모듈성이 필요한 상황에 적합합니다. 반대로 팀 규모가 작고 기능 변화가 드물며 최소 레이턴시가 절대적 요건인 경우에는 단순한 모놀리식 구조가 더 나은 선택일 수 있습니다. 아키텍처의 선택은 항상 현재 팀의 규모, 기능 변화 속도, 운영 역량을 종합적으로 고려한 결과여야 합니다.
 
-### 다음 단계
-
-Microkernel을 이해했다면 자연스럽게 이어지는 심화 주제로 **OSGi 기반 엔터프라이즈 플러그인 시스템**, **GraalVM Native Image에서의 플러그인 동적 로딩**, **Kubernetes 환경에서의 플러그인 사이드카 패턴** 등을 탐구해 볼 수 있습니다. 또한 IntelliJ IDEA나 VS Code의 플러그인 개발 경험을 통해 성숙한 플러그인 생태계가 어떻게 설계되었는지 직접 체험하는 것도 큰 도움이 됩니다. 처음부터 완성된 Microkernel 시스템을 구축하려 하기보다는, 코어와 플러그인 계약을 먼저 정의하고 한 개의 플러그인을 성공적으로 분리하는 작은 성공 경험에서 시작하는 것이 가장 현실적인 접근법입니다.
-
-[관련글:마이크로서비스 아키텍처 설계]
-[관련글:Java 모듈 시스템 JPMS]
-[관련글:이벤트 드리븐 아키텍처]
-
 **참고 자료**
 - [OSGi Alliance 공식 명세](https://www.osgi.org/resources/architecture/)
 - [Java ServiceLoader API 문서](https://docs.oracle.com/en/java/docs/api/java.base/java/util/ServiceLoader.html)

@@ -330,19 +330,6 @@ Spring Session의 도입을 고려할 때 아래 기준이 의사결정에 도�
 
 ---
 
-### 다음 단계
-
-Spring Session을 더 깊이 활용하려면 **Spring Security OAuth2와의 통합**을 검토해볼 만합니다. OAuth2 액세스 토큰과 리프레시 토큰을 세션에 안전하게 저장하고 관리하는 방식은 소셜 로그인을 지원하는 많은 서비스에서 핵심적인 패턴입니다. `OAuth2AuthorizedClientRepository`를 커스터마이징하여 토큰을 Redis 세션에 저장하면, 여러 서버에서 OAuth2 토큰을 공유하는 구조를 만들 수 있습니다.
-
-**JDBC 기반 세션(`spring-session-jdbc`)**도 고려해볼 대안입니다. 이미 PostgreSQL을 운영하고 있고 세션 데이터에 대한 트랜잭션 일관성이 중요하다면, Redis보다 JDBC 세션이 더 적합한 경우가 있습니다. JDBC 기반 세션은 Redis에 비해 처리 속도는 느리지만, 데이터베이스의 ACID 특성을 활용하여 세션 데이터의 일관성을 강하게 보장합니다. 추가 인프라 없이 세션 관리를 구현하고 싶을 때도 유용한 선택지입니다.
-
-**Reactive 환경(WebFlux)**에서의 Spring Session 사용도 증가하는 추세입니다. `spring-session-data-redis`는 WebFlux와의 통합을 위해 `ReactiveSessionRepository`를 제공하며, `Mono`·`Flux` 기반의 논블로킹 방식으로 세션을 처리할 수 있습니다. WebFlux 기반 서비스를 운영하거나 마이그레이션을 계획 중이라면 이 부분을 함께 검토하는 것을 권장합니다.
-
-[관련글:Redis 캐시 전략 Spring Cache]
-[관련글:Spring Security JWT 세션 관리]
-
----
-
 참고 자료:
 - [Spring Session 공식 문서](https://docs.spring.io/spring-session/reference/)
 - [Spring Session Data Redis 설정](https://docs.spring.io/spring-session/reference/guides/boot-redis.html)

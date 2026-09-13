@@ -370,14 +370,6 @@ WebFlux 기반 서비스에서 `parallelStream()`을 호출하면, 이벤트 루
 
 ---
 
-### 다음 단계
-
-병렬 스트림과 ForkJoinPool을 더 깊이 이해하려면 `RecursiveTask`와 `RecursiveAction`을 직접 구현해보는 것을 권장합니다. 복잡한 병렬 작업 분기와 합산을 명시적으로 제어하면서 ForkJoin 프레임워크의 내부 동작을 체험할 수 있습니다. 또한 Java 21의 가상 스레드는 기존 블로킹 코드를 거의 변경 없이 높은 동시성으로 전환할 수 있는 강력한 도구이므로, JDK 21 이상 환경이라면 적극적으로 검토할 것을 권장합니다.
-
-성능 측정 도구로는 [JMH(Java Microbenchmark Harness)](https://github.com/openjdk/jmh)를 활용하십시오. 병렬 스트림이 실제로 이득을 주는지, 어느 데이터 크기에서 교차점이 발생하는지를 정량적으로 확인할 수 있습니다. 공식 레퍼런스로는 [OpenJDK ForkJoinPool API 문서](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/ForkJoinPool.html)와 [Java Stream 패키지 사양](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/stream/package-summary.html)을 참고하십시오.
-
----
-
 **출처**
 
 1. [OpenJDK, ForkJoinPool API 문서](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/ForkJoinPool.html) — 공용 풀의 기본 병렬도와 동작 규칙.

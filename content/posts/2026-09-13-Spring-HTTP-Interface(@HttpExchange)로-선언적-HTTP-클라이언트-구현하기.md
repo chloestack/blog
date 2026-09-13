@@ -335,13 +335,3 @@ Spring HTTP Interface(`@HttpExchange`)는 인터페이스 선언만으로 HTTP �
 `@HttpExchange`를 도입하기에 가장 적합한 시점은 다음과 같습니다. **세 개 이상의 외부 API를 호출**하거나 각 API 엔드포인트가 여러 메서드로 나뉘는 경우, 또는 외부 API 호출 코드의 테스트 커버리지를 높이고 싶은 경우에 효과가 뚜렷합니다. 반면 외부 API가 단 하나이고 복잡한 요청 파이프라인이 필요한 경우라면 `WebClient`를 직접 사용하는 편이 불필요한 추상화 레이어를 피할 수 있습니다.
 
 Spring Boot 3.0 이상 환경을 사용하고 있다면 신규 외부 API 연동에는 `@HttpExchange`를 우선 검토하는 것을 권장합니다. 기존 `RestTemplate` 코드는 당장 교체하기보다 새 기능 추가 시 점진적으로 전환하는 방식이 리스크를 줄일 수 있습니다.
-
-### 다음 단계
-
-`@HttpExchange`를 더 깊이 활용하려면 몇 가지 연관 기술을 함께 살펴볼 것을 권장합니다. Resilience4j를 통한 서킷 브레이커 패턴은 외부 서비스 장애 시 연쇄 실패를 막는 필수 보완책입니다. Spring Security OAuth2 Client와의 통합은 `ServerOAuth2AuthorizedClientExchangeFilterFunction`을 통해 액세스 토큰 갱신을 자동화합니다. Micrometer Tracing을 적용하면 분산 추적 컨텍스트가 HTTP 헤더에 자동으로 전파되어 마이크로서비스 환경에서 요청 흐름을 추적할 수 있습니다.
-
-공식 문서는 [Spring Framework Docs — HTTP Interface](https://docs.spring.io/spring-framework/reference/integration/rest-clients.html#rest-http-interface)에서 최신 내용을 확인할 수 있습니다. Spring Boot 버전별 변경 사항은 [Spring Boot Release Notes](https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-3.x-Release-Notes)에서 `@HttpExchange` 관련 업데이트를 추적하는 것이 좋습니다.
-
-[관련글:WebClient 심화]
-[관련글:Resilience4j 서킷 브레이커]
-[관련글:Spring WebFlux 적용]

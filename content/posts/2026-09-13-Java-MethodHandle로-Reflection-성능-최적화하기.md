@@ -374,10 +374,3 @@ Java MethodHandle은 Reflection이 안고 있는 성능 문제를 세 가지 차
 ### 적용 판단 기준
 
 모든 Reflection 코드를 MethodHandle로 교체할 필요는 없습니다. 적용 가치가 높은 시나리오는 명확합니다. 동일한 메서드를 초당 수만 회 이상 반복 호출하는 핫패스, 메모리 할당량이 성능에 직접 영향을 주는 저지연 시스템, 그리고 직렬화/역직렬화처럼 필드 접근이 빈번한 데이터 처리 파이프라인이 주요 대상입니다. Hibernate, Jackson, Spring Framework 같은 성숙한 라이브러리들이 내부적으로 MethodHandle로 전환하고 있는 것은 이러한 이유 때문입니다. 반면 초기화 코드, 설정 파싱, 관리용 유틸리티처럼 빈도가 낮은 코드에서는 Reflection의 단순함을 유지하는 편이 합리적입니다.
-
-### 다음 단계
-
-MethodHandle을 깊이 이해했다면 자연스럽게 `invokedynamic` 바이트코드와 `CallSite` 개념으로 탐구가 이어집니다. `invokedynamic`은 MethodHandle의 기반이 되는 JVM 명령어로, Java 람다, 문자열 연결(`+` 연산자), 레코드의 `toString()`까지 광범위하게 사용됩니다. 또한 ByteBuddy나 ASM 같은 바이트코드 조작 라이브러리와 MethodHandle을 결합하면, JVM 위에서 동적 언어 지원이나 특수화된 프레임워크를 구축하는 기반을 마련할 수 있습니다. JDK 공식 문서의 [`java.lang.invoke` 패키지 Javadoc](https://docs.oracle.com/en/java/docs/api/java.base/java/lang/invoke/package-summary.html)과 [JEP 276: Dynamic Linking of Language-Defined Object Models](https://openjdk.org/jeps/276)은 이 주제를 심화 학습하기에 좋은 출발점입니다.
-
-[관련글:Java Virtual Threads 적용하기]
-[관련글:JVM GC 튜닝 성능 최적화]

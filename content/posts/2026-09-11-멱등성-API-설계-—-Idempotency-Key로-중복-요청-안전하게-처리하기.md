@@ -356,12 +356,6 @@ Idempotency Key 처리는 모든 요청에 추가 I/O를 발생시킵니다. Red
 
 API를 설계할 때 "이 요청이 두 번 처리된다면 어떤 일이 발생하는가?"라는 질문을 먼저 던져야 합니다. 금전적 부작용이 있거나, 외부 서비스 호출처럼 취소가 어려운 연산이거나, 클라이언트가 재시도 로직을 가진 경우에 집중적으로 도입을 검토해야 합니다. 모든 API에 무분별하게 적용하는 것은 오히려 운영 복잡도를 높이므로, 비즈니스 영향도와 트레이드오프를 명확히 분석한 뒤 결정하는 것이 바람직합니다.
 
-### 다음 단계
-
-Idempotency Key 패턴을 이해했다면, 관련된 두 가지 심화 주제를 탐구하기를 권장합니다. 첫째는 **분산 사가 패턴**입니다. 여러 마이크로서비스에 걸친 트랜잭션에서 각 단계의 멱등성을 어떻게 보장하고, 보상 트랜잭션을 설계하는지 이해하면 더 복잡한 비즈니스 흐름을 안전하게 다룰 수 있습니다. 둘째는 **Transactional Outbox 패턴**입니다. 데이터베이스 트랜잭션과 메시지 발행을 원자적으로 처리하는 이 패턴은, Idempotency Key와 결합했을 때 분산 시스템에서 Exactly-Once 처리를 실현하는 강력한 조합이 됩니다.
-
-공식 참고 자료로는 [Stripe Idempotent Requests 문서](https://stripe.com/docs/api/idempotent_requests)와 [IETF Idempotency-Key 헤더 초안](https://datatracker.ietf.org/doc/draft-ietf-httpapi-idempotency-key-header/)을 권장합니다. 두 문서 모두 이론과 실제 서비스 경험이 결합된 높은 수준의 설계 결정을 담고 있습니다.
-
 ---
 
 **출처**

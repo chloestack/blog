@@ -375,10 +375,3 @@ PostgreSQL 버전 업그레이드나 대규모 데이터 마이그레이션 시�
 □ 다중 컬럼 조건에서 행 수 추정 오류가 반복되는 경우
 □ 인덱스가 있음에도 Seq Scan이 지속적으로 선택되는 경우
 ```
-
-### 다음 단계
-
-통계 정보 튜닝을 마친 뒤에는 관련 주제로 심화 학습을 이어갈 수 있습니다. **PostgreSQL 파티션 테이블 설계**는 파티셔닝 환경에서 파티션 제거(Partition Pruning)가 올바르게 작동하도록 통계를 유지하는 방법을 다룹니다. **`pg_stat_statements`를 활용한 쿼리 성능 모니터링**은 운영 환경에서 지속적으로 쿼리 성능을 관찰하는 체계를 갖추는 데 도움이 됩니다. 공식 문서인 [PostgreSQL Planner Statistics](https://www.postgresql.org/docs/current/planner-stats.html)와 [Row Estimation Examples](https://www.postgresql.org/docs/current/row-estimation-examples.html)는 플래너 내부 동작을 더 깊이 이해하는 데 필수 참고 자료입니다.
-
-[관련글:PostgreSQL 인덱스 설계]
-[관련글:pg_stat_statements 쿼리 성능 모니터링]

@@ -320,12 +320,6 @@ Generated Column 기반 인덱스의 가장 흔한 실수는 **표현식 불일�
 | 쓰기 부하가 읽기보다 현저히 낮음 | 초당 수천 건 이상의 고빈도 INSERT/UPDATE |
 | 테이블 크기 수백만 행 이상 | 소규모 테이블 (수만 행 이하) |
 
-### 다음 단계
-
-Generated Column 인덱스를 적용한 뒤 성능 이슈가 남아있다면, 파티셔닝과 함께 사용하는 것을 검토해볼 수 있습니다. 예를 들어 `created_at` 기준으로 범위 파티셔닝을 적용하고, 각 파티션 내에서 Generated Column 인덱스를 활용하면 파티션 프루닝과 인덱스 효율을 동시에 얻을 수 있습니다. 또한 MySQL 8.0.17부터 지원되는 **멀티밸류 인덱스(Multi-Valued Index)**는 JSON 배열 내 개별 요소에 인덱스를 적용하는 새로운 방법으로, `MEMBER OF` 연산자와 함께 JSON 배열을 다루는 쿼리에서 활용할 수 있습니다. 더 복잡한 JSON 분석이 필요하다면 ClickHouse나 Apache Druid 같은 OLAP 엔진 또는 Elasticsearch로의 역할 분담을 고려해볼 시점입니다.
-
-공식 MySQL 문서에서 Generated Column과 함수 기반 인덱스 관련 내용을 직접 확인할 수 있습니다: https://dev.mysql.com/doc/refman/8.0/en/create-table-generated-columns.html
-
 ---
 
 **출처**

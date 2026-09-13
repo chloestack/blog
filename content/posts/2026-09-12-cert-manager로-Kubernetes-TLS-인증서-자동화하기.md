@@ -328,11 +328,3 @@ cert-manager 도입을 결정할 때 다음 기준을 참고하면 좋습니다.
 | GitOps로 인증서 설정 이력 관리 | 소규모, 단순 환경 |
 | 내부 CA 또는 기업 PKI 연동 필요 | 인증서 수가 매우 적음 (3개 미만) |
 | 멀티 테넌트 클러스터 | 단일 Ingress 클래스만 사용 |
-
-### 다음 단계
-
-cert-manager를 기반으로 보안 인프라를 더 확장하려면 몇 가지 심화 주제를 탐구해 볼 만합니다. **External Secrets Operator**와 결합하면 인증서뿐만 아니라 다양한 시크릿을 외부 Vault에서 Kubernetes로 안전하게 동기화할 수 있습니다. **SPIFFE/SPIRE**는 서비스 간 상호 TLS(mTLS)를 자동화하는 또 다른 접근법으로, 마이크로서비스 아키텍처에서 서비스 신원 증명을 강화할 수 있습니다. cert-manager는 SPIRE의 Workload Identity를 활용하는 Issuer를 지원하므로, 두 도구를 결합하면 클러스터 내부와 외부 모두에서 일관된 인증서 관리 체계를 구축하는 것이 가능합니다. 공식 문서(https://cert-manager.io/docs/)에는 각 Issuer 유형별 상세한 설정 예시와 트러블슈팅 참고 자료가 제공됩니다. 또한 cert-manager 커뮤니티의 Slack 채널과 GitHub Discussions에서 운영 환경 적용 사례를 공유하고 질문을 남길 수 있습니다.
-
-[관련글:Kubernetes Ingress 컨트롤러 비교]
-[관련글:HashiCorp Vault Kubernetes 연동]
-[관련글:GitOps ArgoCD 적용하기]

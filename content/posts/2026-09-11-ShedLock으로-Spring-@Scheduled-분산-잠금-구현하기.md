@@ -283,14 +283,6 @@ ShedLock은 Spring의 `@Scheduled` 기반 스케줄링 코드를 최소한의 �
 
 ShedLock 적용을 고려하는 가장 좋은 시점은 단일 인스턴스로 운영되던 서비스를 다중 인스턴스로 전환할 때, 혹은 Kubernetes 기반으로 이전하면서 파드 수 제어를 자동화할 때입니다. 이미 `@Scheduled`로 잘 동작하는 코드가 있고, 엔터프라이즈 배치 기능(재시도, 파티셔닝, 이력 관리)까지는 필요 없다면 ShedLock이 Quartz 대비 도입 비용을 수십 배 줄여줍니다. 단, 작업의 성격이 강한 멱등성을 필요로 하지 않거나, 정확히 한 번 실행 보장이 비즈니스 크리티컬하다면 더 강한 보장을 제공하는 솔루션과 병행 검토를 권장합니다.
 
-### 다음 단계
-
-ShedLock을 적용한 뒤 자연스럽게 이어지는 주제는 **배치 작업의 멱등성 설계**입니다. ShedLock이 중복 실행 가능성을 줄여주더라도, 작업 자체가 멱등하게 설계되어 있어야 진정으로 안전합니다. 처리 상태를 데이터베이스에 기록하고 이미 처리된 항목은 건너뛰는 체크포인트 패턴, 또는 Spring Batch의 JobExecution 모델을 참고하면 더 견고한 구조를 만들 수 있습니다.
-
-규모가 더 커지거나 복잡한 요구사항이 생겼을 때는 **Quartz Scheduler의 클러스터 모드**나, 인프라 수준에서 실행 보장을 제공하는 **Kubernetes CronJob**, 또는 비동기 작업 큐 기반의 **Celery(Python)나 Sidekiq(Ruby) 유사 패턴의 Spring + Redis 큐** 방식으로 마이그레이션하는 경로를 검토할 수 있습니다.
-
-공식 문서: [ShedLock GitHub Repository](https://github.com/lukas-krecan/ShedLock)
-
 ---
 
 **출처**

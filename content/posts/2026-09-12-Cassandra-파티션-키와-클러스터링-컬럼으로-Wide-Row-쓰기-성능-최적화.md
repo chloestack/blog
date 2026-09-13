@@ -306,10 +306,3 @@ Cassandra에서 파티션 키와 클러스터링 컬럼을 올바르게 설계�
 ### 적용 판단 기준
 
 모든 문제에 Wide Row가 답은 아닙니다. Wide Row 패턴은 **하나의 엔터티(사용자·장치·주문)에 대한 시간순 데이터를 빠르게 범위 조회** 해야 할 때 가장 강력합니다. 단순한 키-값 조회가 주를 이루거나, 관계가 복잡하게 얽힌 데이터라면 Redis, PostgreSQL, 또는 MongoDB 같은 다른 데이터베이스를 먼저 검토하는 것이 맞습니다. Cassandra의 강점은 쓰기 처리량과 선형 확장성이지, 유연한 쿼리나 트랜잭션 일관성이 아닙니다. 이 특성을 파악하고 Cassandra가 적합한 문제에 올바른 파티션 설계를 적용했을 때, 수백 GB의 데이터에서도 밀리초 단위의 쓰기 레이턴시를 안정적으로 유지하는 결과를 얻을 수 있습니다.
-
-### 다음 단계
-
-파티션 설계를 확정했다면 다음으로 살펴볼 주제들을 추천합니다. **Secondary Index와 Materialized View** 는 파티션 키 이외의 컬럼으로 조회해야 할 때 대안이 되지만, 쓰기 성능에 추가 비용이 발생하므로 신중하게 도입해야 합니다. **Cassandra 5.0의 Storage-Attached Index(SAI)** 는 기존 Secondary Index보다 효율적인 새 인덱스 구현으로, 더 다양한 필터링 조건을 지원합니다. 또한 대규모 클러스터 운영 시에는 **Virtual Nodes(vNodes) 설정과 토큰 분산 전략** 이 파티션 키 설계만큼이나 중요하므로, Cassandra 공식 문서([https://cassandra.apache.org/doc/latest/](https://cassandra.apache.org/doc/latest/))의 아키텍처 섹션을 함께 참고하기를 권장합니다.
-
-[관련글:NoSQL 데이터베이스 선택 기준]
-[관련글:시계열 데이터베이스 비교]

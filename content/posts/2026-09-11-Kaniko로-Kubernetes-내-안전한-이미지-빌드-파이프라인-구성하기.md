@@ -327,14 +327,6 @@ Kaniko는 Docker 데몬 없이 Dockerfile로부터 컨테이너 이미지를 빌
 
 Kaniko 도입을 적극 권장하는 상황은 다음과 같습니다. PodSecurityAdmission이나 Open Policy Agent를 통해 `privileged` 컨테이너가 제한된 환경, 내부 보안 감사에서 DinD 방식이 리스크로 지목된 환경, Kubernetes를 CI 인프라로 통합하여 별도 빌드 서버를 제거하려는 경우가 대표적입니다. 반면 빌드 속도가 매우 중요하고 BuildKit의 병렬 스테이지 기능이 필요한 경우, 또는 Buildah가 이미 표준화된 OpenShift 환경이라면 Kaniko 대신 해당 도구를 선택하는 것이 더 현실적입니다.
 
-### 다음 단계
-
-Kaniko를 도입한 이후 자연스럽게 고려하게 되는 심화 주제들이 있습니다. **Supply Chain Security** 관점에서 빌드된 이미지의 출처를 보장하는 **Sigstore/Cosign** 기반 이미지 서명은 Kaniko 빌드 파이프라인에 추가하기 비교적 간단한 보안 강화 방안입니다. 이미지 취약점 스캐닝 도구인 **Trivy**나 **Grype**를 Kaniko 빌드 이후 단계에 추가하면 이미지가 레지스트리에 푸시되기 전에 알려진 CVE를 탐지할 수 있습니다.
-
-더 나아가 **SLSA(Supply chain Levels for Software Artifacts)** 프레임워크 준수를 목표로 한다면, Tekton Chains를 함께 사용하여 빌드 증명(attestation)을 자동으로 생성하고 서명하는 파이프라인을 구축할 수 있습니다. Kaniko는 이 생태계에서 신뢰할 수 있는 빌드 환경의 핵심 구성 요소로 자리 잡을 수 있습니다.
-
-공식 문서와 최신 릴리즈 정보는 [Kaniko GitHub 저장소](https://github.com/GoogleContainerTools/kaniko)에서 확인할 수 있으며, Tekton Hub의 [Kaniko Task](https://hub.tekton.dev/tekton/task/kaniko)도 파이프라인 통합 시 참고할 만한 자료입니다.
-
 ---
 
 **출처**
