@@ -57,6 +57,22 @@ nav a:hover, footer a:not(.wordmark):hover { color: var(--accent); border-color:
 .rail-list button:hover { color: var(--accent); background: rgba(248,250,251,.55); }
 .rail-list button.is-active { border-left-color: var(--accent); background: var(--accent-soft); color: var(--accent); }
 .rail-list button.is-active .rail-count { color: var(--accent); }
+/* 시리즈 블록은 카테고리 레일 바로 아래, 같은 생김새로 붙는다. 제목만 간격을 벌린다. */
+.rail-title.series { margin-top: 1.5rem; }
+/* 시리즈 목록 위에 붙는 안내줄과, 각 글 앞의 "n편" 표시. */
+.series-lede { margin-bottom: 1.4rem; color: var(--ink-2); font-size: .82rem; }
+.series-badge { margin-right: .5rem; padding: .16rem .5rem; background: var(--accent-soft); color: var(--accent); font-family: var(--mono); font-size: .62rem; font-weight: 600; letter-spacing: .06em; }
+.tag.series-order { background: var(--accent-soft); color: var(--accent); border-color: color-mix(in srgb, var(--accent) 45%, transparent); }
+/* 글 본문 위 시리즈 목차. 현재 편은 강조하고, 나머지는 링크로 건너뛴다. */
+.series-nav { margin-top: 2rem; padding: 1.1rem 1.3rem; background: var(--surface); border: 1px solid var(--line-2); border-left: 3px solid var(--accent); }
+.series-nav-head { margin-bottom: .7rem; color: var(--ink); font-family: var(--head); font-size: .9rem; font-weight: 700; }
+.series-nav-list { margin: 0; padding: 0; list-style: none; counter-reset: none; }
+.series-nav-list li { display: flex; align-items: baseline; gap: .6rem; padding: .28rem 0; }
+.series-nav-num { flex: none; width: 1.4rem; color: var(--ink-3); font-family: var(--mono); font-size: .72rem; text-align: right; }
+.series-nav-name { color: var(--ink-2); font-size: .9rem; }
+a.series-nav-name:hover { color: var(--accent); }
+.series-nav-list li.is-current .series-nav-name { color: var(--accent); font-weight: 600; }
+.series-nav-list li.is-current .series-nav-num { color: var(--accent); }
 /* 행 구분선은 이 열의 폭을 그대로 따라간다. 기둥(1222px)에서 레일과 간격을 빼면
    1,004px이 남는데, 그 길이로 선을 긋기엔 너무 멀리 뻗는다. 조금 못 미치게 묶는다. */
 .post-list { border-top: 1px solid var(--line); max-width: 911px; }
@@ -86,6 +102,8 @@ footer { display: grid; gap: 2.2rem; padding: 2.6rem 0 3rem; border-top: 1px sol
   .articles-layout { grid-template-columns: minmax(0, 1fr); gap: 1.6rem; }
   .category-rail { position: static; }
   .rail-title { display: none; }
+  /* 모바일에선 카테고리·시리즈가 칩으로 섞이므로 "시리즈" 제목만 남겨 구분한다. */
+  .rail-title.series { display: block; width: 100%; margin-top: 1rem; }
   .rail-list { flex-direction: row; flex-wrap: wrap; gap: .4rem; border-top: 0; }
   .rail-list button { width: auto; padding: .38rem .7rem; border: 1px solid var(--line); background: rgba(248,250,251,.42); }
   .rail-list button.is-active { border-color: var(--accent); }

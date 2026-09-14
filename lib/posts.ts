@@ -12,6 +12,10 @@ export type Post = {
   /** 정렬과 메타데이터에 쓰는 발행 시각. KST 기준 ISO 8601. */
   publishedAt: string;
   category: string;
+  /** 시리즈 이름. 여러 글을 한 주제로 묶어 목록에서 따로 보여줄 때만 있다. */
+  series: string;
+  /** 시리즈 안의 순서(1부터). 시리즈가 없으면 0. */
+  seriesOrder: number;
   tags: string[];
   excerpt: string;
   body: string;
@@ -65,6 +69,8 @@ function readPostFile(file: string): Post | null {
     date,
     publishedAt,
     category: typeof data.category === "string" ? data.category : "GENERAL",
+    series: typeof data.series === "string" ? data.series.trim() : "",
+    seriesOrder: Number.isFinite(Number(data.seriesOrder)) ? Number(data.seriesOrder) : 0,
     tags: Array.isArray(data.tags) ? data.tags.map(String) : [],
     excerpt: typeof data.excerpt === "string" ? data.excerpt : "",
     body,
@@ -116,6 +122,18 @@ function readDiagramSvg(name: string): string {
   const svg = /<svg\b[\s\S]*<\/svg>/.exec(html)?.[0];
   if (!svg) throw new Error(`도식 파일에 <svg>가 없습니다: ${name}`);
   return svg;
+}
+
+/**
+ * 같은 시리즈의 글을 읽는 순서(seriesOrder 오름차순)로 돌려준다. 글 본문 위에 시리즈
+ * 목차를 그릴 때 쓴다. 시리즈가 없으면 빈 배열.
+ */
+export function getSeriesPosts(series: string): PostCard[] {
+  if (!series) return [];
+  return getAllPosts()
+    .filter((post) => post.series === series)
+    .sort((a, b) => a.seriesOrder - b.seriesOrder)
+    .map(toCard);
 }
 
 // marked 인스턴스를 매번 만들면 확장 등록 비용이 반복된다. 모듈 스코프에 하나만 둔다.
@@ -170,6 +188,10 @@ export type PostCard = {
   /** HH:MM. 목록에서 날짜 아래에 함께 찍는다. */
   time: string;
   category: string;
+  /** 시리즈 이름. 없으면 빈 문자열. */
+  series: string;
+  /** 시리즈 안의 순서(1부터). 없으면 0. */
+  seriesOrder: number;
   excerpt: string;
   tone: string;
 };
@@ -182,6 +204,8 @@ export function toCard(post: Post): PostCard {
     date: post.date,
     time: post.publishedAt.slice(11, 16),
     category: post.category,
+    series: post.series,
+    seriesOrder: post.seriesOrder,
     excerpt: post.excerpt,
     tone: toneFor(post.category),
   };

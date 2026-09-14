@@ -1,13 +1,14 @@
 import Link from "next/link";
 import { MermaidDiagrams } from "@/components/mermaid-diagrams";
 import { SiteFooter } from "@/components/site-footer";
-import { getRelatedPosts, hasDiagrams, renderMarkdown, toneFor, type Post } from "@/lib/posts";
+import { getRelatedPosts, getSeriesPosts, hasDiagrams, postHref, renderMarkdown, toneFor, type Post } from "@/lib/posts";
 
 export function ArticleView({ post }: { post: Post }) {
   const tone = toneFor(post.category);
   const date = post.date.replaceAll("-", ".");
   const time = post.publishedAt.slice(11, 16);
   const related = getRelatedPosts(post);
+  const series = getSeriesPosts(post.series);
 
   return (
     <main>
@@ -25,6 +26,24 @@ export function ArticleView({ post }: { post: Post }) {
             <h1>{post.title}</h1>
             {post.excerpt ? <p className="lede">{post.excerpt}</p> : null}
           </div>
+
+          {series.length > 1 ? (
+            <nav className="series-nav" aria-label={`시리즈: ${post.series}`}>
+              <p className="series-nav-head"><span className="series-badge">시리즈</span>{post.series}</p>
+              <ol className="series-nav-list">
+                {series.map((item) => (
+                  <li key={item.slug} className={item.slug === post.slug ? "is-current" : undefined}>
+                    <span className="series-nav-num">{item.seriesOrder}</span>
+                    {item.slug === post.slug ? (
+                      <span className="series-nav-name" aria-current="true">{item.title}</span>
+                    ) : (
+                      <Link className="series-nav-name" href={postHref(item.slug)}>{item.title}</Link>
+                    )}
+                  </li>
+                ))}
+              </ol>
+            </nav>
+          ) : null}
 
           <div className="prose" dangerouslySetInnerHTML={{ __html: renderMarkdown(post.body) }} />
           {hasDiagrams(post.body) ? <MermaidDiagrams /> : null}
