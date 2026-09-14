@@ -165,6 +165,7 @@ footer { display: grid; gap: 2.2rem; padding: 2.6rem 0 3rem; border-top: 1px sol
 .prose pre code { padding: 0; border: 0; background: none; color: inherit; font-size: inherit; }
 .prose table { display: block; width: 100%; margin: 1.2rem 0; overflow-x: auto; border-collapse: collapse; font-size: .84rem; }
 .prose th, .prose td { padding: .6rem .8rem; border: 1px solid var(--line); text-align: left; vertical-align: top; }
+.prose td { background: var(--surface-2); }
 .prose th { background: var(--surface-2); color: var(--ink); font-family: var(--head); font-weight: 700; white-space: nowrap; }
 .prose img { max-width: 100%; height: auto; }
 /* mermaid 도식. 그리기 전과 실패했을 때는 원문이 옅게 보이고, 그린 뒤에는 SVG만 남는다.
