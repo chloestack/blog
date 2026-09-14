@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>단계별 공격 행동 수</title>
+  <link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --paper:#f8fafb; --ink:#122127; --muted:#3f545c; --soft:#6c8188; --accent:#0d5763;
+      --sans:'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif; --mono:'IBM Plex Mono',ui-monospace,monospace; }
+    body { font-family: var(--sans); background: var(--paper); color: var(--ink); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 3rem 2rem; }
+    .frame { max-width: 1100px; width: 100%; }
+    .eyebrow { font-family: var(--mono); font-size: .66rem; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin-bottom: .5rem; }
+    h1 { font-family: 'Gothic A1', var(--sans); font-size: 1.6rem; font-weight: 800; letter-spacing: -.02em; line-height: 1.2; margin-bottom: 1.4rem; }
+    svg { width: 100%; min-width: 720px; display: block; }
+  </style>
+</head>
+<body>
+  <div class="frame">
+    <p class="eyebrow">Bar chart · 사고 분석</p>
+    <h1>17,600건은 어떻게 나뉘나 — 대부분은 정찰과 스테이징</h1>
+
+    <svg viewBox="0 0 1000 500" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="hf-ph-title hf-ph-desc">
+      <title id="hf-ph-title">단계별 공격 행동 수</title>
+      <desc id="hf-ph-desc">복원된 공격 행동을 단계별로 세면 드로퍼·정찰·원격 실행이 대부분을 차지하고, 실제 데이터 반출은 56건에 불과함을 가로 막대로 보여준다.</desc>
+      <defs></defs>
+
+      <rect width="100%" height="100%" fill="#f8fafb"/>
+
+      <!-- gridlines at 0,1750,3500,5250,7000 -> x 200,390,580,770,960 -->
+      <line x1="390" y1="44" x2="390" y2="404" stroke="rgba(18,33,39,0.08)" stroke-width="0.8"/>
+      <line x1="580" y1="44" x2="580" y2="404" stroke="rgba(18,33,39,0.08)" stroke-width="0.8"/>
+      <line x1="770" y1="44" x2="770" y2="404" stroke="rgba(18,33,39,0.08)" stroke-width="0.8"/>
+      <line x1="960" y1="44" x2="960" y2="404" stroke="rgba(18,33,39,0.08)" stroke-width="0.8"/>
+      <!-- axis baseline -->
+      <line x1="200" y1="44" x2="200" y2="404" stroke="rgba(18,33,39,0.25)" stroke-width="1"/>
+
+      <!-- rows: pitch 40, bar h 24, first y 52; bar x0=200, scale 760/7000 -->
+      <!-- drop dropper 6972 -> w=757 -->
+      <rect x="200" y="52" width="757" height="24" fill="rgba(63,84,92,0.15)" stroke="#3f545c" stroke-width="1"/>
+      <text x="188" y="68" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="end">드로퍼(스테이징)</text>
+      <text x="949" y="68" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="end">6,972</text>
+
+      <!-- recon 6191 -> 672 -->
+      <rect x="200" y="92" width="672" height="24" fill="rgba(63,84,92,0.15)" stroke="#3f545c" stroke-width="1"/>
+      <text x="188" y="108" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="end">정찰</text>
+      <text x="884" y="108" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace">6,191</text>
+
+      <!-- rce 2911 -> 316 -->
+      <rect x="200" y="132" width="316" height="24" fill="rgba(63,84,92,0.15)" stroke="#3f545c" stroke-width="1"/>
+      <text x="188" y="148" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="end">원격 실행(RCE)</text>
+      <text x="528" y="148" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace">2,911</text>
+
+      <!-- tailscale 115 -> 12 -->
+      <rect x="200" y="172" width="12" height="24" fill="rgba(63,84,92,0.15)" stroke="#3f545c" stroke-width="1"/>
+      <text x="188" y="188" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="end">메시망 침투</text>
+      <text x="224" y="188" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace">115</text>
+
+      <!-- c2 114 -> 12 -->
+      <rect x="200" y="212" width="12" height="24" fill="rgba(63,84,92,0.15)" stroke="#3f545c" stroke-width="1"/>
+      <text x="188" y="228" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="end">명령 제어(C2)</text>
+      <text x="224" y="228" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace">114</text>
+
+      <!-- k8s 87 -> 9 -->
+      <rect x="200" y="252" width="9" height="24" fill="rgba(63,84,92,0.15)" stroke="#3f545c" stroke-width="1"/>
+      <text x="188" y="268" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="end">쿠버네티스</text>
+      <text x="221" y="268" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace">87</text>
+
+      <!-- supply-chain 69 -> 7 -->
+      <rect x="200" y="292" width="7" height="24" fill="rgba(63,84,92,0.15)" stroke="#3f545c" stroke-width="1"/>
+      <text x="188" y="308" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="end">공급망</text>
+      <text x="219" y="308" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace">69</text>
+
+      <!-- exfil 56 -> 6 (FOCAL) -->
+      <rect x="200" y="332" width="6" height="24" fill="rgba(13,87,99,0.12)" stroke="#0d5763" stroke-width="1.2"/>
+      <text x="188" y="348" fill="#0d5763" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="end">데이터 반출</text>
+      <text x="218" y="348" fill="#0d5763" font-size="11" font-weight="600" font-family="'IBM Plex Mono', monospace">56</text>
+
+      <!-- evasion 6 -> 1 -->
+      <rect x="200" y="372" width="2" height="24" fill="rgba(63,84,92,0.15)" stroke="#3f545c" stroke-width="1"/>
+      <text x="188" y="388" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="end">회피</text>
+      <text x="214" y="388" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace">6</text>
+
+      <!-- x-axis tick labels -->
+      <text x="200" y="424" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">0</text>
+      <text x="580" y="424" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">3,500</text>
+      <text x="960" y="424" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">7,000</text>
+
+      <!-- legend -->
+      <line x1="200" y1="452" x2="960" y2="452" stroke="rgba(18,33,39,0.10)" stroke-width="0.8"/>
+      <rect x="200" y="466" width="14" height="12" rx="2" fill="rgba(13,87,99,0.12)" stroke="#0d5763" stroke-width="1"/>
+      <text x="222" y="476" fill="#3f545c" font-size="12" font-family="'IBM Plex Sans KR', sans-serif">실제 탈취는 56건 — 정찰·스테이징이 행동의 대부분</text>
+    </svg>
+  </div>
+</body>
+</html>
