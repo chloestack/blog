@@ -2,7 +2,7 @@
 title: "PostgreSQL 하나로 작업 큐와 스케줄러까지 처리해도 될까?"
 date: "2026-09-14 10:24"
 publishedAt: ""
-category: "AI"
+category: "Database"
 tags: ["PostgreSQL", "작업 큐", "스케줄러", "AI 워커"]
 excerpt: "임베딩 생성과 문서 처리에 별도 메시지 브로커가 꼭 필요한 것은 아닙니다. PostgreSQL의 SKIP LOCKED와 예약 시각으로 큐를 만들 수 있지만, 리스 복구·멱등 처리·데이터베이스 부하까지 함께 설계해야 합니다."
 status: "draft"
