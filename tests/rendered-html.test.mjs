@@ -165,7 +165,8 @@ test("rows are stamped with the publish time instead of a running number", async
   if (posts.length === 0) return;
   const article = await (await render(`/posts/${encodeURIComponent(posts[0].slug)}`)).text();
   const head = article.slice(article.indexOf('class="article-head"'), article.indexOf("</h1>")).replaceAll("<!-- -->", "");
-  assert.doesNotMatch(head, /\d+분/, "reading time is back on the article");
+  // 제목에 "5분" 같은 말이 들어갈 수 있으니 독서 시간은 제목 앞 메타 줄에서만 찾는다.
+  assert.doesNotMatch(head.slice(0, head.indexOf("<h1")), /\d+분/, "reading time is back on the article");
   assert.match(head, /<span class="meta">2026\.\d{2}\.\d{2} \d{2}:\d{2}<\/span>/);
 });
 
