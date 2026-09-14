@@ -2,15 +2,11 @@
 
 import { useEffect } from "react";
 
-// 본문 폭을 채우도록 늘리되, 원래 크기의 이 배수까지만. 상자 서너 개짜리 도식을
-// 끝까지 늘리면 라벨이 본문 글자의 두 배가 되어 글보다 도식이 더 크게 읽힌다.
-const MAX_UPSCALE = 1.25;
-
-/** mermaid가 붙인 원래 폭(style max-width)을 기준으로 늘어날 상한을 건다. */
+/** 도식은 자연 폭까지만 키우고, 컨테이너가 더 좁으면 그 폭에 맞춰 줄인다. */
 function fitToColumn(svg: SVGSVGElement | null) {
   if (!svg) return;
   const natural = parseFloat(svg.style.maxWidth);
-  svg.style.maxWidth = Number.isFinite(natural) ? `min(100%, ${Math.round(natural * MAX_UPSCALE)}px)` : "100%";
+  svg.style.maxWidth = Number.isFinite(natural) ? `min(100%, ${Math.round(natural)}px)` : "100%";
 }
 
 /**
@@ -31,9 +27,13 @@ export function MermaidDiagrams() {
 
       // mermaid는 글자 폭을 재서 상자 크기를 정한다. 웹 폰트가 오기 전에 재면
       // 대체 글꼴 기준으로 상자가 잡혀, 폰트가 바뀐 뒤 라벨 끝이 잘린다.
+      // figure는 본문 문단과 같은 CSS 글자 크기를 쓰므로 실제 픽셀 값을 읽는다.
+      const figure = nodes[0].closest<HTMLElement>("figure.diagram");
+      if (!figure) return;
+      const bodyFontSize = getComputedStyle(figure).fontSize;
       const [{ default: mermaid }] = await Promise.all([
         import("mermaid"),
-        document.fonts.load('15px "IBM Plex Sans KR"').catch(() => undefined),
+        document.fonts.load(`${bodyFontSize} "IBM Plex Sans KR"`).catch(() => undefined),
       ]);
       await document.fonts.ready;
       mermaid.initialize({
@@ -51,7 +51,7 @@ export function MermaidDiagrams() {
         fontFamily: '"IBM Plex Sans KR", "Apple SD Gothic Neo", system-ui, sans-serif',
         themeVariables: {
           background: "#f8fafb",
-          fontSize: "15px",
+          fontSize: bodyFontSize,
           primaryColor: "#eef2f4",
           primaryBorderColor: "#c3d0d4",
           primaryTextColor: "#122127",

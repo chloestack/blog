@@ -123,13 +123,13 @@ footer { display: grid; gap: 2.2rem; padding: 2.6rem 0 3rem; border-top: 1px sol
 
 /* 글줄은 96ch로 묶되 폭 제한은 본문 요소에만 건다. 가로선을 긋는 요소(hr, h2)는
    기둥 전체를 쓰게 두어야 머리말 아래 선과 같은 폭으로 떨어진다. */
-.prose { margin-top: 2.6rem; color: var(--ink-2); }
+.prose { --prose-body-font-size: .95rem; margin-top: 2.6rem; color: var(--ink-2); }
 .prose > * { max-width: 96ch; }
 .prose > hr, .prose > h2 { max-width: none; }
 .prose h2 { margin: 3.2rem 0 .6rem; padding-top: 1.4rem; border-top: 1px solid var(--line-2); font-family: var(--head); font-size: 1.5rem; font-weight: 800; line-height: 1.4; letter-spacing: -.035em; color: var(--ink); }
 .prose h3 { margin: 2.1rem 0 .45rem; font-family: var(--head); font-size: 1.1rem; font-weight: 700; letter-spacing: -.025em; color: var(--ink); }
 .prose h4 { margin: 1.6rem 0 .3rem; font-size: .95rem; font-weight: 600; color: var(--ink); }
-.prose p, .prose li { font-size: .95rem; }
+.prose p, .prose li { font-size: var(--prose-body-font-size); }
 .prose p { margin: .75rem 0; }
 .prose ul, .prose ol { margin: .75rem 0; padding-left: 1.3rem; }
 .prose li { margin: .28rem 0; }
@@ -148,9 +148,9 @@ footer { display: grid; gap: 2.2rem; padding: 2.6rem 0 3rem; border-top: 1px sol
 .prose img { max-width: 100%; height: auto; }
 /* mermaid 도식. 그리기 전과 실패했을 때는 원문이 옅게 보이고, 그린 뒤에는 SVG만 남는다.
    상자 폭은 본문 문단과 똑같이 맞춘다. max-width의 ch는 요소 자신의 글자 크기를 따르므로
-   문단(.95rem)과 같은 크기를 줘야 96ch가 같은 폭이 된다. 그림은 상자 안에서 가운데 두고,
-   넓으면 줄이되 좁은 도식을 끝까지 늘리지는 않는다(상한은 mermaid-diagrams.tsx). */
-.prose figure.diagram { width: 100%; margin: 1.4rem 0; overflow: hidden; background: var(--surface); border: 1px solid var(--line-2); font-size: .95rem; }
+   문단과 같은 크기를 줘야 96ch가 같은 폭이 된다. 그림은 상자 안에서 가운데 두고,
+   넓으면 줄이되 좁은 도식을 확대하지 않는다(mermaid-diagrams.tsx). */
+.prose figure.diagram { width: 100%; margin: 1.4rem 0; overflow: hidden; background: var(--surface); border: 1px solid var(--line-2); font-size: var(--prose-body-font-size); }
 .prose pre.mermaid { margin: 0; padding: 1.4rem 1.2rem; overflow-x: auto; background: none; color: var(--ink-3); font-size: .72rem; line-height: 1.6; white-space: pre; }
 .prose pre.mermaid[data-rendered="true"] { display: block; overflow: visible; color: var(--ink); font-family: var(--sans); white-space: normal; }
 .prose pre.mermaid[data-rendered="true"] svg { display: block; width: 100%; max-width: 100%; height: auto; margin: 0 auto; }
