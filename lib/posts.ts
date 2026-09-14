@@ -102,6 +102,22 @@ export function getRelatedPosts(post: Post, limit = 4): PostCard[] {
   return [...sameCategory, ...fill].slice(0, limit).map(toCard);
 }
 
+const DIAGRAMS_DIR = path.join(process.cwd(), "content", "diagrams");
+
+/**
+ * ```diagram 블록에는 content/diagrams 아래 HTML 파일 이름(확장자 없이)만 적는다.
+ * 파일은 diagram-design 스킬이 만든 단독 HTML이고, 그 안의 <svg>만 본문에 그대로 넣는다.
+ * 브라우저 스크립트 없이 서버에서 끝나며, 글꼴은 본문과 같은 웹 폰트를 물려받는다.
+ * 파일이 없거나 <svg>가 없으면 빌드를 멈춘다 — 빈 그림으로 배포되는 것보다 낫다.
+ */
+function readDiagramSvg(name: string): string {
+  if (!/^[a-z0-9-]+(?:\/[a-z0-9-]+)*$/.test(name)) throw new Error(`도식 이름이 올바르지 않습니다: ${name}`);
+  const html = fs.readFileSync(path.join(DIAGRAMS_DIR, `${name}.html`), "utf8");
+  const svg = /<svg\b[\s\S]*<\/svg>/.exec(html)?.[0];
+  if (!svg) throw new Error(`도식 파일에 <svg>가 없습니다: ${name}`);
+  return svg;
+}
+
 // marked 인스턴스를 매번 만들면 확장 등록 비용이 반복된다. 모듈 스코프에 하나만 둔다.
 const marked = new Marked({ gfm: true, breaks: false });
 
@@ -122,7 +138,9 @@ marked.use({
     // mermaid 블록은 서버에서는 원문을 담아 두고, 브라우저에서 그림으로 바꾼다
     // (components/mermaid-diagrams.tsx). 스크립트가 돌지 않아도 원문은 읽힌다.
     code({ text, lang }) {
-      if (lang?.trim() !== "mermaid") return false;
+      const kind = lang?.trim();
+      if (kind === "diagram") return `<figure class="diagram diagram-svg">${readDiagramSvg(text.trim())}</figure>\n`;
+      if (kind !== "mermaid") return false;
       return `<figure class="diagram"><pre class="mermaid">${escapeHtml(text)}</pre></figure>\n`;
     },
   },

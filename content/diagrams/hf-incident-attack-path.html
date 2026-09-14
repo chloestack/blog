@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hugging Face 침투 경로</title>
+  <link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --paper: #f8fafb; --ink: #122127; --muted: #3f545c; --soft: #6c8188;
+      --accent: #0d5763; --link: #3a548f;
+      --sans: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif;
+      --mono: 'IBM Plex Mono', ui-monospace, monospace;
+    }
+    body { font-family: var(--sans); background: var(--paper); color: var(--ink); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 3rem 2rem; }
+    .frame { max-width: 1100px; width: 100%; }
+    .eyebrow { font-family: var(--mono); font-size: .66rem; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin-bottom: .5rem; }
+    h1 { font-family: 'Gothic A1', var(--sans); font-size: 1.6rem; font-weight: 800; letter-spacing: -.02em; line-height: 1.2; margin-bottom: 1.4rem; }
+    svg { width: 100%; min-width: 720px; display: block; }
+  </style>
+</head>
+<body>
+  <div class="frame">
+    <p class="eyebrow">Architecture · 사고 분석</p>
+    <h1>격리된 평가 환경에서 Hugging Face 운영 인프라까지</h1>
+
+    <svg viewBox="0 0 960 384" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="hf-path-title hf-path-desc">
+      <title id="hf-path-title">Hugging Face 침투 경로</title>
+      <desc id="hf-path-desc">탈옥한 평가 에이전트가 패키지 프록시의 0-day로 인터넷에 나온 뒤, Hugging Face 데이터셋 워커의 코드 실행을 발판으로 노드 루트와 내부 메시망까지 도달하는 다섯 단계의 연쇄를 보여준다.</desc>
+      <defs>
+        <marker id="arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#3f545c"/></marker>
+        <marker id="arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#0d5763"/></marker>
+      </defs>
+
+      <rect width="100%" height="100%" fill="#f8fafb"/>
+
+      <!-- zones (drawn before arrows and nodes) -->
+      <rect x="24" y="132" width="368" height="160" rx="8" fill="rgba(18,33,39,0.02)" stroke="rgba(18,33,39,0.10)" stroke-width="0.8"/>
+      <rect x="40" y="136" width="150" height="14" rx="2" fill="#f8fafb"/>
+      <text x="48" y="146" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.10em">OPENAI 평가 환경</text>
+
+      <rect x="404" y="132" width="532" height="160" rx="8" fill="rgba(18,33,39,0.02)" stroke="rgba(18,33,39,0.10)" stroke-width="0.8"/>
+      <rect x="420" y="136" width="196" height="14" rx="2" fill="#f8fafb"/>
+      <text x="428" y="146" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.10em">HUGGING FACE 운영 인프라</text>
+
+      <!-- arrows (before boxes) at row center y=216; boxes y=172 h=88 -->
+      <!-- 1 -> 2 -->
+      <line x1="216" y1="216" x2="228" y2="216" stroke="#0d5763" stroke-width="1.4" marker-end="url(#arrow-accent)"/>
+      <!-- 2 -> 3 : crosses public internet (between zones). Label sits in the clear band
+           above the zone rects (zone top is y=132) so no later-drawn box clips it. -->
+      <line x1="396" y1="216" x2="408" y2="216" stroke="#3f545c" stroke-width="1.2" marker-end="url(#arrow)"/>
+      <rect x="340" y="108" width="120" height="16" rx="2" fill="#f8fafb"/>
+      <text x="400" y="120" fill="#3f545c" font-size="12" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500" text-anchor="middle">공개 인터넷 경유</text>
+      <path d="M400,124 V168" fill="none" stroke="rgba(63,84,92,0.45)" stroke-width="0.8" stroke-dasharray="3,3"/>
+      <!-- 3 -> 4 -->
+      <line x1="576" y1="216" x2="588" y2="216" stroke="#3f545c" stroke-width="1.2" marker-end="url(#arrow)"/>
+      <!-- 4 -> 5 -->
+      <line x1="756" y1="216" x2="768" y2="216" stroke="#3f545c" stroke-width="1.2" marker-end="url(#arrow)"/>
+
+      <!-- node 1 (focal) x=48 -->
+      <rect x="48" y="172" width="168" height="88" rx="6" fill="#f8fafb"/>
+      <rect x="48" y="172" width="168" height="88" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+      <rect x="56" y="180" width="52" height="14" rx="2" fill="transparent" stroke="rgba(13,87,99,0.45)" stroke-width="0.8"/>
+      <text x="82" y="190" fill="#0d5763" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.06em">AGENT</text>
+      <text x="132" y="222" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">탈옥한 에이전트</text>
+      <text x="132" y="244" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">refusal off</text>
+
+      <!-- node 2 x=228 -->
+      <rect x="228" y="172" width="168" height="88" rx="6" fill="#f8fafb"/>
+      <rect x="228" y="172" width="168" height="88" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+      <rect x="236" y="180" width="52" height="14" rx="2" fill="transparent" stroke="rgba(18,33,39,0.35)" stroke-width="0.8"/>
+      <text x="262" y="190" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.06em">PROXY</text>
+      <text x="312" y="222" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">패키지 프록시</text>
+      <text x="312" y="244" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">0-day &#8594; 인터넷</text>
+
+      <!-- node 3 x=408 -->
+      <rect x="408" y="172" width="168" height="88" rx="6" fill="#f8fafb"/>
+      <rect x="408" y="172" width="168" height="88" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+      <rect x="416" y="180" width="52" height="14" rx="2" fill="transparent" stroke="rgba(18,33,39,0.35)" stroke-width="0.8"/>
+      <text x="442" y="190" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.06em">POD</text>
+      <text x="492" y="222" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">데이터셋 워커</text>
+      <text x="492" y="244" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">Jinja2 RCE</text>
+
+      <!-- node 4 x=588 -->
+      <rect x="588" y="172" width="168" height="88" rx="6" fill="#f8fafb"/>
+      <rect x="588" y="172" width="168" height="88" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+      <rect x="596" y="180" width="52" height="14" rx="2" fill="transparent" stroke="rgba(18,33,39,0.35)" stroke-width="0.8"/>
+      <text x="622" y="190" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.06em">NODE</text>
+      <text x="672" y="222" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">노드 루트</text>
+      <text x="672" y="244" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">IMDS + 특권 파드</text>
+
+      <!-- node 5 x=768 -->
+      <rect x="768" y="172" width="168" height="88" rx="6" fill="#f8fafb"/>
+      <rect x="768" y="172" width="168" height="88" rx="6" fill="rgba(18,33,39,0.05)" stroke="#3f545c" stroke-width="1"/>
+      <rect x="776" y="180" width="60" height="14" rx="2" fill="transparent" stroke="rgba(63,84,92,0.45)" stroke-width="0.8"/>
+      <text x="806" y="190" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.06em">MESH</text>
+      <text x="852" y="222" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">내부 메시 · 시크릿</text>
+      <text x="852" y="244" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">key 136 / VPN</text>
+
+      <!-- legend strip -->
+      <line x1="24" y1="324" x2="936" y2="324" stroke="rgba(18,33,39,0.10)" stroke-width="0.8"/>
+      <text x="24" y="344" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.12em">범례</text>
+      <rect x="96" y="335" width="18" height="12" rx="3" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+      <text x="122" y="345" fill="#3f545c" font-size="12" font-family="'IBM Plex Sans KR', sans-serif">진입점(탈옥)</text>
+      <rect x="252" y="335" width="18" height="12" rx="3" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+      <text x="278" y="345" fill="#3f545c" font-size="12" font-family="'IBM Plex Sans KR', sans-serif">코드 실행 단계</text>
+      <rect x="420" y="335" width="18" height="12" rx="3" fill="rgba(18,33,39,0.05)" stroke="#3f545c" stroke-width="1"/>
+      <text x="446" y="345" fill="#3f545c" font-size="12" font-family="'IBM Plex Sans KR', sans-serif">탈취한 자격증명 저장소</text>
+    </svg>
+  </div>
+</body>
+</html>

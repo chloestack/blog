@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>뚫린 방어와 버틴 방어</title>
+  <link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --paper: #f8fafb; --ink: #122127; --muted: #3f545c; --soft: #6c8188; --accent: #0d5763;
+      --sans: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif;
+      --mono: 'IBM Plex Mono', ui-monospace, monospace;
+    }
+    body { font-family: var(--sans); background: var(--paper); color: var(--ink); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 3rem 2rem; }
+    .frame { max-width: 1100px; width: 100%; }
+    .eyebrow { font-family: var(--mono); font-size: .66rem; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin-bottom: .5rem; }
+    h1 { font-family: 'Gothic A1', var(--sans); font-size: 1.6rem; font-weight: 800; letter-spacing: -.02em; line-height: 1.2; margin-bottom: 1.4rem; }
+    svg { width: 100%; min-width: 720px; display: block; }
+  </style>
+</head>
+<body>
+  <div class="frame">
+    <p class="eyebrow">Layer stack · 사고 분석</p>
+    <h1>무엇이 뚫렸고, 무엇이 끝까지 버텼나</h1>
+
+    <svg viewBox="0 0 960 520" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="hf-def-title hf-def-desc">
+      <title id="hf-def-title">뚫린 방어와 버틴 방어</title>
+      <desc id="hf-def-desc">다섯 개의 방어 지점을 위아래로 쌓아, 범위가 넓고 수명이 긴 권한(메타데이터 접근, 특권 파드, 공유 관리자 자격증명)은 뚫렸고 경계를 좁게 그은 곳(Private Link, IAM 쓰기 거부, CI 실행 정책)은 버텼음을 보여준다.</desc>
+      <defs></defs>
+
+      <rect width="100%" height="100%" fill="#f8fafb"/>
+
+      <!-- column headers -->
+      <text x="40" y="96" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.12em">방어 지점</text>
+      <text x="892" y="96" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.12em" text-anchor="end">결과</text>
+
+      <!-- Row 1 (focal / broke): shared connector credential -->
+      <rect x="40" y="112" width="880" height="64" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+      <text x="60" y="140" fill="#0d5763" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.08em">CRED</text>
+      <text x="60" y="160" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif">공유 커넥터 자격증명</text>
+      <text x="300" y="150" fill="#3f545c" font-size="12" font-family="'IBM Plex Sans KR', sans-serif">하나로 여러 클러스터에 system:masters — 훔치면 몇 초 만에 전면 장악</text>
+      <rect x="812" y="132" width="88" height="24" rx="4" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+      <text x="856" y="148" fill="#0d5763" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">뚫림</text>
+
+      <!-- Row 2 (broke): pod IMDS -->
+      <rect x="40" y="184" width="880" height="64" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+      <text x="60" y="212" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.08em">IMDS</text>
+      <text x="60" y="232" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif">파드 &#8594; 노드 메타데이터</text>
+      <text x="300" y="222" fill="#3f545c" font-size="12" font-family="'IBM Plex Sans KR', sans-serif">파드에서 IMDS가 열려 있어 노드 자격증명 획득</text>
+      <rect x="812" y="204" width="88" height="24" rx="4" fill="rgba(18,33,39,0.05)" stroke="#3f545c" stroke-width="1"/>
+      <text x="856" y="220" fill="#3f545c" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">뚫림</text>
+
+      <!-- Row 3 (broke): privileged pod admission -->
+      <rect x="40" y="256" width="880" height="64" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+      <text x="60" y="284" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.08em">ADMIT</text>
+      <text x="60" y="304" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif">특권 파드 어드미션</text>
+      <text x="300" y="294" fill="#3f545c" font-size="12" font-family="'IBM Plex Sans KR', sans-serif">거부 정책이 없어 hostPath 특권 파드로 노드 루트 탈출</text>
+      <rect x="812" y="276" width="88" height="24" rx="4" fill="rgba(18,33,39,0.05)" stroke="#3f545c" stroke-width="1"/>
+      <text x="856" y="292" fill="#3f545c" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">뚫림</text>
+
+      <!-- divider between broke / held -->
+      <line x1="40" y1="336" x2="920" y2="336" stroke="rgba(18,33,39,0.12)" stroke-width="0.8" stroke-dasharray="4,3"/>
+
+      <!-- Row 4 (held): private link -->
+      <rect x="40" y="352" width="880" height="64" rx="6" fill="rgba(18,33,39,0.03)" stroke="rgba(18,33,39,0.30)" stroke-width="1" stroke-dasharray="4,3"/>
+      <text x="60" y="380" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.08em">NET</text>
+      <text x="60" y="400" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif">운영 DB Private Link</text>
+      <text x="300" y="390" fill="#3f545c" font-size="12" font-family="'IBM Plex Sans KR', sans-serif">허용 목록 밖 트래픽이 시간 초과 — 운영 DB에 끝내 도달 못함</text>
+      <rect x="812" y="372" width="88" height="24" rx="4" fill="transparent" stroke="rgba(18,33,39,0.30)" stroke-width="1"/>
+      <text x="856" y="388" fill="#3f545c" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">막음</text>
+
+      <!-- Row 5 (held): IAM write + CI policy -->
+      <rect x="40" y="424" width="880" height="64" rx="6" fill="rgba(18,33,39,0.03)" stroke="rgba(18,33,39,0.30)" stroke-width="1" stroke-dasharray="4,3"/>
+      <text x="60" y="452" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.08em">POLICY</text>
+      <text x="60" y="472" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif">IAM 쓰기 · CI 실행 정책</text>
+      <text x="300" y="462" fill="#3f545c" font-size="12" font-family="'IBM Plex Sans KR', sans-serif">열거는 되나 변경 API는 거부 / 악성 PR의 파이프라인 탈취 차단</text>
+      <rect x="812" y="444" width="88" height="24" rx="4" fill="transparent" stroke="rgba(18,33,39,0.30)" stroke-width="1"/>
+      <text x="856" y="460" fill="#3f545c" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">막음</text>
+    </svg>
+  </div>
+</body>
+</html>
