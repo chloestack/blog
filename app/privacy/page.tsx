@@ -29,7 +29,7 @@ export default function PrivacyPage() {
         <article className="article">
           <div className="article-head">
             <Link className="back-link" href="/">← 홈으로</Link>
-            <div className="label-row"><span className="meta">시행일 2026.09.01</span></div>
+            <div className="label-row"><span className="meta">시행일 2026.09.16</span></div>
             <h1>개인정보처리방침</h1>
             <p className="lede">
               blog.pistamond.dev(이하 &ldquo;사이트&rdquo;)는 개발 및 기술 관련 콘텐츠를 제공하는 개인 블로그입니다. 사이트를
@@ -65,6 +65,11 @@ export default function PrivacyPage() {
               <li><strong>네이버 애널리틱스</strong> — 방문 통계 분석. 방문 기록과 쿠키를 수집합니다.</li>
               <li><strong>Google AdSense</strong> — 광고 게재. 광고 제공과 성과 측정을 위해 쿠키를 사용할 수 있습니다.</li>
               <li><strong>Vercel</strong> — 사이트 호스팅. 요청 처리 과정에서 접속 기록이 남습니다.</li>
+              <li>
+                <strong>Upstash</strong> — 사이트에 표시하는 오늘·전체 방문자 수 집계. 같은 날 중복 방문을 가려내기 위해 IP
+                주소와 브라우저 정보를 날짜와 함께 해시한 값만 저장하며, 원래 IP 주소는 저장하지 않습니다. 이 해시 값은 2일
+                뒤 삭제되고, 날짜별 방문자 수만 남습니다.
+              </li>
             </ul>
             <p>
               외부 서비스를 이용하는 과정에는 해당 서비스 제공자의 개인정보처리방침과 이용약관이 적용됩니다. 운영에 필요한
@@ -96,7 +101,7 @@ export default function PrivacyPage() {
             </p>
 
             <hr />
-            <p>시행일: 2026년 9월 1일</p>
+            <p>시행일: 2026년 9월 16일</p>
           </div>
         </article>
 

@@ -20,12 +20,12 @@ function readPosts() {
     .sort((a, b) => b.date.localeCompare(a.date) || a.slug.localeCompare(b.slug));
 }
 
-async function render(pathname = "/") {
+async function render(pathname = "/", init = {}) {
   const workerUrl = new URL("../dist/server/index.js", import.meta.url);
   workerUrl.searchParams.set("test", `${process.pid}-${Date.now()}`);
   const { default: worker } = await import(workerUrl.href);
   return worker.fetch(
-    new Request(`http://localhost${pathname}`, { headers: { accept: "text/html" } }),
+    new Request(`http://localhost${pathname}`, { headers: { accept: "text/html" }, ...init }),
     { ASSETS: { fetch: async () => new Response("Not found", { status: 404 }) } },
     { waitUntil() {}, passThroughOnException() {} },
   );
@@ -227,7 +227,8 @@ test("the privacy policy stands on its own page", async () => {
   assert.deepEqual(sections, ["1", "2", "3", "4", "5", "6", "7", "8"]);
   assert.match(html, /네이버 애널리틱스/, "the policy hides the analytics it actually runs");
   assert.match(html, /mailto:contact@pistamond\.dev/);
-  assert.match(html, /시행일: 2026년 9월 1일/);
+  assert.match(html, /Upstash/, "the policy does not disclose the visit counter");
+  assert.match(html, /시행일: 2026년 9월 16일/);
 
   const sitemap = await (await render("/sitemap.xml")).text();
   assert.match(sitemap, /https:\/\/blog\.pistamond\.dev\/privacy/);
@@ -336,4 +337,17 @@ test("mermaid blocks become diagram placeholders", async () => {
   assert.match(prose, /<figure class="diagram"><pre class="mermaid">/);
   assert.doesNotMatch(prose, /class="language-mermaid"/);
   assert.doesNotMatch(prose, /<pre class="mermaid">[^<]*<(?!\/pre>)/, "diagram source is not escaped");
+});
+
+/**
+ * 방문자 수는 저장소가 연결됐을 때만 센다. 로컬·테스트에는 연결 정보가 없으니
+ * API는 null을 돌려주고, 푸터는 숫자 없이 그려져야 한다.
+ */
+test("the visit counter stays silent without a store", async () => {
+  const response = await render("/api/visit", { method: "POST" });
+  assert.equal(response.status, 200);
+  assert.equal(await response.json(), null);
+
+  const footer = (await (await render()).text()).split("<footer")[1];
+  assert.doesNotMatch(footer, /class="visit-counter"/);
 });

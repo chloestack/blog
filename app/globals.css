@@ -96,6 +96,7 @@ footer { display: grid; gap: 2.2rem; padding: 2.6rem 0 3rem; border-top: 1px sol
 .footer-contact a { color: var(--ink); font-size: .74rem; }
 .footer-bottom { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding-top: 1.5rem; border-top: 1px solid var(--line-2); }
 .footer-mark { color: var(--ink); font-size: .74rem; }
+.visit-counter { font-variant-numeric: tabular-nums; }
 .footer-mark .mark { width: 22px; height: 22px; }
 
 @media (max-width: 860px) {
