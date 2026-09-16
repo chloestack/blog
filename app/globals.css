@@ -96,9 +96,10 @@ footer { display: grid; gap: 2.2rem; padding: 2.6rem 0 3rem; border-top: 1px sol
 .footer-contact a { color: var(--ink); font-size: .74rem; }
 .footer-bottom { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding-top: 1.5rem; border-top: 1px solid var(--line-2); }
 .footer-mark { color: var(--ink); font-size: .74rem; }
-/* 목록 오른쪽 위의 방문자 수. 왼쪽 "카테고리" 제목과 같은 줄·같은 글자로 선다. 숫자가
+/* 목록 오른쪽 위의 방문자 수. 목록(.post-list)과 같은 폭 안에서 오른쪽 끝에 붙고,
+   왼쪽 "카테고리" 제목과 같은 줄·같은 글자로 선다. 숫자가
    늦게 와도 목록이 밀리지 않게 줄 높이를 미리 잡아 둔다. */
-.visit-counter { min-height: 1.15rem; margin-bottom: .7rem; color: var(--ink-3); font-family: var(--mono); font-size: .62rem; letter-spacing: .08em; text-align: right; font-variant-numeric: tabular-nums; }
+.visit-counter { max-width: 911px; min-height: 1.15rem; margin-bottom: .7rem; color: var(--ink-3); font-family: var(--mono); font-size: .62rem; letter-spacing: .08em; text-align: right; font-variant-numeric: tabular-nums; }
 .visit-counter b { color: var(--ink-2); font-weight: 600; }
 .footer-mark .mark { width: 22px; height: 22px; }
 
@@ -116,7 +117,6 @@ footer { display: grid; gap: 2.2rem; padding: 2.6rem 0 3rem; border-top: 1px sol
 
 @media (max-width: 700px) {
   .wrap { width: min(100% - 2rem, 1222px); }
-  .site-header nav { gap: .85rem; }
   .footer-top { grid-template-columns: minmax(0, 1fr); gap: 1.6rem; }
   .footer-bottom { flex-wrap: wrap; row-gap: .8rem; }
   .footer-bottom p { order: 3; width: 100%; }
