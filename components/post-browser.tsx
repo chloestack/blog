@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import type { PostCard } from "@/lib/posts";
+import { VisitCounter } from "@/components/visit-counter";
 
 const ALL = "전체";
 /** 도구 이야기는 주제라기보다 곁가지라 개수와 상관없이 레일 맨 아래에 둔다. */
@@ -96,6 +97,7 @@ export function PostBrowser({ posts }: { posts: PostCard[] }) {
         ) : null}
 
         <div className="articles-main">
+          <VisitCounter />
           {posts.length === 0 ? (
             <p className="empty-note">아직 공개된 글이 없습니다.</p>
           ) : visible.length === 0 ? (

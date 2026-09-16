@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { VisitCounter } from "@/components/visit-counter";
+import { VisitBeacon } from "@/components/visit-counter";
 
 /** 세 페이지가 같은 푸터를 쓰므로 한 곳에서만 고친다. */
 export function SiteFooter({ homeHref, backHref, backLabel }: { homeHref: string; backHref: string; backLabel: string }) {
@@ -16,10 +16,10 @@ export function SiteFooter({ homeHref, backHref, backLabel }: { homeHref: string
         </section>
       </div>
 
+      <VisitBeacon />
       <div className="footer-bottom">
         <Link className="wordmark footer-mark" href={homeHref}><span className="mark">P</span><span>blog.pistamond</span></Link>
         <p>© 2026 pistamond</p>
-        <VisitCounter />
         <Link href="/privacy">개인정보처리방침</Link>
         <Link href={backHref}>{backLabel}</Link>
       </div>

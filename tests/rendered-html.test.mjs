@@ -341,13 +341,15 @@ test("mermaid blocks become diagram placeholders", async () => {
 
 /**
  * 방문자 수는 저장소가 연결됐을 때만 센다. 로컬·테스트에는 연결 정보가 없으니
- * API는 null을 돌려주고, 푸터는 숫자 없이 그려져야 한다.
+ * API는 null을 돌려주고, 목록 머리의 방문자 수 자리는 비어 있어야 한다.
  */
 test("the visit counter stays silent without a store", async () => {
   const response = await render("/api/visit", { method: "POST" });
   assert.equal(response.status, 200);
   assert.equal(await response.json(), null);
 
-  const footer = (await (await render()).text()).split("<footer")[1];
-  assert.doesNotMatch(footer, /class="visit-counter"/);
+  // 자리는 목록 머리에 잡혀 있지만 숫자는 비어 있다.
+  const html = await (await render()).text();
+  assert.match(html, /<div class="articles-main"><p class="visit-counter"[^>]*><\/p>/);
+  assert.doesNotMatch(html, /오늘 <b>/);
 });
