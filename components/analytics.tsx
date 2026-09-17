@@ -4,10 +4,12 @@
  * 루트 레이아웃이 </body> 바로 앞에서 한 번만 렌더링하므로, 새 페이지를 추가할 때
  * 이 스크립트를 따로 붙일 필요는 없다. 페이지는 app/ 아래에 만들면 되고,
  * 측정 태그는 여기서만 관리한다.
+ *
+ * Vercel 배포별 주소와 로컬 개발 방문은 집계하지 않도록 운영 도메인에서만 wcs_do()를 부른다.
  */
 const WCS_SNIPPET = `if(!wcs_add) var wcs_add = {};
 wcs_add["wa"] = "2d2e2d4e62aa6e";
-if(window.wcs) {
+if(window.wcs && location.hostname === "blog.pistamond.dev") {
 wcs_do();
 }`;
 
