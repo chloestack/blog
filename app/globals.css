@@ -64,7 +64,7 @@ nav a:hover, footer a:not(.wordmark):hover { color: var(--accent); border-color:
 .series-badge { margin-right: .5rem; padding: .16rem .5rem; background: var(--accent-soft); color: var(--accent); font-family: var(--mono); font-size: .62rem; font-weight: 600; letter-spacing: .06em; }
 .tag.series-order { background: var(--accent-soft); color: var(--accent); border-color: color-mix(in srgb, var(--accent) 45%, transparent); }
 /* 글 본문 위 시리즈 목차. 현재 편은 강조하고, 나머지는 링크로 건너뛴다. */
-.series-nav { max-width: 96ch; margin-top: 2rem; padding: 1.1rem 1.3rem; background: var(--surface); border: 1px solid var(--line-2); border-left: 3px solid var(--accent); font-size: var(--prose-body-font-size, .95rem); }
+.series-nav { max-width: 96ch; margin-top: 2rem; padding: 1.1rem 1.3rem; background: var(--surface); border: 1px solid var(--line-2); border-left: 3px solid var(--accent); font-size: var(--prose-body-font-size, 1.1rem); }
 .series-nav-head { margin-bottom: .7rem; color: var(--ink); font-family: var(--head); font-size: .9rem; font-weight: 700; }
 .series-nav-list { margin: 0; padding: 0; list-style: none; counter-reset: none; }
 .series-nav-list li { display: flex; align-items: baseline; gap: .6rem; padding: .28rem 0; }
@@ -129,9 +129,9 @@ footer { display: grid; gap: 2.2rem; padding: 2.6rem 0 3rem; border-top: 1px sol
 /* ---------- 글 상세 ---------- */
 .article { padding: 3.8rem 0 3rem; border-bottom: 1px solid var(--line); }
 /* 제목·리드는 본문 문단과 같은 폭 안에 둔다. 96ch는 요소 자신의 글자 크기를 따르므로
-   본문(.prose, .95rem)과 같은 크기를 줘야 문단과 정확히 같은 픽셀 폭이 된다. 큰 제목에
+   본문(.prose, 1.1rem)과 같은 크기를 줘야 문단과 정확히 같은 픽셀 폭이 된다. 큰 제목에
    96ch를 그냥 주면 훨씬 넓어져 본문을 넘친다. */
-.article-head { max-width: 96ch; padding-bottom: 2.2rem; border-bottom: 1px solid var(--line); font-size: var(--prose-body-font-size, .95rem); }
+.article-head { max-width: 96ch; padding-bottom: 2.2rem; border-bottom: 1px solid var(--line); font-size: var(--prose-body-font-size, 1.1rem); }
 .back-link { display: inline-block; margin-bottom: 1.7rem; border-bottom: 1px solid transparent; color: var(--ink-3); font-family: var(--mono); font-size: .68rem; letter-spacing: .04em; transition: color .15s, border-color .15s; }
 .back-link:hover { color: var(--accent); border-color: var(--accent); }
 .article-head h1 { margin: 1.35rem 0 1rem; font-family: var(--head); font-size: clamp(1.85rem, 5vw, 2.9rem); font-weight: 800; line-height: 1.24; letter-spacing: -.045em; text-wrap: balance; }
@@ -148,12 +148,12 @@ footer { display: grid; gap: 2.2rem; padding: 2.6rem 0 3rem; border-top: 1px sol
 
 /* 글줄은 96ch로 묶되 폭 제한은 본문 요소에만 건다. 가로선을 긋는 요소(hr, h2)는
    기둥 전체를 쓰게 두어야 머리말 아래 선과 같은 폭으로 떨어진다. */
-.prose { --prose-body-font-size: .95rem; margin-top: 2.6rem; color: var(--ink-2); }
+.prose { --prose-body-font-size: 1.1rem; margin-top: 2.6rem; color: var(--ink-2); }
 .prose > * { max-width: 96ch; }
 .prose > hr, .prose > h2 { max-width: none; }
 .prose h2 { margin: 3.2rem 0 .6rem; padding-top: 1.4rem; border-top: 1px solid var(--line-2); font-family: var(--head); font-size: 1.5rem; font-weight: 800; line-height: 1.4; letter-spacing: -.035em; color: var(--ink); }
-.prose h3 { margin: 2.1rem 0 .45rem; font-family: var(--head); font-size: 1.1rem; font-weight: 700; letter-spacing: -.025em; color: var(--ink); }
-.prose h4 { margin: 1.6rem 0 .3rem; font-size: .95rem; font-weight: 600; color: var(--ink); }
+.prose h3 { margin: 2.1rem 0 .45rem; font-family: var(--head); font-size: 1.25rem; font-weight: 700; letter-spacing: -.025em; color: var(--ink); }
+.prose h4 { margin: 1.6rem 0 .3rem; font-size: 1.1rem; font-weight: 600; color: var(--ink); }
 .prose p, .prose li { font-size: var(--prose-body-font-size); }
 .prose p { margin: .75rem 0; }
 .prose ul, .prose ol { margin: .75rem 0; padding-left: 1.3rem; }
@@ -162,12 +162,12 @@ footer { display: grid; gap: 2.2rem; padding: 2.6rem 0 3rem; border-top: 1px sol
 .prose a { border-bottom: 1px solid var(--accent); color: var(--accent); }
 .prose strong { color: var(--ink); font-weight: 600; }
 .prose hr { margin: 2rem 0; border: 0; border-top: 1px solid var(--line); }
-.prose blockquote { margin: 1.15rem 0; padding: .3rem 0 .3rem 1.1rem; border-left: 3px solid var(--accent); color: var(--ink); font-size: .93rem; }
+.prose blockquote { margin: 1.15rem 0; padding: .3rem 0 .3rem 1.1rem; border-left: 3px solid var(--accent); color: var(--ink); font-size: 1.07rem; }
 .prose blockquote p { margin: .35rem 0; }
 .prose code { padding: .1rem .32rem; background: var(--surface-2); border: 1px solid var(--line-2); font-family: var(--mono); font-size: .84em; color: var(--ink); }
 .prose pre { margin: 1.15rem 0; padding: 1.2rem 1.3rem; overflow-x: auto; background: var(--ink); color: #cfdbde; font-family: var(--mono); font-size: .78rem; line-height: 1.85; }
 .prose pre code { padding: 0; border: 0; background: none; color: inherit; font-size: inherit; }
-.prose table { display: block; width: 100%; margin: 1.2rem 0; overflow-x: auto; border-collapse: collapse; font-size: .84rem; }
+.prose table { display: block; width: 100%; margin: 1.2rem 0; overflow-x: auto; border-collapse: collapse; font-size: .97rem; }
 .prose th, .prose td { padding: .6rem .8rem; border: 1px solid var(--line); text-align: left; vertical-align: top; }
 .prose td { background: var(--surface-2); }
 .prose th { background: var(--surface-2); color: var(--ink); font-family: var(--head); font-weight: 700; white-space: nowrap; }
