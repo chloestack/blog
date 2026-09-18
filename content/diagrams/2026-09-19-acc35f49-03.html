@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AOF 재작성 흐름</title>
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; font-family: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; }
+  .diagram-wrap { width: 100%; max-width: 960px; margin: 0 auto; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<div class="diagram-wrap">
+<svg viewBox="0 0 960 340" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="2026-09-19-acc35f49-03-aof-rewrite-title 2026-09-19-acc35f49-03-aof-rewrite-desc">
+  <title id="2026-09-19-acc35f49-03-aof-rewrite-title">AOF 재작성(BGREWRITEAOF) 흐름</title>
+  <desc id="2026-09-19-acc35f49-03-aof-rewrite-desc">Redis AOF 파일이 명령을 누적하다가 BGREWRITEAOF로 재작성 프로세스를 실행하고, 최종 상태만 담은 새 AOF로 원자적으로 교체되는 과정을 왼쪽에서 오른쪽으로 보여줍니다.</desc>
+
+  <defs>
+    <!-- 기본 화살표 (muted) -->
+    <marker id="2026-09-19-acc35f49-03-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <!-- 포커스 화살표 (accent) -->
+    <marker id="2026-09-19-acc35f49-03-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+  </defs>
+
+  <!-- 배경 -->
+  <rect width="960" height="340" fill="#f8fafb"/>
+
+  <!-- ══════════════════ 화살표 (노드보다 먼저) ══════════════════ -->
+
+  <!-- CMD → AOF-FILE : appendonly.aof에 추가 -->
+  <line x1="196" y1="132" x2="268" y2="132" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-19-acc35f49-03-arrow)"/>
+  <rect x="198" y="116" width="68" height="14" rx="2" fill="#f8fafb"/>
+  <text x="232" y="126" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">추가 기록</text>
+
+  <!-- AOF-FILE → RW : BGREWRITEAOF -->
+  <line x1="396" y1="132" x2="468" y2="132" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-19-acc35f49-03-arrow-accent)"/>
+  <rect x="398" y="116" width="68" height="14" rx="2" fill="#f8fafb"/>
+  <text x="432" y="126" fill="#0d5763" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle" font-weight="500">BGREWRITEAOF</text>
+
+  <!-- RW → NEW-AOF : 최종 상태만 기록 -->
+  <line x1="596" y1="132" x2="668" y2="132" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-19-acc35f49-03-arrow)"/>
+  <rect x="598" y="116" width="68" height="14" rx="2" fill="#f8fafb"/>
+  <text x="632" y="126" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">최종 상태만</text>
+
+  <!-- NEW-AOF → AOF2 : 원자적 교체 (아래로 꺾어 AOF-FILE 아래 도착) -->
+  <!-- 세로 내림 → AOF2 쪽으로 수평 이동 -->
+  <path d="M 796 132 L 836 132 L 836 220 L 344 220 L 344 168" fill="none" stroke="#0d5763" stroke-width="1.2" stroke-dasharray="5,4" marker-end="url(#2026-09-19-acc35f49-03-arrow-accent)"/>
+  <rect x="558" y="206" width="56" height="14" rx="2" fill="#f8fafb"/>
+  <text x="586" y="216" fill="#0d5763" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="500">원자적 교체</text>
+
+  <!-- ══════════════════ 노드 ══════════════════ -->
+
+  <!-- 노드 1: CMD (명령 입력) — input 타입 -->
+  <!-- x=36 y=88 w=160 h=88 -->
+  <rect x="36" y="88" width="160" height="88" rx="6" fill="#f8fafb"/>
+  <rect x="36" y="88" width="160" height="88" rx="6" fill="rgba(58,84,143,0.06)" stroke="rgba(58,84,143,0.45)" stroke-width="1"/>
+  <rect x="44" y="96" width="32" height="12" rx="2" fill="transparent" stroke="rgba(58,84,143,0.35)" stroke-width="0.8"/>
+  <text x="60" y="105" fill="rgba(58,84,143,0.75)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">CMD</text>
+  <text x="116" y="134" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Mono', monospace" text-anchor="middle">SET foo 1</text>
+  <text x="116" y="150" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Mono', monospace" text-anchor="middle">SET foo 2</text>
+  <text x="116" y="166" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Mono', monospace" text-anchor="middle">SET foo 3</text>
+
+  <!-- 노드 2: AOF 파일 (누적) — store 타입 + warn 색조 -->
+  <!-- x=268 y=88 w=128 h=88 -->
+  <rect x="268" y="88" width="128" height="88" rx="6" fill="#f8fafb"/>
+  <rect x="268" y="88" width="128" height="88" rx="6" fill="rgba(169,106,8,0.07)" stroke="rgba(169,106,8,0.50)" stroke-width="1"/>
+  <rect x="276" y="96" width="32" height="12" rx="2" fill="transparent" stroke="rgba(169,106,8,0.40)" stroke-width="0.8"/>
+  <text x="292" y="105" fill="rgba(169,106,8,0.80)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">AOF</text>
+  <text x="332" y="130" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">AOF 파일</text>
+  <text x="332" y="150" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">명령 누적</text>
+
+  <!-- 노드 2b: AOF 파일 간소화됨 (교체 후) — store + ok 색조 -->
+  <!-- x=268 y=168 — 아래쪽에 위치 (경로 도착지) -->
+  <!-- 실제로 동일한 AOF 파일이지만 교체됨을 표현하기 위해 별도 노드로 배치 -->
+  <!-- 위 경로가 y=168에 도달하므로 y=168 h=80 -->
+  <rect x="268" y="172" width="152" height="76" rx="6" fill="#f8fafb"/>
+  <rect x="268" y="172" width="152" height="76" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <rect x="276" y="180" width="40" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="296" y="189" fill="rgba(13,87,99,0.80)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">교체됨</text>
+  <text x="344" y="214" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">AOF 파일</text>
+  <text x="344" y="232" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">간소화됨</text>
+
+  <!-- 노드 3: 재작성 프로세스 — focal (accent) -->
+  <!-- x=468 y=88 w=128 h=88 -->
+  <rect x="468" y="88" width="128" height="88" rx="6" fill="#f8fafb"/>
+  <rect x="468" y="88" width="128" height="88" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="476" y="96" width="40" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="496" y="105" fill="#0d5763" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">PROCESS</text>
+  <text x="532" y="128" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">재작성</text>
+  <text x="532" y="146" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">프로세스</text>
+  <text x="532" y="164" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">현재 메모리 기준</text>
+
+  <!-- 노드 4: 새 AOF — focal (accent) -->
+  <!-- x=668 y=88 w=128 h=88 -->
+  <rect x="668" y="88" width="128" height="88" rx="6" fill="#f8fafb"/>
+  <rect x="668" y="88" width="128" height="88" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="676" y="96" width="40" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="696" y="105" fill="#0d5763" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">NEW AOF</text>
+  <text x="732" y="128" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">새 AOF</text>
+  <text x="732" y="148" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">SET foo 3</text>
+  <text x="732" y="164" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">한 줄로 압축</text>
+
+  <!-- ══════════════════ 범례 ══════════════════ -->
+  <line x1="36" y1="282" x2="924" y2="282" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+  <text x="36" y="296" fill="#3f545c" font-size="9" font-family="'IBM Plex Mono', monospace" letter-spacing="0.14em">LEGEND</text>
+
+  <!-- 범례: 누적 중 -->
+  <rect x="108" y="285" width="12" height="12" rx="2" fill="rgba(169,106,8,0.07)" stroke="rgba(169,106,8,0.50)" stroke-width="1"/>
+  <text x="126" y="295" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">명령 누적 중</text>
+
+  <!-- 범례: 재작성/교체 -->
+  <rect x="248" y="285" width="12" height="12" rx="2" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="266" y="295" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">재작성 / 교체</text>
+
+  <!-- 범례: BGREWRITEAOF 실선 -->
+  <line x1="400" y1="291" x2="428" y2="291" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-19-acc35f49-03-arrow-accent)"/>
+  <text x="436" y="295" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">BGREWRITEAOF 트리거</text>
+
+  <!-- 범례: 원자적 교체 점선 -->
+  <line x1="640" y1="291" x2="668" y2="291" stroke="#0d5763" stroke-width="1.2" stroke-dasharray="5,4" marker-end="url(#2026-09-19-acc35f49-03-arrow-accent)"/>
+  <text x="676" y="295" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">원자적 교체</text>
+
+</svg>
+</div>
+</body>
+</html>

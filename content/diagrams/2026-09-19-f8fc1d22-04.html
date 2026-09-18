@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; font-family: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; }
+  .diagram-wrap { width: 100%; max-width: 960px; margin: 0 auto; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<div class="diagram-wrap">
+<svg viewBox="0 0 960 600" xmlns="http://www.w3.org/2000/svg"
+     role="img" aria-labelledby="2026-09-19-f8fc1d22-04-retry-title 2026-09-19-f8fc1d22-04-retry-desc">
+  <title id="2026-09-19-f8fc1d22-04-retry-title">WebClient 재시도 판단 흐름</title>
+  <desc id="2026-09-19-f8fc1d22-04-retry-desc">오류 발생 시 재시도 가능 여부, 멱등성, 횟수 초과를 순서대로 판단해 즉시 실패·재시도 불가·최종 실패·백오프 재시도 중 하나로 분기하는 흐름도.</desc>
+
+  <defs>
+    <!-- 기본 muted 화살표 -->
+    <marker id="2026-09-19-f8fc1d22-04-arr" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0,8 3,0 6" fill="#3f545c"/>
+    </marker>
+    <!-- accent 화살표 (백오프 루프) -->
+    <marker id="2026-09-19-f8fc1d22-04-arr-acc" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0,8 3,0 6" fill="#0d5763"/>
+    </marker>
+  </defs>
+
+  <!-- 배경 -->
+  <rect width="960" height="600" fill="#f8fafb"/>
+
+  <!-- ============================================================
+       CONNECTORS (z-order: 화살표 먼저, 박스 나중)
+       ============================================================ -->
+
+  <!-- E → Q1 (직선, 같은 y=220) -->
+  <line x1="175" y1="220" x2="243" y2="220" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-19-f8fc1d22-04-arr)"/>
+
+  <!-- Q1 →|아니오| F (아래로: Q1 바닥 → F 상단, 같은 x=304) -->
+  <line x1="304" y1="252" x2="304" y2="320" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-19-f8fc1d22-04-arr)"/>
+
+  <!-- Q1 →|예| Q2 (직선, 같은 y=220) -->
+  <line x1="365" y1="220" x2="433" y2="220" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-19-f8fc1d22-04-arr)"/>
+
+  <!-- Q2 →|아니오| F2 (아래로, x=494) -->
+  <line x1="494" y1="252" x2="494" y2="320" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-19-f8fc1d22-04-arr)"/>
+
+  <!-- Q2 →|예| Q3 (직선, y=220) -->
+  <line x1="555" y1="220" x2="623" y2="220" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-19-f8fc1d22-04-arr)"/>
+
+  <!-- Q3 →|예| F3 (아래로, x=684) -->
+  <line x1="684" y1="252" x2="684" y2="320" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-19-f8fc1d22-04-arr)"/>
+
+  <!-- Q3 →|아니오| B (직선, y=220) -->
+  <line x1="745" y1="220" x2="793" y2="220" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-19-f8fc1d22-04-arr)"/>
+
+  <!-- B → E 루프: B 바닥(x=844,y=252) → 아래 y=480 → 왼쪽 x=108 → 위 y=220 → E 오른쪽(x=108,y=220) -->
+  <!-- 세그먼트1: B 바닥 → y=480 (수직) -->
+  <path d="M844,252 L844,472" stroke="#0d5763" stroke-width="1" fill="none"/>
+  <!-- 세그먼트2: y=472, 844→108, r=8 코너 두 개 -->
+  <path d="M844,472 Q836,480 828,480 L120,480 Q112,480 108,472" stroke="#0d5763" stroke-width="1" fill="none"/>
+  <!-- 세그먼트3: x=108 → y=228 (수직, arrow to E 왼쪽) -->
+  <path d="M108,472 L108,228" stroke="#0d5763" stroke-width="1" fill="none" marker-end="url(#2026-09-19-f8fc1d22-04-arr-acc)"/>
+
+  <!-- ============================================================
+       ARROW LABELS (mask + text)
+       ============================================================ -->
+
+  <!-- Q1 아니오 (왼쪽 branch, label 위치: x=304 y선=252→320 중간=286 → label 위) -->
+  <rect x="270" y="266" width="40" height="14" rx="2" fill="#f8fafb"/>
+  <text x="290" y="276" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR',sans-serif" text-anchor="middle">아니오</text>
+
+  <!-- Q1 예 (오른쪽, y=220 라인, 중간 x=(365+433)/2=399) -->
+  <rect x="381" y="205" width="24" height="12" rx="2" fill="#f8fafb"/>
+  <text x="393" y="215" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR',sans-serif" text-anchor="middle">예</text>
+
+  <!-- Q2 아니오 -->
+  <rect x="460" y="266" width="40" height="14" rx="2" fill="#f8fafb"/>
+  <text x="480" y="276" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR',sans-serif" text-anchor="middle">아니오</text>
+
+  <!-- Q2 예 -->
+  <rect x="572" y="205" width="24" height="12" rx="2" fill="#f8fafb"/>
+  <text x="584" y="215" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR',sans-serif" text-anchor="middle">예</text>
+
+  <!-- Q3 예 -->
+  <rect x="651" y="266" width="24" height="14" rx="2" fill="#f8fafb"/>
+  <text x="663" y="276" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR',sans-serif" text-anchor="middle">예</text>
+
+  <!-- Q3 아니오 -->
+  <rect x="749" y="205" width="40" height="12" rx="2" fill="#f8fafb"/>
+  <text x="769" y="215" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR',sans-serif" text-anchor="middle">아니오</text>
+
+  <!-- B → E 루프 label (백오프 후 재시도 루프, y=480 라인 중간 x=(828+120)/2=474) -->
+  <rect x="438" y="483" width="80" height="14" rx="2" fill="#f8fafb"/>
+  <text x="478" y="494" fill="#0d5763" font-size="10" font-family="'IBM Plex Sans KR',sans-serif" text-anchor="middle">백오프 후 재시도</text>
+
+  <!-- ============================================================
+       NODES
+       ============================================================ -->
+
+  <!-- E: 오류 발생 — link 계열 (시작) -->
+  <!-- paper mask -->
+  <rect x="72" y="192" width="103" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="72" y="192" width="103" height="56" rx="6" fill="rgba(58,84,143,0.08)" stroke="#3a548f" stroke-width="1"/>
+  <!-- tag -->
+  <rect x="80" y="198" width="28" height="12" rx="2" fill="transparent" stroke="rgba(58,84,143,0.4)" stroke-width="0.8"/>
+  <text x="94" y="207" fill="rgba(58,84,143,0.8)" font-size="8" font-family="'IBM Plex Mono',monospace" text-anchor="middle" letter-spacing="0.08em">START</text>
+  <!-- name -->
+  <text x="123" y="228" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR',sans-serif" text-anchor="middle">오류 발생</text>
+
+  <!-- Q1: 재시도 가능 오류인가 — decision diamond, accent -->
+  <!-- diamond: cx=304 cy=220, half-w=61 half-h=32 -->
+  <rect x="243" y="188" width="122" height="64" rx="0" fill="#f8fafb" stroke="none"/>
+  <polygon points="304,188 365,220 304,252 243,220" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="304" y="215" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR',sans-serif" text-anchor="middle">재시도 가능</text>
+  <text x="304" y="229" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR',sans-serif" text-anchor="middle">오류인가</text>
+
+  <!-- F: 즉시 실패 (4xx·비즈니스) — stop -->
+  <rect x="244" y="320" width="120" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="244" y="320" width="120" height="56" rx="6" fill="rgba(148,56,43,0.07)" stroke="#94382b" stroke-width="1"/>
+  <rect x="252" y="326" width="24" height="12" rx="2" fill="transparent" stroke="rgba(148,56,43,0.4)" stroke-width="0.8"/>
+  <text x="264" y="335" fill="rgba(148,56,43,0.8)" font-size="8" font-family="'IBM Plex Mono',monospace" text-anchor="middle" letter-spacing="0.08em">FAIL</text>
+  <text x="304" y="355" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR',sans-serif" text-anchor="middle">즉시 실패</text>
+  <text x="304" y="369" fill="#3f545c" font-size="9" font-family="'IBM Plex Mono',monospace" text-anchor="middle">4xx · 비즈니스</text>
+
+  <!-- Q2: 멱등성 있는 메서드인가 — decision diamond, accent -->
+  <rect x="433" y="188" width="122" height="64" rx="0" fill="#f8fafb" stroke="none"/>
+  <polygon points="494,188 555,220 494,252 433,220" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="494" y="215" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR',sans-serif" text-anchor="middle">멱등성 있는</text>
+  <text x="494" y="229" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR',sans-serif" text-anchor="middle">메서드인가</text>
+
+  <!-- F2: 재시도 불가 (POST 주의) — stop -->
+  <rect x="434" y="320" width="120" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="434" y="320" width="120" height="56" rx="6" fill="rgba(148,56,43,0.07)" stroke="#94382b" stroke-width="1"/>
+  <rect x="442" y="326" width="24" height="12" rx="2" fill="transparent" stroke="rgba(148,56,43,0.4)" stroke-width="0.8"/>
+  <text x="454" y="335" fill="rgba(148,56,43,0.8)" font-size="8" font-family="'IBM Plex Mono',monospace" text-anchor="middle" letter-spacing="0.08em">FAIL</text>
+  <text x="494" y="355" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR',sans-serif" text-anchor="middle">재시도 불가</text>
+  <text x="494" y="369" fill="#3f545c" font-size="9" font-family="'IBM Plex Mono',monospace" text-anchor="middle">POST 주의</text>
+
+  <!-- Q3: 횟수 초과인가 — decision diamond, accent (focal) -->
+  <rect x="623" y="188" width="122" height="64" rx="0" fill="#f8fafb" stroke="none"/>
+  <polygon points="684,188 745,220 684,252 623,220" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.5"/>
+  <text x="684" y="215" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR',sans-serif" text-anchor="middle">횟수 초과</text>
+  <text x="684" y="229" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR',sans-serif" text-anchor="middle">인가</text>
+
+  <!-- F3: 최종 실패 (fallback 호출) — stop + accent (focal) -->
+  <rect x="624" y="320" width="120" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="624" y="320" width="120" height="56" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.5"/>
+  <rect x="632" y="326" width="44" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.4)" stroke-width="0.8"/>
+  <text x="654" y="335" fill="rgba(13,87,99,0.8)" font-size="8" font-family="'IBM Plex Mono',monospace" text-anchor="middle" letter-spacing="0.08em">FALLBACK</text>
+  <text x="684" y="355" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR',sans-serif" text-anchor="middle">최종 실패</text>
+  <text x="684" y="369" fill="#0d5763" font-size="9" font-family="'IBM Plex Mono',monospace" text-anchor="middle">fallback 호출</text>
+
+  <!-- B: 백오프 대기 후 재시도 — backend -->
+  <rect x="793" y="192" width="103" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="793" y="192" width="103" height="56" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="801" y="198" width="32" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.4)" stroke-width="0.8"/>
+  <text x="817" y="207" fill="rgba(18,33,39,0.7)" font-size="8" font-family="'IBM Plex Mono',monospace" text-anchor="middle" letter-spacing="0.08em">RETRY</text>
+  <text x="844" y="228" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR',sans-serif" text-anchor="middle">백오프 대기</text>
+  <text x="844" y="242" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR',sans-serif" text-anchor="middle">후 재시도</text>
+
+  <!-- ============================================================
+       LEGEND STRIP
+       ============================================================ -->
+  <line x1="30" y1="540" x2="930" y2="540" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+
+  <!-- legend: 시작/오류 -->
+  <rect x="30" y="553" width="14" height="14" rx="3" fill="rgba(58,84,143,0.08)" stroke="#3a548f" stroke-width="1"/>
+  <text x="50" y="564" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR',sans-serif">시작·오류</text>
+
+  <!-- legend: 판단 -->
+  <polygon points="110,560 126,553 142,560 126,567" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="150" y="564" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR',sans-serif">판단</text>
+
+  <!-- legend: 실패 종료 -->
+  <rect x="218" y="553" width="14" height="14" rx="3" fill="rgba(148,56,43,0.07)" stroke="#94382b" stroke-width="1"/>
+  <text x="238" y="564" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR',sans-serif">실패 종료</text>
+
+  <!-- legend: fallback(focal) -->
+  <rect x="326" y="553" width="14" height="14" rx="3" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.5"/>
+  <text x="346" y="564" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR',sans-serif">fallback (핵심 종료)</text>
+
+  <!-- legend: 백오프·재시도 -->
+  <rect x="494" y="553" width="14" height="14" rx="3" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <text x="514" y="564" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR',sans-serif">백오프·재시도</text>
+
+</svg>
+</div>
+</body>
+</html>

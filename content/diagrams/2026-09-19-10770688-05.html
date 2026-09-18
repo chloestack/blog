@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; font-family: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; }
+  svg { display: block; max-width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 360" width="960" height="360" role="img" aria-labelledby="2026-09-19-10770688-05-ragas-recall-title 2026-09-19-10770688-05-ragas-recall-desc">
+  <title id="2026-09-19-10770688-05-ragas-recall-title">Context Recall 낮음 — 진단 흐름도</title>
+  <desc id="2026-09-19-10770688-05-ragas-recall-desc">Context Recall이 낮을 때 원인을 진단하고 수정 방향을 결정하는 흐름도. 청크 경계 문제라면 Semantic Chunking을 적용하고, 임베딩 모델 부적합이라면 도메인 특화 임베딩으로 교체하며, 그 외에는 Top-k 증가 또는 재순위화를 권장한다.</desc>
+
+  <defs>
+    <!-- Arrow markers -->
+    <marker id="2026-09-19-10770688-05-rc-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-09-19-10770688-05-rc-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="960" height="360" fill="#f8fafb"/>
+
+  <!-- ────────────────────────────────────────────
+       ARROWS (drawn before boxes)
+  ──────────────────────────────────────────── -->
+
+  <!-- LOW → Q1: horizontal -->
+  <line x1="196" y1="180" x2="256" y2="180" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-19-10770688-05-rc-arrow)"/>
+
+  <!-- Q1 →|예| FIX1: right from diamond top-right, up and right -->
+  <!-- Q1 center: 328,180. FIX1 center: 500,100 -->
+  <!-- Exit right of Q1: 400,180 → elbow up to 500,100 -->
+  <path d="M 400,180 L 456,180 L 456,100 L 464,100" fill="none" stroke="#0d5763" stroke-width="1" marker-end="url(#2026-09-19-10770688-05-rc-arrow-accent)"/>
+  <!-- "예" label -->
+  <rect x="407" y="160" width="20" height="13" rx="2" fill="#f8fafb"/>
+  <text x="417" y="170" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="500">예</text>
+
+  <!-- Q1 →|아니오| Q2: downward from Q1 bottom to Q2 -->
+  <!-- Q1 center: 328,180. Q2 center: 328,272 -->
+  <path d="M 328,220 L 328,252" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-19-10770688-05-rc-arrow)"/>
+  <!-- "아니오" label -->
+  <rect x="288" y="229" width="44" height="13" rx="2" fill="#f8fafb"/>
+  <text x="310" y="239" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="500">아니오</text>
+
+  <!-- Q2 →|예| FIX2: right exit from Q2 -->
+  <!-- Q2 center: 328,272. FIX2 center: 500,272 -->
+  <line x1="400" y1="272" x2="464" y2="272" stroke="#0d5763" stroke-width="1" marker-end="url(#2026-09-19-10770688-05-rc-arrow-accent)"/>
+  <!-- "예" label -->
+  <rect x="407" y="258" width="20" height="13" rx="2" fill="#f8fafb"/>
+  <text x="417" y="268" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="500">예</text>
+
+  <!-- Q2 →|아니오| FIX3: downward from Q2 bottom to FIX3 -->
+  <!-- Q2 center: 328,272. FIX3 center: 500,344 -->
+  <path d="M 328,312 L 328,344 L 464,344" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-19-10770688-05-rc-arrow)"/>
+  <!-- "아니오" label -->
+  <rect x="288" y="321" width="44" height="13" rx="2" fill="#f8fafb"/>
+  <text x="310" y="331" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="500">아니오</text>
+
+  <!-- ────────────────────────────────────────────
+       NODES
+  ──────────────────────────────────────────── -->
+
+  <!-- LOW: Context Recall 낮음 (start / problem node — accent focal) -->
+  <!-- x=56, y=152, w=140, h=56, cx=126, cy=180 -->
+  <rect x="56" y="152" width="140" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="56" y="152" width="140" height="56" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <!-- tag -->
+  <rect x="64" y="158" width="44" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="86" y="167" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">METRIC</text>
+  <!-- name -->
+  <text x="126" y="182" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Context Recall</text>
+  <text x="126" y="197" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">낮음</text>
+
+  <!-- Q1: 청크 경계 문제인가 (decision diamond) -->
+  <!-- center: 328,180, half-width=72, half-height=40 -->
+  <rect x="256" y="140" width="144" height="80" rx="0" fill="#f8fafb"/>
+  <polygon points="328,140 400,180 328,220 256,180" fill="rgba(13,87,99,0.05)" stroke="#0d5763" stroke-width="1"/>
+  <text x="328" y="175" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">청크 경계</text>
+  <text x="328" y="189" fill="#122127" font-size="11" font-weight="500" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">문제인가?</text>
+
+  <!-- Q2: 임베딩 모델 부적합인가 (decision diamond) -->
+  <!-- center: 328,272, half-width=72, half-height=40 -->
+  <rect x="256" y="232" width="144" height="80" rx="0" fill="#f8fafb"/>
+  <polygon points="328,232 400,272 328,312 256,272" fill="rgba(13,87,99,0.05)" stroke="#0d5763" stroke-width="1"/>
+  <text x="328" y="267" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">임베딩 모델</text>
+  <text x="328" y="281" fill="#122127" font-size="11" font-weight="500" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">부적합인가?</text>
+
+  <!-- FIX1: Semantic Chunking 적용 -->
+  <!-- x=464, y=72, w=176, h=56, cx=552, cy=100 -->
+  <rect x="464" y="72" width="176" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="464" y="72" width="176" height="56" rx="6" fill="rgba(40,109,80,0.07)" stroke="#286d50" stroke-width="1"/>
+  <rect x="472" y="78" width="36" height="12" rx="2" fill="transparent" stroke="rgba(40,109,80,0.40)" stroke-width="0.8"/>
+  <text x="490" y="87" fill="rgba(40,109,80,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">FIX</text>
+  <text x="552" y="100" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Mono', monospace" text-anchor="middle">Semantic Chunking</text>
+  <text x="552" y="115" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">적용</text>
+
+  <!-- FIX2: 도메인 특화 임베딩 교체 -->
+  <!-- x=464, y=244, w=176, h=56, cx=552, cy=272 -->
+  <rect x="464" y="244" width="176" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="464" y="244" width="176" height="56" rx="6" fill="rgba(40,109,80,0.07)" stroke="#286d50" stroke-width="1"/>
+  <rect x="472" y="250" width="36" height="12" rx="2" fill="transparent" stroke="rgba(40,109,80,0.40)" stroke-width="0.8"/>
+  <text x="490" y="259" fill="rgba(40,109,80,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">FIX</text>
+  <text x="552" y="272" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">도메인 특화 임베딩</text>
+  <text x="552" y="287" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">교체</text>
+
+  <!-- FIX3: Top-k 증가 또는 재순위화 -->
+  <!-- x=464, y=316, w=196, h=56, cx=562, cy=344 -->
+  <rect x="464" y="316" width="196" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="464" y="316" width="196" height="56" rx="6" fill="rgba(40,109,80,0.07)" stroke="#286d50" stroke-width="1"/>
+  <rect x="472" y="322" width="36" height="12" rx="2" fill="transparent" stroke="rgba(40,109,80,0.40)" stroke-width="0.8"/>
+  <text x="490" y="331" fill="rgba(40,109,80,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">FIX</text>
+  <text x="562" y="344" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Mono', monospace" text-anchor="middle">Top-k 증가</text>
+  <text x="562" y="359" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">또는 재순위화</text>
+
+</svg>
+</body>
+</html>

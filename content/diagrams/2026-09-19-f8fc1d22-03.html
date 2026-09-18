@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 600" role="img" aria-labelledby="2026-09-19-f8fc1d22-03-wc-timeout-title 2026-09-19-f8fc1d22-03-wc-timeout-desc">
+  <title id="2026-09-19-f8fc1d22-03-wc-timeout-title">Spring WebClient 요청 생애주기와 타임아웃</title>
+  <desc id="2026-09-19-f8fc1d22-03-wc-timeout-desc">요청 발행부터 완료까지 커넥션 풀 대기, TCP 연결, TLS 협상, 요청 전송, 응답 수신 순서로 흐르며, 각 단계에 해당 타임아웃 설정이 점선으로 연결된 흐름도.</desc>
+
+  <defs>
+    <!-- 기본 화살표 -->
+    <marker id="2026-09-19-f8fc1d22-03-arrow-default" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <!-- 악센트 화살표 -->
+    <marker id="2026-09-19-f8fc1d22-03-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <!-- 타임아웃(경고) 화살표 -->
+    <marker id="2026-09-19-f8fc1d22-03-arrow-warn" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#6c8188"/>
+    </marker>
+  </defs>
+
+  <!-- 배경 -->
+  <rect width="960" height="600" fill="#f8fafb"/>
+
+  <!-- ===== 타임아웃 노드 (오른쪽 열) — 박스를 나중에 그리므로 화살표 먼저 ===== -->
+
+  <!-- T1 pendingAcquireTimeout → ACQ 점선 -->
+  <!-- T1 box: x=628, y=132, w=200, h=52, cy=158. ACQ box: x=388, y=132, h=52, 오른쪽 edge x=508 -->
+  <!-- 연결: T1 left edge (x=628, y=158) → ACQ right edge (x=508, y=158) -->
+  <line x1="628" y1="158" x2="512" y2="158"
+        stroke="#6c8188" stroke-width="1" stroke-dasharray="4,3"
+        marker-end="url(#2026-09-19-f8fc1d22-03-arrow-warn)"/>
+
+  <!-- T2 CONNECT_TIMEOUT → CON 점선 -->
+  <!-- T2 box: x=628, y=212, h=52, cy=238. CON box right edge x=508 -->
+  <line x1="628" y1="238" x2="512" y2="238"
+        stroke="#6c8188" stroke-width="1" stroke-dasharray="4,3"
+        marker-end="url(#2026-09-19-f8fc1d22-03-arrow-warn)"/>
+
+  <!-- T3 TLS Timeout → TLS 점선 -->
+  <!-- T3 box: x=628, y=292, h=52, cy=318. TLS box right edge x=508 -->
+  <line x1="628" y1="318" x2="512" y2="318"
+        stroke="#6c8188" stroke-width="1" stroke-dasharray="4,3"
+        marker-end="url(#2026-09-19-f8fc1d22-03-arrow-warn)"/>
+
+  <!-- T4 responseTimeout → RECV 점선 -->
+  <!-- T4 box: x=628, y=452, h=52, cy=478. RECV box right edge x=508 -->
+  <line x1="628" y1="478" x2="512" y2="478"
+        stroke="#6c8188" stroke-width="1" stroke-dasharray="4,3"
+        marker-end="url(#2026-09-19-f8fc1d22-03-arrow-warn)"/>
+
+  <!-- ===== 메인 흐름 화살표 (박스 그리기 전) ===== -->
+
+  <!-- REQ → ACQ (y=72+52=124 bottom of REQ → y=132 top of ACQ) -->
+  <!-- REQ: x=388,y=72,w=120,h=52 → center x=448 -->
+  <line x1="448" y1="124" x2="448" y2="128"
+        stroke="#3f545c" stroke-width="1.2"
+        marker-end="url(#2026-09-19-f8fc1d22-03-arrow-default)"/>
+
+  <!-- ACQ → CON -->
+  <line x1="448" y1="184" x2="448" y2="208"
+        stroke="#3f545c" stroke-width="1.2"
+        marker-end="url(#2026-09-19-f8fc1d22-03-arrow-default)"/>
+
+  <!-- CON → TLS -->
+  <line x1="448" y1="264" x2="448" y2="288"
+        stroke="#3f545c" stroke-width="1.2"
+        marker-end="url(#2026-09-19-f8fc1d22-03-arrow-default)"/>
+
+  <!-- TLS → SEND -->
+  <line x1="448" y1="344" x2="448" y2="368"
+        stroke="#3f545c" stroke-width="1.2"
+        marker-end="url(#2026-09-19-f8fc1d22-03-arrow-default)"/>
+
+  <!-- SEND → RECV -->
+  <line x1="448" y1="420" x2="448" y2="448"
+        stroke="#3f545c" stroke-width="1.2"
+        marker-end="url(#2026-09-19-f8fc1d22-03-arrow-default)"/>
+
+  <!-- RECV → DONE -->
+  <line x1="448" y1="504" x2="448" y2="528"
+        stroke="#0d5763" stroke-width="1.2"
+        marker-end="url(#2026-09-19-f8fc1d22-03-arrow-accent)"/>
+
+  <!-- ===== 메인 흐름 노드 ===== -->
+
+  <!-- REQ "요청 발행" — input 처리 (시작점) -->
+  <!-- x=388, y=72, w=120, h=52 -->
+  <rect x="388" y="72" width="120" height="52" rx="24" fill="#f8fafb"/>
+  <rect x="388" y="72" width="120" height="52" rx="24"
+        fill="rgba(58,84,143,0.08)" stroke="#3a548f" stroke-width="1"/>
+  <text x="448" y="93" fill="#122127" font-size="12" font-weight="600"
+        font-family="'IBM Plex Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif"
+        text-anchor="middle">요청 발행</text>
+  <text x="448" y="112" fill="#3a548f" font-size="10"
+        font-family="'IBM Plex Mono',ui-monospace,monospace"
+        text-anchor="middle">WebClient.get()</text>
+
+  <!-- ACQ "커넥션 풀 대기" — step -->
+  <!-- x=388, y=132, w=120, h=52 -->
+  <rect x="388" y="132" width="120" height="52" rx="6" fill="#f8fafb"/>
+  <rect x="388" y="132" width="120" height="52" rx="6"
+        fill="white" stroke="#122127" stroke-width="1"/>
+  <text x="448" y="154" fill="#122127" font-size="12" font-weight="600"
+        font-family="'IBM Plex Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif"
+        text-anchor="middle">커넥션 풀 대기</text>
+  <text x="448" y="172" fill="#3f545c" font-size="10"
+        font-family="'IBM Plex Mono',ui-monospace,monospace"
+        text-anchor="middle">Connection Pool</text>
+
+  <!-- CON "TCP 연결 시도" — step -->
+  <!-- x=388, y=212, w=120, h=52 -->
+  <rect x="388" y="212" width="120" height="52" rx="6" fill="#f8fafb"/>
+  <rect x="388" y="212" width="120" height="52" rx="6"
+        fill="white" stroke="#122127" stroke-width="1"/>
+  <text x="448" y="234" fill="#122127" font-size="12" font-weight="600"
+        font-family="'IBM Plex Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif"
+        text-anchor="middle">TCP 연결 시도</text>
+  <text x="448" y="252" fill="#3f545c" font-size="10"
+        font-family="'IBM Plex Mono',ui-monospace,monospace"
+        text-anchor="middle">TCP Handshake</text>
+
+  <!-- TLS "TLS 협상" — step (HTTPS만) -->
+  <!-- x=388, y=292, w=120, h=52 -->
+  <rect x="388" y="292" width="120" height="52" rx="6" fill="#f8fafb"/>
+  <rect x="388" y="292" width="120" height="52" rx="6"
+        fill="white" stroke="#122127" stroke-width="1"/>
+  <text x="448" y="314" fill="#122127" font-size="12" font-weight="600"
+        font-family="'IBM Plex Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif"
+        text-anchor="middle">TLS 협상</text>
+  <text x="448" y="332" fill="#3f545c" font-size="10"
+        font-family="'IBM Plex Mono',ui-monospace,monospace"
+        text-anchor="middle">HTTPS only</text>
+
+  <!-- SEND "HTTP 요청 전송" — step -->
+  <!-- x=388, y=372, w=120, h=48 -->
+  <rect x="388" y="368" width="120" height="52" rx="6" fill="#f8fafb"/>
+  <rect x="388" y="368" width="120" height="52" rx="6"
+        fill="white" stroke="#122127" stroke-width="1"/>
+  <text x="448" y="390" fill="#122127" font-size="12" font-weight="600"
+        font-family="'IBM Plex Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif"
+        text-anchor="middle">HTTP 요청 전송</text>
+  <text x="448" y="408" fill="#3f545c" font-size="10"
+        font-family="'IBM Plex Mono',ui-monospace,monospace"
+        text-anchor="middle">Request Body</text>
+
+  <!-- RECV "응답 수신 대기" — focal -->
+  <!-- x=388, y=452, w=120, h=52 -->
+  <rect x="388" y="448" width="120" height="52" rx="6" fill="#f8fafb"/>
+  <rect x="388" y="448" width="120" height="52" rx="6"
+        fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="448" y="470" fill="#122127" font-size="12" font-weight="600"
+        font-family="'IBM Plex Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif"
+        text-anchor="middle">응답 수신 대기</text>
+  <text x="448" y="488" fill="#0d5763" font-size="10"
+        font-family="'IBM Plex Mono',ui-monospace,monospace"
+        text-anchor="middle">Response Wait</text>
+
+  <!-- DONE "완료" — 종료 타원 -->
+  <!-- cx=448, cy=552, rx=60, ry=24 -->
+  <ellipse cx="448" cy="552" rx="60" ry="24" fill="#f8fafb"/>
+  <ellipse cx="448" cy="552" rx="60" ry="24"
+           fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="448" y="557" fill="#122127" font-size="12" font-weight="600"
+        font-family="'IBM Plex Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif"
+        text-anchor="middle">완료</text>
+
+  <!-- ===== 타임아웃 노드 (오른쪽 열) ===== -->
+
+  <!-- T1 pendingAcquireTimeout — x=628, y=132, w=208, h=52 -->
+  <rect x="628" y="132" width="208" height="52" rx="6" fill="#f8fafb"/>
+  <rect x="628" y="132" width="208" height="52" rx="6"
+        fill="rgba(13,87,99,0.03)" stroke="rgba(13,87,99,0.40)" stroke-width="0.8" stroke-dasharray="4,3"/>
+  <!-- 태그 -->
+  <rect x="636" y="138" width="44" height="12" rx="2"
+        fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="658" y="147" fill="rgba(13,87,99,0.8)" font-size="7"
+        font-family="'IBM Plex Mono',ui-monospace,monospace"
+        text-anchor="middle" letter-spacing="0.08em">TIMEOUT</text>
+  <text x="748" y="162" fill="#122127" font-size="11" font-weight="500"
+        font-family="'IBM Plex Mono',ui-monospace,monospace"
+        text-anchor="middle">pendingAcquireTimeout</text>
+  <text x="748" y="176" fill="#6c8188" font-size="9"
+        font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif"
+        text-anchor="middle">풀 대기 최대 시간</text>
+
+  <!-- T2 CONNECT_TIMEOUT — x=628, y=212, w=208, h=52 -->
+  <rect x="628" y="212" width="208" height="52" rx="6" fill="#f8fafb"/>
+  <rect x="628" y="212" width="208" height="52" rx="6"
+        fill="rgba(13,87,99,0.03)" stroke="rgba(13,87,99,0.40)" stroke-width="0.8" stroke-dasharray="4,3"/>
+  <rect x="636" y="218" width="44" height="12" rx="2"
+        fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="658" y="227" fill="rgba(13,87,99,0.8)" font-size="7"
+        font-family="'IBM Plex Mono',ui-monospace,monospace"
+        text-anchor="middle" letter-spacing="0.08em">TIMEOUT</text>
+  <text x="748" y="242" fill="#122127" font-size="11" font-weight="500"
+        font-family="'IBM Plex Mono',ui-monospace,monospace"
+        text-anchor="middle">CONNECT_TIMEOUT</text>
+  <text x="748" y="256" fill="#6c8188" font-size="9"
+        font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif"
+        text-anchor="middle">TCP 연결 최대 시간</text>
+
+  <!-- T3 TLS Timeout — x=628, y=292, w=208, h=52 -->
+  <rect x="628" y="292" width="208" height="52" rx="6" fill="#f8fafb"/>
+  <rect x="628" y="292" width="208" height="52" rx="6"
+        fill="rgba(13,87,99,0.03)" stroke="rgba(13,87,99,0.40)" stroke-width="0.8" stroke-dasharray="4,3"/>
+  <rect x="636" y="298" width="44" height="12" rx="2"
+        fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="658" y="307" fill="rgba(13,87,99,0.8)" font-size="7"
+        font-family="'IBM Plex Mono',ui-monospace,monospace"
+        text-anchor="middle" letter-spacing="0.08em">TIMEOUT</text>
+  <text x="748" y="322" fill="#122127" font-size="11" font-weight="500"
+        font-family="'IBM Plex Mono',ui-monospace,monospace"
+        text-anchor="middle">TLS Timeout</text>
+  <text x="748" y="336" fill="#6c8188" font-size="9"
+        font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif"
+        text-anchor="middle">핸드셰이크 최대 시간</text>
+
+  <!-- T4 responseTimeout — x=628, y=452, w=208, h=52 -->
+  <rect x="628" y="448" width="208" height="52" rx="6" fill="#f8fafb"/>
+  <rect x="628" y="448" width="208" height="52" rx="6"
+        fill="rgba(13,87,99,0.03)" stroke="rgba(13,87,99,0.40)" stroke-width="0.8" stroke-dasharray="4,3"/>
+  <rect x="636" y="454" width="44" height="12" rx="2"
+        fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="658" y="463" fill="rgba(13,87,99,0.8)" font-size="7"
+        font-family="'IBM Plex Mono',ui-monospace,monospace"
+        text-anchor="middle" letter-spacing="0.08em">TIMEOUT</text>
+  <text x="748" y="478" fill="#122127" font-size="11" font-weight="500"
+        font-family="'IBM Plex Mono',ui-monospace,monospace"
+        text-anchor="middle">responseTimeout</text>
+  <text x="748" y="492" fill="#6c8188" font-size="9"
+        font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif"
+        text-anchor="middle">첫 응답 바이트까지 최대 시간</text>
+
+  <!-- 타임아웃 화살표 라벨 (마스크 포함) -->
+  <!-- T1 라벨 -->
+  <rect x="546" y="146" width="36" height="14" rx="2" fill="#f8fafb"/>
+  <text x="564" y="156" fill="#6c8188" font-size="9"
+        font-family="'IBM Plex Mono',ui-monospace,monospace"
+        text-anchor="middle" letter-spacing="0.04em">제한</text>
+
+  <!-- T2 라벨 -->
+  <rect x="546" y="226" width="36" height="14" rx="2" fill="#f8fafb"/>
+  <text x="564" y="236" fill="#6c8188" font-size="9"
+        font-family="'IBM Plex Mono',ui-monospace,monospace"
+        text-anchor="middle" letter-spacing="0.04em">제한</text>
+
+  <!-- T3 라벨 -->
+  <rect x="546" y="306" width="36" height="14" rx="2" fill="#f8fafb"/>
+  <text x="564" y="316" fill="#6c8188" font-size="9"
+        font-family="'IBM Plex Mono',ui-monospace,monospace"
+        text-anchor="middle" letter-spacing="0.04em">제한</text>
+
+  <!-- T4 라벨 -->
+  <rect x="546" y="466" width="36" height="14" rx="2" fill="#f8fafb"/>
+  <text x="564" y="476" fill="#6c8188" font-size="9"
+        font-family="'IBM Plex Mono',ui-monospace,monospace"
+        text-anchor="middle" letter-spacing="0.04em">제한</text>
+
+  <!-- ===== 범례 구분선 ===== -->
+  <line x1="30" y1="582" x2="930" y2="582"
+        stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+  <!-- 범례 아이템들 -->
+  <!-- 흐름 단계 -->
+  <rect x="30" y="590" width="12" height="8" rx="2"
+        fill="white" stroke="#122127" stroke-width="1"/>
+  <text x="48" y="598" fill="#3f545c" font-size="8"
+        font-family="'IBM Plex Mono',ui-monospace,monospace"
+        letter-spacing="0.10em">흐름 단계</text>
+
+  <!-- 주요 단계 (focal) -->
+  <rect x="140" y="590" width="12" height="8" rx="2"
+        fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="158" y="598" fill="#3f545c" font-size="8"
+        font-family="'IBM Plex Mono',ui-monospace,monospace"
+        letter-spacing="0.10em">주요 단계</text>
+
+  <!-- 타임아웃 설정 -->
+  <rect x="250" y="590" width="12" height="8" rx="2"
+        fill="rgba(13,87,99,0.03)" stroke="rgba(13,87,99,0.40)" stroke-width="0.8" stroke-dasharray="3,2"/>
+  <text x="268" y="598" fill="#3f545c" font-size="8"
+        font-family="'IBM Plex Mono',ui-monospace,monospace"
+        letter-spacing="0.10em">타임아웃 설정</text>
+
+  <!-- 점선 화살표 표시 -->
+  <line x1="375" y1="594" x2="395" y2="594"
+        stroke="#6c8188" stroke-width="1" stroke-dasharray="3,2"
+        marker-end="url(#2026-09-19-f8fc1d22-03-arrow-warn)"/>
+  <text x="402" y="598" fill="#3f545c" font-size="8"
+        font-family="'IBM Plex Mono',ui-monospace,monospace"
+        letter-spacing="0.10em">타임아웃 적용</text>
+</svg>
+</body>
+</html>

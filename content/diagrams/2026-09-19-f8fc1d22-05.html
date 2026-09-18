@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: #f8fafb; }
+  body { display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 0; }
+  svg { display: block; width: 100%; max-width: 960px; height: auto; }
+</style>
+</head>
+<body>
+<svg viewBox="0 0 960 400" xmlns="http://www.w3.org/2000/svg"
+     role="img" aria-labelledby="2026-09-19-f8fc1d22-05-pool-eviction-title 2026-09-19-f8fc1d22-05-pool-eviction-desc">
+
+  <title id="2026-09-19-f8fc1d22-05-pool-eviction-title">커넥션 풀 eviction 흐름</title>
+  <desc id="2026-09-19-f8fc1d22-05-pool-eviction-desc">유휴 커넥션이 maxIdleTime 또는 maxLifeTime을 초과하면 eviction 제거 후 신규 커넥션이 생성되고, 그렇지 않으면 풀에 유지되어 재사용된다.</desc>
+
+  <defs>
+    <!-- 기본 화살표 (muted) -->
+    <marker id="2026-09-19-f8fc1d22-05-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <!-- accent 화살표 -->
+    <marker id="2026-09-19-f8fc1d22-05-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+  </defs>
+
+  <!-- 배경 -->
+  <rect width="960" height="400" fill="#f8fafb"/>
+
+  <!-- ───────────────────────────────────────────
+       화살표를 박스보다 먼저 그린다 (z-order)
+  ─────────────────────────────────────────────── -->
+
+  <!-- IDLE → CHK (오른쪽으로) -->
+  <line x1="196" y1="180" x2="264" y2="180" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-19-f8fc1d22-05-arrow)"/>
+
+  <!-- CHK → EVICT (예 / 위쪽) -->
+  <path d="M320 148 L320 108 L564 108 L564 148" fill="none" stroke="#0d5763" stroke-width="1" marker-end="url(#2026-09-19-f8fc1d22-05-arrow-accent)"/>
+  <!-- 예 라벨 마스크 + 텍스트 -->
+  <rect x="398" y="92" width="24" height="12" rx="2" fill="#f8fafb"/>
+  <text x="410" y="101" fill="#0d5763" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500" text-anchor="middle">예</text>
+
+  <!-- CHK → CHK2 (아니오 / 오른쪽) -->
+  <line x1="376" y1="180" x2="448" y2="180" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-19-f8fc1d22-05-arrow)"/>
+  <!-- 아니오 라벨 마스크 + 텍스트 -->
+  <rect x="387" y="164" width="40" height="12" rx="2" fill="#f8fafb"/>
+  <text x="407" y="173" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500" text-anchor="middle">아니오</text>
+
+  <!-- CHK2 → EVICT (예 / 위쪽) -->
+  <path d="M504 148 L504 108" fill="none" stroke="#0d5763" stroke-width="1"/>
+  <!-- 예 라벨 마스크 + 텍스트 -->
+  <rect x="482" y="92" width="24" height="12" rx="2" fill="#f8fafb"/>
+  <text x="494" y="101" fill="#0d5763" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500" text-anchor="middle">예</text>
+
+  <!-- CHK2 → REUSE (아니오 / 오른쪽) -->
+  <line x1="560" y1="180" x2="636" y2="180" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-19-f8fc1d22-05-arrow)"/>
+  <!-- 아니오 라벨 마스크 + 텍스트 -->
+  <rect x="571" y="164" width="40" height="12" rx="2" fill="#f8fafb"/>
+  <text x="591" y="173" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500" text-anchor="middle">아니오</text>
+
+  <!-- EVICT → NEW (아래쪽으로) -->
+  <line x1="612" y1="212" x2="612" y2="272" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-19-f8fc1d22-05-arrow)"/>
+
+  <!-- ───────────────────────────────────────────
+       박스 노드들
+  ─────────────────────────────────────────────── -->
+
+  <!-- IDLE: 유휴 커넥션 (input 처리) -->
+  <rect x="52" y="152" width="144" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="52" y="152" width="144" height="56" rx="6" fill="rgba(63,84,92,0.10)" stroke="#6c8188" stroke-width="1"/>
+  <rect x="60" y="159" width="32" height="12" rx="2" fill="transparent" stroke="rgba(108,129,136,0.40)" stroke-width="0.8"/>
+  <text x="76" y="168" fill="rgba(108,129,136,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">INPUT</text>
+  <text x="124" y="186" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">유휴 커넥션</text>
+
+  <!-- CHK: maxIdleTime 다이아몬드 -->
+  <!-- 다이아몬드: 중심 (320, 180), 반지름 56×32 -->
+  <rect x="264" y="148" width="112" height="64" rx="6" fill="#f8fafb"/>
+  <polygon points="320,148 376,180 320,212 264,180" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="320" y="176" fill="#122127" font-size="10" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">maxIdleTime</text>
+  <text x="320" y="190" fill="#122127" font-size="10" font-weight="600" font-family="'IBM Plex Mono', monospace" text-anchor="middle">초과?</text>
+
+  <!-- CHK2: maxLifeTime 다이아몬드 -->
+  <rect x="448" y="148" width="112" height="64" rx="6" fill="#f8fafb"/>
+  <polygon points="504,148 560,180 504,212 448,180" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="504" y="176" fill="#122127" font-size="10" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">maxLifeTime</text>
+  <text x="504" y="190" fill="#122127" font-size="10" font-weight="600" font-family="'IBM Plex Mono', monospace" text-anchor="middle">초과?</text>
+
+  <!-- EVICT: eviction 제거 (focal) -->
+  <rect x="564" y="80" width="96" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="564" y="80" width="96" height="56" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <rect x="572" y="87" width="52" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="598" y="96" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">EVICTION</text>
+  <text x="612" y="117" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">eviction 제거</text>
+
+  <!-- REUSE: 풀에 유지 재사용 가능 -->
+  <rect x="636" y="152" width="144" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="636" y="152" width="144" height="56" rx="6" fill="rgba(255,255,255,1)" stroke="#122127" stroke-width="1"/>
+  <rect x="644" y="159" width="32" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="660" y="168" fill="rgba(18,33,39,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">REUSE</text>
+  <text x="708" y="183" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">풀에 유지</text>
+  <text x="708" y="198" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">재사용 가능</text>
+
+  <!-- NEW: 신규 커넥션 생성 -->
+  <rect x="564" y="272" width="96" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="564" y="272" width="96" height="56" rx="6" fill="rgba(255,255,255,1)" stroke="#122127" stroke-width="1"/>
+  <rect x="572" y="279" width="28" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="586" y="288" fill="rgba(18,33,39,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">NEW</text>
+  <text x="612" y="308" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">신규 커넥션</text>
+  <text x="612" y="323" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">생성</text>
+
+  <!-- ───────────────────────────────────────────
+       범례
+  ─────────────────────────────────────────────── -->
+  <line x1="40" y1="360" x2="920" y2="360" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+
+  <text x="40" y="376" fill="#3f545c" font-size="8" font-family="'IBM Plex Mono', monospace" letter-spacing="0.14em">LEGEND</text>
+
+  <!-- focal: eviction 판단 경로 -->
+  <rect x="104" y="366" width="12" height="12" rx="2" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="120" y="376" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">eviction 판단</text>
+
+  <!-- backend: 커넥션 노드 -->
+  <rect x="248" y="366" width="12" height="12" rx="2" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <text x="264" y="376" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">커넥션 상태</text>
+
+  <!-- input: 유휴 -->
+  <rect x="388" y="366" width="12" height="12" rx="2" fill="rgba(63,84,92,0.10)" stroke="#6c8188" stroke-width="1"/>
+  <text x="404" y="376" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">입력 (유휴)</text>
+
+  <!-- accent arrow -->
+  <line x1="524" y1="372" x2="548" y2="372" stroke="#0d5763" stroke-width="1" marker-end="url(#2026-09-19-f8fc1d22-05-arrow-accent)"/>
+  <text x="556" y="376" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">eviction 경로</text>
+
+  <!-- default arrow -->
+  <line x1="668" y1="372" x2="692" y2="372" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-19-f8fc1d22-05-arrow)"/>
+  <text x="700" y="376" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">일반 흐름</text>
+
+</svg>
+</body>
+</html>

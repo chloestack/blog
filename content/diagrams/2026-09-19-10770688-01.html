@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 420" role="img" aria-labelledby="2026-09-19-10770688-01-ragas-title 2026-09-19-10770688-01-ragas-desc">
+  <title id="2026-09-19-10770688-01-ragas-title">RAGAS로 RAG 파이프라인 품질 자동 평가</title>
+  <desc id="2026-09-19-10770688-01-ragas-desc">사용자 질문이 검색 단계와 생성 단계를 거쳐 RAGAS 평가 모듈로 전달되고, Faithfulness·Context Recall·Answer Relevancy 세 지표로 분기되는 흐름을 보여준다.</desc>
+
+  <defs>
+    <!-- arrow markers -->
+    <marker id="2026-09-19-10770688-01-ragas-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-09-19-10770688-01-ragas-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <marker id="2026-09-19-10770688-01-ragas-arrow-muted" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#6c8188"/>
+    </marker>
+  </defs>
+
+  <!-- background -->
+  <rect width="960" height="420" fill="#f8fafb"/>
+
+  <!-- ── connectors (drawn before boxes) ── -->
+
+  <!-- Q → R -->
+  <path d="M 188,160 L 256,160" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-19-10770688-01-ragas-arrow)"/>
+
+  <!-- R → G -->
+  <path d="M 396,160 L 464,160" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-19-10770688-01-ragas-arrow)"/>
+
+  <!-- G → E (accent) -->
+  <path d="M 604,160 L 672,160" fill="none" stroke="#0d5763" stroke-width="1" marker-end="url(#2026-09-19-10770688-01-ragas-arrow-accent)"/>
+
+  <!-- E → F (top branch): right edge of E → up → right → down to F -->
+  <path d="M 792,148 L 808,148 L 808,96 L 840,96" fill="none" stroke="#6c8188" stroke-width="1" marker-end="url(#2026-09-19-10770688-01-ragas-arrow-muted)"/>
+
+  <!-- E → C (middle branch): right edge of E → C -->
+  <path d="M 792,164 L 840,164" fill="none" stroke="#6c8188" stroke-width="1" marker-end="url(#2026-09-19-10770688-01-ragas-arrow-muted)"/>
+
+  <!-- E → A (bottom branch): right edge of E → down → right → up to A -->
+  <path d="M 792,180 L 808,180 L 808,232 L 840,232" fill="none" stroke="#6c8188" stroke-width="1" marker-end="url(#2026-09-19-10770688-01-ragas-arrow-muted)"/>
+
+  <!-- ── NODE: Q (사용자 질문) — input type ── -->
+  <rect x="48" y="128" width="140" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="48" y="128" width="140" height="64" rx="6" fill="rgba(62,84,92,0.10)" stroke="#6c8188" stroke-width="1"/>
+  <rect x="56" y="136" width="28" height="12" rx="2" fill="transparent" stroke="rgba(108,129,136,0.40)" stroke-width="0.8"/>
+  <text x="70" y="145" fill="rgba(108,129,136,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">INPUT</text>
+  <text x="118" y="166" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">사용자 질문</text>
+
+  <!-- ── NODE: R (검색 단계) — backend type ── -->
+  <rect x="256" y="128" width="140" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="256" y="128" width="140" height="64" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="264" y="136" width="28" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="278" y="145" fill="rgba(18,33,39,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">STEP</text>
+  <text x="326" y="161" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">검색 단계</text>
+  <text x="326" y="178" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">컨텍스트 회수</text>
+
+  <!-- ── NODE: G (생성 단계) — backend type ── -->
+  <rect x="464" y="128" width="140" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="464" y="128" width="140" height="64" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="472" y="136" width="28" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="486" y="145" fill="rgba(18,33,39,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">STEP</text>
+  <text x="534" y="161" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">생성 단계</text>
+  <text x="534" y="178" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">답변 생성</text>
+
+  <!-- ── NODE: E (RAGAS 평가) — FOCAL ── -->
+  <rect x="672" y="128" width="120" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="672" y="128" width="120" height="64" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="680" y="136" width="36" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="698" y="145" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">EVAL</text>
+  <text x="732" y="165" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">RAGAS 평가</text>
+
+  <!-- ── NODE: F (Faithfulness) — store/metric ── -->
+  <rect x="840" y="64" width="80" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="840" y="64" width="80" height="64" rx="6" fill="rgba(18,33,39,0.05)" stroke="#3f545c" stroke-width="1"/>
+  <text x="880" y="88" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Mono', monospace" text-anchor="middle">Faithfulness</text>
+  <text x="880" y="106" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">환각 감지</text>
+
+  <!-- ── NODE: C (Context Recall) — store/metric ── -->
+  <rect x="840" y="132" width="80" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="840" y="132" width="80" height="64" rx="6" fill="rgba(18,33,39,0.05)" stroke="#3f545c" stroke-width="1"/>
+  <text x="880" y="155" fill="#122127" font-size="10" font-weight="600" font-family="'IBM Plex Mono', monospace" text-anchor="middle">Context Recall</text>
+  <text x="880" y="172" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">검색 완전성</text>
+
+  <!-- ── NODE: A (Answer Relevancy) — store/metric ── -->
+  <rect x="840" y="200" width="80" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="840" y="200" width="80" height="64" rx="6" fill="rgba(18,33,39,0.05)" stroke="#3f545c" stroke-width="1"/>
+  <text x="880" y="223" fill="#122127" font-size="9.5" font-weight="600" font-family="'IBM Plex Mono', monospace" text-anchor="middle">Answer Relevancy</text>
+  <text x="880" y="240" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">답변 적합성</text>
+
+  <!-- ── LEGEND ── -->
+  <line x1="32" y1="352" x2="928" y2="352" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+  <text x="32" y="368" fill="#3f545c" font-size="8" font-family="'IBM Plex Mono', monospace" letter-spacing="0.14em">LEGEND</text>
+
+  <!-- legend: input -->
+  <rect x="100" y="358" width="16" height="12" rx="3" fill="rgba(62,84,92,0.10)" stroke="#6c8188" stroke-width="0.8"/>
+  <text x="122" y="368" fill="#6c8188" font-size="9" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">입력</text>
+
+  <!-- legend: step -->
+  <rect x="176" y="358" width="16" height="12" rx="3" fill="#ffffff" stroke="#122127" stroke-width="0.8"/>
+  <text x="198" y="368" fill="#3f545c" font-size="9" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">파이프라인 단계</text>
+
+  <!-- legend: focal -->
+  <rect x="316" y="358" width="16" height="12" rx="3" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="0.8"/>
+  <text x="338" y="368" fill="#3f545c" font-size="9" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">평가 모듈 (핵심)</text>
+
+  <!-- legend: metric -->
+  <rect x="456" y="358" width="16" height="12" rx="3" fill="rgba(18,33,39,0.05)" stroke="#3f545c" stroke-width="0.8"/>
+  <text x="478" y="368" fill="#3f545c" font-size="9" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">평가 지표</text>
+</svg>
+</body>
+</html>

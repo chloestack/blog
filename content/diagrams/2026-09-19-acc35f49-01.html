@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 420" role="img" aria-labelledby="2026-09-19-acc35f49-01-redis-persist-title 2026-09-19-acc35f49-01-redis-persist-desc">
+  <title id="2026-09-19-acc35f49-01-redis-persist-title">Redis 영속성 전략: RDB vs AOF</title>
+  <desc id="2026-09-19-acc35f49-01-redis-persist-desc">클라이언트 요청이 Redis 메모리에 쓰이고, RDB는 스냅샷 덤프 방식으로, AOF는 명령어 추가 방식으로 각각 파일에 저장된 뒤 재시작 시 메모리를 복원하는 흐름을 보여주는 도식.</desc>
+
+  <defs>
+    <!-- 기본 화살표 -->
+    <marker id="2026-09-19-acc35f49-01-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <!-- 강조 화살표 -->
+    <marker id="2026-09-19-acc35f49-01-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+  </defs>
+
+  <!-- 배경 -->
+  <rect width="960" height="420" fill="#f8fafb"/>
+
+  <!-- ─────────────────────────────────
+       커넥터 (박스보다 먼저 그림)
+       ───────────────────────────────── -->
+
+  <!-- 클라이언트 → Redis 메모리 (수평 직선) -->
+  <line x1="168" y1="176" x2="276" y2="176"
+        stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-19-acc35f49-01-arrow)"/>
+
+  <!-- Redis 메모리 → RDB (위쪽으로 꺾어 올라감) -->
+  <!-- Redis 메모리 오른쪽 중앙 (448,176) → 오른쪽으로 24 → 위로 꺾어 RDB 왼쪽 중앙 (556,96) -->
+  <path d="M 448 164 L 492 164 L 492 96 L 556 96"
+        fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-19-acc35f49-01-arrow)"/>
+  <!-- 화살표 라벨: 스냅샷 덤프 -->
+  <rect x="468" y="120" width="56" height="16" rx="2" fill="#f8fafb"/>
+  <text x="496" y="131" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif"
+        text-anchor="middle" font-weight="500">스냅샷 덤프</text>
+
+  <!-- Redis 메모리 → AOF (아래쪽으로 꺾어 내려감) -->
+  <!-- Redis 메모리 오른쪽 중앙 (448,188) → 오른쪽으로 44 → 아래로 꺾어 AOF 왼쪽 중앙 (556,256) -->
+  <path d="M 448 188 L 492 188 L 492 256 L 556 256"
+        fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-19-acc35f49-01-arrow)"/>
+  <!-- 화살표 라벨: 명령어 추가 -->
+  <rect x="468" y="212" width="56" height="16" rx="2" fill="#f8fafb"/>
+  <text x="496" y="223" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif"
+        text-anchor="middle" font-weight="500">명령어 추가</text>
+
+  <!-- RDB → 메모리 복원 (오른쪽으로 꺾어 내려감) -->
+  <!-- RDB 오른쪽 중앙 (716,96) → 오른쪽으로 44 → 아래로 꺾어 메모리 복원 왼쪽 중앙 (780,164) -->
+  <path d="M 716 96 L 752 96 L 752 164 L 780 164"
+        fill="none" stroke="#0d5763" stroke-width="1" marker-end="url(#2026-09-19-acc35f49-01-arrow-accent)"/>
+  <!-- 화살표 라벨: 재시작 시 로드 -->
+  <rect x="724" y="116" width="60" height="16" rx="2" fill="#f8fafb"/>
+  <text x="754" y="127" fill="#0d5763" font-size="10" font-family="'IBM Plex Sans KR', sans-serif"
+        text-anchor="middle" font-weight="500">재시작 시 로드</text>
+
+  <!-- AOF → 메모리 복원 (오른쪽으로 꺾어 올라감) -->
+  <!-- AOF 오른쪽 중앙 (716,256) → 오른쪽으로 36 → 위로 꺾어 메모리 복원 왼쪽 중앙 (780,188) -->
+  <path d="M 716 256 L 752 256 L 752 188 L 780 188"
+        fill="none" stroke="#0d5763" stroke-width="1" marker-end="url(#2026-09-19-acc35f49-01-arrow-accent)"/>
+  <!-- 화살표 라벨: 재시작 시 재실행 -->
+  <rect x="720" y="208" width="68" height="16" rx="2" fill="#f8fafb"/>
+  <text x="754" y="219" fill="#0d5763" font-size="10" font-family="'IBM Plex Sans KR', sans-serif"
+        text-anchor="middle" font-weight="500">재시작 시 재실행</text>
+
+  <!-- ─────────────────────────────────
+       노드 박스
+       ───────────────────────────────── -->
+
+  <!-- 클라이언트 요청 (input 처리) -->
+  <rect x="28" y="148" width="140" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="28" y="148" width="140" height="56" rx="6"
+        fill="rgba(63,84,92,0.10)" stroke="#6c8188" stroke-width="1"/>
+  <rect x="36" y="156" width="44" height="12" rx="2"
+        fill="transparent" stroke="rgba(108,129,136,0.40)" stroke-width="0.8"/>
+  <text x="58" y="165" fill="rgba(108,129,136,0.8)" font-size="8"
+        font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">INPUT</text>
+  <text x="98" y="181" fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">클라이언트 요청</text>
+
+  <!-- Redis 메모리 (focal) -->
+  <rect x="276" y="140" width="172" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="276" y="140" width="172" height="72" rx="6"
+        fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <rect x="284" y="148" width="36" height="12" rx="2"
+        fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="302" y="157" fill="rgba(13,87,99,0.8)" font-size="8"
+        font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">FOCAL</text>
+  <text x="362" y="176" fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Redis 메모리</text>
+  <text x="362" y="196" fill="#3f545c" font-size="11"
+        font-family="'IBM Plex Mono', monospace" text-anchor="middle">in-memory state</text>
+
+  <!-- RDB 파일 (store) -->
+  <rect x="556" y="60" width="160" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="556" y="60" width="160" height="72" rx="6"
+        fill="rgba(18,33,39,0.05)" stroke="#3f545c" stroke-width="1"/>
+  <rect x="564" y="68" width="28" height="12" rx="2"
+        fill="transparent" stroke="rgba(63,84,92,0.40)" stroke-width="0.8"/>
+  <text x="578" y="77" fill="rgba(63,84,92,0.8)" font-size="8"
+        font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">RDB</text>
+  <text x="636" y="96" fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">RDB 파일</text>
+  <text x="636" y="116" fill="#3f545c" font-size="11"
+        font-family="'IBM Plex Mono', monospace" text-anchor="middle">dump.rdb</text>
+
+  <!-- AOF 파일 (store) -->
+  <rect x="556" y="220" width="160" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="556" y="220" width="160" height="72" rx="6"
+        fill="rgba(18,33,39,0.05)" stroke="#3f545c" stroke-width="1"/>
+  <rect x="564" y="228" width="28" height="12" rx="2"
+        fill="transparent" stroke="rgba(63,84,92,0.40)" stroke-width="0.8"/>
+  <text x="578" y="237" fill="rgba(63,84,92,0.8)" font-size="8"
+        font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">AOF</text>
+  <text x="636" y="256" fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">AOF 파일</text>
+  <text x="636" y="276" fill="#3f545c" font-size="11"
+        font-family="'IBM Plex Mono', monospace" text-anchor="middle">appendonly.aof</text>
+
+  <!-- 메모리 복원 (backend) -->
+  <rect x="780" y="144" width="152" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="780" y="144" width="152" height="64" rx="6"
+        fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="788" y="152" width="44" height="12" rx="2"
+        fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="810" y="161" fill="rgba(18,33,39,0.8)" font-size="8"
+        font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">RESTORE</text>
+  <text x="856" y="181" fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">메모리 복원</text>
+
+  <!-- ─────────────────────────────────
+       범례 (하단 수평 스트립)
+       ───────────────────────────────── -->
+  <line x1="28" y1="352" x2="932" y2="352"
+        stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+  <text x="28" y="368" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace"
+        letter-spacing="0.14em">LEGEND</text>
+
+  <!-- focal -->
+  <rect x="96" y="358" width="12" height="12" rx="2"
+        fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="114" y="368" fill="#3f545c" font-size="10"
+        font-family="'IBM Plex Sans KR', sans-serif">메모리 상태 (focal)</text>
+
+  <!-- store -->
+  <rect x="288" y="358" width="12" height="12" rx="2"
+        fill="rgba(18,33,39,0.05)" stroke="#3f545c" stroke-width="1"/>
+  <text x="306" y="368" fill="#3f545c" font-size="10"
+        font-family="'IBM Plex Sans KR', sans-serif">영속성 파일</text>
+
+  <!-- backend -->
+  <rect x="436" y="358" width="12" height="12" rx="2"
+        fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <text x="454" y="368" fill="#3f545c" font-size="10"
+        font-family="'IBM Plex Sans KR', sans-serif">복원 단계</text>
+
+  <!-- input -->
+  <rect x="556" y="358" width="12" height="12" rx="2"
+        fill="rgba(63,84,92,0.10)" stroke="#6c8188" stroke-width="1"/>
+  <text x="574" y="368" fill="#3f545c" font-size="10"
+        font-family="'IBM Plex Sans KR', sans-serif">클라이언트</text>
+
+  <!-- 재시작 경로 화살표 범례 -->
+  <line x1="680" y1="364" x2="708" y2="364"
+        stroke="#0d5763" stroke-width="1" marker-end="url(#2026-09-19-acc35f49-01-arrow-accent)"/>
+  <text x="716" y="368" fill="#3f545c" font-size="10"
+        font-family="'IBM Plex Sans KR', sans-serif">재시작 복원 경로</text>
+</svg>
+</body>
+</html>

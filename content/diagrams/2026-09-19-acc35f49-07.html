@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+  .diagram-wrap { width: 100%; max-width: 960px; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<div class="diagram-wrap">
+<svg viewBox="0 0 960 400" xmlns="http://www.w3.org/2000/svg"
+     role="img" aria-labelledby="2026-09-19-acc35f49-07-redis-ha-title 2026-09-19-acc35f49-07-redis-ha-desc">
+  <title id="2026-09-19-acc35f49-07-redis-ha-title">Redis 고가용성 구성 — 마스터·레플리카·Sentinel</title>
+  <desc id="2026-09-19-acc35f49-07-redis-ha-desc">영속성 없는 마스터가 레플리카 1(AOF everysec)과 레플리카 2(RDB 스냅샷)로 실시간 복제하고, Sentinel이 마스터를 감시하며 장애 시 레플리카 1을 승격하는 구성을 보여준다.</desc>
+
+  <defs>
+    <!-- 기본 화살표 (muted) -->
+    <marker id="2026-09-19-acc35f49-07-arrow-muted" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <!-- 액센트 화살표 (accent) -->
+    <marker id="2026-09-19-acc35f49-07-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+  </defs>
+
+  <!-- 배경 -->
+  <rect width="960" height="400" fill="#f8fafb"/>
+
+  <!-- ============================================================
+       화살표를 박스보다 먼저 그림 (z-order)
+       노드 배치:
+         Sentinel  S  : cx=160, cy=200  w=144 h=64
+         마스터    M  : cx=380, cy=200  w=144 h=72
+         레플리카1 R1 : cx=640, cy=120  w=160 h=72
+         레플리카2 R2 : cx=640, cy=284  w=160 h=72
+       ============================================================ -->
+
+  <!-- S → M  마스터 감시 (accent) -->
+  <!-- S 우측 중앙 → M 좌측 중앙: 수평 직선 -->
+  <!-- S right edge: 160+72=232, y=200  /  M left edge: 380-72=308, y=200 -->
+  <line x1="234" y1="200" x2="306" y2="200"
+        stroke="#0d5763" stroke-width="1.2"
+        marker-end="url(#2026-09-19-acc35f49-07-arrow-accent)"/>
+  <!-- 라벨 마스크 + 텍스트 (중간점 x=270) -->
+  <rect x="238" y="183" width="64" height="14" rx="2" fill="#f8fafb"/>
+  <text x="270" y="194" fill="#0d5763" font-size="10"
+        font-family="'IBM Plex Sans KR', sans-serif"
+        text-anchor="middle" font-weight="500">마스터 감시</text>
+
+  <!-- S → R1  페일오버 시 승격 (accent, 점선) -->
+  <!-- S right edge 232,200 → 엘보 → R1 left edge 560,120 -->
+  <!-- 경로: S우측(232,200) → (460,200) → (460,120) → R1좌측(560,120) -->
+  <path d="M 232 200 L 460 200 Q 468 200 468 192 L 468 128 Q 468 120 476 120 L 558 120"
+        fill="none" stroke="#0d5763" stroke-width="1" stroke-dasharray="5,4"
+        marker-end="url(#2026-09-19-acc35f49-07-arrow-accent)"/>
+  <!-- 라벨: 수직 구간 왼쪽 (x=448, 구간 y 160) -->
+  <rect x="392" y="148" width="72" height="24" rx="2" fill="#f8fafb"/>
+  <text x="428" y="158" fill="#0d5763" font-size="10"
+        font-family="'IBM Plex Sans KR', sans-serif"
+        text-anchor="middle" font-weight="500">페일오버 시</text>
+  <text x="428" y="170" fill="#0d5763" font-size="10"
+        font-family="'IBM Plex Sans KR', sans-serif"
+        text-anchor="middle" font-weight="500">승격</text>
+
+  <!-- M → R1  실시간 복제 (muted) -->
+  <!-- M right top attach: 452,176  →  R1 left mid: 560,120 -->
+  <!-- 경로: (452,176) → (506,176) Q → (506,120) → (560,120) -->
+  <path d="M 452 176 L 506 176 Q 514 176 514 168 L 514 128 Q 514 120 522 120 L 558 120"
+        fill="none" stroke="#3f545c" stroke-width="1"
+        marker-end="url(#2026-09-19-acc35f49-07-arrow-muted)"/>
+  <!-- 라벨: 수평 구간 (midx=505, y=176) -->
+  <rect x="462" y="159" width="68" height="13" rx="2" fill="#f8fafb"/>
+  <text x="496" y="170" fill="#3f545c" font-size="10"
+        font-family="'IBM Plex Sans KR', sans-serif"
+        text-anchor="middle">실시간 복제</text>
+
+  <!-- M → R2  실시간 복제 (muted) -->
+  <!-- M right bottom attach: 452,224  →  R2 left mid: 560,284 -->
+  <path d="M 452 224 L 506 224 Q 514 224 514 232 L 514 276 Q 514 284 522 284 L 558 284"
+        fill="none" stroke="#3f545c" stroke-width="1"
+        marker-end="url(#2026-09-19-acc35f49-07-arrow-muted)"/>
+  <!-- 라벨: 수평 구간 (midx=505, y=224) -->
+  <rect x="462" y="231" width="68" height="13" rx="2" fill="#f8fafb"/>
+  <text x="496" y="242" fill="#3f545c" font-size="10"
+        font-family="'IBM Plex Sans KR', sans-serif"
+        text-anchor="middle">실시간 복제</text>
+
+  <!-- ============================================================
+       노드 박스
+       ============================================================ -->
+
+  <!-- Sentinel  cx=160 cy=200  w=144 h=64  → x=88 y=168 -->
+  <!-- focal 처리: accent-tint fill + accent stroke -->
+  <rect x="88" y="168" width="144" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="88" y="168" width="144" height="64" rx="6"
+        fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <!-- 타입 태그 -->
+  <rect x="96" y="175" width="52" height="12" rx="2"
+        fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="122" y="184" fill="rgba(13,87,99,0.8)" font-size="8"
+        font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.08em">SENTINEL</text>
+  <!-- 이름 -->
+  <text x="160" y="206" fill="#122127" font-size="14"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif"
+        text-anchor="middle" font-weight="600">Sentinel</text>
+  <!-- 서브라벨 -->
+  <text x="160" y="222" fill="#6c8188" font-size="11"
+        font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle">failover 관리</text>
+
+  <!-- 마스터  cx=380 cy=200  w=144 h=72  → x=308 y=164 -->
+  <!-- warn 처리: 옅은 노란색 계열 → muted 톤 (ink@0.05 + muted stroke) -->
+  <rect x="308" y="164" width="144" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="308" y="164" width="144" height="72" rx="6"
+        fill="rgba(169,106,8,0.07)" stroke="#a96a08" stroke-width="1.2"/>
+  <!-- 타입 태그 -->
+  <rect x="316" y="171" width="44" height="12" rx="2"
+        fill="transparent" stroke="rgba(169,106,8,0.40)" stroke-width="0.8"/>
+  <text x="338" y="180" fill="rgba(169,106,8,0.85)" font-size="8"
+        font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.08em">MASTER</text>
+  <!-- 이름 -->
+  <text x="380" y="205" fill="#122127" font-size="14"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif"
+        text-anchor="middle" font-weight="600">마스터</text>
+  <!-- 서브라벨 -->
+  <text x="380" y="222" fill="#6c8188" font-size="11"
+        font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle">영속성 없음</text>
+
+  <!-- 레플리카 1  cx=640 cy=120  w=160 h=72  → x=560 y=84 -->
+  <!-- ok 처리: 연초록 계열 → store 유사 (accent@0.08 / 녹색 muted) -->
+  <rect x="560" y="84" width="160" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="560" y="84" width="160" height="72" rx="6"
+        fill="rgba(40,109,80,0.07)" stroke="#286d50" stroke-width="1.2"/>
+  <!-- 타입 태그 -->
+  <rect x="568" y="91" width="56" height="12" rx="2"
+        fill="transparent" stroke="rgba(40,109,80,0.40)" stroke-width="0.8"/>
+  <text x="596" y="100" fill="rgba(40,109,80,0.85)" font-size="8"
+        font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.08em">REPLICA</text>
+  <!-- 이름 -->
+  <text x="640" y="125" fill="#122127" font-size="14"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif"
+        text-anchor="middle" font-weight="600">레플리카 1</text>
+  <!-- 서브라벨 -->
+  <text x="640" y="143" fill="#6c8188" font-size="11"
+        font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle">AOF everysec</text>
+
+  <!-- 레플리카 2  cx=640 cy=284  w=160 h=72  → x=560 y=248 -->
+  <rect x="560" y="248" width="160" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="560" y="248" width="160" height="72" rx="6"
+        fill="rgba(40,109,80,0.07)" stroke="#286d50" stroke-width="1.2"/>
+  <!-- 타입 태그 -->
+  <rect x="568" y="255" width="56" height="12" rx="2"
+        fill="transparent" stroke="rgba(40,109,80,0.40)" stroke-width="0.8"/>
+  <text x="596" y="264" fill="rgba(40,109,80,0.85)" font-size="8"
+        font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.08em">REPLICA</text>
+  <!-- 이름 -->
+  <text x="640" y="289" fill="#122127" font-size="14"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif"
+        text-anchor="middle" font-weight="600">레플리카 2</text>
+  <!-- 서브라벨 -->
+  <text x="640" y="307" fill="#6c8188" font-size="11"
+        font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle">RDB 스냅샷</text>
+
+  <!-- ============================================================
+       범례 (하단 수평 스트립)
+       ============================================================ -->
+  <line x1="32" y1="352" x2="928" y2="352"
+        stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+  <text x="32" y="364" fill="#3f545c" font-size="8"
+        font-family="'IBM Plex Mono', monospace"
+        letter-spacing="0.14em">LEGEND</text>
+
+  <!-- 항목 1: 실시간 복제 -->
+  <line x1="100" y1="368" x2="124" y2="368"
+        stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-19-acc35f49-07-arrow-muted)"/>
+  <text x="130" y="372" fill="#3f545c" font-size="10"
+        font-family="'IBM Plex Sans KR', sans-serif">실시간 복제</text>
+
+  <!-- 항목 2: 마스터 감시 / 승격 -->
+  <line x1="252" y1="368" x2="276" y2="368"
+        stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-19-acc35f49-07-arrow-accent)"/>
+  <text x="282" y="372" fill="#3f545c" font-size="10"
+        font-family="'IBM Plex Sans KR', sans-serif">감시 · 승격 (Sentinel)</text>
+
+  <!-- 항목 3: 페일오버 점선 -->
+  <line x1="452" y1="368" x2="476" y2="368"
+        stroke="#0d5763" stroke-width="1" stroke-dasharray="5,4"
+        marker-end="url(#2026-09-19-acc35f49-07-arrow-accent)"/>
+  <text x="482" y="372" fill="#3f545c" font-size="10"
+        font-family="'IBM Plex Sans KR', sans-serif">페일오버 승격 경로</text>
+
+  <!-- 항목 4: 영속성 없음 경고 -->
+  <rect x="648" y="360" width="10" height="10" rx="2"
+        fill="rgba(169,106,8,0.07)" stroke="#a96a08" stroke-width="1"/>
+  <text x="664" y="372" fill="#3f545c" font-size="10"
+        font-family="'IBM Plex Sans KR', sans-serif">영속성 없음 (단순 캐시)</text>
+
+  <!-- 항목 5: 영속성 있음 -->
+  <rect x="816" y="360" width="10" height="10" rx="2"
+        fill="rgba(40,109,80,0.07)" stroke="#286d50" stroke-width="1"/>
+  <text x="832" y="372" fill="#3f545c" font-size="10"
+        font-family="'IBM Plex Sans KR', sans-serif">영속성 있음</text>
+
+</svg>
+</div>
+</body>
+</html>

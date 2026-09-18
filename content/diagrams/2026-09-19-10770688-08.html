@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 960 240"
+  role="img"
+  aria-labelledby="2026-09-19-10770688-08-ragas-flow-title 2026-09-19-10770688-08-ragas-flow-desc"
+>
+  <title id="2026-09-19-10770688-08-ragas-flow-title">RAGAS RAG 파이프라인 평가 흐름</title>
+  <desc id="2026-09-19-10770688-08-ragas-flow-desc">전체 RAG 쿼리에서 샘플링 후 비동기 배치 평가 큐를 거쳐 RAGAS 경량 LLM으로 평가하고, 지표를 시계열 DB에 저장해 모니터링 대시보드로 확인하는 흐름.</desc>
+
+  <defs>
+    <!-- 기본 화살표 -->
+    <marker id="2026-09-19-10770688-08-arrow-muted" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <!-- accent 화살표 -->
+    <marker id="2026-09-19-10770688-08-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+  </defs>
+
+  <!-- 배경 -->
+  <rect width="960" height="240" fill="#f8fafb"/>
+
+  <!-- ───────────────────────────────────────────
+       노드 배치: 5개, LR 흐름
+       X 위치: 40 | 216 | 392 | 568 | 744
+       Y 중앙: 108 (높이 80, Y=68)
+       노드 너비: 136  ─────────────────────────── -->
+
+  <!-- 화살표 (노드보다 먼저) -->
+
+  <!-- ALL → SAMP -->
+  <line x1="176" y1="108" x2="212" y2="108" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-19-10770688-08-arrow-muted)"/>
+
+  <!-- SAMP → BATCH -->
+  <line x1="352" y1="108" x2="388" y2="108" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-19-10770688-08-arrow-muted)"/>
+
+  <!-- BATCH → EVAL -->
+  <line x1="528" y1="108" x2="564" y2="108" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-19-10770688-08-arrow-accent)"/>
+
+  <!-- EVAL → DB -->
+  <line x1="704" y1="108" x2="740" y2="108" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-19-10770688-08-arrow-accent)"/>
+
+  <!-- DB → DASH -->
+  <line x1="880" y1="108" x2="916" y2="108" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-19-10770688-08-arrow-muted)"/>
+
+  <!-- ── 노드 1: 전체 RAG 쿼리 (input 스타일) ── -->
+  <!-- paper mask -->
+  <rect x="40" y="68" width="136" height="80" rx="6" fill="#f8fafb"/>
+  <!-- styled box -->
+  <rect x="40" y="68" width="136" height="80" rx="6"
+        fill="rgba(58,84,143,0.08)" stroke="#3a548f" stroke-width="1"/>
+  <!-- tag -->
+  <rect x="48" y="74" width="28" height="12" rx="2"
+        fill="transparent" stroke="rgba(58,84,143,0.40)" stroke-width="0.8"/>
+  <text x="62" y="83"
+        fill="rgba(58,84,143,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.08em">INPUT</text>
+  <!-- 이름 -->
+  <text x="108" y="114"
+        fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">전체 RAG 쿼리</text>
+
+  <!-- ── 노드 2: 5~10% 샘플링 (warn) ── -->
+  <rect x="216" y="68" width="136" height="80" rx="6" fill="#f8fafb"/>
+  <rect x="216" y="68" width="136" height="80" rx="6"
+        fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="224" y="74" width="28" height="12" rx="2"
+        fill="transparent" stroke="rgba(18,33,39,0.35)" stroke-width="0.8"/>
+  <text x="238" y="83"
+        fill="rgba(18,33,39,0.65)" font-size="7" font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.08em">STEP</text>
+  <text x="284" y="108"
+        fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">5~10% 샘플링</text>
+  <text x="284" y="126"
+        fill="#6c8188" font-size="11" font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle">이상 탐지 우선</text>
+
+  <!-- ── 노드 3: 비동기 배치 평가 큐 (focal) ── -->
+  <rect x="392" y="68" width="136" height="80" rx="6" fill="#f8fafb"/>
+  <rect x="392" y="68" width="136" height="80" rx="6"
+        fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="400" y="74" width="28" height="12" rx="2"
+        fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="414" y="83"
+        fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.08em">QUEUE</text>
+  <text x="460" y="108"
+        fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">비동기 배치</text>
+  <text x="460" y="126"
+        fill="#6c8188" font-size="11" font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle">평가 큐</text>
+
+  <!-- ── 노드 4: RAGAS 평가 (focal) ── -->
+  <rect x="568" y="68" width="136" height="80" rx="6" fill="#f8fafb"/>
+  <rect x="568" y="68" width="136" height="80" rx="6"
+        fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="576" y="74" width="28" height="12" rx="2"
+        fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="590" y="83"
+        fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.08em">EVAL</text>
+  <text x="636" y="108"
+        fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">RAGAS 평가</text>
+  <text x="636" y="126"
+        fill="#6c8188" font-size="11" font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle">경량 LLM</text>
+
+  <!-- ── 노드 5: 지표 DB (store) ── -->
+  <rect x="744" y="68" width="136" height="80" rx="6" fill="#f8fafb"/>
+  <rect x="744" y="68" width="136" height="80" rx="6"
+        fill="rgba(18,33,39,0.05)" stroke="#3f545c" stroke-width="1"/>
+  <rect x="752" y="74" width="28" height="12" rx="2"
+        fill="transparent" stroke="rgba(63,84,92,0.35)" stroke-width="0.8"/>
+  <text x="766" y="83"
+        fill="rgba(63,84,92,0.7)" font-size="7" font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.08em">STORE</text>
+  <text x="812" y="108"
+        fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">지표 DB</text>
+  <text x="812" y="126"
+        fill="#6c8188" font-size="11" font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle">시계열 저장</text>
+
+  <!-- ── 노드 6: 모니터링 대시보드 (외부/출력) ── -->
+  <!-- 마지막 노드는 오른쪽 끝, 화살표가 944까지 나가는 구조가 되어 960을 넘으므로
+       대신 대시보드를 별도 컬럼 없이 오른쪽 여백에 인라인 레이블로 표현.
+       → 레이아웃을 재계산: 5노드, 간격 조정 -->
+
+  <!-- ─────── 재계산: 노드 5개 + 대시보드 아이콘 영역 분리 안 하고
+       노드 6개를 모두 렌더링. viewBox를 960으로 맞추기 위해
+       노드 너비 120, 간격 16으로 재산정.
+       X 시작: 24
+       노드 폭 120, 간격 16 → 스텝 136
+       N=6: 총 너비 = 6*120 + 5*16 = 720+80 = 800, 여백 24+24 = 960 ✓ ─────── -->
+
+  <!-- 위 노드들을 지우고 재배치 필요 → 이미 렌더링된 노드들은 위치가 틀림.
+       SVG는 선언적이므로 나중에 선언된 rect가 위에 덮임.
+       아래에 올바른 좌표로 덮어쓰기 렌더링 -->
+
+  <!-- ══════════════════════════════════════════════
+       최종 렌더: 6개 노드, 노드폭=120, 간격=16
+       X 배열: 24, 160, 296, 432, 568, 704
+       viewBox 960×240, 노드 Y=68, 높이=88
+       ══════════════════════════════════════════════ -->
+
+  <!-- BG 재도포 -->
+  <rect width="960" height="240" fill="#f8fafb"/>
+
+  <!-- 화살표 (재배치, 노드 밑에 있어야 하므로 다시 선언) -->
+  <!-- 각 노드 우변: x+120, 중앙 y=112 -->
+
+  <!-- 1→2: 144 → 160 -->
+  <line x1="144" y1="112" x2="157" y2="112"
+        stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-19-10770688-08-arrow-muted)"/>
+  <!-- 2→3: 280 → 296 -->
+  <line x1="280" y1="112" x2="293" y2="112"
+        stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-19-10770688-08-arrow-muted)"/>
+  <!-- 3→4: 416 → 432 -->
+  <line x1="416" y1="112" x2="429" y2="112"
+        stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-19-10770688-08-arrow-accent)"/>
+  <!-- 4→5: 552 → 568 -->
+  <line x1="552" y1="112" x2="565" y2="112"
+        stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-19-10770688-08-arrow-accent)"/>
+  <!-- 5→6: 688 → 704 -->
+  <line x1="688" y1="112" x2="701" y2="112"
+        stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-19-10770688-08-arrow-muted)"/>
+
+  <!-- ── 노드 1: 전체 RAG 쿼리 x=24 ── -->
+  <rect x="24" y="68" width="120" height="88" rx="6" fill="#f8fafb"/>
+  <rect x="24" y="68" width="120" height="88" rx="6"
+        fill="rgba(58,84,143,0.07)" stroke="#3a548f" stroke-width="1"/>
+  <rect x="32" y="75" width="32" height="12" rx="2"
+        fill="transparent" stroke="rgba(58,84,143,0.35)" stroke-width="0.8"/>
+  <text x="48" y="84"
+        fill="rgba(58,84,143,0.75)" font-size="7" font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.08em">INPUT</text>
+  <text x="84" y="108"
+        fill="#122127" font-size="13" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">전체 RAG</text>
+  <text x="84" y="124"
+        fill="#122127" font-size="13" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">쿼리</text>
+
+  <!-- ── 노드 2: 5~10% 샘플링 x=160 ── -->
+  <rect x="160" y="68" width="120" height="88" rx="6" fill="#f8fafb"/>
+  <rect x="160" y="68" width="120" height="88" rx="6"
+        fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="168" y="75" width="28" height="12" rx="2"
+        fill="transparent" stroke="rgba(18,33,39,0.30)" stroke-width="0.8"/>
+  <text x="182" y="84"
+        fill="rgba(18,33,39,0.60)" font-size="7" font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.08em">STEP</text>
+  <text x="220" y="104"
+        fill="#122127" font-size="13" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">5~10%</text>
+  <text x="220" y="120"
+        fill="#122127" font-size="13" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">샘플링</text>
+  <text x="220" y="136"
+        fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle">이상 탐지 우선</text>
+
+  <!-- ── 노드 3: 비동기 배치 평가 큐 x=296 (focal 1) ── -->
+  <rect x="296" y="68" width="120" height="88" rx="6" fill="#f8fafb"/>
+  <rect x="296" y="68" width="120" height="88" rx="6"
+        fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="304" y="75" width="32" height="12" rx="2"
+        fill="transparent" stroke="rgba(13,87,99,0.35)" stroke-width="0.8"/>
+  <text x="320" y="84"
+        fill="rgba(13,87,99,0.75)" font-size="7" font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.08em">QUEUE</text>
+  <text x="356" y="104"
+        fill="#122127" font-size="13" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">비동기 배치</text>
+  <text x="356" y="120"
+        fill="#122127" font-size="13" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">평가 큐</text>
+
+  <!-- ── 노드 4: RAGAS 평가 x=432 (focal 2) ── -->
+  <rect x="432" y="68" width="120" height="88" rx="6" fill="#f8fafb"/>
+  <rect x="432" y="68" width="120" height="88" rx="6"
+        fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="440" y="75" width="28" height="12" rx="2"
+        fill="transparent" stroke="rgba(13,87,99,0.35)" stroke-width="0.8"/>
+  <text x="454" y="84"
+        fill="rgba(13,87,99,0.75)" font-size="7" font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.08em">EVAL</text>
+  <text x="492" y="104"
+        fill="#122127" font-size="13" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">RAGAS 평가</text>
+  <text x="492" y="120"
+        fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle">경량 LLM</text>
+
+  <!-- ── 노드 5: 지표 DB x=568 ── -->
+  <rect x="568" y="68" width="120" height="88" rx="6" fill="#f8fafb"/>
+  <rect x="568" y="68" width="120" height="88" rx="6"
+        fill="rgba(18,33,39,0.04)" stroke="#3f545c" stroke-width="1"/>
+  <rect x="576" y="75" width="32" height="12" rx="2"
+        fill="transparent" stroke="rgba(63,84,92,0.30)" stroke-width="0.8"/>
+  <text x="592" y="84"
+        fill="rgba(63,84,92,0.65)" font-size="7" font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.08em">STORE</text>
+  <text x="628" y="104"
+        fill="#122127" font-size="13" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">지표 DB</text>
+  <text x="628" y="120"
+        fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle">시계열 저장</text>
+
+  <!-- ── 노드 6: 모니터링 대시보드 x=704 ── -->
+  <rect x="704" y="68" width="120" height="88" rx="6" fill="#f8fafb"/>
+  <rect x="704" y="68" width="120" height="88" rx="6"
+        fill="rgba(18,33,39,0.03)" stroke="rgba(18,33,39,0.28)" stroke-width="1"/>
+  <rect x="712" y="75" width="28" height="12" rx="2"
+        fill="transparent" stroke="rgba(18,33,39,0.22)" stroke-width="0.8"/>
+  <text x="726" y="84"
+        fill="rgba(18,33,39,0.50)" font-size="7" font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.08em">VIEW</text>
+  <text x="764" y="104"
+        fill="#122127" font-size="13" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">모니터링</text>
+  <text x="764" y="120"
+        fill="#122127" font-size="13" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">대시보드</text>
+
+  <!-- ── 레전드 구분선 ── -->
+  <line x1="24" y1="180" x2="836" y2="180"
+        stroke="rgba(18,33,39,0.10)" stroke-width="0.8"/>
+
+  <!-- 레전드 텍스트 -->
+  <text x="24" y="196"
+        fill="#3f545c" font-size="8" font-family="'IBM Plex Mono', monospace"
+        letter-spacing="0.14em">LEGEND</text>
+
+  <!-- 레전드 항목 1: INPUT -->
+  <rect x="88" y="186" width="10" height="10" rx="2"
+        fill="rgba(58,84,143,0.07)" stroke="#3a548f" stroke-width="1"/>
+  <text x="102" y="195"
+        fill="#3f545c" font-size="9" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">쿼리 입력</text>
+
+  <!-- 레전드 항목 2: STEP -->
+  <rect x="184" y="186" width="10" height="10" rx="2"
+        fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <text x="198" y="195"
+        fill="#3f545c" font-size="9" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">처리 단계</text>
+
+  <!-- 레전드 항목 3: 핵심 경로 (focal) -->
+  <rect x="280" y="186" width="10" height="10" rx="2"
+        fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="294" y="195"
+        fill="#3f545c" font-size="9" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">핵심 평가 경로</text>
+
+  <!-- 레전드 항목 4: STORE -->
+  <rect x="408" y="186" width="10" height="10" rx="2"
+        fill="rgba(18,33,39,0.04)" stroke="#3f545c" stroke-width="1"/>
+  <text x="422" y="195"
+        fill="#3f545c" font-size="9" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">저장 / 출력</text>
+
+</svg>
+</body>
+</html>

@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; font-family: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; }
+  .diagram-wrap { width: 100%; max-width: 960px; margin: 0 auto; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<div class="diagram-wrap">
+<svg viewBox="0 0 960 600" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="2026-09-19-acc35f49-02-rdb-cow-title 2026-09-19-acc35f49-02-rdb-cow-desc">
+  <title id="2026-09-19-acc35f49-02-rdb-cow-title">Redis RDB 스냅샷 — fork()와 CoW 흐름</title>
+  <desc id="2026-09-19-acc35f49-02-rdb-cow-desc">Redis 메인 프로세스가 fork()로 자식 프로세스를 만들고, 자식이 메모리를 순회해 dump.rdb를 기록하는 동안 메인 프로세스는 CoW(Copy-on-Write)로 쓰기 요청을 처리하며, 완료 후 dump.rdb가 원자적으로 교체되는 흐름을 보여준다.</desc>
+
+  <defs>
+    <!-- Arrow markers -->
+    <marker id="2026-09-19-acc35f49-02-arr" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-09-19-acc35f49-02-arr-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <marker id="2026-09-19-acc35f49-02-arr-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3a548f"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="960" height="600" fill="#f8fafb"/>
+
+  <!-- ─────────────────────────────────────────────
+       Connectors drawn BEFORE boxes (z-order)
+       ───────────────────────────────────────────── -->
+
+  <!-- P → F : fork() — right edge of P to top of F -->
+  <!-- P center: (240,148), F center: (560,148) — same row -->
+  <!-- straight horizontal: P right(360,148) → F left(468,148) -->
+  <line x1="360" y1="148" x2="461" y2="148" stroke="#0d5763" stroke-width="1.5" marker-end="url(#2026-09-19-acc35f49-02-arr-accent)"/>
+  <!-- label -->
+  <rect x="383" y="129" width="56" height="14" rx="2" fill="#f8fafb"/>
+  <text x="411" y="140" fill="#0d5763" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle" font-weight="600">fork()</text>
+
+  <!-- F → W : 메모리 순회 — F bottom(560,208) → W top(560,288) -->
+  <line x1="560" y1="208" x2="560" y2="281" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-19-acc35f49-02-arr)"/>
+  <!-- label -->
+  <rect x="521" y="234" width="76" height="14" rx="2" fill="#f8fafb"/>
+  <text x="559" y="245" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">메모리 순회</text>
+
+  <!-- P → C : 쓰기 요청 발생 — P bottom(240,208) → C top(240,288) -->
+  <line x1="240" y1="208" x2="240" y2="281" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-19-acc35f49-02-arr)"/>
+  <!-- label -->
+  <rect x="181" y="234" width="100" height="14" rx="2" fill="#f8fafb"/>
+  <text x="231" y="245" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">쓰기 요청 발생</text>
+
+  <!-- C → P : 복사 완료 후 돌아감 — C top edge back to P via loop left side -->
+  <!-- route: C left(160,324) → elbow at (120,324) → up to (120,148) → P left(120,148) -->
+  <path d="M 160,324 Q 112,324 112,316 L 112,156 Q 112,148 120,148 L 120,148" stroke="#3f545c" stroke-width="1" fill="none" stroke-dasharray="5,4" marker-end="url(#2026-09-19-acc35f49-02-arr)"/>
+  <!-- label at mid-left segment -->
+  <rect x="68" y="222" width="52" height="14" rx="2" fill="#f8fafb"/>
+  <text x="94" y="233" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">반영</text>
+
+  <!-- W → D : 완료 후 원자적 교체 — W bottom(560,388) → D top(560,468) -->
+  <line x1="560" y1="388" x2="560" y2="461" stroke="#3a548f" stroke-width="1" marker-end="url(#2026-09-19-acc35f49-02-arr-link)"/>
+  <!-- label -->
+  <rect x="489" y="414" width="144" height="14" rx="2" fill="#f8fafb"/>
+  <text x="561" y="425" fill="#3a548f" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">완료 후 원자적 교체</text>
+
+  <!-- F → D : 완료 시 종료 (diagonal avoidance — route right of F and D) -->
+  <!-- F right(652,148) → elbow right at (720,148) → down to (720,508) → D right(652,508) -->
+  <path d="M 652,148 Q 724,148 724,156 L 724,500 Q 724,508 716,508 L 659,508" stroke="#3f545c" stroke-width="1" fill="none" stroke-dasharray="5,4" marker-end="url(#2026-09-19-acc35f49-02-arr)"/>
+  <!-- label -->
+  <rect x="688" y="310" width="72" height="14" rx="2" fill="#f8fafb"/>
+  <text x="724" y="321" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">완료 시 종료</text>
+
+  <!-- ─────────────────────────────────────────────
+       Nodes (drawn after connectors)
+       ───────────────────────────────────────────── -->
+
+  <!-- P: Redis 메인 프로세스 (focal) — center (240,148), 240×88 -->
+  <rect x="120" y="104" width="240" height="88" rx="6" fill="#f8fafb"/>
+  <rect x="120" y="104" width="240" height="88" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.5"/>
+  <!-- type tag -->
+  <rect x="128" y="111" width="44" height="13" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="150" y="121" fill="rgba(13,87,99,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">PROCESS</text>
+  <!-- name -->
+  <text x="240" y="156" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Redis 메인 프로세스</text>
+  <text x="240" y="175" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">클라이언트 처리 중</text>
+
+  <!-- F: 자식 프로세스 (backend) — center (560,148), 200×88 -->
+  <rect x="460" y="104" width="200" height="88" rx="6" fill="#f8fafb"/>
+  <rect x="460" y="104" width="200" height="88" rx="6" fill="white" stroke="#122127" stroke-width="1"/>
+  <!-- type tag -->
+  <rect x="468" y="111" width="44" height="13" rx="2" fill="transparent" stroke="rgba(18,33,39,0.35)" stroke-width="0.8"/>
+  <text x="490" y="121" fill="rgba(18,33,39,0.7)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">CHILD</text>
+  <!-- name -->
+  <text x="560" y="156" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">자식 프로세스</text>
+  <text x="560" y="175" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">스냅샷 담당</text>
+
+  <!-- C: CoW 복사 (backend) — center (240,324), 200×72 -->
+  <rect x="140" y="288" width="200" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="140" y="288" width="200" height="72" rx="6" fill="white" stroke="#122127" stroke-width="1"/>
+  <!-- type tag -->
+  <rect x="148" y="295" width="24" height="13" rx="2" fill="transparent" stroke="rgba(18,33,39,0.35)" stroke-width="0.8"/>
+  <text x="160" y="305" fill="rgba(18,33,39,0.7)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">CoW</text>
+  <!-- name -->
+  <text x="240" y="328" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">CoW: 해당 페이지만 복사</text>
+  <text x="240" y="347" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">Copy-on-Write</text>
+
+  <!-- W: dump.rdb 기록 (store) — center (560,328), 200×72 -->
+  <rect x="460" y="288" width="200" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="460" y="288" width="200" height="72" rx="6" fill="rgba(18,33,39,0.05)" stroke="#3f545c" stroke-width="1"/>
+  <!-- type tag -->
+  <rect x="468" y="295" width="44" height="13" rx="2" fill="transparent" stroke="rgba(63,84,92,0.40)" stroke-width="0.8"/>
+  <text x="490" y="305" fill="rgba(63,84,92,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">WRITE</text>
+  <!-- name -->
+  <text x="560" y="326" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Mono', monospace" text-anchor="middle">dump.rdb 기록</text>
+  <text x="560" y="347" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">sequential write</text>
+
+  <!-- D: dump.rdb 최신화 (store/focal result) — center (560,508), 200×72 -->
+  <rect x="460" y="468" width="200" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="460" y="468" width="200" height="72" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.5"/>
+  <!-- type tag -->
+  <rect x="468" y="475" width="44" height="13" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="490" y="485" fill="rgba(13,87,99,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">STORE</text>
+  <!-- name -->
+  <text x="560" y="506" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Mono', monospace" text-anchor="middle">dump.rdb 최신화</text>
+  <text x="560" y="525" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">atomic rename(2)</text>
+
+  <!-- ─────────────────────────────────────────────
+       Legend strip
+       ───────────────────────────────────────────── -->
+  <line x1="32" y1="572" x2="928" y2="572" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+
+  <!-- Legend items -->
+  <!-- focal -->
+  <rect x="32" y="581" width="10" height="10" rx="2" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="48" y="590" fill="#3f545c" font-size="9" font-family="'IBM Plex Mono', monospace">핵심 노드</text>
+
+  <!-- backend -->
+  <rect x="136" y="581" width="10" height="10" rx="2" fill="white" stroke="#122127" stroke-width="1"/>
+  <text x="152" y="590" fill="#3f545c" font-size="9" font-family="'IBM Plex Mono', monospace">프로세스 / 연산</text>
+
+  <!-- store -->
+  <rect x="268" y="581" width="10" height="10" rx="2" fill="rgba(18,33,39,0.05)" stroke="#3f545c" stroke-width="1"/>
+  <text x="284" y="590" fill="#3f545c" font-size="9" font-family="'IBM Plex Mono', monospace">파일 / 저장</text>
+
+  <!-- dashed = optional/return -->
+  <line x1="380" y1="586" x2="408" y2="586" stroke="#3f545c" stroke-width="1" stroke-dasharray="4,3"/>
+  <text x="416" y="590" fill="#3f545c" font-size="9" font-family="'IBM Plex Mono', monospace">비동기 / 복귀</text>
+
+  <!-- accent arrow -->
+  <line x1="524" y1="586" x2="552" y2="586" stroke="#0d5763" stroke-width="1.5"/>
+  <text x="560" y="590" fill="#3f545c" font-size="9" font-family="'IBM Plex Mono', monospace">주요 흐름</text>
+
+</svg>
+</div>
+</body>
+</html>

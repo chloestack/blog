@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; display: flex; justify-content: center; padding: 0; }
+  .diagram-wrap { width: 100%; max-width: 960px; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<div class="diagram-wrap">
+<svg viewBox="0 0 960 380" xmlns="http://www.w3.org/2000/svg"
+     role="img" aria-labelledby="2026-09-19-f8fc1d22-01-wc-title 2026-09-19-f8fc1d22-01-wc-desc">
+  <title id="2026-09-19-f8fc1d22-01-wc-title">WebClient vs RestTemplate — 설정 레이어 분기</title>
+  <desc id="2026-09-19-f8fc1d22-01-wc-desc">RestTemplate의 블로킹 방식은 스레드 풀 고갈 위험으로 이어지고, WebClient의 논블로킹 이벤트 루프는 고처리량을 가능하게 하지만 설정 레이어가 올바르지 않으면 타임아웃 미동작·풀 고갈이 발생하고 올바른 설정 시 안정적 운영에 도달하는 흐름을 보여준다.</desc>
+
+  <defs>
+    <!-- 기본 화살표 (muted) -->
+    <marker id="2026-09-19-f8fc1d22-01-wc-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <!-- accent 화살표 -->
+    <marker id="2026-09-19-f8fc1d22-01-wc-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <!-- warning 화살표 -->
+    <marker id="2026-09-19-f8fc1d22-01-wc-arrow-warn" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#a96a08"/>
+    </marker>
+    <!-- danger 화살표 -->
+    <marker id="2026-09-19-f8fc1d22-01-wc-arrow-danger" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#94382b"/>
+    </marker>
+    <!-- ok 화살표 -->
+    <marker id="2026-09-19-f8fc1d22-01-wc-arrow-ok" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#286d50"/>
+    </marker>
+  </defs>
+
+  <!-- 배경 -->
+  <rect width="960" height="380" fill="#f8fafb"/>
+
+  <!-- ===================== ARROWS (drawn before boxes) ===================== -->
+
+  <!-- RestTemplate → 스레드 풀 고갈 -->
+  <path d="M 200,120 H 312" fill="none" stroke="#a96a08" stroke-width="1.2"
+        marker-end="url(#2026-09-19-f8fc1d22-01-wc-arrow-warn)"/>
+  <!-- arrow label mask + text -->
+  <rect x="218" y="100" width="60" height="14" rx="2" fill="#f8fafb"/>
+  <text x="248" y="111" fill="#a96a08" font-size="10" font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.06em">스레드 증가</text>
+
+  <!-- WebClient → 이벤트 루프(고처리량) -->
+  <path d="M 200,240 H 312" fill="none" stroke="#0d5763" stroke-width="1.2"
+        marker-end="url(#2026-09-19-f8fc1d22-01-wc-arrow-accent)"/>
+  <rect x="210" y="220" width="72" height="14" rx="2" fill="#f8fafb"/>
+  <text x="246" y="231" fill="#0d5763" font-size="10" font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.06em">이벤트 루프</text>
+
+  <!-- 고처리량 → 설정 레이어 -->
+  <path d="M 480,240 H 560" fill="none" stroke="#0d5763" stroke-width="1.2"
+        marker-end="url(#2026-09-19-f8fc1d22-01-wc-arrow-accent)"/>
+
+  <!-- 설정 레이어 → 타임아웃 미동작 (위쪽 분기) -->
+  <path d="M 636,216 V 140 H 724" fill="none" stroke="#94382b" stroke-width="1.2"
+        stroke-dasharray="5,3" marker-end="url(#2026-09-19-f8fc1d22-01-wc-arrow-danger)"/>
+  <rect x="622" y="160" width="56" height="14" rx="2" fill="#f8fafb"/>
+  <text x="650" y="171" fill="#94382b" font-size="10" font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.05em">잘못 설정</text>
+
+  <!-- 설정 레이어 → 안정적 운영 (아래쪽 분기) -->
+  <path d="M 636,264 V 320 H 724" fill="none" stroke="#286d50" stroke-width="1.2"
+        marker-end="url(#2026-09-19-f8fc1d22-01-wc-arrow-ok)"/>
+  <rect x="622" y="278" width="56" height="14" rx="2" fill="#f8fafb"/>
+  <text x="650" y="289" fill="#286d50" font-size="10" font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.05em">올바른 설정</text>
+
+  <!-- ===================== NODES ===================== -->
+
+  <!-- ── 왼쪽 열: RestTemplate (warn) ── -->
+  <rect x="40" y="88" width="160" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="40" y="88" width="160" height="64" rx="6"
+        fill="rgba(169,106,8,0.07)" stroke="#a96a08" stroke-width="1"/>
+  <rect x="52" y="96" width="52" height="13" rx="2"
+        fill="transparent" stroke="rgba(169,106,8,0.40)" stroke-width="0.8"/>
+  <text x="78" y="106" fill="rgba(169,106,8,0.8)" font-size="8"
+        font-family="'IBM Plex Mono', monospace" text-anchor="middle"
+        letter-spacing="0.10em">LEGACY</text>
+  <text x="120" y="124" fill="#122127" font-size="13" font-weight="600"
+        font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">RestTemplate</text>
+  <text x="120" y="141" fill="#3f545c" font-size="10"
+        font-family="'IBM Plex Mono', monospace" text-anchor="middle">블로킹 방식</text>
+
+  <!-- ── 왼쪽 열: WebClient (focal / accent) ── -->
+  <rect x="40" y="208" width="160" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="40" y="208" width="160" height="64" rx="6"
+        fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="52" y="216" width="44" height="13" rx="2"
+        fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="74" y="226" fill="rgba(13,87,99,0.85)" font-size="8"
+        font-family="'IBM Plex Mono', monospace" text-anchor="middle"
+        letter-spacing="0.10em">FOCAL</text>
+  <text x="120" y="244" fill="#122127" font-size="13" font-weight="600"
+        font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">WebClient</text>
+  <text x="120" y="261" fill="#3f545c" font-size="10"
+        font-family="'IBM Plex Mono', monospace" text-anchor="middle">논블로킹</text>
+
+  <!-- ── 중간 열: 스레드 풀 고갈 (warn, 위) ── -->
+  <rect x="312" y="88" width="168" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="312" y="88" width="168" height="64" rx="6"
+        fill="rgba(169,106,8,0.07)" stroke="#a96a08" stroke-width="1"/>
+  <text x="396" y="120" fill="#122127" font-size="12" font-weight="600"
+        font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">스레드 풀 고갈 위험</text>
+  <text x="396" y="138" fill="#a96a08" font-size="10"
+        font-family="'IBM Plex Mono', monospace" text-anchor="middle">Thread Pool Exhaustion</text>
+
+  <!-- ── 중간 열: 소수 스레드 고처리량 (accent) ── -->
+  <rect x="312" y="208" width="168" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="312" y="208" width="168" height="64" rx="6"
+        fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="396" y="236" fill="#122127" font-size="12" font-weight="600"
+        font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">소수 스레드</text>
+  <text x="396" y="254" fill="#122127" font-size="12" font-weight="600"
+        font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">고처리량</text>
+
+  <!-- ── 중앙: 설정 레이어 다이아몬드 ── -->
+  <!-- diamond 중심: cx=636, cy=240, 반폭=76, 반높이=48 -->
+  <polygon points="636,192 712,240 636,288 560,240"
+           fill="#f8fafb"/>
+  <polygon points="636,192 712,240 636,288 560,240"
+           fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="636" y="236" fill="#122127" font-size="12" font-weight="600"
+        font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">설정 레이어</text>
+  <text x="636" y="252" fill="#3f545c" font-size="10"
+        font-family="'IBM Plex Mono', monospace" text-anchor="middle">분리됨?</text>
+
+  <!-- ── 오른쪽 열 위: 타임아웃 미동작 (danger) ── -->
+  <rect x="724" y="100" width="188" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="724" y="100" width="188" height="64" rx="6"
+        fill="rgba(148,56,43,0.07)" stroke="#94382b" stroke-width="1"/>
+  <text x="818" y="128" fill="#122127" font-size="12" font-weight="600"
+        font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">타임아웃 미동작</text>
+  <text x="818" y="146" fill="#94382b" font-size="10"
+        font-family="'IBM Plex Mono', monospace" text-anchor="middle">풀 고갈</text>
+
+  <!-- ── 오른쪽 열 아래: 안정적 운영 (ok/accent) ── -->
+  <rect x="724" y="296" width="188" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="724" y="296" width="188" height="56" rx="6"
+        fill="rgba(40,109,80,0.08)" stroke="#286d50" stroke-width="1.2"/>
+  <text x="818" y="328" fill="#122127" font-size="13" font-weight="600"
+        font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">안정적 운영</text>
+
+  <!-- ===================== LEGEND ===================== -->
+  <line x1="40" y1="356" x2="920" y2="356"
+        stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+
+  <!-- 범례 아이템들 -->
+  <rect x="40" y="363" width="10" height="10" rx="2"
+        fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="56" y="372" fill="#3f545c" font-size="10"
+        font-family="'IBM Plex Mono', monospace">핵심 경로</text>
+
+  <rect x="200" y="363" width="10" height="10" rx="2"
+        fill="rgba(169,106,8,0.07)" stroke="#a96a08" stroke-width="1"/>
+  <text x="216" y="372" fill="#3f545c" font-size="10"
+        font-family="'IBM Plex Mono', monospace">주의 필요</text>
+
+  <rect x="360" y="363" width="10" height="10" rx="2"
+        fill="rgba(148,56,43,0.07)" stroke="#94382b" stroke-width="1"/>
+  <text x="376" y="372" fill="#3f545c" font-size="10"
+        font-family="'IBM Plex Mono', monospace">장애 시나리오</text>
+
+  <rect x="540" y="363" width="10" height="10" rx="2"
+        fill="rgba(40,109,80,0.08)" stroke="#286d50" stroke-width="1"/>
+  <text x="556" y="372" fill="#3f545c" font-size="10"
+        font-family="'IBM Plex Mono', monospace">목표 상태</text>
+
+  <line x1="680" y1="363" x2="704" y2="363"
+        stroke="#94382b" stroke-width="1" stroke-dasharray="5,3"/>
+  <text x="710" y="372" fill="#3f545c" font-size="10"
+        font-family="'IBM Plex Mono', monospace">잘못된 경로</text>
+
+</svg>
+</div>
+</body>
+</html>
