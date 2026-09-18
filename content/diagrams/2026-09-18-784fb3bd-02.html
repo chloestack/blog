@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; display: flex; justify-content: center; padding: 0; }
+  .diagram-wrap { width: 100%; max-width: 960px; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<div class="diagram-wrap">
+<svg viewBox="0 0 960 600" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="2026-09-18-784fb3bd-02-constrained-decode-title 2026-09-18-784fb3bd-02-constrained-decode-desc">
+  <title id="2026-09-18-784fb3bd-02-constrained-decode-title">Constrained Decoding: JSON Schema 기반 구조화 출력 흐름</title>
+  <desc id="2026-09-18-784fb3bd-02-constrained-decode-desc">JSON Schema 정의에서 시작해 유효 토큰 마스크를 계산하고, LLM Logits에 마스크를 적용한 뒤 토큰을 선택하는 반복 루프. JSON이 완성되면 구조화 응답을 출력한다.</desc>
+
+  <defs>
+    <!-- Arrow markers -->
+    <marker id="2026-09-18-784fb3bd-02-arrow-muted" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-09-18-784fb3bd-02-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="100%" height="100%" fill="#f8fafb"/>
+
+  <!-- ===================== CONNECTORS (drawn before boxes) ===================== -->
+
+  <!-- S → C (vertical, center x=480) -->
+  <line x1="480" y1="121" x2="480" y2="155" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-18-784fb3bd-02-arrow-muted)"/>
+
+  <!-- C → L (vertical) -->
+  <line x1="480" y1="215" x2="480" y2="247" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-18-784fb3bd-02-arrow-muted)"/>
+
+  <!-- L → M (vertical) -->
+  <line x1="480" y1="307" x2="480" y2="339" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-18-784fb3bd-02-arrow-muted)"/>
+
+  <!-- M → T (vertical) -->
+  <line x1="480" y1="399" x2="480" y2="431" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-18-784fb3bd-02-arrow-muted)"/>
+
+  <!-- T → Q (vertical) -->
+  <line x1="480" y1="491" x2="480" y2="519" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-18-784fb3bd-02-arrow-muted)"/>
+
+  <!-- Q → O (right horizontal: diamond right tip → O left) -->
+  <!-- Diamond center=(480,543), right tip=x:560; O box left=628 -->
+  <path d="M560,543 L628,543" stroke="#0d5763" stroke-width="1.2" fill="none" marker-end="url(#2026-09-18-784fb3bd-02-arrow-accent)"/>
+
+  <!-- Q "아니오" → C loop: diamond bottom tip → elbow right side → back up to C -->
+  <!-- Diamond center=(480,543), bottom tip y=567 -->
+  <!-- Loop goes: down from diamond bottom(480,567) → right elbow to x=760 → up to y=185 → left to C right(560,185) -->
+  <path d="M480,567 Q480,580 492,580 L752,580 Q764,580 764,568 L764,192 Q764,180 752,180 L560,180" stroke="#3f545c" stroke-width="1" stroke-dasharray="5,4" fill="none" marker-end="url(#2026-09-18-784fb3bd-02-arrow-muted)"/>
+
+  <!-- ===================== NODES ===================== -->
+
+  <!-- S: JSON Schema 정의 (focal — link color, accent-tint) -->
+  <!-- Box: x=380, y=73, w=200, h=48 -->
+  <rect x="380" y="73" width="200" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="380" y="73" width="200" height="48" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="388" y="79" width="32" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.4)" stroke-width="0.8"/>
+  <text x="404" y="88" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">INPUT</text>
+  <text x="480" y="103" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">JSON Schema 정의</text>
+
+  <!-- C: 유효 토큰 마스크 계산 (accent) -->
+  <!-- Box: x=380, y=155, w=200, h=60 -->
+  <rect x="380" y="155" width="200" height="60" rx="6" fill="#f8fafb"/>
+  <rect x="380" y="155" width="200" height="60" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <rect x="388" y="161" width="32" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.4)" stroke-width="0.8"/>
+  <text x="404" y="170" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">STEP</text>
+  <text x="480" y="189" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">유효 토큰</text>
+  <text x="480" y="206" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">마스크 계산</text>
+
+  <!-- L: LLM Logits 확률 분포 (warn — muted) -->
+  <!-- Box: x=380, y=247, w=200, h=60 -->
+  <rect x="380" y="247" width="200" height="60" rx="6" fill="#f8fafb"/>
+  <rect x="380" y="247" width="200" height="60" rx="6" fill="rgba(63,84,92,0.06)" stroke="#6c8188" stroke-width="1"/>
+  <rect x="388" y="253" width="36" height="12" rx="2" fill="transparent" stroke="rgba(108,129,136,0.5)" stroke-width="0.8"/>
+  <text x="406" y="262" fill="#6c8188" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">MODEL</text>
+  <text x="480" y="281" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">LLM Logits</text>
+  <text x="480" y="298" fill="#3f545c" font-size="11" font-weight="400" font-family="'IBM Plex Mono', monospace" text-anchor="middle">확률 분포</text>
+
+  <!-- M: 마스크 적용 (accent) -->
+  <!-- Box: x=380, y=339, w=200, h=60 -->
+  <rect x="380" y="339" width="200" height="60" rx="6" fill="#f8fafb"/>
+  <rect x="380" y="339" width="200" height="60" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <rect x="388" y="345" width="32" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.4)" stroke-width="0.8"/>
+  <text x="404" y="354" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">STEP</text>
+  <text x="480" y="373" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">마스크 적용</text>
+  <text x="480" y="390" fill="#3f545c" font-size="11" font-weight="400" font-family="'IBM Plex Mono', monospace" text-anchor="middle">무효 토큰 제거</text>
+
+  <!-- T: 다음 토큰 선택 (ok — subtle green) -->
+  <!-- Box: x=380, y=431, w=200, h=60 -->
+  <rect x="380" y="431" width="200" height="60" rx="6" fill="#f8fafb"/>
+  <rect x="380" y="431" width="200" height="60" rx="6" fill="rgba(40,109,80,0.07)" stroke="#286d50" stroke-width="1"/>
+  <rect x="388" y="437" width="32" height="12" rx="2" fill="transparent" stroke="rgba(40,109,80,0.4)" stroke-width="0.8"/>
+  <text x="404" y="446" fill="rgba(40,109,80,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">STEP</text>
+  <text x="480" y="465" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">다음 토큰 선택</text>
+
+  <!-- Q: JSON 완성? decision diamond -->
+  <!-- Diamond center=(480,543), half-w=80, half-h=24 -->
+  <rect x="400" y="519" width="160" height="48" rx="0" fill="#f8fafb"/>
+  <polygon points="480,519 560,543 480,567 400,543" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="480" y="539" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">JSON</text>
+  <text x="480" y="554" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">완성?</text>
+
+  <!-- O: 구조화 응답 출력 (ok, focal) -->
+  <!-- Box: x=628, y=519, w=200, h=48 -->
+  <rect x="628" y="519" width="200" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="628" y="519" width="200" height="48" rx="6" fill="rgba(40,109,80,0.10)" stroke="#286d50" stroke-width="1.2"/>
+  <rect x="636" y="525" width="40" height="12" rx="2" fill="transparent" stroke="rgba(40,109,80,0.5)" stroke-width="0.8"/>
+  <text x="656" y="534" fill="rgba(40,109,80,0.9)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">OUTPUT</text>
+  <text x="728" y="549" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">구조화 응답 출력</text>
+
+  <!-- ===================== ARROW LABELS ===================== -->
+
+  <!-- "예" label on Q→O arrow, midpoint x=(560+628)/2=594, y=543 -->
+  <rect x="577" y="533" width="24" height="14" rx="2" fill="#f8fafb"/>
+  <text x="589" y="543" fill="#6c8188" font-size="12" font-weight="500" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">예</text>
+
+  <!-- "아니오" label on loop-back path, positioned near bottom of loop -->
+  <rect x="692" y="570" width="52" height="14" rx="2" fill="#f8fafb"/>
+  <text x="718" y="580" fill="#6c8188" font-size="12" font-weight="500" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">아니오</text>
+
+  <!-- ===================== LEGEND ===================== -->
+  <line x1="32" y1="592" x2="928" y2="592" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+
+  <!-- Legend item 1: focal/accent node -->
+  <rect x="32" y="596" width="12" height="10" rx="2" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="50" y="605" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.08em">마스크 계산 단계</text>
+
+  <!-- Legend item 2: model logits node -->
+  <rect x="192" y="596" width="12" height="10" rx="2" fill="rgba(63,84,92,0.06)" stroke="#6c8188" stroke-width="1"/>
+  <text x="210" y="605" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.08em">LLM 처리</text>
+
+  <!-- Legend item 3: output node -->
+  <rect x="312" y="596" width="12" height="10" rx="2" fill="rgba(40,109,80,0.07)" stroke="#286d50" stroke-width="1"/>
+  <text x="330" y="605" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.08em">출력</text>
+
+  <!-- Legend item 4: loop-back -->
+  <line x1="412" y1="601" x2="432" y2="601" stroke="#3f545c" stroke-width="1" stroke-dasharray="5,4" marker-end="url(#2026-09-18-784fb3bd-02-arrow-muted)"/>
+  <text x="440" y="605" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.08em">반복 루프</text>
+</svg>
+</div>
+</body>
+</html>

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; }
+  .diagram-wrap { display: block; width: 100%; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<div class="diagram-wrap">
+<svg viewBox="0 0 960 400" xmlns="http://www.w3.org/2000/svg"
+     role="img" aria-labelledby="2026-09-18-784fb3bd-07-monitoring-title 2026-09-18-784fb3bd-07-monitoring-desc">
+  <title id="2026-09-18-784fb3bd-07-monitoring-title">모니터링 지표 기반 스키마 개선 행동 흐름</title>
+  <desc id="2026-09-18-784fb3bd-07-monitoring-desc">모니터링 지표(재시도 비율·응답 지연·필드별 실패 빈도)가 각각 스키마 개선·단순화·description 보완 행동으로 이어지는 흐름도.</desc>
+
+  <defs>
+    <marker id="2026-09-18-784fb3bd-07-arrow-muted" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-09-18-784fb3bd-07-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="960" height="400" fill="#f8fafb"/>
+
+  <!-- ─── CONNECTORS (drawn before boxes) ─── -->
+
+  <!-- M → R (top branch, routes up then right) -->
+  <path d="M 212,200 H 256 V 120 H 320" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-18-784fb3bd-07-arrow-muted)"/>
+  <!-- M → L (middle branch, straight right) -->
+  <path d="M 212,200 H 320" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-18-784fb3bd-07-arrow-muted)"/>
+  <!-- M → F (bottom branch, routes down then right) -->
+  <path d="M 212,200 H 256 V 280 H 320" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-18-784fb3bd-07-arrow-muted)"/>
+
+  <!-- R → A1 -->
+  <path d="M 468,120 H 580" fill="none" stroke="#0d5763" stroke-width="1" marker-end="url(#2026-09-18-784fb3bd-07-arrow-accent)"/>
+  <!-- L → A2 -->
+  <path d="M 468,200 H 580" fill="none" stroke="#0d5763" stroke-width="1" marker-end="url(#2026-09-18-784fb3bd-07-arrow-accent)"/>
+  <!-- F → A3 -->
+  <path d="M 468,280 H 580" fill="none" stroke="#0d5763" stroke-width="1" marker-end="url(#2026-09-18-784fb3bd-07-arrow-accent)"/>
+
+  <!-- ─── NODE: M (모니터링 지표) — focal ─── -->
+  <rect x="60" y="160" width="152" height="80" rx="6" fill="#f8fafb"/>
+  <rect x="60" y="160" width="152" height="80" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="68" y="168" width="32" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.4)" stroke-width="0.8"/>
+  <text x="84" y="177" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">INPUT</text>
+  <text x="136" y="198" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">모니터링</text>
+  <text x="136" y="216" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">지표</text>
+
+  <!-- ─── NODE: R (재시도 비율) — metric ─── -->
+  <rect x="320" y="80" width="148" height="80" rx="6" fill="#f8fafb"/>
+  <rect x="320" y="80" width="148" height="80" rx="6" fill="rgba(13,87,99,0.05)" stroke="#0d5763" stroke-width="1"/>
+  <rect x="328" y="88" width="36" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.35)" stroke-width="0.8"/>
+  <text x="346" y="97" fill="rgba(13,87,99,0.75)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">METRIC</text>
+  <text x="394" y="118" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">재시도 비율</text>
+  <text x="394" y="136" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">retry rate</text>
+
+  <!-- ─── NODE: L (응답 지연) — metric ─── -->
+  <rect x="320" y="160" width="148" height="80" rx="6" fill="#f8fafb"/>
+  <rect x="320" y="160" width="148" height="80" rx="6" fill="rgba(13,87,99,0.05)" stroke="#0d5763" stroke-width="1"/>
+  <rect x="328" y="168" width="36" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.35)" stroke-width="0.8"/>
+  <text x="346" y="177" fill="rgba(13,87,99,0.75)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">METRIC</text>
+  <text x="394" y="198" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">응답 지연</text>
+  <text x="394" y="216" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">latency</text>
+
+  <!-- ─── NODE: F (필드별 실패 빈도) — metric ─── -->
+  <rect x="320" y="240" width="148" height="80" rx="6" fill="#f8fafb"/>
+  <rect x="320" y="240" width="148" height="80" rx="6" fill="rgba(13,87,99,0.05)" stroke="#0d5763" stroke-width="1"/>
+  <rect x="328" y="248" width="36" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.35)" stroke-width="0.8"/>
+  <text x="346" y="257" fill="rgba(13,87,99,0.75)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">METRIC</text>
+  <text x="394" y="278" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">필드별 실패</text>
+  <text x="394" y="296" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">field failure</text>
+
+  <!-- ─── NODE: A1 (5% 초과 → 스키마 개선) — action ─── -->
+  <rect x="580" y="80" width="308" height="80" rx="6" fill="#f8fafb"/>
+  <rect x="580" y="80" width="308" height="80" rx="6" fill="rgba(40,109,80,0.06)" stroke="#286d50" stroke-width="1"/>
+  <rect x="588" y="88" width="36" height="12" rx="2" fill="transparent" stroke="rgba(40,109,80,0.35)" stroke-width="0.8"/>
+  <text x="606" y="97" fill="rgba(40,109,80,0.75)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">ACTION</text>
+  <text x="734" y="118" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">5% 초과 시 스키마 개선</text>
+  <text x="734" y="136" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">schema improvement</text>
+
+  <!-- ─── NODE: A2 (증가 추세 → 스키마 단순화) — action ─── -->
+  <rect x="580" y="160" width="308" height="80" rx="6" fill="#f8fafb"/>
+  <rect x="580" y="160" width="308" height="80" rx="6" fill="rgba(40,109,80,0.06)" stroke="#286d50" stroke-width="1"/>
+  <rect x="588" y="168" width="36" height="12" rx="2" fill="transparent" stroke="rgba(40,109,80,0.35)" stroke-width="0.8"/>
+  <text x="606" y="177" fill="rgba(40,109,80,0.75)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">ACTION</text>
+  <text x="734" y="198" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">증가 추세 시 스키마 단순화</text>
+  <text x="734" y="216" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">schema simplification</text>
+
+  <!-- ─── NODE: A3 (패턴 분석 → description 보완) — action ─── -->
+  <rect x="580" y="240" width="308" height="80" rx="6" fill="#f8fafb"/>
+  <rect x="580" y="240" width="308" height="80" rx="6" fill="rgba(40,109,80,0.06)" stroke="#286d50" stroke-width="1"/>
+  <rect x="588" y="248" width="36" height="12" rx="2" fill="transparent" stroke="rgba(40,109,80,0.35)" stroke-width="0.8"/>
+  <text x="606" y="257" fill="rgba(40,109,80,0.75)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">ACTION</text>
+  <text x="734" y="278" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">패턴 분석 후 description 보완</text>
+  <text x="734" y="296" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">description enrichment</text>
+
+  <!-- ─── LEGEND ─── -->
+  <line x1="32" y1="352" x2="928" y2="352" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+
+  <!-- Legend: focal -->
+  <rect x="32" y="364" width="12" height="12" rx="2" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="50" y="374" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.10em">지표 입력</text>
+
+  <!-- Legend: metric -->
+  <rect x="152" y="364" width="12" height="12" rx="2" fill="rgba(13,87,99,0.05)" stroke="#0d5763" stroke-width="1"/>
+  <text x="170" y="374" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.10em">관찰 지표</text>
+
+  <!-- Legend: action -->
+  <rect x="272" y="364" width="12" height="12" rx="2" fill="rgba(40,109,80,0.06)" stroke="#286d50" stroke-width="1"/>
+  <text x="290" y="374" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.10em">개선 행동</text>
+</svg>
+</div>
+</body>
+</html>
