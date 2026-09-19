@@ -2,10 +2,18 @@ import fs from "node:fs";
 import path from "node:path";
 import matter from "gray-matter";
 import { Marked } from "marked";
+import { localePrefix, type Locale } from "@/lib/i18n";
 
 export type Post = {
   slug: string;
   file: string;
+  /** 이 글이 어느 언어의 지면에 서는지. 한국어가 원본이고 영어는 번역본이다. */
+  locale: Locale;
+  /**
+   * 번역본이 옮긴 원본 글의 slug. 한국어 글에서는 빈 문자열이다.
+   * 두 언어의 글을 짝지어 hreflang과 언어 전환 링크를 만드는 유일한 근거다.
+   */
+  koSlug: string;
   title: string;
   /** 지면에 찍히는 날짜. YYYY-MM-DD. */
   date: string;
@@ -21,7 +29,15 @@ export type Post = {
   body: string;
 };
 
-const POSTS_DIR = path.join(process.cwd(), "content", "posts");
+const POSTS_ROOT = path.join(process.cwd(), "content", "posts");
+
+/**
+ * 한국어 글은 `content/posts/`에, 번역본은 그 아래 언어 폴더에 둔다.
+ * 한국어 목록이 번역본을 집어 가지 않는 이유는 `.md` 파일만 세기 때문이다.
+ */
+function postsDir(locale: Locale): string {
+  return locale === "ko" ? POSTS_ROOT : path.join(POSTS_ROOT, locale);
+}
 
 // 카테고리는 config 한 곳에서만 늘어나면 되도록, 톤은 순환 배정한다.
 const TONES = ["teal", "blue", "clay", "plum", "olive", "rose"] as const;
@@ -53,8 +69,8 @@ function readDate(value: unknown, fallback: string): { date: string; publishedAt
   return { date, publishedAt: `${date}T${time ?? "00:00"}:00+09:00` };
 }
 
-function readPostFile(file: string): Post | null {
-  const raw = fs.readFileSync(path.join(POSTS_DIR, file), "utf8");
+function readPostFile(file: string, locale: Locale): Post | null {
+  const raw = fs.readFileSync(path.join(postsDir(locale), file), "utf8");
   const { data, content } = matter(raw);
   const title = typeof data.title === "string" ? data.title : "";
   if (!title) return null;
@@ -65,6 +81,8 @@ function readPostFile(file: string): Post | null {
   return {
     slug,
     file,
+    locale,
+    koSlug: locale === "ko" ? "" : typeof data.koSlug === "string" ? data.koSlug.trim() : "",
     title,
     date,
     publishedAt,
@@ -81,19 +99,41 @@ function readPostFile(file: string): Post | null {
  * 저장소에 있는 글은 전부 공개된 글이다. 비공개 상태는 두지 않는다 —
  * 커밋되어 배포에 포함되는 순간이 곧 공개 시점이다.
  */
-export function getAllPosts(): Post[] {
-  if (!fs.existsSync(POSTS_DIR)) return [];
+export function getAllPosts(locale: Locale = "ko"): Post[] {
+  const dir = postsDir(locale);
+  if (!fs.existsSync(dir)) return [];
   return fs
-    .readdirSync(POSTS_DIR)
+    .readdirSync(dir)
     .filter((file) => file.endsWith(".md"))
-    .map(readPostFile)
+    .map((file) => readPostFile(file, locale))
     .filter((post): post is Post => post !== null)
     // 발행 시각 내림차순. 같은 분에 올라온 글이 남으면 slug로 마지막을 가른다.
     .sort((a, b) => b.publishedAt.localeCompare(a.publishedAt) || a.slug.localeCompare(b.slug));
 }
 
-export function getPostBySlug(slug: string): Post | null {
-  return getAllPosts().find((post) => post.slug === slug) ?? null;
+export function getPostBySlug(slug: string, locale: Locale = "ko"): Post | null {
+  return getAllPosts(locale).find((post) => post.slug === slug) ?? null;
+}
+
+/**
+ * 다른 언어에 같은 글이 있으면 그 slug를 돌려준다. 짝은 번역본 frontmatter의
+ * `koSlug` 하나로만 정해진다 — 번역본이 없는 글에서는 언어 전환 링크도,
+ * hreflang도, 지역에 따른 리다이렉트도 생기지 않는다.
+ */
+export function counterpartSlug(post: Post): string | null {
+  if (post.locale !== "ko") {
+    return getPostBySlug(post.koSlug, "ko") ? post.koSlug : null;
+  }
+  return getAllPosts("en").find((translated) => translated.koSlug === post.slug)?.slug ?? null;
+}
+
+/** 한국어 slug → 영문 slug. 미들웨어에 넘기는 색인(content/post-pairs.json)을 만들 때 쓴다. */
+export function postPairs(): Record<string, string> {
+  const pairs: Record<string, string> = {};
+  for (const translated of getAllPosts("en")) {
+    if (translated.koSlug && getPostBySlug(translated.koSlug, "ko")) pairs[translated.koSlug] = translated.slug;
+  }
+  return pairs;
 }
 
 /**
@@ -102,7 +142,7 @@ export function getPostBySlug(slug: string): Post | null {
  * 비지 않도록. 목록 정렬(날짜 내림차순)을 그대로 물려받는다.
  */
 export function getRelatedPosts(post: Post, limit = 4): PostCard[] {
-  const others = getAllPosts().filter((candidate) => candidate.slug !== post.slug);
+  const others = getAllPosts(post.locale).filter((candidate) => candidate.slug !== post.slug);
   const sameCategory = others.filter((candidate) => candidate.category === post.category);
   const fill = others.filter((candidate) => candidate.category !== post.category);
   return [...sameCategory, ...fill].slice(0, limit).map(toCard);
@@ -128,9 +168,9 @@ function readDiagramSvg(name: string): string {
  * 같은 시리즈의 글을 읽는 순서(seriesOrder 오름차순)로 돌려준다. 글 본문 위에 시리즈
  * 목차를 그릴 때 쓴다. 시리즈가 없으면 빈 배열.
  */
-export function getSeriesPosts(series: string): PostCard[] {
+export function getSeriesPosts(series: string, locale: Locale = "ko"): PostCard[] {
   if (!series) return [];
-  return getAllPosts()
+  return getAllPosts(locale)
     .filter((post) => post.series === series)
     .sort((a, b) => a.seriesOrder - b.seriesOrder)
     .map(toCard);
@@ -172,8 +212,8 @@ export function renderMarkdown(body: string): string {
   return marked.parse(body, { async: false });
 }
 
-export function postHref(slug: string): string {
-  return `/posts/${encodeURIComponent(slug)}`;
+export function postHref(slug: string, locale: Locale = "ko"): string {
+  return `${localePrefix(locale)}/posts/${encodeURIComponent(slug)}`;
 }
 
 /**
@@ -199,7 +239,7 @@ export type PostCard = {
 export function toCard(post: Post): PostCard {
   return {
     slug: post.slug,
-    href: postHref(post.slug),
+    href: postHref(post.slug, post.locale),
     title: post.title,
     date: post.date,
     time: post.publishedAt.slice(11, 16),

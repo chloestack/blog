@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 660"
+     role="img" aria-labelledby="2026-09-19-acc35f49-04-redis-restore-title 2026-09-19-acc35f49-04-redis-restore-desc">
+  <title id="2026-09-19-acc35f49-04-redis-restore-title">Redis Failure Recovery Flow — Branch by Persistence Mode</title>
+  <desc id="2026-09-19-acc35f49-04-redis-restore-desc">Flowchart showing how recovery path and outcome differ by persistence mode (RDB only, AOF only, RDB+AOF) after a failure occurs</desc>
+
+  <defs>
+    <!-- 배경 점 패턴 (opt-in, 이 다이어그램에서는 미사용) -->
+    <marker id="2026-09-19-acc35f49-04-arr" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-09-19-acc35f49-04-arr-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+  </defs>
+
+  <!-- 배경 -->
+  <rect width="960" height="660" fill="#f8fafb"/>
+
+  <!-- ─────────────────────────────────────────
+       ARROWS (drawn before boxes)
+  ───────────────────────────────────────── -->
+
+  <!-- 장애 발생 → 영속성 모드 (수직) -->
+  <line x1="480" y1="100" x2="480" y2="152" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-19-acc35f49-04-arr)"/>
+
+  <!-- 영속성 모드 → RDB only (왼쪽 대각 → 오르소고널) -->
+  <!-- 다이아몬드 bottom=236, 왼쪽 꼭짓점 x=400 y=196 -->
+  <!-- RDB only box: x=160 y=268 w=180 h=64 -->
+  <!-- 다이아몬드 왼쪽 → 수평 → 수직 -->
+  <path d="M400,196 H250 V268" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-19-acc35f49-04-arr)"/>
+
+  <!-- 영속성 모드 → AOF only (수직 아래) -->
+  <!-- 다이아몬드 bottom: y=236 -->
+  <!-- AOF only box: x=400 y=268 w=160 h=64 -->
+  <line x1="480" y1="236" x2="480" y2="268" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-19-acc35f49-04-arr)"/>
+
+  <!-- 영속성 모드 → RDB+AOF (오른쪽) -->
+  <!-- 다이아몬드 오른쪽 꼭짓점 x=560 y=196 -->
+  <!-- RDB+AOF box: x=696 y=268 w=188 h=64 -->
+  <path d="M560,196 H792 V268" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-19-acc35f49-04-arr)"/>
+
+  <!-- RDB only → 복구 완료(빈틈) -->
+  <!-- R1 bottom: y=332, cx=250 -->
+  <!-- O1 box: x=160 y=440 w=180 h=64 -->
+  <line x1="250" y1="332" x2="250" y2="440" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-19-acc35f49-04-arr)"/>
+
+  <!-- AOF only → 복구 완료(정확) -->
+  <!-- R2 bottom: y=332, cx=480 -->
+  <!-- O2 box: x=400 y=440 w=160 h=64 -->
+  <line x1="480" y1="332" x2="480" y2="440" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-19-acc35f49-04-arr)"/>
+
+  <!-- RDB+AOF → 복구 완료(균형) -->
+  <!-- R3 bottom: y=332, cx=792 -->
+  <!-- O3 box: x=700 y=440 w=180 h=64 -->
+  <line x1="792" y1="332" x2="792" y2="440" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-19-acc35f49-04-arr)"/>
+
+  <!-- ─────────────────────────────────────────
+       ARROW LABELS
+  ───────────────────────────────────────── -->
+
+  <!-- RDB only 경로 라벨 (수평 구간 x=250~400 y=196) -->
+  <rect x="288" y="180" width="60" height="14" rx="2" fill="#f8fafb"/>
+  <text x="318" y="190" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.04em">RDB only</text>
+
+  <!-- AOF only 경로 라벨 (수직 구간 x=480 y=236~268) -->
+  <rect x="430" y="240" width="58" height="14" rx="2" fill="#f8fafb"/>
+  <text x="459" y="250" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.04em">AOF only</text>
+
+  <!-- RDB+AOF 경로 라벨 (수평 구간 x=560~792 y=196) -->
+  <rect x="624" y="180" width="72" height="14" rx="2" fill="#f8fafb"/>
+  <text x="660" y="190" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.04em">RDB + AOF</text>
+
+  <!-- ─────────────────────────────────────────
+       NODES
+  ───────────────────────────────────────── -->
+
+  <!-- 장애 발생 (stop: 위험 강조, focal 1) -->
+  <!-- oval rx=20, x=380 y=44 w=200 h=56 -->
+  <rect x="380" y="44" width="200" height="56" rx="20" fill="#f8fafb"/>
+  <rect x="380" y="44" width="200" height="56" rx="20"
+        fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.5"/>
+  <text x="480" y="77" fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Failure</text>
+
+  <!-- 영속성 모드 결정 다이아몬드 (focal 2, accent) -->
+  <!-- 다이아몬드: center=480,196, 반지름 w=80 h=44 -->
+  <!-- 꼭짓점: top=(480,152), right=(560,196), bottom=(480,236), left=(400,196) -->
+  <polygon points="480,152 560,196 480,236 400,196" fill="#f8fafb"/>
+  <polygon points="480,152 560,196 480,236 400,196"
+           fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.5"/>
+  <text x="480" y="192" fill="#122127" font-size="12" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Persistence Mode</text>
+  <text x="480" y="207" fill="#3f545c" font-size="10"
+        font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle">select strategy</text>
+
+  <!-- R1: RDB only — 마지막 스냅샷 -->
+  <!-- box: x=160 y=268 w=180 h=64 -->
+  <rect x="160" y="268" width="180" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="160" y="268" width="180" height="64" rx="6"
+        fill="rgba(169,106,8,0.07)" stroke="rgba(169,106,8,0.5)" stroke-width="1"/>
+  <!-- type tag -->
+  <rect x="168" y="276" width="36" height="12" rx="2"
+        fill="transparent" stroke="rgba(169,106,8,0.4)" stroke-width="0.8"/>
+  <text x="186" y="285" fill="rgba(169,106,8,0.8)" font-size="7"
+        font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.08em">RDB</text>
+  <text x="250" y="304" fill="#122127" font-size="13" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Load Last Snapshot</text>
+  <text x="250" y="320" fill="#3f545c" font-size="11"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Fast · Partial loss</text>
+
+  <!-- R2: AOF only — 전체 명령 재실행 -->
+  <!-- box: x=400 y=268 w=160 h=64 -->
+  <rect x="400" y="268" width="160" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="400" y="268" width="160" height="64" rx="6"
+        fill="rgba(169,106,8,0.07)" stroke="rgba(169,106,8,0.5)" stroke-width="1"/>
+  <rect x="408" y="276" width="36" height="12" rx="2"
+        fill="transparent" stroke="rgba(169,106,8,0.4)" stroke-width="0.8"/>
+  <text x="426" y="285" fill="rgba(169,106,8,0.8)" font-size="7"
+        font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.08em">AOF</text>
+  <text x="480" y="304" fill="#122127" font-size="13" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Replay All Cmds</text>
+  <text x="480" y="320" fill="#3f545c" font-size="11"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Slow · Min. loss</text>
+
+  <!-- R3: RDB+AOF — AOF 우선 로드 -->
+  <!-- box: x=696 y=268 w=188 h=64 -->
+  <rect x="696" y="268" width="188" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="696" y="268" width="188" height="64" rx="6"
+        fill="rgba(40,109,80,0.06)" stroke="rgba(40,109,80,0.45)" stroke-width="1"/>
+  <rect x="704" y="276" width="44" height="12" rx="2"
+        fill="transparent" stroke="rgba(40,109,80,0.4)" stroke-width="0.8"/>
+  <text x="726" y="285" fill="rgba(40,109,80,0.8)" font-size="7"
+        font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.08em">HYBRID</text>
+  <text x="792" y="301" fill="#122127" font-size="13" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">AOF-first Load</text>
+  <text x="792" y="317" fill="#3f545c" font-size="11"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Use RDB preamble</text>
+
+  <!-- O1: 복구 완료 (빠르지만 빈틈) -->
+  <!-- box: x=160 y=440 w=180 h=64 -->
+  <rect x="160" y="440" width="180" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="160" y="440" width="180" height="64" rx="6"
+        fill="rgba(169,106,8,0.05)" stroke="rgba(169,106,8,0.40)" stroke-width="1" stroke-dasharray="5,3"/>
+  <text x="250" y="468" fill="#122127" font-size="13" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Recovered</text>
+  <text x="250" y="488" fill="#3f545c" font-size="11"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Fast but data gaps</text>
+
+  <!-- O2: 복구 완료 (느리지만 정확) -->
+  <!-- box: x=400 y=440 w=160 h=64 -->
+  <rect x="400" y="440" width="160" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="400" y="440" width="160" height="64" rx="6"
+        fill="rgba(40,109,80,0.07)" stroke="rgba(40,109,80,0.45)" stroke-width="1"/>
+  <text x="480" y="468" fill="#122127" font-size="13" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Recovered</text>
+  <text x="480" y="488" fill="#3f545c" font-size="11"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Slow but accurate</text>
+
+  <!-- O3: 복구 완료 (균형) -->
+  <!-- box: x=700 y=440 w=180 h=64 -->
+  <rect x="700" y="440" width="180" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="700" y="440" width="180" height="64" rx="6"
+        fill="rgba(40,109,80,0.07)" stroke="rgba(40,109,80,0.45)" stroke-width="1"/>
+  <text x="792" y="468" fill="#122127" font-size="13" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Recovered</text>
+  <text x="792" y="488" fill="#3f545c" font-size="11"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Balanced recovery</text>
+
+  <!-- ─────────────────────────────────────────
+       LEGEND
+  ───────────────────────────────────────── -->
+  <line x1="40" y1="580" x2="920" y2="580" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+
+  <!-- 범례 항목 -->
+  <!-- 빠름·손실 가능 -->
+  <rect x="40" y="592" width="14" height="10" rx="2"
+        fill="rgba(169,106,8,0.07)" stroke="rgba(169,106,8,0.5)" stroke-width="1"/>
+  <text x="60" y="601" fill="#3f545c" font-size="10"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">Fast · Possible loss</text>
+
+  <!-- 느림·정확 -->
+  <rect x="196" y="592" width="14" height="10" rx="2"
+        fill="rgba(40,109,80,0.07)" stroke="rgba(40,109,80,0.45)" stroke-width="1"/>
+  <text x="216" y="601" fill="#3f545c" font-size="10"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">Slow · Accurate</text>
+
+  <!-- 균형 (하이브리드) -->
+  <rect x="320" y="592" width="14" height="10" rx="2"
+        fill="rgba(40,109,80,0.07)" stroke="rgba(40,109,80,0.45)" stroke-width="1"/>
+  <text x="340" y="601" fill="#3f545c" font-size="10"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">Balanced (RDB + AOF)</text>
+
+  <!-- 핵심 경로 -->
+  <rect x="480" y="592" width="14" height="10" rx="2"
+        fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.5"/>
+  <text x="500" y="601" fill="#3f545c" font-size="10"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">Key nodes (failure · branch)</text>
+
+</svg>
+</body>
+</html>

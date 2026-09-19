@@ -1,17 +1,30 @@
 import Link from "next/link";
 import { VisitBeacon } from "@/components/visit-counter";
+import { STRINGS, type Locale } from "@/lib/i18n";
 
-/** 세 페이지가 같은 푸터를 쓰므로 한 곳에서만 고친다. */
-export function SiteFooter({ homeHref, backHref, backLabel }: { homeHref: string; backHref: string; backLabel: string }) {
+/** 네 페이지가 같은 푸터를 쓰므로 한 곳에서만 고친다. */
+export function SiteFooter({
+  locale,
+  homeHref,
+  backHref,
+  backLabel,
+}: {
+  locale: Locale;
+  homeHref: string;
+  backHref: string;
+  backLabel: string;
+}) {
+  const strings = STRINGS[locale];
+
   return (
     <footer>
       <div className="footer-top">
         <section className="footer-about">
-          <h2 className="footer-title">About</h2>
-          <p>Java/Spring 기반 백엔드 개발과 AI/RAG, 아키텍처, 개발 도구에 대한 실무 경험을 공유하고 새로운 기술을 탐구합니다.</p>
+          <h2 className="footer-title">{strings.aboutTitle}</h2>
+          <p>{strings.aboutCopy}</p>
         </section>
         <section className="footer-contact">
-          <h2 className="footer-title">Contact · 연락처</h2>
+          <h2 className="footer-title">{strings.contactTitle}</h2>
           <p><a href="mailto:contact@pistamond.dev">contact@pistamond.dev</a></p>
         </section>
       </div>
@@ -20,7 +33,8 @@ export function SiteFooter({ homeHref, backHref, backLabel }: { homeHref: string
       <div className="footer-bottom">
         <Link className="wordmark footer-mark" href={homeHref}><span className="mark">P</span><span>blog.pistamond</span></Link>
         <p>© 2026 pistamond</p>
-        <Link href="/privacy">개인정보처리방침</Link>
+        {/* 개인정보처리방침은 한국어 원문 한 벌만 둔다. 영문 지면에서도 같은 문서를 가리킨다. */}
+        <Link href="/privacy">{strings.privacy}</Link>
         <Link href={backHref}>{backLabel}</Link>
       </div>
     </footer>

@@ -7,6 +7,9 @@ const nextConfig: NextConfig = {
     "/sitemap.xml": ["./content/**/*"],
     "/rss.xml": ["./content/**/*"],
     "/posts/[slug]": ["./content/**/*"],
+    "/en": ["./content/**/*"],
+    "/en/rss.xml": ["./content/**/*"],
+    "/en/posts/[slug]": ["./content/**/*"],
   },
 };
 

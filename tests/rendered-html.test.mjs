@@ -353,3 +353,179 @@ test("the visit counter stays silent without a store", async () => {
   assert.match(html, /<div class="articles-main"><p class="visit-counter"[^>]*><\/p>/);
   assert.doesNotMatch(html, /오늘 <b>/);
 });
+
+// ---------------------------------------------------------------------------
+// 영문 지면
+// ---------------------------------------------------------------------------
+
+const EN_POSTS_DIR = new URL("../content/posts/en/", import.meta.url);
+
+function readEnglishPosts() {
+  if (!fs.existsSync(EN_POSTS_DIR)) return [];
+  return fs
+    .readdirSync(EN_POSTS_DIR)
+    .filter((file) => file.endsWith(".md"))
+    .map((file) => {
+      const { data } = matter(fs.readFileSync(path.join(EN_POSTS_DIR.pathname, file), "utf8"));
+      return { slug: file.replace(/\.md$/, ""), title: String(data.title ?? ""), koSlug: String(data.koSlug ?? "") };
+    })
+    .sort((a, b) => a.slug.localeCompare(b.slug));
+}
+
+/** 방문자의 지역·언어·선택을 흉내내 요청한다. */
+function visitor(headers) {
+  return { headers: { accept: "text/html", ...headers } };
+}
+
+const FROM_KOREA = { "cf-ipcountry": "KR", "accept-language": "ko-KR,ko;q=0.9" };
+const FROM_ABROAD = { "cf-ipcountry": "US", "accept-language": "en-US,en;q=0.9" };
+
+/**
+ * 영문 지면은 한국어 지면과 같은 몸통에 <html lang>과 문구만 다르다. 번역본이
+ * 저장소에 있으면 전부 목록에 선다 — 한국어와 같은 규칙이다.
+ */
+test("the english pages stand on their own locale", async () => {
+  const response = await render("/en");
+  assert.equal(response.status, 200);
+  const html = await response.text();
+
+  assert.match(html, /<html lang="en">/i);
+  assert.match(html, /<section class="articles"[^>]*aria-label="Posts"/);
+  // 머리의 언어 전환 링크만은 상대 언어로 적는다 — 그 한 줄은 빼고 본다.
+  const body = html.slice(0, html.indexOf("</main>")).replace(/<a [^>]*class="lang-switch"[^>]*>.*?<\/a>/s, "");
+  assert.doesNotMatch(body, /[가-힣]/, "korean copy leaked into the english page");
+
+  for (const post of readEnglishPosts()) {
+    assert.ok(html.includes(post.title), `english post missing from /en: ${post.title}`);
+  }
+});
+
+/** 번역본은 원본을 frontmatter의 koSlug로 가리킨다. 짝이 없으면 고립된 글이 된다. */
+test("every english post points back at a korean post", async () => {
+  const korean = new Set(readPosts().map((post) => post.slug));
+  for (const post of readEnglishPosts()) {
+    assert.ok(post.koSlug, `no koSlug: en/${post.slug}`);
+    assert.ok(korean.has(post.koSlug), `koSlug has no korean post: en/${post.slug} → ${post.koSlug}`);
+  }
+});
+
+/**
+ * 미들웨어가 읽는 slug 색인은 번역본 frontmatter에서 파생된 파일이다. 손으로
+ * 고치거나 `npm run pairs`를 잊으면 리다이렉트가 옛 짝을 가리킨다.
+ */
+test("the slug index agrees with the translations on disk", async () => {
+  const { POST_PAIRS } = await import(new URL("../lib/post-pairs.generated.ts", import.meta.url).href);
+  const expected = Object.fromEntries(readEnglishPosts().map((post) => [post.koSlug, post.slug]));
+  assert.deepEqual(POST_PAIRS, expected, "run npm run pairs");
+});
+
+/**
+ * 두 언어가 같은 글임을 검색엔진에 알리는 것은 hreflang뿐이다 — 크롤러에게는
+ * 지역 리다이렉트를 걸지 않는다. canonical은 언제나 자기 자신을 가리킨다.
+ */
+test("paired posts declare each other with hreflang", async () => {
+  const [pair] = readEnglishPosts();
+  if (!pair) return;
+
+  const koUrl = `https://blog.pistamond.dev/posts/${encodeURIComponent(pair.koSlug)}`;
+  const enUrl = `https://blog.pistamond.dev/en/posts/${pair.slug}`;
+
+  for (const [pathname, self] of [
+    [`/posts/${encodeURIComponent(pair.koSlug)}`, koUrl],
+    [`/en/posts/${pair.slug}`, enUrl],
+  ]) {
+    const head = (await (await render(pathname)).text()).split("</head>")[0];
+    assert.match(head, new RegExp(`rel="canonical" href="${self.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}"`), `wrong canonical: ${pathname}`);
+    for (const [lang, url] of [["ko", koUrl], ["en", enUrl], ["x-default", koUrl]]) {
+      assert.ok(
+        head.includes(`hrefLang="${lang}" href="${url}"`),
+        `missing hreflang ${lang} on ${pathname}`,
+      );
+    }
+  }
+
+  // 목록도 서로를 가리킨다.
+  const home = (await (await render("/")).text()).split("</head>")[0];
+  assert.ok(home.includes('hrefLang="en" href="https://blog.pistamond.dev/en"'));
+});
+
+/**
+ * 한국 밖에서 들어온 사람은 같은 글의 영문 주소로 보낸다. 한국어를 읽는
+ * 브라우저, 크롤러, 언어를 직접 고른 사람은 그대로 둔다 — 원본은 한국어다.
+ */
+test("visitors from outside korea land on the english post", async () => {
+  const [pair] = readEnglishPosts();
+  if (!pair) return;
+  const korean = `/posts/${encodeURIComponent(pair.koSlug)}`;
+
+  const abroad = await render(korean, visitor(FROM_ABROAD));
+  assert.equal(abroad.status, 302);
+  assert.equal(new URL(abroad.headers.get("location")).pathname, `/en/posts/${pair.slug}`);
+  // 방문자마다 다른 응답이다. 중간 캐시가 한 사람의 결과를 남에게 주면 안 된다.
+  assert.match(abroad.headers.get("cache-control") ?? "", /no-store/);
+
+  const home = await render("/", visitor(FROM_ABROAD));
+  assert.equal(home.status, 302);
+  assert.equal(new URL(home.headers.get("location")).pathname, "/en");
+
+  for (const [who, headers] of [
+    ["from korea", FROM_KOREA],
+    ["korean browser abroad", { "cf-ipcountry": "US", "accept-language": "ko-KR,ko;q=0.9" }],
+    ["googlebot", { ...FROM_ABROAD, "user-agent": "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)" }],
+    ["chose korean", { ...FROM_ABROAD, cookie: "lang=ko" }],
+  ]) {
+    const response = await render(korean, visitor(headers));
+    assert.equal(response.status, 200, `redirected a visitor that should stay: ${who}`);
+  }
+
+  // 영문 주소로 직접 들어온 사람은 되돌리지 않는다. 공유된 링크가 열려야 한다.
+  const direct = await render(`/en/posts/${pair.slug}`, visitor(FROM_KOREA));
+  assert.equal(direct.status, 200);
+});
+
+/** 번역본이 없는 글은 옮길 곳이 없다. 한국어 그대로 보여 준다. */
+test("a post without a translation is served as it is", async () => {
+  const translated = new Set(readEnglishPosts().map((post) => post.koSlug));
+  const untranslated = readPosts().find((post) => !translated.has(post.slug));
+  if (!untranslated) return;
+
+  const response = await render(`/posts/${encodeURIComponent(untranslated.slug)}`, visitor(FROM_ABROAD));
+  assert.equal(response.status, 200);
+});
+
+/** 언어를 직접 고르면 쿠키로 남고, 주소에서 파라미터는 지워진다. */
+test("the language switch remembers the choice", async () => {
+  const response = await render("/en?lang=en", visitor(FROM_KOREA));
+  assert.equal(response.status, 302);
+
+  const location = new URL(response.headers.get("location"));
+  assert.equal(location.pathname, "/en");
+  assert.equal(location.search, "");
+  assert.match(response.headers.get("set-cookie") ?? "", /lang=en/);
+
+  // 두 지면 모두 상대 언어로 가는 링크를 머리에 세운다.
+  const ko = await (await render("/")).text();
+  assert.match(ko, /<a [^>]*href="\/en\?lang=en"[^>]*class="lang-switch"/);
+  const en = await (await render("/en")).text();
+  assert.match(en, /<a [^>]*href="\/\?lang=ko"[^>]*class="lang-switch"/);
+});
+
+/** 피드도 언어마다 하나씩 선다. 리더가 두 언어를 섞어 받지 않도록. */
+test("each locale publishes its own feed", async () => {
+  const response = await render("/en/rss.xml");
+  assert.equal(response.status, 200);
+  const xml = await response.text();
+
+  assert.match(xml, /<language>en<\/language>/);
+  assert.match(xml, /<atom:link href="https:\/\/blog\.pistamond\.dev\/en\/rss\.xml" rel="self"/);
+  const items = [...xml.matchAll(/<item>[\s\S]*?<\/item>/g)];
+  assert.equal(items.length, readEnglishPosts().length);
+  for (const [item] of items) assert.match(item, /<link>https:\/\/blog\.pistamond\.dev\/en\/posts\//);
+
+  // 사이트맵은 두 언어를 한 곳에 담는다.
+  const sitemap = await (await render("/sitemap.xml")).text();
+  if (readEnglishPosts().length > 0) {
+    assert.match(sitemap, /<loc>https:\/\/blog\.pistamond\.dev\/en<\/loc>/);
+    assert.match(sitemap, /hreflang="en"/);
+  }
+});

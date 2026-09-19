@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Is a Chain Enough, or Do You Need a Graph?</title>
+  <link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --paper:#f8fafb; --ink:#122127; --muted:#3f545c; --soft:#6c8188; --accent:#0d5763;
+      --sans:'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif; --mono:'IBM Plex Mono',ui-monospace,monospace; }
+    body { font-family: var(--sans); background: var(--paper); color: var(--ink); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 3rem 2rem; }
+    .frame { max-width: 1100px; width: 100%; }
+    .eyebrow { font-family: var(--mono); font-size: .66rem; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin-bottom: .5rem; }
+    h1 { font-family: 'Gothic A1', var(--sans); font-size: 1.6rem; font-weight: 800; letter-spacing: -.02em; line-height: 1.2; margin-bottom: 1.4rem; }
+    svg { width: 100%; min-width: 720px; display: block; }
+  </style>
+</head>
+<body>
+  <div class="frame">
+    <p class="eyebrow">Flowchart · LangGraph Intro</p>
+    <h1>If There Are No Branches or Loops, a Chain Is Enough</h1>
+
+    <svg viewBox="0 0 960 600" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="lg-when-title lg-when-desc">
+      <title id="lg-when-title">LangGraph Adoption Decision Flow</title>
+      <desc id="lg-when-desc">Starting from a new LLM feature, the flow asks whether paths diverge based on intermediate results, and whether any step is repeated. If neither applies, a chain is sufficient; if either applies, LangGraph is considered. If pause/resume or human approval is needed, checkpointing is also used.</desc>
+      <defs>
+        <marker id="lg-when-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#3f545c"/></marker>
+      </defs>
+
+      <rect width="100%" height="100%" fill="#f8fafb"/>
+
+      <!-- arrows before boxes -->
+      <line x1="192" y1="112" x2="220" y2="112" stroke="#3f545c" stroke-width="1.2" marker-end="url(#lg-when-arrow)"/>
+      <line x1="456" y1="112" x2="580" y2="112" stroke="#3f545c" stroke-width="1.2" marker-end="url(#lg-when-arrow)"/>
+      <line x1="340" y1="176" x2="340" y2="244" stroke="#3f545c" stroke-width="1.2" marker-end="url(#lg-when-arrow)"/>
+      <path d="M816,112 H872 Q880,112 880,120 V244" fill="none" stroke="#3f545c" stroke-width="1.2" marker-end="url(#lg-when-arrow)"/>
+      <path d="M700,176 V272 Q700,280 692,280 H420" fill="none" stroke="#3f545c" stroke-width="1.2" marker-end="url(#lg-when-arrow)"/>
+      <line x1="340" y1="312" x2="340" y2="368" stroke="#3f545c" stroke-width="1.2" marker-end="url(#lg-when-arrow)"/>
+      <line x1="480" y1="436" x2="556" y2="436" stroke="#3f545c" stroke-width="1.2" marker-end="url(#lg-when-arrow)"/>
+
+      <!-- edge labels -->
+      <rect x="496" y="88" width="48" height="16" rx="2" fill="#f8fafb"/>
+      <text x="520" y="100" fill="#3f545c" font-size="12" font-weight="500" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">No</text>
+      <rect x="812" y="88" width="64" height="16" rx="2" fill="#f8fafb"/>
+      <text x="844" y="100" fill="#3f545c" font-size="12" font-weight="500" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">No</text>
+      <rect x="300" y="196" width="32" height="16" rx="2" fill="#f8fafb"/>
+      <text x="316" y="208" fill="#3f545c" font-size="12" font-weight="500" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Yes</text>
+      <rect x="660" y="196" width="32" height="16" rx="2" fill="#f8fafb"/>
+      <text x="676" y="208" fill="#3f545c" font-size="12" font-weight="500" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Yes</text>
+      <rect x="504" y="412" width="32" height="16" rx="2" fill="#f8fafb"/>
+      <text x="520" y="424" fill="#3f545c" font-size="12" font-weight="500" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Yes</text>
+
+      <!-- nodes -->
+      <rect x="40" y="80" width="152" height="64" rx="6" fill="#f8fafb"/>
+      <rect x="40" y="80" width="152" height="64" rx="6" fill="rgba(63,84,92,0.10)" stroke="#6c8188" stroke-width="1"/>
+      <text x="116" y="117" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">New LLM Feature</text>
+
+      <polygon points="224,112 340,48 456,112 340,176" fill="#f8fafb"/>
+      <polygon points="224,112 340,48 456,112 340,176" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+      <text x="340" y="108" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Do paths diverge based</text>
+      <text x="340" y="128" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">on intermediate results?</text>
+
+      <polygon points="584,112 700,48 816,112 700,176" fill="#f8fafb"/>
+      <polygon points="584,112 700,48 816,112 700,176" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+      <text x="700" y="108" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Is any step</text>
+      <text x="700" y="128" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">repeated?</text>
+
+      <rect x="752" y="248" width="168" height="64" rx="6" fill="#f8fafb"/>
+      <rect x="752" y="248" width="168" height="64" rx="6" fill="rgba(18,33,39,0.02)" stroke="rgba(18,33,39,0.20)" stroke-width="1" stroke-dasharray="4,3"/>
+      <text x="836" y="285" fill="#3f545c" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Chain is sufficient</text>
+
+      <rect x="264" y="248" width="152" height="64" rx="6" fill="#f8fafb"/>
+      <rect x="264" y="248" width="152" height="64" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+      <text x="340" y="285" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Consider LangGraph</text>
+
+      <polygon points="200,436 340,372 480,436 340,500" fill="#f8fafb"/>
+      <polygon points="200,436 340,372 480,436 340,500" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+      <text x="340" y="432" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Need pause/resume</text>
+      <text x="340" y="452" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">or human approval?</text>
+
+      <rect x="560" y="404" width="200" height="64" rx="6" fill="#f8fafb"/>
+      <rect x="560" y="404" width="200" height="64" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+      <text x="660" y="441" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Use with Checkpointing</text>
+
+      <!-- legend -->
+      <line x1="40" y1="544" x2="920" y2="544" stroke="rgba(18,33,39,0.10)" stroke-width="0.8"/>
+      <text x="40" y="568" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.14em">LEGEND</text>
+      <polygon points="140,564 156,556 172,564 156,572" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+      <text x="180" y="568" fill="#3f545c" font-size="12" font-family="'IBM Plex Sans KR', sans-serif">Decision</text>
+      <rect x="252" y="556" width="16" height="16" rx="4" fill="rgba(18,33,39,0.02)" stroke="rgba(18,33,39,0.20)" stroke-width="1" stroke-dasharray="4,3"/>
+      <text x="276" y="568" fill="#3f545c" font-size="12" font-family="'IBM Plex Sans KR', sans-serif">No graph needed</text>
+      <rect x="464" y="556" width="16" height="16" rx="4" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+      <text x="488" y="568" fill="#3f545c" font-size="12" font-family="'IBM Plex Sans KR', sans-serif">Consider adoption</text>
+    </svg>
+  </div>
+</body>
+</html>

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 480" role="img" aria-labelledby="2026-09-19-10770688-06-ragas-opt-title 2026-09-19-10770688-06-ragas-opt-desc">
+  <title id="2026-09-19-10770688-06-ragas-opt-title">RAGAS Pipeline Optimization Direction Decision</title>
+  <desc id="2026-09-19-10770688-06-ragas-opt-desc">A flowchart showing the pipeline optimization direction decision node leading through a domain characteristics branch point into three priority strategies: no hallucination, information completeness, and user satisfaction.</desc>
+
+  <defs>
+    <!-- Arrow markers -->
+    <marker id="2026-09-19-10770688-06-arrow-muted" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-09-19-10770688-06-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="960" height="480" fill="#f8fafb"/>
+
+  <!-- ─────────────────────────────────────────
+       ARROWS — drawn before boxes (z-order)
+  ───────────────────────────────────────── -->
+
+  <!-- OPT → TR (vertical) -->
+  <line x1="480" y1="116" x2="480" y2="172" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-19-10770688-06-arrow-muted)"/>
+
+  <!-- TR → PF (left branch): right-angle elbow: down then left -->
+  <!-- From diamond bottom-left exit: TR center (480,220), go left to x=220, then down to PF top -->
+  <path d="M 432 220 L 220 220 L 220 292" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-19-10770688-06-arrow-muted)"/>
+
+  <!-- TR → PC (straight down) -->
+  <line x1="480" y1="268" x2="480" y2="292" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-19-10770688-06-arrow-accent)"/>
+
+  <!-- TR → PA (right branch): right-angle elbow: right then down -->
+  <path d="M 528 220 L 740 220 L 740 292" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-19-10770688-06-arrow-muted)"/>
+
+  <!-- Arrow labels -->
+  <!-- "No-Hallucination Domain" label on left branch -->
+  <rect x="256" y="196" width="108" height="20" rx="2" fill="#f8fafb"/>
+  <text x="310" y="210" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">No-Hallucination Domain</text>
+
+  <!-- "Info Completeness" label on center branch -->
+  <rect x="420" y="271" width="120" height="16" rx="2" fill="#f8fafb"/>
+  <text x="480" y="283" fill="#0d5763" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Info Completeness Priority</text>
+
+  <!-- "User Satisfaction" label on right branch -->
+  <rect x="596" y="196" width="108" height="20" rx="2" fill="#f8fafb"/>
+  <text x="650" y="210" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">User Satisfaction Priority</text>
+
+  <!-- ─────────────────────────────────────────
+       NODES
+  ───────────────────────────────────────── -->
+
+  <!-- OPT: Pipeline Optimization Direction Decision (focal, oval/rounded rect) -->
+  <!-- Paper mask -->
+  <rect x="336" y="60" width="288" height="56" rx="28" fill="#f8fafb"/>
+  <!-- Styled box -->
+  <rect x="336" y="60" width="288" height="56" rx="28" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <!-- Tag -->
+  <rect x="352" y="68" width="32" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.4)" stroke-width="0.8"/>
+  <text x="368" y="77" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">START</text>
+  <!-- Label -->
+  <text x="480" y="87" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Pipeline Optimization Direction</text>
+
+  <!-- TR: What are the domain characteristics? (decision diamond) -->
+  <!-- Paper mask -->
+  <polygon points="480,172 548,220 480,268 412,220" fill="#f8fafb"/>
+  <!-- Styled diamond -->
+  <polygon points="480,172 548,220 480,268 412,220" fill="rgba(13,87,99,0.06)" stroke="#0d5763" stroke-width="1.2"/>
+  <!-- Label line 1 -->
+  <text x="480" y="214" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Domain</text>
+  <!-- Label line 2 -->
+  <text x="480" y="230" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Characteristics?</text>
+
+  <!-- PF: Faithfulness Priority (left leaf) -->
+  <!-- Paper mask -->
+  <rect x="104" y="292" width="232" height="72" rx="6" fill="#f8fafb"/>
+  <!-- Styled box -->
+  <rect x="104" y="292" width="232" height="72" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <!-- Tag -->
+  <rect x="116" y="300" width="40" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.4)" stroke-width="0.8"/>
+  <text x="136" y="309" fill="rgba(18,33,39,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">METRIC</text>
+  <!-- Line 1 -->
+  <text x="220" y="328" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Faithfulness Priority</text>
+  <!-- Line 2 -->
+  <text x="220" y="348" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Strict Context Filtering</text>
+
+  <!-- PC: Context Recall Priority (center leaf, focal) -->
+  <!-- Paper mask -->
+  <rect x="364" y="292" width="232" height="72" rx="6" fill="#f8fafb"/>
+  <!-- Styled box -->
+  <rect x="364" y="292" width="232" height="72" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <!-- Tag -->
+  <rect x="376" y="300" width="40" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.4)" stroke-width="0.8"/>
+  <text x="396" y="309" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">METRIC</text>
+  <!-- Line 1 -->
+  <text x="480" y="328" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Context Recall Priority</text>
+  <!-- Line 2 -->
+  <text x="480" y="348" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Top-k Increase · Re-ranking</text>
+
+  <!-- PA: Answer Relevancy Priority (right leaf) -->
+  <!-- Paper mask -->
+  <rect x="624" y="292" width="232" height="72" rx="6" fill="#f8fafb"/>
+  <!-- Styled box -->
+  <rect x="624" y="292" width="232" height="72" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <!-- Tag -->
+  <rect x="636" y="300" width="40" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.4)" stroke-width="0.8"/>
+  <text x="656" y="309" fill="rgba(18,33,39,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">METRIC</text>
+  <!-- Line 1 -->
+  <text x="740" y="328" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Answer Relevancy Priority</text>
+  <!-- Line 2 -->
+  <text x="740" y="348" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Prompt Structuring</text>
+
+  <!-- ─────────────────────────────────────────
+       LEGEND STRIP
+  ───────────────────────────────────────── -->
+  <line x1="32" y1="416" x2="928" y2="416" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+  <text x="32" y="430" fill="#6c8188" font-size="8" font-family="'IBM Plex Mono', monospace" letter-spacing="0.14em">LEGEND</text>
+
+  <!-- Focal item -->
+  <rect x="104" y="420" width="12" height="12" rx="2" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="122" y="431" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">Key Branch / Focal Strategy</text>
+
+  <!-- Default item -->
+  <rect x="288" y="420" width="12" height="12" rx="2" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <text x="306" y="431" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">Optimization Strategy</text>
+
+  <!-- Decision item -->
+  <polygon points="470,432 477,420 484,432 477,444" fill="rgba(13,87,99,0.06)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="492" y="431" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">Decision Branch Point</text>
+</svg>
+</body>
+</html>

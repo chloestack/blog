@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { SiteFooter } from "@/components/site-footer";
+import { SiteHeader } from "@/components/site-header";
+import { STRINGS, switchHref } from "@/lib/i18n";
 
 export const metadata: Metadata = {
   title: "개인정보처리방침",
@@ -19,11 +21,7 @@ export const metadata: Metadata = {
 export default function PrivacyPage() {
   return (
     <main>
-      <header className="site-header">
-        <div className="wrap header-inner">
-          <Link className="wordmark" href="/" aria-label="blog.pistamond 홈"><span className="mark">P</span><span>blog.pistamond</span></Link>
-        </div>
-      </header>
+      <SiteHeader locale="ko" homeHref="/" switchTo={switchHref("ko", null)} />
 
       <div className="wrap">
         <article className="article">
@@ -105,7 +103,7 @@ export default function PrivacyPage() {
           </div>
         </article>
 
-        <SiteFooter homeHref="/" backHref="/#articles" backLabel="목록으로 ←" />
+        <SiteFooter locale="ko" homeHref="/" backHref="/#articles" backLabel={STRINGS.ko.backToListFooter} />
       </div>
     </main>
   );

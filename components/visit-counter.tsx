@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { STRINGS, type Locale } from "@/lib/i18n";
 import type { VisitCounts } from "@/lib/visits";
 
 // 방문 기록은 페이지를 처음 열 때 한 번만 보낸다. 푸터(기록)와 목록 머리(표시)가
@@ -21,7 +22,7 @@ export function VisitBeacon() {
 }
 
 /** 목록 오른쪽 위의 방문자 수. 자리는 미리 잡아 두고, 집계가 꺼져 있으면 비워 둔다. */
-export function VisitCounter() {
+export function VisitCounter({ locale }: { locale: Locale }) {
   const [counts, setCounts] = useState<VisitCounts | null>(null);
 
   useEffect(() => {
@@ -30,10 +31,11 @@ export function VisitCounter() {
     return () => { alive = false; };
   }, []);
 
-  const format = (value: number) => value.toLocaleString("ko-KR");
+  const strings = STRINGS[locale];
+  const format = (value: number) => value.toLocaleString(strings.numberLocale);
   return (
     <p className="visit-counter" aria-live="polite">
-      {counts ? <>오늘 <b>{format(counts.today)}</b> · 전체 <b>{format(counts.total)}</b></> : null}
+      {counts ? <>{strings.visitsToday} <b>{format(counts.today)}</b> · {strings.visitsTotal} <b>{format(counts.total)}</b></> : null}
     </p>
   );
 }

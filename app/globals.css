@@ -31,6 +31,7 @@ button, input { font: inherit; }
 .wordmark { display: inline-flex; align-items: center; gap: .65rem; font-family: var(--mono); font-size: .86rem; font-weight: 600; letter-spacing: -.02em; }
 .mark { display: grid; place-items: center; width: 28px; height: 28px; background: var(--accent); color: var(--surface); font-family: var(--head); font-weight: 800; }
 nav { display: flex; gap: 1.5rem; font-family: var(--mono); color: var(--ink-2); font-size: .72rem; letter-spacing: .08em; }
+.lang-switch { font-family: var(--mono); font-size: .72rem; letter-spacing: .06em; }
 nav a, footer a:not(.wordmark) { border-bottom: 1px solid transparent; transition: color .15s, border-color .15s; }
 nav a:hover, footer a:not(.wordmark):hover { color: var(--accent); border-color: var(--accent); }
 

@@ -1,9 +1,7 @@
+import { SITE, SITE_DESCRIPTION, localePrefix, type Locale } from "@/lib/i18n";
 import { getAllPosts, postHref } from "@/lib/posts";
 
-const SITE = "https://blog.pistamond.dev";
 const TITLE = "blog.pistamond";
-const DESCRIPTION =
-  "소프트웨어의 구조와 인터페이스, 운영에서 내린 판단을 기록하는 한국어 기술 블로그입니다. Spring·Java·아키텍처·DevOps·AI 도구를 다룹니다.";
 
 function escapeXml(value: string): string {
   return value
@@ -14,14 +12,16 @@ function escapeXml(value: string): string {
     .replaceAll("'", "&apos;");
 }
 
-export function GET(): Response {
-  const posts = getAllPosts();
+/** 언어마다 피드가 하나씩 선다. 한국어는 /rss.xml, 영문은 /en/rss.xml. */
+export function renderFeed(locale: Locale): Response {
+  const posts = getAllPosts(locale);
+  const self = `${SITE}${localePrefix(locale)}/rss.xml`;
   // 발행 시각이 곧 목록 순서다. 피드의 lastBuildDate도 맨 앞 글에서 가져온다.
   const updated = posts[0] ? new Date(posts[0].publishedAt) : new Date();
 
   const items = posts
     .map((post) => {
-      const url = `${SITE}${postHref(post.slug)}`;
+      const url = `${SITE}${postHref(post.slug, locale)}`;
       return [
         "<item>",
         `<title>${escapeXml(post.title)}</title>`,
@@ -40,11 +40,11 @@ export function GET(): Response {
     '<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">' +
     "<channel>" +
     `<title>${escapeXml(TITLE)}</title>` +
-    `<link>${SITE}</link>` +
-    `<description>${escapeXml(DESCRIPTION)}</description>` +
-    "<language>ko</language>" +
+    `<link>${SITE}${localePrefix(locale) || "/"}</link>` +
+    `<description>${escapeXml(SITE_DESCRIPTION[locale])}</description>` +
+    `<language>${locale}</language>` +
     `<lastBuildDate>${updated.toUTCString()}</lastBuildDate>` +
-    `<atom:link href="${SITE}/rss.xml" rel="self" type="application/rss+xml"/>` +
+    `<atom:link href="${self}" rel="self" type="application/rss+xml"/>` +
     items +
     "</channel></rss>";
 

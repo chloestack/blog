@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<svg viewBox="0 0 960 600" role="img" aria-labelledby="2026-09-18-784fb3bd-05-llm-schema-title 2026-09-18-784fb3bd-05-llm-schema-desc" xmlns="http://www.w3.org/2000/svg">
+  <title id="2026-09-18-784fb3bd-05-llm-schema-title">LLM Structured Output Design: Schema Design Flowchart</title>
+  <desc id="2026-09-18-784fb3bd-05-llm-schema-desc">A design flow starting from schema design, branching into format constraints (JSON Schema) and semantic constraints (Pydantic Validator), each elaborated into types/required fields/enum values and value ranges/business rules, then converging into the API layer and app layer.</desc>
+
+  <defs>
+    <!-- 화살표 마커 -->
+    <marker id="2026-09-18-784fb3bd-05-arr" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-09-18-784fb3bd-05-arr-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+  </defs>
+
+  <!-- 배경 -->
+  <rect width="960" height="600" fill="#f8fafb"/>
+
+  <!-- ──────────────────────────────────────────
+       연결선 (노드보다 먼저)
+  ────────────────────────────────────────── -->
+
+  <!-- SC → F (왼쪽 아래) -->
+  <path d="M 400 128 L 400 152 Q 400 160 392 160 L 296 160 Q 288 160 288 168 L 288 200"
+        fill="none" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-18-784fb3bd-05-arr-accent)"/>
+
+  <!-- SC → B (오른쪽 아래) -->
+  <path d="M 560 128 L 560 152 Q 560 160 568 160 L 664 160 Q 672 160 672 168 L 672 200"
+        fill="none" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-18-784fb3bd-05-arr-accent)"/>
+
+  <!-- F → T -->
+  <path d="M 288 268 L 288 308"
+        fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-18-784fb3bd-05-arr)"/>
+
+  <!-- B → VL -->
+  <path d="M 672 268 L 672 308"
+        fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-18-784fb3bd-05-arr)"/>
+
+  <!-- T → API -->
+  <path d="M 288 396 L 288 428 Q 288 436 296 436 L 396 436 Q 404 436 404 444 L 404 468"
+        fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-18-784fb3bd-05-arr)"/>
+
+  <!-- VL → App -->
+  <path d="M 672 396 L 672 428 Q 672 436 664 436 L 564 436 Q 556 436 556 444 L 556 468"
+        fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-18-784fb3bd-05-arr)"/>
+
+  <!-- ──────────────────────────────────────────
+       노드
+  ────────────────────────────────────────── -->
+
+  <!-- SC: 스키마 설계 (focal) — 상단 중앙 -->
+  <rect x="388" y="52" width="184" height="76" rx="6" fill="#f8fafb"/>
+  <rect x="388" y="52" width="184" height="76" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="396" y="60" width="44" height="13" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="418" y="70" fill="rgba(13,87,99,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">ENTRY</text>
+  <text x="480" y="96" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Schema Design</text>
+  <text x="480" y="116" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">Schema Design</text>
+
+  <!-- F: 형식 제약 (accent) — 왼쪽 중단 -->
+  <rect x="184" y="200" width="208" height="68" rx="6" fill="#f8fafb"/>
+  <rect x="184" y="200" width="208" height="68" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="192" y="208" width="36" height="13" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="210" y="218" fill="rgba(13,87,99,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">FMT</text>
+  <text x="288" y="240" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Format Constraint</text>
+  <text x="288" y="258" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">JSON Schema</text>
+
+  <!-- B: 의미 제약 (accent) — 오른쪽 중단 -->
+  <rect x="568" y="200" width="208" height="68" rx="6" fill="#f8fafb"/>
+  <rect x="568" y="200" width="208" height="68" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="576" y="208" width="36" height="13" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="594" y="218" fill="rgba(13,87,99,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">SEM</text>
+  <text x="672" y="240" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Semantic Constraint</text>
+  <text x="672" y="258" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">Pydantic Validator</text>
+
+  <!-- T: 타입·필수 필드·열거값 (store) — 왼쪽 하단 -->
+  <rect x="164" y="308" width="248" height="88" rx="6" fill="#f8fafb"/>
+  <rect x="164" y="308" width="248" height="88" rx="6" fill="rgba(18,33,39,0.05)" stroke="#3f545c" stroke-width="1"/>
+  <rect x="172" y="316" width="32" height="13" rx="2" fill="transparent" stroke="rgba(63,84,92,0.40)" stroke-width="0.8"/>
+  <text x="188" y="326" fill="rgba(63,84,92,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">TYPE</text>
+  <text x="288" y="352" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Types · Required Fields</text>
+  <text x="288" y="372" fill="#6c8188" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Enum Values</text>
+
+  <!-- VL: 값 범위·비즈니스 규칙·교차 필드 검증 (store) — 오른쪽 하단 -->
+  <rect x="548" y="308" width="248" height="88" rx="6" fill="#f8fafb"/>
+  <rect x="548" y="308" width="248" height="88" rx="6" fill="rgba(18,33,39,0.05)" stroke="#3f545c" stroke-width="1"/>
+  <rect x="556" y="316" width="32" height="13" rx="2" fill="transparent" stroke="rgba(63,84,92,0.40)" stroke-width="0.8"/>
+  <text x="572" y="326" fill="rgba(63,84,92,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">RULE</text>
+  <text x="672" y="348" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Value Range · Biz Rules</text>
+  <text x="672" y="368" fill="#6c8188" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Cross-field Validation</text>
+
+  <!-- API: API 레이어·토큰 마스크 (backend) — 왼쪽 하단 -->
+  <rect x="308" y="468" width="192" height="68" rx="6" fill="#f8fafb"/>
+  <rect x="308" y="468" width="192" height="68" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="316" y="476" width="28" height="13" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="330" y="486" fill="rgba(18,33,39,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">API</text>
+  <text x="404" y="508" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">API Layer</text>
+  <text x="404" y="526" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">Token Mask</text>
+
+  <!-- App: 앱 레이어·런타임 검증 (backend) — 오른쪽 하단 -->
+  <rect x="460" y="468" width="192" height="68" rx="6" fill="#f8fafb"/>
+  <rect x="460" y="468" width="192" height="68" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="468" y="476" width="28" height="13" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="482" y="486" fill="rgba(18,33,39,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">APP</text>
+  <text x="556" y="508" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">App Layer</text>
+  <text x="556" y="526" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">Runtime Validation</text>
+
+  <!-- ──────────────────────────────────────────
+       범례 (하단 스트립)
+  ────────────────────────────────────────── -->
+  <line x1="40" y1="562" x2="920" y2="562" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+  <text x="40" y="577" fill="#3f545c" font-size="8" font-family="'IBM Plex Mono', monospace" letter-spacing="0.14em">LEGEND</text>
+
+  <!-- 진입점 -->
+  <rect x="112" y="566" width="12" height="12" rx="2" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="130" y="577" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">Entry / Constraint Layer</text>
+
+  <!-- 세부 규칙 -->
+  <rect x="284" y="566" width="12" height="12" rx="2" fill="rgba(18,33,39,0.05)" stroke="#3f545c" stroke-width="1"/>
+  <text x="302" y="577" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">Detail Rules</text>
+
+  <!-- 런타임 -->
+  <rect x="400" y="566" width="12" height="12" rx="2" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <text x="418" y="577" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">Runtime Layer</text>
+</svg>
+</body>
+</html>

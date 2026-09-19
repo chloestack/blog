@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 660" role="img" aria-labelledby="2026-09-19-f8fc1d22-06-wc-diag-title 2026-09-19-f8fc1d22-06-wc-diag-desc">
+  <title id="2026-09-19-f8fc1d22-06-wc-diag-title">WebClient Correct Usage Decision Flow</title>
+  <desc id="2026-09-19-f8fc1d22-06-wc-diag-desc">A decision flowchart that checks three checkpoints in order when using WebClient (instance reuse, event-loop blocking, retry error scope) to determine whether usage is correct.</desc>
+
+  <defs>
+    <!-- arrow markers -->
+    <marker id="2026-09-19-f8fc1d22-06-arr" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0,8 3,0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-09-19-f8fc1d22-06-arr-acc" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0,8 3,0 6" fill="#0d5763"/>
+    </marker>
+    <marker id="2026-09-19-f8fc1d22-06-arr-stop" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0,8 3,0 6" fill="#94382b"/>
+    </marker>
+    <marker id="2026-09-19-f8fc1d22-06-arr-ok" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0,8 3,0 6" fill="#286d50"/>
+    </marker>
+  </defs>
+
+  <!-- background -->
+  <rect width="960" height="660" fill="#f8fafb"/>
+
+  <!-- ───────────────────────────────────────────
+       CONNECTORS  (drawn before nodes)
+  ─────────────────────────────────────────────── -->
+
+  <!-- START → Q1 -->
+  <line x1="480" y1="104" x2="480" y2="152" stroke="#3f545c" stroke-width="1.2" marker-end="url(#2026-09-19-f8fc1d22-06-arr)"/>
+
+  <!-- Q1 예 (right) → BAD1 -->
+  <!-- Q1 right edge (616,196) → elbow right then down to BAD1 -->
+  <path d="M616,196 L680,196 L680,288 L656,288" fill="none" stroke="#94382b" stroke-width="1.2" marker-end="url(#2026-09-19-f8fc1d22-06-arr-stop)"/>
+  <!-- label 예 on horizontal segment -->
+  <rect x="630" y="182" width="24" height="14" rx="2" fill="#f8fafb"/>
+  <text x="642" y="192" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR',sans-serif" text-anchor="middle">yes</text>
+
+  <!-- Q1 아니오 (bottom) → Q2 -->
+  <line x1="480" y1="240" x2="480" y2="300" stroke="#3f545c" stroke-width="1.2" marker-end="url(#2026-09-19-f8fc1d22-06-arr)"/>
+  <!-- label 아니오 -->
+  <rect x="452" y="256" width="56" height="14" rx="2" fill="#f8fafb"/>
+  <text x="480" y="266" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR',sans-serif" text-anchor="middle">no</text>
+
+  <!-- Q2 예 (right) → BAD2 -->
+  <path d="M616,344 L680,344 L680,400 L656,400" fill="none" stroke="#94382b" stroke-width="1.2" marker-end="url(#2026-09-19-f8fc1d22-06-arr-stop)"/>
+  <rect x="630" y="330" width="24" height="14" rx="2" fill="#f8fafb"/>
+  <text x="642" y="340" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR',sans-serif" text-anchor="middle">yes</text>
+
+  <!-- Q2 아니오 (bottom) → Q3 -->
+  <line x1="480" y1="388" x2="480" y2="448" stroke="#3f545c" stroke-width="1.2" marker-end="url(#2026-09-19-f8fc1d22-06-arr)"/>
+  <rect x="452" y="404" width="56" height="14" rx="2" fill="#f8fafb"/>
+  <text x="480" y="414" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR',sans-serif" text-anchor="middle">no</text>
+
+  <!-- Q3 예 (right) → BAD3 -->
+  <path d="M616,492 L680,492 L680,508 L656,508" fill="none" stroke="#94382b" stroke-width="1.2" marker-end="url(#2026-09-19-f8fc1d22-06-arr-stop)"/>
+  <rect x="630" y="478" width="24" height="14" rx="2" fill="#f8fafb"/>
+  <text x="642" y="488" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR',sans-serif" text-anchor="middle">yes</text>
+
+  <!-- Q3 아니오 (bottom) → GOOD -->
+  <line x1="480" y1="536" x2="480" y2="568" stroke="#0d5763" stroke-width="1.4" marker-end="url(#2026-09-19-f8fc1d22-06-arr-acc)"/>
+  <rect x="452" y="544" width="56" height="14" rx="2" fill="#f8fafb"/>
+  <text x="480" y="554" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR',sans-serif" text-anchor="middle">no</text>
+
+  <!-- ───────────────────────────────────────────
+       NODES
+  ─────────────────────────────────────────────── -->
+
+  <!-- START oval -->
+  <rect x="368" y="56" width="224" height="48" rx="20" fill="#f8fafb"/>
+  <rect x="368" y="56" width="224" height="48" rx="20" fill="rgba(58,84,143,0.08)" stroke="#3a548f" stroke-width="1.2"/>
+  <text x="480" y="76" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR',sans-serif" text-anchor="middle">WebClient Usage</text>
+  <text x="480" y="93" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono',monospace" text-anchor="middle">start</text>
+
+  <!-- Q1 diamond -->
+  <!-- center 480,196  half-w=136 half-h=44 -->
+  <rect x="340" y="152" width="280" height="88" rx="4" fill="#f8fafb"/>
+  <polygon points="480,152 616,196 480,240 344,196" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="480" y="191" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR',sans-serif" text-anchor="middle">New instance per</text>
+  <text x="480" y="207" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR',sans-serif" text-anchor="middle">request?</text>
+
+  <!-- BAD1 -->
+  <rect x="656" y="264" width="200" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="656" y="264" width="200" height="48" rx="6" fill="rgba(148,56,43,0.08)" stroke="#94382b" stroke-width="1.2"/>
+  <text x="756" y="283" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR',sans-serif" text-anchor="middle">Pool re-init loop</text>
+  <text x="756" y="299" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR',sans-serif" text-anchor="middle">No connection reuse</text>
+
+  <!-- Q2 diamond -->
+  <rect x="340" y="300" width="280" height="88" rx="4" fill="#f8fafb"/>
+  <polygon points="480,300 616,344 480,388 344,344" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="480" y="339" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR',sans-serif" text-anchor="middle">.block() called on</text>
+  <text x="480" y="355" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR',sans-serif" text-anchor="middle">event loop?</text>
+
+  <!-- BAD2 -->
+  <rect x="656" y="376" width="200" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="656" y="376" width="200" height="48" rx="6" fill="rgba(148,56,43,0.08)" stroke="#94382b" stroke-width="1.2"/>
+  <text x="756" y="395" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR',sans-serif" text-anchor="middle">Deadlock / warning</text>
+  <text x="756" y="411" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono',monospace" text-anchor="middle">BlockingOperationError</text>
+
+  <!-- Q3 diamond -->
+  <rect x="340" y="448" width="280" height="88" rx="4" fill="#f8fafb"/>
+  <polygon points="480,448 616,492 480,536 344,492" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="480" y="483" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR',sans-serif" text-anchor="middle">Retry includes 4xx or</text>
+  <text x="480" y="499" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR',sans-serif" text-anchor="middle">parse errors?</text>
+
+  <!-- BAD3 -->
+  <rect x="656" y="484" width="200" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="656" y="484" width="200" height="48" rx="6" fill="rgba(148,56,43,0.08)" stroke="#94382b" stroke-width="1.2"/>
+  <text x="756" y="503" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR',sans-serif" text-anchor="middle">Pointless retries</text>
+  <text x="756" y="519" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR',sans-serif" text-anchor="middle">Increased load</text>
+
+  <!-- GOOD -->
+  <rect x="368" y="568" width="224" height="52" rx="6" fill="#f8fafb"/>
+  <rect x="368" y="568" width="224" height="52" rx="6" fill="rgba(13,87,99,0.12)" stroke="#0d5763" stroke-width="1.6"/>
+  <text x="480" y="591" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR',sans-serif" text-anchor="middle">Correct Usage ✓</text>
+  <text x="480" y="608" fill="#0d5763" font-size="10" font-family="'IBM Plex Sans KR',sans-serif" text-anchor="middle">All checks passed</text>
+
+  <!-- ───────────────────────────────────────────
+       LEGEND STRIP
+  ─────────────────────────────────────────────── -->
+  <line x1="32" y1="636" x2="928" y2="636" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+
+  <!-- 판별 질문 -->
+  <polygon points="72,650 82,654 72,658 62,654" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="88" y="657" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono',monospace" letter-spacing="0.1em">Decision point</text>
+
+  <!-- 잘못된 사용 -->
+  <rect x="208" y="646" width="12" height="12" rx="2" fill="rgba(148,56,43,0.08)" stroke="#94382b" stroke-width="1"/>
+  <text x="226" y="657" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono',monospace" letter-spacing="0.1em">Incorrect usage</text>
+
+  <!-- 올바른 사용 -->
+  <rect x="368" y="646" width="12" height="12" rx="2" fill="rgba(13,87,99,0.12)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="386" y="657" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono',monospace" letter-spacing="0.1em">Correct usage</text>
+</svg>
+</body>
+</html>

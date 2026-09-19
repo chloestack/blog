@@ -1,35 +1,38 @@
 import Link from "next/link";
 import { MermaidDiagrams } from "@/components/mermaid-diagrams";
 import { SiteFooter } from "@/components/site-footer";
-import { getRelatedPosts, getSeriesPosts, hasDiagrams, postHref, renderMarkdown, toneFor, type Post } from "@/lib/posts";
+import { SiteHeader } from "@/components/site-header";
+import { STRINGS, localePrefix, switchHref } from "@/lib/i18n";
+import { counterpartSlug, getRelatedPosts, getSeriesPosts, hasDiagrams, postHref, renderMarkdown, toneFor, type Post } from "@/lib/posts";
 
 export function ArticleView({ post }: { post: Post }) {
+  const locale = post.locale;
+  const strings = STRINGS[locale];
+  // 한국어는 접두어가 없어 "/"가 되고, 영문은 "/en"이다. 뒤에 슬래시를 붙이면 한 번 더 튕긴다.
+  const home = localePrefix(locale) || "/";
+  const list = `${localePrefix(locale)}/#articles`;
   const tone = toneFor(post.category);
   const date = post.date.replaceAll("-", ".");
   const time = post.publishedAt.slice(11, 16);
   const related = getRelatedPosts(post);
-  const series = getSeriesPosts(post.series);
+  const series = getSeriesPosts(post.series, locale);
 
   return (
     <main>
-      <header className="site-header">
-        <div className="wrap header-inner">
-          <Link className="wordmark" href="/" aria-label="blog.pistamond 홈"><span className="mark">P</span><span>blog.pistamond</span></Link>
-        </div>
-      </header>
+      <SiteHeader locale={locale} homeHref={home} switchTo={switchHref(locale, counterpartSlug(post))} />
 
       <div className="wrap">
         <article className="article">
           <div className="article-head">
-            <Link className="back-link" href="/#articles">← 목록으로</Link>
+            <Link className="back-link" href={list}>{strings.backToList}</Link>
             <div className="label-row"><span className={`tag ${tone}`}>{post.category.toUpperCase()}</span><span className="meta">{date} {time}</span></div>
             <h1>{post.title}</h1>
             {post.excerpt ? <p className="lede">{post.excerpt}</p> : null}
           </div>
 
           {series.length > 1 ? (
-            <nav className="series-nav" aria-label={`시리즈: ${post.series}`}>
-              <p className="series-nav-head"><span className="series-badge">시리즈</span>{post.series}</p>
+            <nav className="series-nav" aria-label={`${strings.seriesBadge}: ${post.series}`}>
+              <p className="series-nav-head"><span className="series-badge">{strings.seriesBadge}</span>{post.series}</p>
               <ol className="series-nav-list">
                 {series.map((item) => (
                   <li key={item.slug} className={item.slug === post.slug ? "is-current" : undefined}>
@@ -37,7 +40,7 @@ export function ArticleView({ post }: { post: Post }) {
                     {item.slug === post.slug ? (
                       <span className="series-nav-name" aria-current="true">{item.title}</span>
                     ) : (
-                      <Link className="series-nav-name" href={postHref(item.slug)}>{item.title}</Link>
+                      <Link className="series-nav-name" href={postHref(item.slug, locale)}>{item.title}</Link>
                     )}
                   </li>
                 ))}
@@ -69,7 +72,7 @@ export function ArticleView({ post }: { post: Post }) {
           </aside>
         ) : null}
 
-        <SiteFooter homeHref="/" backHref="/#articles" backLabel="목록으로 ←" />
+        <SiteFooter locale={locale} homeHref={home} backHref={list} backLabel={strings.backToListFooter} />
       </div>
     </main>
   );

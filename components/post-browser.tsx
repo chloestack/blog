@@ -2,10 +2,12 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
+import { STRINGS, type Locale } from "@/lib/i18n";
 import type { PostCard } from "@/lib/posts";
 import { VisitCounter } from "@/components/visit-counter";
 
-const ALL = "전체";
+/** 카테고리 이름이 아니라 "전부"를 가리키는 표식. 지면에 찍히는 말은 locale에서 온다. */
+const ALL = "\u0000all";
 /** 도구 이야기는 주제라기보다 곁가지라 개수와 상관없이 레일 맨 아래에 둔다. */
 const PINNED_LAST = "Tools";
 
@@ -17,8 +19,10 @@ function formatDate(value: string): string {
 }
 
 /** 왼쪽 카테고리 레일과 목록이 같은 필터를 공유하므로 한 컴포넌트가 함께 들고 있는다. */
-export function PostBrowser({ posts }: { posts: PostCard[] }) {
+export function PostBrowser({ posts, locale }: { posts: PostCard[]; locale: Locale }) {
   const [active, setActive] = useState<Selection>({ kind: "category", name: ALL });
+  const strings = STRINGS[locale];
+  const labelOf = (name: string) => (name === ALL ? strings.all : name);
 
   const topics = useMemo(() => {
     const counts = new Map<string, number>();
@@ -54,12 +58,12 @@ export function PostBrowser({ posts }: { posts: PostCard[] }) {
   const inSeriesView = active.kind === "series";
 
   return (
-    <section className="articles" id="articles" aria-label="글 목록">
+    <section className="articles" id="articles" aria-label={strings.listAria}>
       <div className={topics.length > 0 ? "articles-layout" : "articles-layout no-rail"}>
         {topics.length > 0 ? (
           <aside className="category-rail" aria-labelledby="category-title">
-            <h3 className="rail-title" id="category-title">카테고리</h3>
-            <div className="rail-list" role="group" aria-label="카테고리로 거르기">
+            <h3 className="rail-title" id="category-title">{strings.categoriesTitle}</h3>
+            <div className="rail-list" role="group" aria-label={strings.categoryFilterAria}>
               {[[ALL, posts.length] as const, ...topics].map(([topic, count]) => (
                 <button
                   key={topic}
@@ -68,7 +72,7 @@ export function PostBrowser({ posts }: { posts: PostCard[] }) {
                   aria-pressed={isActive({ kind: "category", name: topic })}
                   onClick={() => setActive({ kind: "category", name: topic })}
                 >
-                  <span className="rail-name">{topic}</span>
+                  <span className="rail-name">{labelOf(topic)}</span>
                   <span className="rail-count">{String(count).padStart(2, "0")}</span>
                 </button>
               ))}
@@ -76,8 +80,8 @@ export function PostBrowser({ posts }: { posts: PostCard[] }) {
 
             {seriesList.length > 0 ? (
               <>
-                <h3 className="rail-title series" id="series-title">시리즈</h3>
-                <div className="rail-list" role="group" aria-label="시리즈로 거르기">
+                <h3 className="rail-title series" id="series-title">{strings.seriesTitle}</h3>
+                <div className="rail-list" role="group" aria-label={strings.seriesFilterAria}>
                   {seriesList.map(([name, count]) => (
                     <button
                       key={name}
@@ -97,15 +101,15 @@ export function PostBrowser({ posts }: { posts: PostCard[] }) {
         ) : null}
 
         <div className="articles-main">
-          <VisitCounter />
+          <VisitCounter locale={locale} />
           {posts.length === 0 ? (
-            <p className="empty-note">아직 공개된 글이 없습니다.</p>
+            <p className="empty-note">{strings.emptyAll}</p>
           ) : visible.length === 0 ? (
-            <p className="empty-note">{active.name} 주제의 글이 아직 없습니다.</p>
+            <p className="empty-note">{strings.emptyTopic(labelOf(active.name))}</p>
           ) : (
             <>
               {inSeriesView ? (
-                <p className="series-lede"><span className="series-badge">시리즈</span>{active.name} · 총 {visible.length}편, 1편부터 순서대로</p>
+                <p className="series-lede"><span className="series-badge">{strings.seriesBadge}</span>{strings.seriesLede(active.name, visible.length)}</p>
               ) : null}
               <div className="post-list">
                 {visible.map((post) => (
@@ -113,7 +117,7 @@ export function PostBrowser({ posts }: { posts: PostCard[] }) {
                     <div className="post-body">
                       <div className="label-row">
                         {inSeriesView ? (
-                          <span className="tag series-order">{post.seriesOrder}편</span>
+                          <span className="tag series-order">{strings.seriesOrderLabel(post.seriesOrder)}</span>
                         ) : (
                           <span className={`tag ${post.tone}`}>{post.category.toUpperCase()}</span>
                         )}
