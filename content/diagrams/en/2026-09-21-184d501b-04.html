@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GraphRAG Global Query Processing Flow</title>
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; font-family: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; }
+  .diagram-wrap { display: block; width: 100%; max-width: 960px; margin: 0 auto; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<div class="diagram-wrap">
+<svg viewBox="0 0 960 600" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="2026-09-21-184d501b-04-graphrag-global-title 2026-09-21-184d501b-04-graphrag-global-desc">
+  <title id="2026-09-21-184d501b-04-graphrag-global-title">GraphRAG Global Query Processing Flow</title>
+  <desc id="2026-09-21-184d501b-04-graphrag-global-desc">A Map-Reduce flow diagram where a global query selects a community report level, passes through shuffle and ranking stages, is distributed into multiple batches, each batch generates an intermediate answer (map), and all results are finally reduced into a single consolidated answer.</desc>
+
+  <defs>
+    <!-- 배경 닷 패턴 없음 — 클린 paper -->
+    <marker id="2026-09-21-184d501b-04-gr-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-09-21-184d501b-04-gr-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <marker id="2026-09-21-184d501b-04-gr-arrow-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3a548f"/>
+    </marker>
+  </defs>
+
+  <!-- Page background -->
+  <rect width="960" height="600" fill="#f8fafb"/>
+
+  <!-- ============================================================
+       CONNECTORS (drawn before nodes)
+  ============================================================ -->
+
+  <!-- GQ → CL (vertical) -->
+  <line x1="480" y1="92" x2="480" y2="136" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-21-184d501b-04-gr-arrow-accent)"/>
+
+  <!-- CL → SH (vertical) -->
+  <line x1="480" y1="188" x2="480" y2="232" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-21-184d501b-04-gr-arrow)"/>
+
+  <!-- SH → B1 (orthogonal elbow: right then down) -->
+  <!-- SH center: (480, 268). B1 center: (216, 332). Path: down from SH bottom (480,296) → right-angle → up to B1 top -->
+  <path d="M 480,296 Q 480,312 464,312 L 232,312 Q 216,312 216,328" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-21-184d501b-04-gr-arrow)"/>
+
+  <!-- SH → B2 (straight down) -->
+  <line x1="480" y1="296" x2="480" y2="328" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-21-184d501b-04-gr-arrow)"/>
+
+  <!-- SH → BN (orthogonal elbow: left then down) -->
+  <path d="M 480,296 Q 480,312 496,312 L 744,312 Q 760,312 760,328" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-21-184d501b-04-gr-arrow)"/>
+
+  <!-- B1 → M1 (vertical) -->
+  <line x1="216" y1="376" x2="216" y2="416" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-21-184d501b-04-gr-arrow)"/>
+
+  <!-- B2 → M2 (vertical) -->
+  <line x1="480" y1="376" x2="480" y2="416" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-21-184d501b-04-gr-arrow)"/>
+
+  <!-- BN → MN (vertical) -->
+  <line x1="760" y1="376" x2="760" y2="416" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-21-184d501b-04-gr-arrow)"/>
+
+  <!-- M1 → R (orthogonal: down then right) -->
+  <path d="M 216,464 Q 216,480 232,480 L 448,480 Q 464,480 464,496" fill="none" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-21-184d501b-04-gr-arrow-accent)"/>
+
+  <!-- M2 → R (straight down) -->
+  <line x1="480" y1="464" x2="480" y2="496" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-21-184d501b-04-gr-arrow-accent)"/>
+
+  <!-- MN → R (orthogonal: down then left) -->
+  <path d="M 760,464 Q 760,480 744,480 L 512,480 Q 496,480 496,496" fill="none" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-21-184d501b-04-gr-arrow-accent)"/>
+
+  <!-- ============================================================
+       NODES
+  ============================================================ -->
+
+  <!-- GQ: Global Query — focal (accent) -->
+  <!-- center: 480, 64; size: 200×48 -->
+  <rect x="380" y="40" width="200" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="380" y="40" width="200" height="48" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="388" y="46" width="40" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="408" y="55" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">INPUT</text>
+  <text x="480" y="70" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Global Query</text>
+
+  <!-- CL: Community Report Level Selection — accent -->
+  <!-- center: 480, 160; size: 240×48 -->
+  <rect x="360" y="136" width="240" height="52" rx="6" fill="#f8fafb"/>
+  <rect x="360" y="136" width="240" height="52" rx="6" fill="rgba(13,87,99,0.05)" stroke="#0d5763" stroke-width="1"/>
+  <rect x="368" y="142" width="40" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.35)" stroke-width="0.8"/>
+  <text x="388" y="151" fill="rgba(13,87,99,0.75)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">STEP</text>
+  <text x="480" y="165" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Community Report</text>
+  <text x="480" y="181" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">Level Selection</text>
+
+  <!-- SH: Shuffle · Ranking Relevance Filter — accent -->
+  <!-- center: 480, 268; size: 240×52 -->
+  <rect x="360" y="232" width="240" height="52" rx="6" fill="#f8fafb"/>
+  <rect x="360" y="232" width="240" height="52" rx="6" fill="rgba(13,87,99,0.05)" stroke="#0d5763" stroke-width="1"/>
+  <rect x="368" y="238" width="40" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.35)" stroke-width="0.8"/>
+  <text x="388" y="247" fill="rgba(13,87,99,0.75)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">STEP</text>
+  <text x="480" y="261" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Shuffle · Ranking</text>
+  <text x="480" y="277" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">Relevance Filter</text>
+
+  <!-- B1: Batch 1 — store/backend -->
+  <!-- center: 216, 352; size: 160×44 -->
+  <rect x="136" y="328" width="160" height="44" rx="6" fill="#f8fafb"/>
+  <rect x="136" y="328" width="160" height="44" rx="6" fill="rgba(18,33,39,0.03)" stroke="rgba(18,33,39,0.30)" stroke-width="1"/>
+  <rect x="144" y="334" width="40" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.25)" stroke-width="0.8"/>
+  <text x="164" y="343" fill="rgba(18,33,39,0.6)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">BATCH</text>
+  <text x="216" y="357" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Batch 1</text>
+  <text x="216" y="368" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">10 communities</text>
+
+  <!-- B2: Batch 2 — store/backend -->
+  <!-- center: 480, 352; size: 160×44 -->
+  <rect x="400" y="328" width="160" height="44" rx="6" fill="#f8fafb"/>
+  <rect x="400" y="328" width="160" height="44" rx="6" fill="rgba(18,33,39,0.03)" stroke="rgba(18,33,39,0.30)" stroke-width="1"/>
+  <rect x="408" y="334" width="40" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.25)" stroke-width="0.8"/>
+  <text x="428" y="343" fill="rgba(18,33,39,0.6)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">BATCH</text>
+  <text x="480" y="357" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Batch 2</text>
+  <text x="480" y="368" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">10 communities</text>
+
+  <!-- BN: Batch N — optional/async -->
+  <!-- center: 760, 352; size: 160×44 -->
+  <rect x="680" y="328" width="160" height="44" rx="6" fill="#f8fafb"/>
+  <rect x="680" y="328" width="160" height="44" rx="6" fill="rgba(18,33,39,0.02)" stroke="rgba(18,33,39,0.20)" stroke-width="1" stroke-dasharray="4,3"/>
+  <rect x="688" y="334" width="40" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.20)" stroke-width="0.8"/>
+  <text x="708" y="343" fill="rgba(18,33,39,0.5)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">BATCH</text>
+  <text x="760" y="357" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Batch N</text>
+  <text x="760" y="368" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">· · ·</text>
+
+  <!-- M1: Intermediate Answer Generation map — backend -->
+  <!-- center: 216, 440; size: 168×44 -->
+  <rect x="132" y="416" width="168" height="44" rx="6" fill="#f8fafb"/>
+  <rect x="132" y="416" width="168" height="44" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="140" y="422" width="28" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.35)" stroke-width="0.8"/>
+  <text x="154" y="431" fill="rgba(18,33,39,0.7)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">map</text>
+  <text x="216" y="445" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Partial Answer Gen.</text>
+
+  <!-- M2: Intermediate Answer Generation map — backend -->
+  <!-- center: 480, 440; size: 168×44 -->
+  <rect x="396" y="416" width="168" height="44" rx="6" fill="#f8fafb"/>
+  <rect x="396" y="416" width="168" height="44" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="404" y="422" width="28" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.35)" stroke-width="0.8"/>
+  <text x="418" y="431" fill="rgba(18,33,39,0.7)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">map</text>
+  <text x="480" y="445" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Partial Answer Gen.</text>
+
+  <!-- MN: Intermediate Answer Generation map — optional -->
+  <!-- center: 760, 440; size: 168×44 -->
+  <rect x="676" y="416" width="168" height="44" rx="6" fill="#f8fafb"/>
+  <rect x="676" y="416" width="168" height="44" rx="6" fill="rgba(18,33,39,0.02)" stroke="rgba(18,33,39,0.20)" stroke-width="1" stroke-dasharray="4,3"/>
+  <rect x="684" y="422" width="28" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.20)" stroke-width="0.8"/>
+  <text x="698" y="431" fill="rgba(18,33,39,0.5)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">map</text>
+  <text x="760" y="445" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Partial Answer Gen.</text>
+
+  <!-- R: reduce Final Consolidated Answer — focal (accent) -->
+  <!-- center: 480, 528; size: 240×52 -->
+  <rect x="360" y="496" width="240" height="52" rx="6" fill="#f8fafb"/>
+  <rect x="360" y="496" width="240" height="52" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="368" y="502" width="40" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="388" y="511" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">reduce</text>
+  <text x="480" y="525" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Final Answer</text>
+  <text x="480" y="540" fill="#0d5763" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">Map-Reduce</text>
+
+  <!-- ============================================================
+       LEGEND STRIP
+  ============================================================ -->
+  <line x1="32" y1="572" x2="928" y2="572" stroke="rgba(18,33,39,0.10)" stroke-width="0.8"/>
+  <text x="32" y="586" fill="#6c8188" font-size="8" font-family="'IBM Plex Mono', monospace" letter-spacing="0.14em">LEGEND</text>
+
+  <!-- Focal -->
+  <rect x="96" y="577" width="12" height="12" rx="2" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="114" y="587" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">Key Step</text>
+
+  <!-- Backend -->
+  <rect x="200" y="577" width="12" height="12" rx="2" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <text x="218" y="587" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">Process Step (map)</text>
+
+  <!-- External -->
+  <rect x="336" y="577" width="12" height="12" rx="2" fill="rgba(18,33,39,0.03)" stroke="rgba(18,33,39,0.30)" stroke-width="1"/>
+  <text x="354" y="587" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">Batch Unit</text>
+
+  <!-- Optional -->
+  <rect x="432" y="577" width="12" height="12" rx="2" fill="rgba(18,33,39,0.02)" stroke="rgba(18,33,39,0.20)" stroke-width="1" stroke-dasharray="4,3"/>
+  <text x="450" y="587" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">Repeat (N)</text>
+
+</svg>
+</div>
+</body>
+</html>

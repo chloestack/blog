@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spring Kafka Consumer Structure</title>
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; font-family: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<svg
+  viewBox="0 0 960 480"
+  xmlns="http://www.w3.org/2000/svg"
+  role="img"
+  aria-labelledby="2026-09-21-5a4b63fa-01-kafka-consumer-title 2026-09-21-5a4b63fa-01-kafka-consumer-desc"
+>
+  <title id="2026-09-21-5a4b63fa-01-kafka-consumer-title">Spring Kafka @KafkaListener Consumer Structure</title>
+  <desc id="2026-09-21-5a4b63fa-01-kafka-consumer-desc">Spring Kafka consumer flow: messages are polled from the Kafka broker, passed through KafkaConsumer and ListenerContainer to @KafkaListener business logic; on failure ErrorHandler routes to Dead Letter Topic, on success the offset is committed.</desc>
+
+  <defs>
+    <!-- Arrow markers -->
+    <marker id="2026-09-21-5a4b63fa-01-kc-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-09-21-5a4b63fa-01-kc-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <marker id="2026-09-21-5a4b63fa-01-kc-arrow-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3a548f"/>
+    </marker>
+    <marker id="2026-09-21-5a4b63fa-01-kc-arrow-muted" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#6c8188"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="960" height="480" fill="#f8fafb"/>
+
+  <!-- ===================== ARROWS (drawn before boxes) ===================== -->
+
+  <!-- Kafka Broker → KafkaConsumer: horizontal right -->
+  <path d="M 156 168 L 232 168" fill="none" stroke="#3a548f" stroke-width="1" marker-end="url(#2026-09-21-5a4b63fa-01-kc-arrow-link)"/>
+  <!-- label: poll -->
+  <rect x="173" y="151" width="24" height="13" rx="2" fill="#f8fafb"/>
+  <text x="185" y="161" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.06em">poll</text>
+
+  <!-- KafkaConsumer → ListenerContainer: horizontal right -->
+  <path d="M 356 168 L 432 168" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-21-5a4b63fa-01-kc-arrow)"/>
+
+  <!-- ListenerContainer → ErrorHandler: going up-right via elbow -->
+  <!-- Exit top of ListenerContainer (cx=532, top=140), go up to y=92, then right to ErrorHandler left edge (x=644) -->
+  <path d="M 532 140 L 532 92 L 644 92" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-21-5a4b63fa-01-kc-arrow)"/>
+
+  <!-- ListenerContainer → @KafkaListener: going down-right via elbow -->
+  <!-- Exit bottom of ListenerContainer (cx=532, bottom=196), go down to y=256, then right to KafkaListener left (x=644) -->
+  <path d="M 532 196 L 532 256 L 644 256" fill="none" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-21-5a4b63fa-01-kc-arrow-accent)"/>
+
+  <!-- ErrorHandler → Dead Letter Topic: horizontal right -->
+  <path d="M 780 92 L 856 92" fill="none" stroke="#3f545c" stroke-width="1" stroke-dasharray="5,4" marker-end="url(#2026-09-21-5a4b63fa-01-kc-arrow)"/>
+  <!-- label: Fail -->
+  <rect x="798" y="75" width="24" height="13" rx="2" fill="#f8fafb"/>
+  <text x="810" y="85" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Fail</text>
+
+  <!-- @KafkaListener → Offset Commit: horizontal right -->
+  <path d="M 780 256 L 856 256" fill="none" stroke="#6c8188" stroke-width="1" marker-end="url(#2026-09-21-5a4b63fa-01-kc-arrow-muted)"/>
+  <!-- label: OK -->
+  <rect x="798" y="239" width="24" height="13" rx="2" fill="#f8fafb"/>
+  <text x="810" y="249" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">OK</text>
+
+  <!-- ===================== NODES ===================== -->
+
+  <!-- Kafka Broker (external/link-blue treatment) -->
+  <rect x="28" y="140" width="128" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="28" y="140" width="128" height="56" rx="6" fill="rgba(58,84,143,0.05)" stroke="rgba(18,33,39,0.30)" stroke-width="1"/>
+  <rect x="36" y="148" width="44" height="12" rx="2" fill="transparent" stroke="rgba(58,84,143,0.40)" stroke-width="0.8"/>
+  <text x="58" y="157" fill="rgba(58,84,143,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.10em">BROKER</text>
+  <text x="92" y="175" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Kafka Broker</text>
+
+  <!-- KafkaConsumer (store/state treatment) -->
+  <rect x="232" y="140" width="124" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="232" y="140" width="124" height="56" rx="6" fill="rgba(18,33,39,0.05)" stroke="#3f545c" stroke-width="1"/>
+  <rect x="240" y="148" width="44" height="12" rx="2" fill="transparent" stroke="rgba(63,84,92,0.40)" stroke-width="0.8"/>
+  <text x="262" y="157" fill="rgba(63,84,92,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.10em">CLIENT</text>
+  <text x="294" y="172" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">KafkaConsumer</text>
+  <text x="294" y="188" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">native client</text>
+
+  <!-- ListenerContainer (focal — accent treatment) -->
+  <rect x="432" y="132" width="200" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="432" y="132" width="200" height="72" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="440" y="140" width="56" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="468" y="149" fill="rgba(13,87,99,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.10em">CONTAINER</text>
+  <text x="532" y="168" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">ListenerContainer</text>
+  <text x="532" y="184" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">offset mgmt</text>
+
+  <!-- ErrorHandler (backend treatment) -->
+  <rect x="644" y="64" width="136" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="644" y="64" width="136" height="56" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="652" y="72" width="52" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="678" y="81" fill="rgba(18,33,39,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.10em">HANDLER</text>
+  <text x="712" y="99" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">ErrorHandler</text>
+  <text x="712" y="113" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">retry · DLT</text>
+
+  <!-- @KafkaListener (focal — accent treatment) -->
+  <rect x="644" y="228" width="136" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="644" y="228" width="136" height="56" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="652" y="236" width="68" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="686" y="245" fill="rgba(13,87,99,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.10em">@KAFKALISTENER</text>
+  <text x="712" y="263" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Business Logic</text>
+  <text x="712" y="277" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">@KafkaListener</text>
+
+  <!-- Dead Letter Topic (optional/async — dashed) -->
+  <rect x="856" y="64" width="80" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="856" y="64" width="80" height="56" rx="6" fill="rgba(18,33,39,0.02)" stroke="rgba(18,33,39,0.20)" stroke-width="1" stroke-dasharray="4,3"/>
+  <rect x="864" y="72" width="20" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.20)" stroke-width="0.8"/>
+  <text x="874" y="81" fill="rgba(18,33,39,0.5)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">DLT</text>
+  <text x="896" y="99" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Dead Letter</text>
+  <text x="896" y="113" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Topic</text>
+
+  <!-- Offset Commit (store/state treatment — muted) -->
+  <rect x="856" y="228" width="80" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="856" y="228" width="80" height="56" rx="6" fill="#eef2f4" stroke="#c3d0d4" stroke-width="1"/>
+  <rect x="864" y="236" width="28" height="12" rx="2" fill="transparent" stroke="rgba(195,208,212,0.60)" stroke-width="0.8"/>
+  <text x="878" y="245" fill="rgba(63,84,92,0.7)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">OFFSET</text>
+  <text x="896" y="264" fill="#3f545c" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Offset</text>
+  <text x="896" y="278" fill="#3f545c" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Commit</text>
+
+  <!-- ===================== LEGEND ===================== -->
+  <line x1="28" y1="384" x2="932" y2="384" stroke="rgba(18,33,39,0.10)" stroke-width="0.8"/>
+  <text x="28" y="400" fill="#3f545c" font-size="9" font-family="'IBM Plex Mono', monospace" letter-spacing="0.14em">LEGEND</text>
+
+  <!-- Legend: focal -->
+  <rect x="96" y="390" width="16" height="12" rx="3" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="118" y="400" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">Core Component</text>
+
+  <!-- Legend: backend -->
+  <rect x="232" y="390" width="16" height="12" rx="3" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <text x="254" y="400" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">Process Stage</text>
+
+  <!-- Legend: external -->
+  <rect x="348" y="390" width="16" height="12" rx="3" fill="rgba(58,84,143,0.05)" stroke="rgba(18,33,39,0.30)" stroke-width="1"/>
+  <text x="370" y="400" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">External System</text>
+
+  <!-- Legend: optional/dashed -->
+  <rect x="464" y="390" width="16" height="12" rx="3" fill="rgba(18,33,39,0.02)" stroke="rgba(18,33,39,0.20)" stroke-width="1" stroke-dasharray="4,3"/>
+  <text x="486" y="400" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">Async Destination</text>
+
+  <!-- Legend: muted/store -->
+  <rect x="592" y="390" width="16" height="12" rx="3" fill="#eef2f4" stroke="#c3d0d4" stroke-width="1"/>
+  <text x="614" y="400" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">Commit / State</text>
+
+  <!-- Legend: dashed arrow -->
+  <line x1="712" y1="396" x2="740" y2="396" stroke="#3f545c" stroke-width="1" stroke-dasharray="5,4" marker-end="url(#2026-09-21-5a4b63fa-01-kc-arrow)"/>
+  <text x="748" y="400" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">Failure Path</text>
+
+</svg>
+</body>
+</html>

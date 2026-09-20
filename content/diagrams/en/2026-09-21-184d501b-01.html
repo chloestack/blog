@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GraphRAG Pipeline</title>
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; font-family: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; }
+  .diagram-wrap { display: block; width: 100%; max-width: 960px; margin: 0 auto; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<div class="diagram-wrap">
+<svg viewBox="0 0 960 600" role="img" aria-labelledby="2026-09-21-184d501b-01-graphrag-title 2026-09-21-184d501b-01-graphrag-desc" xmlns="http://www.w3.org/2000/svg">
+  <title id="2026-09-21-184d501b-01-graphrag-title">GraphRAG Pipeline — From documents to knowledge graph, community detection, and summarisation</title>
+  <desc id="2026-09-21-184d501b-01-graphrag-desc">GraphRAG pipeline flow: raw document corpus → LLM-based entity and relation extraction → knowledge graph construction → Leiden community detection producing fine, mid, and global level clusters → LLM generates community summary reports.</desc>
+
+  <defs>
+    <!-- 화살표 마커 -->
+    <marker id="2026-09-21-184d501b-01-arr" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-09-21-184d501b-01-arr-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <marker id="2026-09-21-184d501b-01-arr-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3a548f"/>
+    </marker>
+  </defs>
+
+  <!-- 배경 -->
+  <rect width="960" height="600" fill="#f8fafb"/>
+
+  <!-- ───────────────────────────────────────────── -->
+  <!-- STEP 1: 화살표 먼저 (노드 뒤에 오지 않도록)  -->
+  <!-- ───────────────────────────────────────────── -->
+
+  <!-- DOC → EX (수직 직선) -->
+  <line x1="480" y1="108" x2="480" y2="156" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-21-184d501b-01-arr)"/>
+
+  <!-- EX → KG (수직 직선) -->
+  <line x1="480" y1="208" x2="480" y2="256" stroke="#0d5763" stroke-width="1" marker-end="url(#2026-09-21-184d501b-01-arr-accent)"/>
+
+  <!-- KG → LD (수직 직선) -->
+  <line x1="480" y1="308" x2="480" y2="356" stroke="#0d5763" stroke-width="1" marker-end="url(#2026-09-21-184d501b-01-arr-accent)"/>
+
+  <!-- LD → L0: 왼쪽 아래 꺾임 -->
+  <!-- LD 중심 (480, 380), L0 중심 (192, 468) -->
+  <!-- 480 → 480, 412 → 192, 412 → 192, 444 -->
+  <path d="M 480 412 L 480 424 Q 480 432 472 432 L 200 432 Q 192 432 192 440 L 192 444"
+        fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-21-184d501b-01-arr)"/>
+
+  <!-- LD → L1: 수직 직선 -->
+  <line x1="480" y1="412" x2="480" y2="444" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-21-184d501b-01-arr)"/>
+
+  <!-- LD → L2: 오른쪽 아래 꺾임 -->
+  <path d="M 480 412 L 480 424 Q 480 432 488 432 L 760 432 Q 768 432 768 440 L 768 444"
+        fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-21-184d501b-01-arr)"/>
+
+  <!-- L0 → SUM: 오른쪽 아래 꺾임 -->
+  <!-- L0 중심 (192, 468), SUM 중심 (480, 540) -->
+  <!-- 192, 496 → 192, 524 → 480, 524 → 480, 516 -->
+  <path d="M 192 496 L 192 524 Q 192 532 200 532 L 472 532 Q 480 532 480 524 L 480 516"
+        fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-21-184d501b-01-arr)"/>
+
+  <!-- L1 → SUM: 수직 직선 -->
+  <line x1="480" y1="496" x2="480" y2="516" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-21-184d501b-01-arr)"/>
+
+  <!-- L2 → SUM: 왼쪽 아래 꺾임 -->
+  <path d="M 768 496 L 768 524 Q 768 532 760 532 L 488 532 Q 480 532 480 524 L 480 516"
+        fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-21-184d501b-01-arr)"/>
+
+  <!-- ───────────────────────────────────────────── -->
+  <!-- STEP 2: 노드 박스                              -->
+  <!-- ───────────────────────────────────────────── -->
+
+  <!-- 1. DOC — 원본 문서 말뭉치 (입력, link-blue 계열) -->
+  <!-- 중심 (480, 76), 너비 224, 높이 64, rx=6 -->
+  <rect x="368" y="44" width="224" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="368" y="44" width="224" height="64" rx="6" fill="rgba(58,84,143,0.06)" stroke="#3a548f" stroke-width="1"/>
+  <rect x="376" y="52" width="32" height="12" rx="2" fill="transparent" stroke="rgba(58,84,143,0.40)" stroke-width="0.8"/>
+  <text x="392" y="61" fill="rgba(58,84,143,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">INPUT</text>
+  <text x="480" y="83" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Raw Document Corpus</text>
+
+  <!-- 2. EX — 엔티티·관계 추출 (focal, accent) -->
+  <!-- 중심 (480, 180), 너비 264, 높이 56, rx=6 -->
+  <rect x="348" y="156" width="264" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="348" y="156" width="264" height="56" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="356" y="164" width="28" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="370" y="173" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">LLM</text>
+  <text x="480" y="191" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Entity &amp; Relation Extraction</text>
+
+  <!-- 3. KG — 지식 그래프 (focal, accent) -->
+  <!-- 중심 (480, 280), 너비 224, 높이 56, rx=6 -->
+  <rect x="368" y="256" width="224" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="368" y="256" width="224" height="56" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="376" y="264" width="32" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="392" y="273" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">GRAPH</text>
+  <text x="480" y="288" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Knowledge Graph</text>
+  <text x="480" y="304" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">Nodes · Edges</text>
+
+  <!-- 4. LD — Leiden 커뮤니티 탐지 (step, backend) -->
+  <!-- 중심 (480, 380), 너비 264, 높이 56, rx=6 -->
+  <rect x="348" y="356" width="264" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="348" y="356" width="264" height="56" rx="6" fill="white" stroke="#122127" stroke-width="1"/>
+  <rect x="356" y="364" width="36" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="374" y="373" fill="rgba(18,33,39,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">ALGO</text>
+  <text x="480" y="391" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Leiden Community Detection</text>
+
+  <!-- 5. L0 — Level 0 세밀한 클러스터 -->
+  <!-- 중심 (192, 468), 너비 196, 높이 56, rx=6 -->
+  <rect x="94" y="444" width="196" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="94" y="444" width="196" height="56" rx="6" fill="rgba(18,33,39,0.03)" stroke="rgba(18,33,39,0.30)" stroke-width="1"/>
+  <rect x="102" y="452" width="40" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.25)" stroke-width="0.8"/>
+  <text x="122" y="461" fill="rgba(18,33,39,0.6)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">LEVEL 0</text>
+  <text x="192" y="479" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Fine-grained Clusters</text>
+
+  <!-- 6. L1 — Level 1 중간 클러스터 -->
+  <!-- 중심 (480, 468), 너비 196, 높이 56, rx=6 -->
+  <rect x="382" y="444" width="196" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="382" y="444" width="196" height="56" rx="6" fill="rgba(18,33,39,0.03)" stroke="rgba(18,33,39,0.30)" stroke-width="1"/>
+  <rect x="390" y="452" width="40" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.25)" stroke-width="0.8"/>
+  <text x="410" y="461" fill="rgba(18,33,39,0.6)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">LEVEL 1</text>
+  <text x="480" y="479" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Mid-level Clusters</text>
+
+  <!-- 7. L2 — Level 2 전체 요약 -->
+  <!-- 중심 (768, 468), 너비 196, 높이 56, rx=6 -->
+  <rect x="670" y="444" width="196" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="670" y="444" width="196" height="56" rx="6" fill="rgba(18,33,39,0.03)" stroke="rgba(18,33,39,0.30)" stroke-width="1"/>
+  <rect x="678" y="452" width="40" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.25)" stroke-width="0.8"/>
+  <text x="698" y="461" fill="rgba(18,33,39,0.6)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">LEVEL 2</text>
+  <text x="768" y="479" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Global Summary</text>
+
+  <!-- 8. SUM — 커뮤니티 요약 리포트 (output) -->
+  <!-- 중심 (480, 540), 너비 280, 높이 48, rx=6 -->
+  <rect x="340" y="516" width="280" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="340" y="516" width="280" height="48" rx="6" fill="rgba(13,87,99,0.05)" stroke="rgba(13,87,99,0.50)" stroke-width="1" stroke-dasharray="4,4"/>
+  <rect x="348" y="524" width="28" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.35)" stroke-width="0.8"/>
+  <text x="362" y="533" fill="rgba(13,87,99,0.75)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">LLM</text>
+  <text x="480" y="547" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Community Summary Report</text>
+
+  <!-- ───────────────────────────────────────────── -->
+  <!-- LEGEND                                        -->
+  <!-- ───────────────────────────────────────────── -->
+  <line x1="32" y1="592" x2="928" y2="592" stroke="rgba(18,33,39,0.10)" stroke-width="0.8"/>
+
+  <!-- legend accent swatch -->
+  <rect x="32" y="600" width="10" height="10" rx="2" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="48" y="609" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.08em">Core Step</text>
+
+  <!-- legend external swatch -->
+  <rect x="160" y="600" width="10" height="10" rx="2" fill="rgba(18,33,39,0.03)" stroke="rgba(18,33,39,0.30)" stroke-width="1"/>
+  <text x="176" y="609" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.08em">Level Cluster</text>
+
+  <!-- legend dashed swatch -->
+  <rect x="296" y="600" width="10" height="10" rx="2" fill="rgba(13,87,99,0.05)" stroke="rgba(13,87,99,0.50)" stroke-width="1" stroke-dasharray="3,2"/>
+  <text x="312" y="609" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.08em">LLM Output</text>
+
+  <!-- legend input swatch -->
+  <rect x="440" y="600" width="10" height="10" rx="2" fill="rgba(58,84,143,0.06)" stroke="#3a548f" stroke-width="1"/>
+  <text x="456" y="609" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.08em">Input Doc</text>
+
+</svg>
+</div>
+</body>
+</html>

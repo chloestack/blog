@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; }
+  .diagram-wrap { width: 100%; max-width: 960px; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<div class="diagram-wrap">
+<svg viewBox="0 0 960 600" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="2026-09-21-56d0a588-01-classloader-title 2026-09-21-56d0a588-01-classloader-desc">
+  <title id="2026-09-21-56d0a588-01-classloader-title">Java ClassLoader Delegation Hierarchy</title>
+  <desc id="2026-09-21-56d0a588-01-classloader-desc">A flowchart showing the parent-delegation hierarchy from Bootstrap, Platform, App, to Custom ClassLoader. Two Custom ClassLoaders (Plugin A &amp; B) branch from App ClassLoader.</desc>
+
+  <defs>
+    <!-- Arrow markers -->
+    <marker id="2026-09-21-56d0a588-01-cl-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-09-21-56d0a588-01-cl-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <marker id="2026-09-21-56d0a588-01-cl-arrow-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3a548f"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="960" height="600" fill="#f8fafb"/>
+
+  <!-- ── Connectors (drawn before boxes) ── -->
+
+  <!-- Bootstrap → Platform -->
+  <path d="M 480 176 L 480 220" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-21-56d0a588-01-cl-arrow)"/>
+
+  <!-- Platform → App -->
+  <path d="M 480 308 L 480 352" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-21-56d0a588-01-cl-arrow)"/>
+
+  <!-- App → Custom A -->
+  <path d="M 440 440 L 440 460 L 288 460 L 288 480" fill="none" stroke="#3a548f" stroke-width="1" stroke-dasharray="5,4" marker-end="url(#2026-09-21-56d0a588-01-cl-arrow-link)"/>
+
+  <!-- App → Custom B -->
+  <path d="M 520 440 L 520 460 L 672 460 L 672 480" fill="none" stroke="#3a548f" stroke-width="1" stroke-dasharray="5,4" marker-end="url(#2026-09-21-56d0a588-01-cl-arrow-link)"/>
+
+  <!-- ── Nodes ── -->
+
+  <!-- Bootstrap CL (focal / accent) -->
+  <rect x="360" y="88" width="240" height="88" rx="6" fill="#f8fafb"/>
+  <rect x="360" y="88" width="240" height="88" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.5"/>
+  <!-- type tag -->
+  <rect x="368" y="96" width="64" height="13" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="400" y="106" fill="rgba(13,87,99,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">BUILT-IN</text>
+  <!-- node name -->
+  <text x="480" y="140" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Bootstrap CL</text>
+  <!-- sublabel -->
+  <text x="480" y="158" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">Core Java API</text>
+
+  <!-- Platform CL -->
+  <rect x="360" y="220" width="240" height="88" rx="6" fill="#f8fafb"/>
+  <rect x="360" y="220" width="240" height="88" rx="6" fill="rgba(18,33,39,0.04)" stroke="#3f545c" stroke-width="1"/>
+  <rect x="368" y="228" width="64" height="13" rx="2" fill="transparent" stroke="rgba(63,84,92,0.40)" stroke-width="0.8"/>
+  <text x="400" y="238" fill="rgba(63,84,92,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">PLATFORM</text>
+  <text x="480" y="272" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Platform CL</text>
+  <text x="480" y="290" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">Ext. Modules</text>
+
+  <!-- App CL -->
+  <rect x="360" y="352" width="240" height="88" rx="6" fill="#f8fafb"/>
+  <rect x="360" y="352" width="240" height="88" rx="6" fill="rgba(18,33,39,0.04)" stroke="#3f545c" stroke-width="1"/>
+  <rect x="368" y="360" width="52" height="13" rx="2" fill="transparent" stroke="rgba(63,84,92,0.40)" stroke-width="0.8"/>
+  <text x="394" y="370" fill="rgba(63,84,92,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">APP</text>
+  <text x="480" y="404" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">App CL</text>
+  <text x="480" y="422" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">Application</text>
+
+  <!-- Custom CL A -->
+  <rect x="168" y="480" width="240" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="168" y="480" width="240" height="72" rx="6" fill="rgba(58,84,143,0.06)" stroke="rgba(58,84,143,0.50)" stroke-width="1" stroke-dasharray="4,4"/>
+  <rect x="176" y="488" width="60" height="13" rx="2" fill="transparent" stroke="rgba(58,84,143,0.40)" stroke-width="0.8"/>
+  <text x="206" y="498" fill="rgba(58,84,143,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">CUSTOM</text>
+  <text x="288" y="524" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Custom CL A</text>
+  <text x="288" y="542" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Plugin A</text>
+
+  <!-- Custom CL B -->
+  <rect x="552" y="480" width="240" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="552" y="480" width="240" height="72" rx="6" fill="rgba(58,84,143,0.06)" stroke="rgba(58,84,143,0.50)" stroke-width="1" stroke-dasharray="4,4"/>
+  <rect x="560" y="488" width="60" height="13" rx="2" fill="transparent" stroke="rgba(58,84,143,0.40)" stroke-width="0.8"/>
+  <text x="590" y="498" fill="rgba(58,84,143,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">CUSTOM</text>
+  <text x="672" y="524" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Custom CL B</text>
+  <text x="672" y="542" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Plugin B</text>
+
+  <!-- ── Delegation label ── -->
+  <rect x="449" y="188" width="62" height="13" rx="2" fill="#f8fafb"/>
+  <text x="480" y="198" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.06em">delegate</text>
+
+  <rect x="449" y="320" width="62" height="13" rx="2" fill="#f8fafb"/>
+  <text x="480" y="330" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.06em">delegate</text>
+
+  <!-- ── Legend ── -->
+  <line x1="40" y1="572" x2="920" y2="572" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+
+  <!-- legend: focal -->
+  <rect x="40" y="582" width="16" height="10" rx="2" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="62" y="591" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.06em">top-level (focal)</text>
+
+  <!-- legend: default -->
+  <rect x="200" y="582" width="16" height="10" rx="2" fill="rgba(18,33,39,0.04)" stroke="#3f545c" stroke-width="1"/>
+  <text x="222" y="591" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.06em">std. layer</text>
+
+  <!-- legend: custom (dashed) -->
+  <rect x="340" y="582" width="16" height="10" rx="2" fill="rgba(58,84,143,0.06)" stroke="rgba(58,84,143,0.50)" stroke-width="1" stroke-dasharray="4,4"/>
+  <text x="362" y="591" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.06em">custom (isolated)</text>
+
+  <!-- legend: delegation arrow -->
+  <line x1="520" y1="587" x2="548" y2="587" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-21-56d0a588-01-cl-arrow)"/>
+  <text x="556" y="591" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.06em">parent delegation</text>
+
+  <!-- legend: dashed arrow -->
+  <line x1="680" y1="587" x2="708" y2="587" stroke="#3a548f" stroke-width="1" stroke-dasharray="5,4" marker-end="url(#2026-09-21-56d0a588-01-cl-arrow-link)"/>
+  <text x="716" y="591" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.06em">load delegate</text>
+</svg>
+</div>
+</body>
+</html>

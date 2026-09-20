@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 440" role="img" aria-labelledby="2026-09-21-184d501b-02-graphrag-title 2026-09-21-184d501b-02-graphrag-desc">
+  <title id="2026-09-21-184d501b-02-graphrag-title">GraphRAG Query Processing Flow</title>
+  <desc id="2026-09-21-184d501b-02-graphrag-desc">A GraphRAG flow diagram where a user query branches by query type into local search (entities/facts) and global search (global patterns), then converges via context assembly or intermediate answers into a final LLM response.</desc>
+
+  <defs>
+    <!-- Arrow markers -->
+    <marker id="2026-09-21-184d501b-02-gr-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-09-21-184d501b-02-gr-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <marker id="2026-09-21-184d501b-02-gr-arrow-muted" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#6c8188"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="960" height="440" fill="#f8fafb"/>
+
+  <!-- ============================================================
+       ARROWS — drawn before boxes
+       Layout (LR flow, two lanes):
+         Q(80,200) → QT(220,200) → LS(380,140) / GS(380,260)
+         LS → EV(520,140) → CTX(660,140) → LLM(820,200)
+         GS → CM(520,260) → MR(660,260) → LLM(820,200)
+       ============================================================ -->
+
+  <!-- Q → QT -->
+  <path d="M 176 200 L 212 200" stroke="#3f545c" stroke-width="1" fill="none" marker-end="url(#2026-09-21-184d501b-02-gr-arrow)"/>
+
+  <!-- QT → LS (upper branch) -->
+  <path d="M 268 192 Q 268 140 372 140" stroke="#0d5763" stroke-width="1" fill="none" marker-end="url(#2026-09-21-184d501b-02-gr-arrow-accent)"/>
+  <!-- label: specific entity/fact -->
+  <rect x="262" y="152" width="76" height="16" rx="2" fill="#f8fafb"/>
+  <text x="300" y="163" fill="#0d5763" font-size="9" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="500">entity · fact</text>
+
+  <!-- QT → GS (lower branch) -->
+  <path d="M 268 208 Q 268 260 372 260" stroke="#3f545c" stroke-width="1" fill="none" marker-end="url(#2026-09-21-184d501b-02-gr-arrow)"/>
+  <!-- label: global pattern/summary -->
+  <rect x="262" y="250" width="72" height="16" rx="2" fill="#f8fafb"/>
+  <text x="298" y="261" fill="#6c8188" font-size="9" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="500">global pattern</text>
+
+  <!-- LS → EV -->
+  <path d="M 468 140 L 512 140" stroke="#3f545c" stroke-width="1" fill="none" marker-end="url(#2026-09-21-184d501b-02-gr-arrow)"/>
+
+  <!-- EV → CTX -->
+  <path d="M 612 140 L 652 140" stroke="#3f545c" stroke-width="1" fill="none" marker-end="url(#2026-09-21-184d501b-02-gr-arrow)"/>
+
+  <!-- GS → CM -->
+  <path d="M 468 260 L 512 260" stroke="#3f545c" stroke-width="1" fill="none" marker-end="url(#2026-09-21-184d501b-02-gr-arrow)"/>
+
+  <!-- CM → MR -->
+  <path d="M 612 260 L 652 260" stroke="#3f545c" stroke-width="1" fill="none" marker-end="url(#2026-09-21-184d501b-02-gr-arrow)"/>
+
+  <!-- CTX → LLM (upper to center) -->
+  <path d="M 756 140 Q 800 140 800 192" stroke="#0d5763" stroke-width="1.2" fill="none" marker-end="url(#2026-09-21-184d501b-02-gr-arrow-accent)"/>
+
+  <!-- MR → LLM (lower to center) -->
+  <path d="M 756 260 Q 800 260 800 208" stroke="#0d5763" stroke-width="1.2" fill="none" marker-end="url(#2026-09-21-184d501b-02-gr-arrow-accent)"/>
+
+  <!-- ============================================================
+       NODES
+       ============================================================ -->
+
+  <!-- Q: User Query — input type, oval -->
+  <rect x="36" y="172" width="140" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="36" y="172" width="140" height="56" rx="6" fill="rgba(58,84,143,0.08)" stroke="#3a548f" stroke-width="1"/>
+  <rect x="44" y="178" width="28" height="12" rx="2" fill="transparent" stroke="rgba(58,84,143,0.40)" stroke-width="0.8"/>
+  <text x="58" y="187" fill="rgba(58,84,143,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">INPUT</text>
+  <text x="106" y="204" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">User Query</text>
+  <text x="106" y="220" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">query</text>
+
+  <!-- QT: Query Type Decision — focal/accent, diamond shape -->
+  <!-- Diamond centered at (244,200), half-width=48, half-height=40 -->
+  <rect x="196" y="160" width="96" height="80" rx="6" fill="#f8fafb"/>
+  <polygon points="244,160 292,200 244,240 196,200" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="244" y="196" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Query Type</text>
+  <text x="244" y="210" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Router</text>
+
+  <!-- LS: Local Search — focal node (upper lane) -->
+  <rect x="372" y="112" width="96" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="372" y="112" width="96" height="56" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="380" y="118" width="40" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="400" y="127" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">LOCAL</text>
+  <text x="420" y="144" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Local Search</text>
+  <text x="420" y="158" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">graph traversal</text>
+
+  <!-- GS: Global Search — backend node (lower lane) -->
+  <rect x="372" y="232" width="96" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="372" y="232" width="96" height="56" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="380" y="238" width="44" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="402" y="247" fill="rgba(18,33,39,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">GLOBAL</text>
+  <text x="420" y="264" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Global Search</text>
+  <text x="420" y="278" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">map-reduce</text>
+
+  <!-- EV: Entity Vector Search — store/state node (upper lane) -->
+  <rect x="512" y="112" width="100" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="512" y="112" width="100" height="56" rx="6" fill="rgba(18,33,39,0.05)" stroke="#3f545c" stroke-width="1"/>
+  <rect x="520" y="118" width="24" height="12" rx="2" fill="transparent" stroke="rgba(63,84,92,0.40)" stroke-width="0.8"/>
+  <text x="532" y="127" fill="rgba(63,84,92,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">VEC</text>
+  <text x="562" y="144" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Entity Vector</text>
+  <text x="562" y="158" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">search</text>
+
+  <!-- CM: Community Summary All — store/state node (lower lane) -->
+  <rect x="512" y="232" width="100" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="512" y="232" width="100" height="56" rx="6" fill="rgba(18,33,39,0.05)" stroke="#3f545c" stroke-width="1"/>
+  <rect x="520" y="238" width="32" height="12" rx="2" fill="transparent" stroke="rgba(63,84,92,0.40)" stroke-width="0.8"/>
+  <text x="536" y="247" fill="rgba(63,84,92,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">COMM</text>
+  <text x="562" y="262" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Community Sum.</text>
+  <text x="562" y="278" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">full retrieval</text>
+
+  <!-- CTX: Context Assembly — backend node (upper lane) -->
+  <rect x="652" y="108" width="104" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="652" y="108" width="104" height="64" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="660" y="114" width="28" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="674" y="123" fill="rgba(18,33,39,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">CTX</text>
+  <text x="704" y="142" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Context Assembly</text>
+  <text x="704" y="156" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">rel·chunk·summary</text>
+
+  <!-- MR: Intermediate Answer Gen — backend node (lower lane) -->
+  <rect x="652" y="228" width="104" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="652" y="228" width="104" height="64" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="660" y="234" width="24" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="672" y="243" fill="rgba(18,33,39,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">MR</text>
+  <text x="704" y="262" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Interim Answers</text>
+  <text x="704" y="276" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">reduce merge</text>
+
+  <!-- LLM: LLM Final Answer — focal node (rightmost) -->
+  <rect x="768" y="168" width="128" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="768" y="168" width="128" height="64" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.5"/>
+  <rect x="776" y="174" width="24" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="788" y="183" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">LLM</text>
+  <text x="832" y="202" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Final Answer</text>
+  <text x="832" y="218" fill="#0d5763" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">generation</text>
+
+  <!-- ============================================================
+       LEGEND
+       ============================================================ -->
+  <line x1="36" y1="372" x2="924" y2="372" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+  <text x="36" y="388" fill="#3f545c" font-size="8" font-family="'IBM Plex Mono', monospace" letter-spacing="0.14em">LEGEND</text>
+
+  <!-- Legend: Entry point -->
+  <rect x="104" y="380" width="12" height="12" rx="2" fill="rgba(58,84,143,0.08)" stroke="#3a548f" stroke-width="1"/>
+  <text x="122" y="390" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">Entry point</text>
+
+  <!-- Legend: Branch/Search -->
+  <rect x="192" y="380" width="12" height="12" rx="2" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="210" y="390" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">Branch · Search (focal)</text>
+
+  <!-- Legend: Processing step -->
+  <rect x="340" y="380" width="12" height="12" rx="2" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <text x="358" y="390" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">Processing step</text>
+
+  <!-- Legend: Index/Store -->
+  <rect x="444" y="380" width="12" height="12" rx="2" fill="rgba(18,33,39,0.05)" stroke="#3f545c" stroke-width="1"/>
+  <text x="462" y="390" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">Index · Store</text>
+
+  <!-- Legend: arrow -->
+  <line x1="572" y1="386" x2="592" y2="386" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-21-184d501b-02-gr-arrow)"/>
+  <text x="598" y="390" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">Data flow</text>
+
+  <!-- Legend: accent arrow -->
+  <line x1="686" y1="386" x2="706" y2="386" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-21-184d501b-02-gr-arrow-accent)"/>
+  <text x="712" y="390" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">Critical path</text>
+
+</svg>
+</body>
+</html>

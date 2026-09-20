@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>@KafkaListener factory configuration flow</title>
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: #f8fafb; }
+  body { display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+  svg { display: block; max-width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 960 380"
+  role="img"
+  aria-labelledby="2026-09-21-5a4b63fa-05-kafka-title 2026-09-21-5a4b63fa-05-kafka-desc"
+  width="960"
+  height="380"
+>
+  <title id="2026-09-21-5a4b63fa-05-kafka-title">@KafkaListener factory configuration flow</title>
+  <desc id="2026-09-21-5a4b63fa-05-kafka-desc">Flow diagram showing that omitting the factory causes retry config to be skipped and errors to be silently dropped, while specifying the factory routes through RetryTopicFactory so retries and DLT work correctly.</desc>
+
+  <defs>
+    <!-- 기본 화살표 (muted) -->
+    <marker id="2026-09-21-5a4b63fa-05-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <!-- 실패 경로 화살표 -->
+    <marker id="2026-09-21-5a4b63fa-05-arrow-stop" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#94382b"/>
+    </marker>
+    <!-- 성공 경로 화살표 (accent) -->
+    <marker id="2026-09-21-5a4b63fa-05-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+  </defs>
+
+  <!-- 배경 -->
+  <rect width="960" height="380" fill="#f8fafb"/>
+
+  <!-- ─── 구분선: 위(실패) / 아래(성공) 통로 라벨 ─── -->
+  <!-- 통로 배경: 위쪽 실패 경로 -->
+  <rect x="24" y="52" width="912" height="128" rx="8"
+        fill="rgba(148,56,43,0.04)" stroke="rgba(148,56,43,0.18)" stroke-width="0.8" stroke-dasharray="5,4"/>
+  <text x="36" y="68"
+        font-family="'IBM Plex Mono', monospace"
+        font-size="10" font-weight="500" fill="rgba(148,56,43,0.70)"
+        letter-spacing="0.12em">FACTORY NOT SPECIFIED</text>
+
+  <!-- 통로 배경: 아래쪽 성공 경로 -->
+  <rect x="24" y="200" width="912" height="128" rx="8"
+        fill="rgba(13,87,99,0.04)" stroke="rgba(13,87,99,0.20)" stroke-width="0.8" stroke-dasharray="5,4"/>
+  <text x="36" y="216"
+        font-family="'IBM Plex Mono', monospace"
+        font-size="10" font-weight="500" fill="rgba(13,87,99,0.70)"
+        letter-spacing="0.12em">FACTORY SPECIFIED</text>
+
+  <!-- ═══════════════════════════════════════════
+       화살표 (노드보다 먼저)
+  ═══════════════════════════════════════════ -->
+
+  <!-- 위 경로: L1 → DEF (x=176→224, y=116) -->
+  <line x1="224" y1="116" x2="272" y2="116"
+        stroke="#3f545c" stroke-width="1.2" marker-end="url(#2026-09-21-5a4b63fa-05-arrow)"/>
+
+  <!-- 위 경로: DEF → NORT (x=400→448, y=116) -->
+  <line x1="400" y1="116" x2="448" y2="116"
+        stroke="#94382b" stroke-width="1.2" marker-end="url(#2026-09-21-5a4b63fa-05-arrow-stop)"/>
+
+  <!-- 위 경로: NORT → LOST (x=588→636, y=116) -->
+  <line x1="588" y1="116" x2="636" y2="116"
+        stroke="#94382b" stroke-width="1.2" marker-end="url(#2026-09-21-5a4b63fa-05-arrow-stop)"/>
+
+  <!-- 아래 경로: L2 → RTFAC (x=176→224, y=264) -->
+  <line x1="224" y1="264" x2="272" y2="264"
+        stroke="#3f545c" stroke-width="1.2" marker-end="url(#2026-09-21-5a4b63fa-05-arrow)"/>
+
+  <!-- 아래 경로: RTFAC → RT (x=420→468, y=264) -->
+  <line x1="420" y1="264" x2="468" y2="264"
+        stroke="#0d5763" stroke-width="1.5" marker-end="url(#2026-09-21-5a4b63fa-05-arrow-accent)"/>
+
+  <!-- ═══════════════════════════════════════════
+       노드
+  ═══════════════════════════════════════════ -->
+
+  <!-- ── L1: @KafkaListener (factory 미지정) ── x=36, y=84, w=188, h=64 -->
+  <rect x="36" y="84" width="188" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="36" y="84" width="188" height="64" rx="6"
+        fill="rgba(58,84,143,0.08)" stroke="#3a548f" stroke-width="1"/>
+  <rect x="48" y="92" width="56" height="12" rx="2"
+        fill="transparent" stroke="rgba(58,84,143,0.40)" stroke-width="0.8"/>
+  <text x="76" y="101"
+        font-family="'IBM Plex Mono', monospace"
+        font-size="7" font-weight="500" fill="rgba(58,84,143,0.80)"
+        text-anchor="middle" letter-spacing="0.08em">LISTENER</text>
+  <text x="130" y="118"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        font-size="12" font-weight="600" fill="#122127" text-anchor="middle">@KafkaListener</text>
+  <text x="130" y="136"
+        font-family="'IBM Plex Mono', monospace"
+        font-size="10" fill="#3f545c" text-anchor="middle">factory omitted</text>
+
+  <!-- ── DEF: 기본 팩토리 ── x=272, y=88, w=128, h=56 -->
+  <rect x="272" y="88" width="128" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="272" y="88" width="128" height="56" rx="6"
+        fill="rgba(13,87,99,0.06)" stroke="#0d5763" stroke-width="1"/>
+  <rect x="284" y="96" width="36" height="12" rx="2"
+        fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="302" y="105"
+        font-family="'IBM Plex Mono', monospace"
+        font-size="7" font-weight="500" fill="rgba(13,87,99,0.80)"
+        text-anchor="middle" letter-spacing="0.08em">FACTORY</text>
+  <text x="336" y="124"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        font-size="12" font-weight="600" fill="#122127" text-anchor="middle">Default Factory</text>
+
+  <!-- ── NORT: 재시도 설정 미적용 ── x=448, y=84, w=140, h=64 -->
+  <rect x="448" y="84" width="140" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="448" y="84" width="140" height="64" rx="6"
+        fill="rgba(148,56,43,0.06)" stroke="#94382b" stroke-width="1"/>
+  <rect x="460" y="92" width="36" height="12" rx="2"
+        fill="transparent" stroke="rgba(148,56,43,0.40)" stroke-width="0.8"/>
+  <text x="478" y="101"
+        font-family="'IBM Plex Mono', monospace"
+        font-size="7" font-weight="500" fill="rgba(148,56,43,0.80)"
+        text-anchor="middle" letter-spacing="0.08em">CONFIG</text>
+  <text x="518" y="118"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        font-size="12" font-weight="600" fill="#122127" text-anchor="middle">Retry Config</text>
+  <text x="518" y="136"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        font-size="11" fill="#3f545c" text-anchor="middle">Not Applied</text>
+
+  <!-- ── LOST: 에러 조용히 누락 ── x=636, y=84, w=152, h=64 -->
+  <rect x="636" y="84" width="152" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="636" y="84" width="152" height="64" rx="6"
+        fill="rgba(148,56,43,0.10)" stroke="#94382b" stroke-width="1.2"/>
+  <rect x="648" y="92" width="36" height="12" rx="2"
+        fill="transparent" stroke="rgba(148,56,43,0.50)" stroke-width="0.8"/>
+  <text x="666" y="101"
+        font-family="'IBM Plex Mono', monospace"
+        font-size="7" font-weight="500" fill="rgba(148,56,43,0.80)"
+        text-anchor="middle" letter-spacing="0.08em">RESULT</text>
+  <text x="712" y="118"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        font-size="12" font-weight="600" fill="#122127" text-anchor="middle">Error Silently Lost</text>
+  <text x="712" y="136"
+        font-family="'IBM Plex Mono', monospace"
+        font-size="10" fill="#94382b" text-anchor="middle">silent drop</text>
+
+  <!-- ── L2: @KafkaListener (factory 명시) ── x=36, y=232, w=188, h=64 -->
+  <rect x="36" y="232" width="188" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="36" y="232" width="188" height="64" rx="6"
+        fill="rgba(58,84,143,0.08)" stroke="#3a548f" stroke-width="1"/>
+  <rect x="48" y="240" width="56" height="12" rx="2"
+        fill="transparent" stroke="rgba(58,84,143,0.40)" stroke-width="0.8"/>
+  <text x="76" y="249"
+        font-family="'IBM Plex Mono', monospace"
+        font-size="7" font-weight="500" fill="rgba(58,84,143,0.80)"
+        text-anchor="middle" letter-spacing="0.08em">LISTENER</text>
+  <text x="130" y="266"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        font-size="12" font-weight="600" fill="#122127" text-anchor="middle">@KafkaListener</text>
+  <text x="130" y="284"
+        font-family="'IBM Plex Mono', monospace"
+        font-size="10" fill="#3f545c" text-anchor="middle">factory specified</text>
+
+  <!-- ── RTFAC: RetryTopicFactory ── x=272, y=236, w=148, h=56 -->
+  <rect x="272" y="236" width="148" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="272" y="236" width="148" height="56" rx="6"
+        fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.5"/>
+  <rect x="284" y="244" width="56" height="12" rx="2"
+        fill="transparent" stroke="rgba(13,87,99,0.50)" stroke-width="0.8"/>
+  <text x="312" y="253"
+        font-family="'IBM Plex Mono', monospace"
+        font-size="7" font-weight="500" fill="rgba(13,87,99,0.80)"
+        text-anchor="middle" letter-spacing="0.08em">FACTORY</text>
+  <text x="346" y="268"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        font-size="12" font-weight="600" fill="#122127" text-anchor="middle">RetryTopicFactory</text>
+  <text x="346" y="284"
+        font-family="'IBM Plex Mono', monospace"
+        font-size="10" fill="#0d5763" text-anchor="middle">containerFactory</text>
+
+  <!-- ── RT: 재시도·DLT 정상 동작 (FOCAL) ── x=468, y=228, w=200, h=72 -->
+  <rect x="468" y="228" width="200" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="468" y="228" width="200" height="72" rx="6"
+        fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.5"/>
+  <rect x="480" y="236" width="36" height="12" rx="2"
+        fill="transparent" stroke="rgba(13,87,99,0.50)" stroke-width="0.8"/>
+  <text x="498" y="245"
+        font-family="'IBM Plex Mono', monospace"
+        font-size="7" font-weight="500" fill="rgba(13,87,99,0.80)"
+        text-anchor="middle" letter-spacing="0.08em">RESULT</text>
+  <text x="568" y="265"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        font-size="13" font-weight="600" fill="#122127" text-anchor="middle">Retry · DLT</text>
+  <text x="568" y="284"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        font-size="12" fill="#0d5763" text-anchor="middle">Working Correctly</text>
+
+  <!-- ═══════════════════════════════════════════
+       범례 (하단 수평 스트립)
+  ═══════════════════════════════════════════ -->
+  <line x1="36" y1="344" x2="924" y2="344"
+        stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+  <text x="36" y="358"
+        font-family="'IBM Plex Mono', monospace"
+        font-size="8" font-weight="500" fill="#6c8188"
+        letter-spacing="0.14em">LEGEND</text>
+
+  <!-- 범례: LISTENER -->
+  <rect x="104" y="348" width="12" height="12" rx="2"
+        fill="rgba(58,84,143,0.08)" stroke="#3a548f" stroke-width="0.8"/>
+  <text x="122" y="358"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        font-size="11" fill="#3f545c">@KafkaListener</text>
+
+  <!-- 범례: FACTORY -->
+  <rect x="260" y="348" width="12" height="12" rx="2"
+        fill="rgba(13,87,99,0.06)" stroke="#0d5763" stroke-width="0.8"/>
+  <text x="278" y="358"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        font-size="11" fill="#3f545c">Factory</text>
+
+  <!-- 범례: 에러 누락 -->
+  <rect x="380" y="348" width="12" height="12" rx="2"
+        fill="rgba(148,56,43,0.10)" stroke="#94382b" stroke-width="0.8"/>
+  <text x="398" y="358"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        font-size="11" fill="#3f545c">Error Drop Path</text>
+
+  <!-- 범례: 정상 동작 -->
+  <rect x="540" y="348" width="12" height="12" rx="2"
+        fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="558" y="358"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        font-size="11" fill="#3f545c">Retry·DLT OK</text>
+
+</svg>
+</body>
+</html>

@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kafka Partition-Thread Mapping</title>
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; font-family: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<svg
+  viewBox="0 0 960 600"
+  xmlns="http://www.w3.org/2000/svg"
+  role="img"
+  aria-labelledby="2026-09-21-5a4b63fa-04-kafka-partition-title 2026-09-21-5a4b63fa-04-kafka-partition-desc"
+>
+  <title id="2026-09-21-5a4b63fa-04-kafka-partition-title">Kafka Partition-Thread Mapping</title>
+  <desc id="2026-09-21-5a4b63fa-04-kafka-partition-desc">6 partitions distributed 2:1 across 3 consumer threads. Each thread handles 2 partitions.</desc>
+
+  <defs>
+    <marker id="2026-09-21-5a4b63fa-04-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-09-21-5a4b63fa-04-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="960" height="600" fill="#f8fafb"/>
+
+  <!-- Zone: 파티션 레이블 -->
+  <rect x="40" y="56" width="340" height="28" rx="4" fill="none"/>
+  <text x="210" y="74" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.14em" font-weight="500">KAFKA PARTITION</text>
+
+  <!-- Zone: 스레드 레이블 -->
+  <rect x="580" y="56" width="340" height="28" rx="4" fill="none"/>
+  <text x="750" y="74" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.14em" font-weight="500">CONSUMER THREAD</text>
+
+  <!-- Zone bg: 파티션 -->
+  <rect x="40" y="88" width="340" height="440" rx="8" fill="rgba(58,84,143,0.04)" stroke="rgba(18,33,39,0.12)" stroke-width="1"/>
+
+  <!-- Zone bg: 스레드 -->
+  <rect x="580" y="88" width="340" height="440" rx="8" fill="rgba(13,87,99,0.04)" stroke="rgba(18,33,39,0.12)" stroke-width="1"/>
+
+  <!-- ============================================================
+       CONNECTORS — drawn before boxes
+       Routing: from right edge of partition box (x=220) → elbow right to x=428 → vertical → elbow to x=580 (left edge of thread box)
+       ============================================================ -->
+
+  <!-- P0 (cy=156) → T1 (cy=172): right → elbow down → right -->
+  <!-- P0 right edge: x=220, y=156 → go right to x=428, then down to y=172, then right to x=580 -->
+  <path d="M220,156 L428,156 L428,172 L580,172" fill="none" stroke="#3a548f" stroke-width="1.2" marker-end="url(#2026-09-21-5a4b63fa-04-arrow-accent)" stroke-dasharray="none"/>
+
+  <!-- P1 (cy=224) → T1 (cy=172): right → elbow up → right -->
+  <path d="M220,224 L456,224 L456,172 L580,172" fill="none" stroke="#3a548f" stroke-width="1.2" marker-end="url(#2026-09-21-5a4b63fa-04-arrow-accent)"/>
+
+  <!-- P2 (cy=292) → T2 (cy=308): right → elbow down → right -->
+  <path d="M220,292 L428,292 L428,308 L580,308" fill="none" stroke="#3a548f" stroke-width="1.2" marker-end="url(#2026-09-21-5a4b63fa-04-arrow-accent)"/>
+
+  <!-- P3 (cy=360) → T2 (cy=308): right → elbow up → right -->
+  <path d="M220,360 L456,360 L456,308 L580,308" fill="none" stroke="#3a548f" stroke-width="1.2" marker-end="url(#2026-09-21-5a4b63fa-04-arrow-accent)"/>
+
+  <!-- P4 (cy=428) → T3 (cy=444): right → elbow down → right -->
+  <path d="M220,428 L428,428 L428,444 L580,444" fill="none" stroke="#3a548f" stroke-width="1.2" marker-end="url(#2026-09-21-5a4b63fa-04-arrow-accent)"/>
+
+  <!-- P5 (cy=496) → T3 (cy=444): right → elbow up → right -->
+  <path d="M220,496 L456,496 L456,444 L580,444" fill="none" stroke="#3a548f" stroke-width="1.2" marker-end="url(#2026-09-21-5a4b63fa-04-arrow-accent)"/>
+
+  <!-- ============================================================
+       PARTITION BOXES
+       x=60, width=160, height=44, cx=140
+       ============================================================ -->
+
+  <!-- P0: cy=156 → y=134 -->
+  <rect x="60" y="134" width="160" height="44" rx="6" fill="#f8fafb"/>
+  <rect x="60" y="134" width="160" height="44" rx="6" fill="rgba(58,84,143,0.06)" stroke="#3a548f" stroke-width="1"/>
+  <rect x="68" y="141" width="36" height="12" rx="2" fill="transparent" stroke="rgba(58,84,143,0.40)" stroke-width="0.8"/>
+  <text x="86" y="150" fill="rgba(58,84,143,0.80)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">PART</text>
+  <text x="140" y="162" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Partition 0</text>
+
+  <!-- P1: cy=224 → y=202 -->
+  <rect x="60" y="202" width="160" height="44" rx="6" fill="#f8fafb"/>
+  <rect x="60" y="202" width="160" height="44" rx="6" fill="rgba(58,84,143,0.06)" stroke="#3a548f" stroke-width="1"/>
+  <rect x="68" y="209" width="36" height="12" rx="2" fill="transparent" stroke="rgba(58,84,143,0.40)" stroke-width="0.8"/>
+  <text x="86" y="218" fill="rgba(58,84,143,0.80)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">PART</text>
+  <text x="140" y="230" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Partition 1</text>
+
+  <!-- P2: cy=292 → y=270 -->
+  <rect x="60" y="270" width="160" height="44" rx="6" fill="#f8fafb"/>
+  <rect x="60" y="270" width="160" height="44" rx="6" fill="rgba(58,84,143,0.06)" stroke="#3a548f" stroke-width="1"/>
+  <rect x="68" y="277" width="36" height="12" rx="2" fill="transparent" stroke="rgba(58,84,143,0.40)" stroke-width="0.8"/>
+  <text x="86" y="286" fill="rgba(58,84,143,0.80)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">PART</text>
+  <text x="140" y="298" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Partition 2</text>
+
+  <!-- P3: cy=360 → y=338 -->
+  <rect x="60" y="338" width="160" height="44" rx="6" fill="#f8fafb"/>
+  <rect x="60" y="338" width="160" height="44" rx="6" fill="rgba(58,84,143,0.06)" stroke="#3a548f" stroke-width="1"/>
+  <rect x="68" y="345" width="36" height="12" rx="2" fill="transparent" stroke="rgba(58,84,143,0.40)" stroke-width="0.8"/>
+  <text x="86" y="354" fill="rgba(58,84,143,0.80)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">PART</text>
+  <text x="140" y="366" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Partition 3</text>
+
+  <!-- P4: cy=428 → y=406 -->
+  <rect x="60" y="406" width="160" height="44" rx="6" fill="#f8fafb"/>
+  <rect x="60" y="406" width="160" height="44" rx="6" fill="rgba(58,84,143,0.06)" stroke="#3a548f" stroke-width="1"/>
+  <rect x="68" y="413" width="36" height="12" rx="2" fill="transparent" stroke="rgba(58,84,143,0.40)" stroke-width="0.8"/>
+  <text x="86" y="422" fill="rgba(58,84,143,0.80)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">PART</text>
+  <text x="140" y="434" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Partition 4</text>
+
+  <!-- P5: cy=496 → y=474 -->
+  <rect x="60" y="474" width="160" height="44" rx="6" fill="#f8fafb"/>
+  <rect x="60" y="474" width="160" height="44" rx="6" fill="rgba(58,84,143,0.06)" stroke="#3a548f" stroke-width="1"/>
+  <rect x="68" y="481" width="36" height="12" rx="2" fill="transparent" stroke="rgba(58,84,143,0.40)" stroke-width="0.8"/>
+  <text x="86" y="490" fill="rgba(58,84,143,0.80)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">PART</text>
+  <text x="140" y="502" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Partition 5</text>
+
+  <!-- ============================================================
+       THREAD BOXES — focal (accent)
+       x=580, width=180, height=52, cx=670
+       T1 cy=172 → y=146  T2 cy=308 → y=282  T3 cy=444 → y=418
+       ============================================================ -->
+
+  <!-- T1 -->
+  <rect x="580" y="146" width="180" height="52" rx="6" fill="#f8fafb"/>
+  <rect x="580" y="146" width="180" height="52" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="588" y="153" width="44" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="610" y="162" fill="rgba(13,87,99,0.80)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">THREAD</text>
+  <text x="670" y="178" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Thread 1</text>
+  <text x="670" y="192" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">concurrency=3</text>
+
+  <!-- T2 -->
+  <rect x="580" y="282" width="180" height="52" rx="6" fill="#f8fafb"/>
+  <rect x="580" y="282" width="180" height="52" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="588" y="289" width="44" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="610" y="298" fill="rgba(13,87,99,0.80)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">THREAD</text>
+  <text x="670" y="314" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Thread 2</text>
+  <text x="670" y="328" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">concurrency=3</text>
+
+  <!-- T3 -->
+  <rect x="580" y="418" width="180" height="52" rx="6" fill="#f8fafb"/>
+  <rect x="580" y="418" width="180" height="52" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="588" y="425" width="44" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="610" y="434" fill="rgba(13,87,99,0.80)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">THREAD</text>
+  <text x="670" y="450" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Thread 3</text>
+  <text x="670" y="464" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">concurrency=3</text>
+
+  <!-- ============================================================
+       ARROW LABELS — with mask, 6px gap above connector
+       ============================================================ -->
+  <!-- P0→T1 segment at y=156, label above at y=144 -->
+  <rect x="296" y="136" width="48" height="12" rx="2" fill="#f8fafb"/>
+  <text x="320" y="146" fill="#6c8188" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.06em">ASSIGN</text>
+
+  <!-- P2→T2 segment at y=292, label above at y=280 -->
+  <rect x="296" y="272" width="48" height="12" rx="2" fill="#f8fafb"/>
+  <text x="320" y="282" fill="#6c8188" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.06em">ASSIGN</text>
+
+  <!-- P4→T3 segment at y=428, label above at y=416 -->
+  <rect x="296" y="408" width="48" height="12" rx="2" fill="#f8fafb"/>
+  <text x="320" y="418" fill="#6c8188" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.06em">ASSIGN</text>
+
+  <!-- ============================================================
+       LEGEND — horizontal strip
+       ============================================================ -->
+  <line x1="40" y1="548" x2="920" y2="548" stroke="rgba(18,33,39,0.10)" stroke-width="0.8"/>
+  <text x="40" y="562" fill="#6c8188" font-size="8" font-family="'IBM Plex Mono', monospace" letter-spacing="0.14em">LEGEND</text>
+
+  <!-- legend item 1: partition -->
+  <rect x="108" y="552" width="12" height="12" rx="3" fill="rgba(58,84,143,0.06)" stroke="#3a548f" stroke-width="1"/>
+  <text x="126" y="562" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif">Partition</text>
+
+  <!-- legend item 2: thread -->
+  <rect x="288" y="552" width="12" height="12" rx="3" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="306" y="562" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif">Consumer Thread</text>
+
+  <!-- legend item 3: assign arrow -->
+  <line x1="488" y1="558" x2="510" y2="558" stroke="#3a548f" stroke-width="1.2" marker-end="url(#2026-09-21-5a4b63fa-04-arrow-accent)"/>
+  <text x="520" y="562" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif">Partition Assignment</text>
+
+</svg>
+</body>
+</html>

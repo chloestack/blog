@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 440" role="img" aria-labelledby="2026-09-21-56d0a588-06-classloader-leak-title 2026-09-21-56d0a588-06-classloader-leak-desc">
+  <title id="2026-09-21-56d0a588-06-classloader-leak-title">ClassLoader Memory Leak Path</title>
+  <desc id="2026-09-21-56d0a588-06-classloader-leak-desc">Flow diagram comparing the path where thread pools and static fields reference old ClassLoaders causing Metaspace leaks, versus the path where a new ClassLoader is properly substituted and Metaspace is reclaimed.</desc>
+
+  <defs>
+    <!-- Markers -->
+    <marker id="2026-09-21-56d0a588-06-arr-stop" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#94382b"/>
+    </marker>
+    <marker id="2026-09-21-56d0a588-06-arr-warn" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#a96a08"/>
+    </marker>
+    <marker id="2026-09-21-56d0a588-06-arr-ok" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#286d50"/>
+    </marker>
+    <marker id="2026-09-21-56d0a588-06-arr-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3a548f"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="960" height="440" fill="#f8fafb"/>
+
+  <!-- ─────────── Zone: 누수 경로 (위쪽) ─────────── -->
+  <rect x="28" y="28" width="588" height="212" rx="6" fill="rgba(18,33,39,0.03)" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+  <text x="40" y="46" font-family="'IBM Plex Mono', monospace" font-size="9" fill="#6c8188" letter-spacing="0.12em" font-weight="500">LEAK PATH</text>
+
+  <!-- Zone: 정상 경로 (아래쪽) -->
+  <rect x="28" y="256" width="588" height="128" rx="6" fill="rgba(13,87,99,0.03)" stroke="rgba(13,87,99,0.18)" stroke-width="0.8"/>
+  <text x="40" y="274" font-family="'IBM Plex Mono', monospace" font-size="9" fill="#0d5763" letter-spacing="0.12em" font-weight="500">NORMAL PATH</text>
+
+  <!-- ═══════════════════════════════════
+       ARROWS (drawn before boxes)
+  ═══════════════════════════════════ -->
+
+  <!-- 스레드 풀 → 구 ClassLoader (수평, 위) -->
+  <path d="M 212 108 L 344 108" fill="none" stroke="#94382b" stroke-width="1.2" marker-end="url(#2026-09-21-56d0a588-06-arr-stop)"/>
+  <rect x="249" y="91" width="52" height="12" rx="2" fill="#f8fafb"/>
+  <text x="275" y="101" font-family="'IBM Plex Sans KR', sans-serif" font-size="9" fill="#94382b" text-anchor="middle" font-weight="500">Ref held</text>
+
+  <!-- 정적 필드 → 구 ClassLoader (경사 없이 꺾어서: 아래 → 오른쪽) -->
+  <!-- 정적 필드 중심: (120, 176), 구 ClassLoader 좌측 중앙: (344, 108) -->
+  <!-- 경로: 정적필드 우측(212, 176) → 꺾음(308, 176) → 꺾음(308, 116) → 구CL 좌측(344, 116) -->
+  <path d="M 212 176 L 308 176 L 308 116 L 344 116" fill="none" stroke="#94382b" stroke-width="1.2" stroke-dasharray="5,3" marker-end="url(#2026-09-21-56d0a588-06-arr-stop)"/>
+  <rect x="228" y="159" width="52" height="12" rx="2" fill="#f8fafb"/>
+  <text x="254" y="169" font-family="'IBM Plex Sans KR', sans-serif" font-size="9" fill="#94382b" text-anchor="middle" font-weight="500">Ref held</text>
+
+  <!-- 구 ClassLoader → Metaspace 누수 -->
+  <path d="M 536 112 L 636 112" fill="none" stroke="#a96a08" stroke-width="1.2" marker-end="url(#2026-09-21-56d0a588-06-arr-warn)"/>
+  <rect x="557" y="95" width="44" height="12" rx="2" fill="#f8fafb"/>
+  <text x="579" y="105" font-family="'IBM Plex Sans KR', sans-serif" font-size="9" fill="#a96a08" text-anchor="middle" font-weight="500">No GC</text>
+
+  <!-- 신규 ClassLoader → Metaspace 해제 가능 -->
+  <path d="M 536 316 L 636 316" fill="none" stroke="#286d50" stroke-width="1.2" marker-end="url(#2026-09-21-56d0a588-06-arr-ok)"/>
+  <rect x="553" y="299" width="52" height="12" rx="2" fill="#f8fafb"/>
+  <text x="579" y="309" font-family="'IBM Plex Sans KR', sans-serif" font-size="9" fill="#286d50" text-anchor="middle" font-weight="500">Replaced</text>
+
+  <!-- ═══════════════════════════════════
+       NODES
+  ═══════════════════════════════════ -->
+
+  <!-- 스레드 풀 (stop: 연한 빨강) -->
+  <rect x="44" y="84" width="168" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="44" y="84" width="168" height="48" rx="6" fill="rgba(148,56,43,0.07)" stroke="#94382b" stroke-width="1"/>
+  <rect x="52" y="91" width="52" height="12" rx="2" fill="transparent" stroke="rgba(148,56,43,0.35)" stroke-width="0.8"/>
+  <text x="78" y="101" font-family="'IBM Plex Mono', monospace" font-size="7" fill="rgba(148,56,43,0.8)" text-anchor="middle" letter-spacing="0.08em" font-weight="500">THREAD</text>
+  <text x="128" y="116" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" font-size="13" font-weight="600" fill="#122127" text-anchor="middle">Thread Pool</text>
+
+  <!-- 정적 필드 (stop: 연한 빨강) -->
+  <rect x="44" y="152" width="168" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="44" y="152" width="168" height="48" rx="6" fill="rgba(148,56,43,0.07)" stroke="#94382b" stroke-width="1"/>
+  <rect x="52" y="159" width="44" height="12" rx="2" fill="transparent" stroke="rgba(148,56,43,0.35)" stroke-width="0.8"/>
+  <text x="74" y="169" font-family="'IBM Plex Mono', monospace" font-size="7" fill="rgba(148,56,43,0.8)" text-anchor="middle" letter-spacing="0.08em" font-weight="500">STATIC</text>
+  <text x="128" y="184" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" font-size="13" font-weight="600" fill="#122127" text-anchor="middle">Static Field</text>
+
+  <!-- 구 ClassLoader (warn: 연한 노랑) -->
+  <rect x="344" y="80" width="192" height="60" rx="6" fill="#f8fafb"/>
+  <rect x="344" y="80" width="192" height="60" rx="6" fill="rgba(169,106,8,0.08)" stroke="#a96a08" stroke-width="1"/>
+  <rect x="352" y="87" width="60" height="12" rx="2" fill="transparent" stroke="rgba(169,106,8,0.35)" stroke-width="0.8"/>
+  <text x="382" y="97" font-family="'IBM Plex Mono', monospace" font-size="7" fill="rgba(169,106,8,0.8)" text-anchor="middle" letter-spacing="0.08em" font-weight="500">OLD</text>
+  <text x="440" y="113" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" font-size="13" font-weight="600" fill="#122127" text-anchor="middle">Old ClassLoader</text>
+  <text x="440" y="130" font-family="'IBM Plex Mono', monospace" font-size="10" fill="#6c8188" text-anchor="middle">Ref not released</text>
+
+  <!-- Metaspace 누수 (stop: 연한 빨강, focal accent) -->
+  <rect x="636" y="80" width="196" height="60" rx="6" fill="#f8fafb"/>
+  <rect x="636" y="80" width="196" height="60" rx="6" fill="rgba(148,56,43,0.09)" stroke="#94382b" stroke-width="1.2"/>
+  <rect x="644" y="87" width="60" height="12" rx="2" fill="transparent" stroke="rgba(148,56,43,0.35)" stroke-width="0.8"/>
+  <text x="674" y="97" font-family="'IBM Plex Mono', monospace" font-size="7" fill="rgba(148,56,43,0.8)" text-anchor="middle" letter-spacing="0.08em" font-weight="500">METASPACE</text>
+  <text x="734" y="113" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" font-size="13" font-weight="600" fill="#122127" text-anchor="middle">Metaspace Leak</text>
+  <text x="734" y="130" font-family="'IBM Plex Mono', monospace" font-size="10" fill="#94382b" text-anchor="middle">OOM risk</text>
+
+  <!-- 신규 ClassLoader (link/blue) -->
+  <rect x="344" y="288" width="192" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="344" y="288" width="192" height="56" rx="6" fill="rgba(58,84,143,0.07)" stroke="#3a548f" stroke-width="1"/>
+  <rect x="352" y="295" width="44" height="12" rx="2" fill="transparent" stroke="rgba(58,84,143,0.35)" stroke-width="0.8"/>
+  <text x="374" y="305" font-family="'IBM Plex Mono', monospace" font-size="7" fill="rgba(58,84,143,0.8)" text-anchor="middle" letter-spacing="0.08em" font-weight="500">NEW</text>
+  <text x="440" y="321" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" font-size="13" font-weight="600" fill="#122127" text-anchor="middle">New ClassLoader</text>
+  <text x="440" y="337" font-family="'IBM Plex Mono', monospace" font-size="10" fill="#3a548f" text-anchor="middle">No ref held</text>
+
+  <!-- Metaspace 해제 가능 (ok: 연한 초록, focal accent) -->
+  <rect x="636" y="284" width="196" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="636" y="284" width="196" height="64" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.5"/>
+  <rect x="644" y="291" width="60" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.35)" stroke-width="0.8"/>
+  <text x="674" y="301" font-family="'IBM Plex Mono', monospace" font-size="7" fill="rgba(13,87,99,0.8)" text-anchor="middle" letter-spacing="0.08em" font-weight="500">METASPACE</text>
+  <text x="734" y="322" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" font-size="14" font-weight="600" fill="#122127" text-anchor="middle">Metaspace Freed</text>
+  <text x="734" y="340" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" font-size="11" fill="#0d5763" text-anchor="middle">GC eligible</text>
+
+  <!-- ─────────── Legend ─────────── -->
+  <line x1="28" y1="400" x2="932" y2="400" stroke="rgba(18,33,39,0.10)" stroke-width="0.8"/>
+  <text x="28" y="416" font-family="'IBM Plex Mono', monospace" font-size="8" fill="#6c8188" letter-spacing="0.14em" font-weight="500">LEGEND</text>
+
+  <!-- 누수 위험 -->
+  <rect x="100" y="408" width="12" height="12" rx="2" fill="rgba(148,56,43,0.09)" stroke="#94382b" stroke-width="1"/>
+  <text x="118" y="419" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" font-size="10" fill="#3f545c">Leak risk</text>
+
+  <!-- 주의 -->
+  <rect x="212" y="408" width="12" height="12" rx="2" fill="rgba(169,106,8,0.08)" stroke="#a96a08" stroke-width="1"/>
+  <text x="230" y="419" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" font-size="10" fill="#3f545c">Caution (no GC)</text>
+
+  <!-- 정상 -->
+  <rect x="360" y="408" width="12" height="12" rx="2" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="378" y="419" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" font-size="10" fill="#3f545c">Normal (GC ok)</text>
+
+  <!-- 신규 -->
+  <rect x="492" y="408" width="12" height="12" rx="2" fill="rgba(58,84,143,0.07)" stroke="#3a548f" stroke-width="1"/>
+  <text x="510" y="419" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" font-size="10" fill="#3f545c">Replacement target</text>
+
+  <!-- 점선 설명 -->
+  <line x1="636" y1="414" x2="656" y2="414" stroke="#94382b" stroke-width="1.2" stroke-dasharray="5,3"/>
+  <text x="662" y="419" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" font-size="10" fill="#3f545c">Indirect ref</text>
+</svg>
+</body>
+</html>

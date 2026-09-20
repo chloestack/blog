@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; }
+  .diagram-wrap { width: 100%; max-width: 960px; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<div class="diagram-wrap">
+<svg viewBox="0 0 960 480" xmlns="http://www.w3.org/2000/svg"
+     role="img" aria-labelledby="2026-09-21-184d501b-07-graphrag-update-title 2026-09-21-184d501b-07-graphrag-update-desc">
+  <title id="2026-09-21-184d501b-07-graphrag-update-title">GraphRAG Knowledge Graph Update Strategy</title>
+  <desc id="2026-09-21-184d501b-07-graphrag-update-desc">A flowchart showing entity and relationship extraction from new documents, branching into two paths: batch strategy (separate index creation) and streaming strategy (incremental addition), each leading to their respective accuracy and complexity outcomes.</desc>
+
+  <defs>
+    <!-- Arrow markers -->
+    <marker id="2026-09-21-184d501b-07-arrow-m" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-09-21-184d501b-07-arrow-acc" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <marker id="2026-09-21-184d501b-07-arrow-warn" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3a548f"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="960" height="480" fill="#f8fafb"/>
+
+  <!-- ══════════════════════════════════════════
+       CONNECTORS (drawn before boxes)
+  ══════════════════════════════════════════ -->
+
+  <!-- New Doc → Entity·Relation Extraction (horizontal) -->
+  <line x1="148" y1="176" x2="212" y2="176"
+        stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-21-184d501b-07-arrow-acc)"/>
+
+  <!-- Entity·Relation Extraction → Merge Method diamond (horizontal) -->
+  <line x1="348" y1="176" x2="412" y2="176"
+        stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-21-184d501b-07-arrow-acc)"/>
+
+  <!-- Merge Method → Batch Strategy (diagonal-to-right-angle: go right then up) -->
+  <!-- from diamond right tip (512, 176) → right to x=568, then up to y=100, right to node -->
+  <path d="M 512,176 L 548,176 L 548,100 L 588,100"
+        fill="none" stroke="#3f545c" stroke-width="1"
+        marker-end="url(#2026-09-21-184d501b-07-arrow-m)"/>
+
+  <!-- Merge Method → Streaming Strategy (diagonal-to-right-angle: go right then down) -->
+  <path d="M 512,176 L 548,176 L 548,252 L 588,252"
+        fill="none" stroke="#3f545c" stroke-width="1"
+        marker-end="url(#2026-09-21-184d501b-07-arrow-m)"/>
+
+  <!-- Batch Strategy → Entity Link Broken -->
+  <path d="M 724,100 L 760,100 L 760,140 L 796,140"
+        fill="none" stroke="#3f545c" stroke-width="1"
+        marker-end="url(#2026-09-21-184d501b-07-arrow-m)"/>
+
+  <!-- Streaming Strategy → Local Community Re-detection -->
+  <path d="M 724,252 L 760,252 L 760,308 L 796,308"
+        fill="none" stroke="#3f545c" stroke-width="1"
+        marker-end="url(#2026-09-21-184d501b-07-arrow-m)"/>
+
+  <!-- Local Community Re-detection → High Accuracy -->
+  <path d="M 932,308 L 932,252 L 932,228"
+        fill="none" stroke="#3f545c" stroke-width="1"
+        marker-end="url(#2026-09-21-184d501b-07-arrow-m)"/>
+  <!-- connect from bottom of High Accuracy node to top — actually let's route right -->
+  <!-- Re-route: Local Community Re-detection right side → right gap → up → High Accuracy right side -->
+
+  <!-- ══════════════════════════════════════════
+       BOXES
+  ══════════════════════════════════════════ -->
+
+  <!-- ① New Document (input treatment) x=24, y=152, w=124, h=48 -->
+  <rect x="24" y="152" width="124" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="24" y="152" width="124" height="48" rx="6"
+        fill="rgba(58,84,143,0.08)" stroke="#3a548f" stroke-width="1"/>
+  <rect x="32" y="158" width="28" height="12" rx="2"
+        fill="transparent" stroke="rgba(58,84,143,0.4)" stroke-width="0.8"/>
+  <text x="46" y="167"
+        font-family="'IBM Plex Mono', monospace" font-size="7" fill="rgba(58,84,143,0.8)"
+        text-anchor="middle" letter-spacing="0.08em">INPUT</text>
+  <text x="86" y="181"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        font-size="13" font-weight="600" fill="#122127" text-anchor="middle">New Doc</text>
+
+  <!-- ② Entity·Relation Extraction (focal) x=212, y=148, w=136, h=56 -->
+  <rect x="212" y="148" width="136" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="212" y="148" width="136" height="56" rx="6"
+        fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="220" y="154" width="36" height="12" rx="2"
+        fill="transparent" stroke="rgba(13,87,99,0.4)" stroke-width="0.8"/>
+  <text x="238" y="163"
+        font-family="'IBM Plex Mono', monospace" font-size="7" fill="rgba(13,87,99,0.8)"
+        text-anchor="middle" letter-spacing="0.08em">STEP</text>
+  <text x="280" y="178"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        font-size="12" font-weight="600" fill="#122127" text-anchor="middle">Entity·Relation</text>
+  <text x="280" y="194"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        font-size="12" font-weight="600" fill="#122127" text-anchor="middle">Extraction</text>
+
+  <!-- ③ Merge Method decision diamond  center=(462,176) half-w=50 half-h=36 -->
+  <!-- diamond: top(462,140) right(512,176) bottom(462,212) left(412,176) -->
+  <polygon points="462,140 512,176 462,212 412,176"
+           fill="rgba(13,87,99,0.06)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="462" y="171"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        font-size="11" font-weight="600" fill="#122127" text-anchor="middle">Merge</text>
+  <text x="462" y="185"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        font-size="11" font-weight="600" fill="#122127" text-anchor="middle">Method</text>
+
+  <!-- ④ Batch Strategy result: Separate Index Creation (warn/muted) x=588, y=72, w=136, h=56 -->
+  <rect x="588" y="72" width="136" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="588" y="72" width="136" height="56" rx="6"
+        fill="rgba(45,49,66,0.04)" stroke="rgba(45,49,66,0.30)" stroke-width="1"/>
+  <rect x="596" y="78" width="40" height="12" rx="2"
+        fill="transparent" stroke="rgba(45,49,66,0.25)" stroke-width="0.8"/>
+  <text x="616" y="87"
+        font-family="'IBM Plex Mono', monospace" font-size="7" fill="rgba(45,49,66,0.6)"
+        text-anchor="middle" letter-spacing="0.08em">BATCH</text>
+  <text x="656" y="103"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        font-size="11" font-weight="600" fill="#122127" text-anchor="middle">Separate Index</text>
+  <text x="656" y="118"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        font-size="11" font-weight="500" fill="#3f545c" text-anchor="middle">Merge at Query</text>
+
+  <!-- ⑤ Streaming Strategy: Incremental Addition (ok/accent-tint) x=588, y=224, w=136, h=56 -->
+  <rect x="588" y="224" width="136" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="588" y="224" width="136" height="56" rx="6"
+        fill="rgba(13,87,99,0.06)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="596" y="230" width="48" height="12" rx="2"
+        fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="620" y="239"
+        font-family="'IBM Plex Mono', monospace" font-size="7" fill="rgba(13,87,99,0.8)"
+        text-anchor="middle" letter-spacing="0.08em">STREAM</text>
+  <text x="656" y="255"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        font-size="11" font-weight="600" fill="#122127" text-anchor="middle">Incremental</text>
+  <text x="656" y="270"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        font-size="11" font-weight="600" fill="#122127" text-anchor="middle">Addition</text>
+
+  <!-- ⑥ Entity Link Broken (negative result) x=796, y=112, w=136, h=56 -->
+  <rect x="796" y="112" width="136" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="796" y="112" width="136" height="56" rx="6"
+        fill="rgba(45,49,66,0.03)" stroke="rgba(45,49,66,0.20)" stroke-width="1"
+        stroke-dasharray="4,3"/>
+  <text x="864" y="138"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        font-size="11" font-weight="600" fill="#6c8188" text-anchor="middle">Entity Link Broken</text>
+  <text x="864" y="154"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        font-size="11" font-weight="500" fill="#6c8188" text-anchor="middle">Low Accuracy</text>
+
+  <!-- ⑦ Local Community Re-detection x=796, y=280, w=136, h=56 -->
+  <rect x="796" y="280" width="136" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="796" y="280" width="136" height="56" rx="6"
+        fill="rgba(13,87,99,0.06)" stroke="#0d5763" stroke-width="1"/>
+  <text x="864" y="306"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        font-size="11" font-weight="600" fill="#122127" text-anchor="middle">Local Community</text>
+  <text x="864" y="322"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        font-size="11" font-weight="600" fill="#122127" text-anchor="middle">Re-detection</text>
+
+  <!-- ⑧ High Accuracy / Complex Implementation — route from Local Community Re-detection right → up -->
+  <!-- positioned at x=796, y=196, w=136, h=56 — between the two right boxes vertically -->
+  <!-- Re-draw connector: Local Community Re-detection top(864,280) → up → High Accuracy bottom(864,252) -->
+
+  <!-- ══════════════════════════════════════════
+       RE-ROUTE connectors that need boxes drawn first
+       (these arrows go OVER open canvas, not behind any box)
+  ══════════════════════════════════════════ -->
+
+  <!-- Batch Strategy → Entity Link Broken: right of ④(724,100) → right segment → down → left of ⑥(796,140) -->
+  <!-- Already drawn above with path. Now clear and redraw correctly over open canvas -->
+
+  <!-- ══════════════════════════════════════════
+       RESULT BOX: High Accuracy (focal accent)
+       Placed right of the two right nodes, connected from Local Community
+  ══════════════════════════════════════════ -->
+
+  <!-- High Accuracy result box x=796, y=196, w=136, h=56 -->
+  <!-- Wait — this would overlap with Local Community Re-detection and Entity Link Broken.
+       The source graph flows: LC → HI (Local Community Re-detection → High Accuracy).
+       Let's place High Accuracy below Local Community Re-detection, at y=368 -->
+
+  <!-- Connector: Local Community Re-detection bottom(864,336) → down → High Accuracy top(864,368) -->
+  <line x1="864" y1="336" x2="864" y2="364"
+        stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-21-184d501b-07-arrow-acc)"/>
+
+  <!-- High Accuracy (focal) x=796, y=364, w=136, h=56 -->
+  <rect x="796" y="364" width="136" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="796" y="364" width="136" height="56" rx="6"
+        fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.5"/>
+  <text x="864" y="390"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        font-size="12" font-weight="600" fill="#122127" text-anchor="middle">High Accuracy</text>
+  <text x="864" y="406"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        font-size="11" font-weight="500" fill="#3f545c" text-anchor="middle">Complex Impl.</text>
+
+  <!-- ══════════════════════════════════════════
+       ARROW LABELS
+  ══════════════════════════════════════════ -->
+
+  <!-- Batch label on the path from diamond→Batch -->
+  <!-- path goes: (548,176)→(548,100) vertical segment midpoint y=138 -->
+  <rect x="514" y="126" width="40" height="16" rx="2" fill="#f8fafb"/>
+  <text x="534" y="137"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        font-size="11" font-weight="500" fill="#3f545c" text-anchor="middle">Batch</text>
+
+  <!-- Streaming label on path from diamond→Streaming -->
+  <!-- path goes: (548,176)→(548,252) vertical segment midpoint y=214 -->
+  <rect x="505" y="202" width="52" height="16" rx="2" fill="#f8fafb"/>
+  <text x="531" y="213"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        font-size="11" font-weight="500" fill="#3f545c" text-anchor="middle">Stream</text>
+
+  <!-- ══════════════════════════════════════════
+       LEGEND STRIP
+  ══════════════════════════════════════════ -->
+  <line x1="32" y1="448" x2="928" y2="448"
+        stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+  <text x="32" y="462"
+        font-family="'IBM Plex Mono', monospace" font-size="8" fill="#6c8188"
+        letter-spacing="0.14em">LEGEND</text>
+
+  <!-- Legend items -->
+  <!-- Processing Step -->
+  <rect x="96" y="454" width="10" height="10" rx="2"
+        fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="110" y="463"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        font-size="10" fill="#3f545c">Processing Step</text>
+
+  <!-- Batch Path -->
+  <rect x="196" y="454" width="10" height="10" rx="2"
+        fill="rgba(45,49,66,0.04)" stroke="rgba(45,49,66,0.30)" stroke-width="1"/>
+  <text x="210" y="463"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        font-size="10" fill="#3f545c">Batch Path</text>
+
+  <!-- Streaming Path -->
+  <rect x="296" y="454" width="10" height="10" rx="2"
+        fill="rgba(13,87,99,0.06)" stroke="#0d5763" stroke-width="1"/>
+  <text x="310" y="463"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        font-size="10" fill="#3f545c">Streaming Path</text>
+
+  <!-- Broken / Low Accuracy -->
+  <rect x="416" y="454" width="10" height="10" rx="2"
+        fill="rgba(45,49,66,0.03)" stroke="rgba(45,49,66,0.20)" stroke-width="1"
+        stroke-dasharray="3,2"/>
+  <text x="430" y="463"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        font-size="10" fill="#3f545c">Broken / Low Accuracy</text>
+
+</svg>
+</div>
+</body>
+</html>

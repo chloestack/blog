@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ClassLoader 동작 흐름</title>
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 0; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<svg
+  viewBox="0 0 960 280"
+  xmlns="http://www.w3.org/2000/svg"
+  role="img"
+  aria-labelledby="2026-09-21-56d0a588-03-classloader-flow-title 2026-09-21-56d0a588-03-classloader-flow-desc"
+>
+  <title id="2026-09-21-56d0a588-03-classloader-flow-title">ClassLoader 동작 흐름</title>
+  <desc id="2026-09-21-56d0a588-03-classloader-flow-desc">JAR 또는 디렉터리에서 바이트코드를 읽고, 선택적 변환 처리를 거쳐 defineClass()를 호출해 Class 객체가 생성되는 ClassLoader의 단계별 흐름.</desc>
+
+  <defs>
+    <!-- 기본 화살표 -->
+    <marker id="2026-09-21-56d0a588-03-clf-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <!-- 강조 화살표 (accent) -->
+    <marker id="2026-09-21-56d0a588-03-clf-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+  </defs>
+
+  <!-- 배경 -->
+  <rect width="960" height="280" fill="#f8fafb"/>
+
+  <!-- ─────────────────────────────────────────── -->
+  <!-- 커넥터 (노드보다 먼저 그림) -->
+  <!-- ─────────────────────────────────────────── -->
+
+  <!-- JAR → 바이트코드 읽기 -->
+  <line x1="192" y1="132" x2="272" y2="132" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-21-56d0a588-03-clf-arrow)"/>
+
+  <!-- 바이트코드 → 변환 처리 -->
+  <line x1="400" y1="132" x2="480" y2="132" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-21-56d0a588-03-clf-arrow)"/>
+
+  <!-- 변환 처리 → defineClass() -->
+  <line x1="608" y1="132" x2="688" y2="132" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-21-56d0a588-03-clf-arrow-accent)"/>
+
+  <!-- defineClass() → Class 객체 -->
+  <line x1="808" y1="132" x2="856" y2="132" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-21-56d0a588-03-clf-arrow)"/>
+
+  <!-- ─────────────────────────────────────────── -->
+  <!-- 노드 1: JAR / 디렉터리 -->
+  <!-- ─────────────────────────────────────────── -->
+  <!-- 마스크 -->
+  <rect x="48" y="100" width="144" height="64" rx="6" fill="#f8fafb"/>
+  <!-- 박스: external/input 계열 -->
+  <rect x="48" y="100" width="144" height="64" rx="6" fill="rgba(58,84,143,0.06)" stroke="rgba(18,33,39,0.30)" stroke-width="1"/>
+  <!-- 태그 -->
+  <rect x="56" y="108" width="32" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.30)" stroke-width="0.8"/>
+  <text x="72" y="117" fill="rgba(18,33,39,0.6)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">INPUT</text>
+  <!-- 노드명 -->
+  <text x="120" y="138" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">JAR / 디렉터리</text>
+  <!-- 서브라벨 -->
+  <text x="120" y="154" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">.jar · .class</text>
+
+  <!-- ─────────────────────────────────────────── -->
+  <!-- 노드 2: 바이트코드 읽기 -->
+  <!-- ─────────────────────────────────────────── -->
+  <rect x="272" y="100" width="128" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="272" y="100" width="128" height="64" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <rect x="280" y="108" width="28" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="294" y="117" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">READ</text>
+  <text x="336" y="138" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">바이트코드</text>
+  <text x="336" y="154" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">읽기</text>
+
+  <!-- ─────────────────────────────────────────── -->
+  <!-- 노드 3: 변환 처리 (선택) — optional 계열 -->
+  <!-- ─────────────────────────────────────────── -->
+  <rect x="480" y="100" width="128" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="480" y="100" width="128" height="64" rx="6" fill="rgba(18,33,39,0.02)" stroke="rgba(18,33,39,0.20)" stroke-width="1" stroke-dasharray="4,3"/>
+  <rect x="488" y="108" width="32" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.20)" stroke-width="0.8"/>
+  <text x="504" y="117" fill="rgba(18,33,39,0.5)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">OPT</text>
+  <text x="544" y="135" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">변환 처리</text>
+  <text x="544" y="151" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">(선택)</text>
+
+  <!-- ─────────────────────────────────────────── -->
+  <!-- 노드 4: defineClass() — focal (accent) -->
+  <!-- ─────────────────────────────────────────── -->
+  <rect x="688" y="100" width="120" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="688" y="100" width="120" height="64" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="696" y="108" width="32" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="712" y="117" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">API</text>
+  <text x="748" y="138" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Mono', monospace" text-anchor="middle">defineClass()</text>
+  <text x="748" y="154" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">JVM 등록</text>
+
+  <!-- ─────────────────────────────────────────── -->
+  <!-- 노드 5: Class 객체 생성 완료 -->
+  <!-- ─────────────────────────────────────────── -->
+  <rect x="856" y="100" width="64" height="64" rx="6" fill="#f8fafb"/>
+  <!-- 배경 폭이 좁으니 넓게 -->
+  <rect x="848" y="100" width="84" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="848" y="100" width="84" height="64" rx="6" fill="rgba(18,33,39,0.04)" stroke="#c3d0d4" stroke-width="1"/>
+  <rect x="856" y="108" width="28" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.20)" stroke-width="0.8"/>
+  <text x="870" y="117" fill="rgba(18,33,39,0.5)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">OUT</text>
+  <text x="890" y="135" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Class</text>
+  <text x="890" y="151" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">객체</text>
+
+  <!-- ─────────────────────────────────────────── -->
+  <!-- 범례 (하단 수평 스트립) -->
+  <!-- ─────────────────────────────────────────── -->
+  <line x1="48" y1="210" x2="912" y2="210" stroke="rgba(18,33,39,0.10)" stroke-width="0.8"/>
+
+  <!-- 범례 항목 1: 일반 단계 -->
+  <rect x="48" y="224" width="12" height="12" rx="2" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="68" y="234" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">필수 단계</text>
+
+  <!-- 범례 항목 2: 선택 단계 -->
+  <rect x="184" y="224" width="12" height="12" rx="2" fill="rgba(18,33,39,0.02)" stroke="rgba(18,33,39,0.20)" stroke-width="1" stroke-dasharray="4,3"/>
+  <text x="204" y="234" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">선택 단계</text>
+
+  <!-- 범례 항목 3: defineClass API -->
+  <rect x="320" y="224" width="12" height="12" rx="2" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="340" y="234" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">핵심 API</text>
+
+  <!-- 범례 항목 4: 입력 -->
+  <rect x="444" y="224" width="12" height="12" rx="2" fill="rgba(58,84,143,0.06)" stroke="rgba(18,33,39,0.30)" stroke-width="1"/>
+  <text x="464" y="234" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">외부 입력</text>
+
+  <!-- 범례 레이블 -->
+  <text x="856" y="234" fill="#6c8188" font-size="9" font-family="'IBM Plex Mono', monospace" text-anchor="end" letter-spacing="0.10em">LEGEND</text>
+</svg>
+</body>
+</html>

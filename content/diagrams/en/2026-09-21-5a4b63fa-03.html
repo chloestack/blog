@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DLT Processing Flow</title>
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<svg viewBox="0 0 960 440" xmlns="http://www.w3.org/2000/svg"
+     role="img" aria-labelledby="2026-09-21-5a4b63fa-03-dlt-title 2026-09-21-5a4b63fa-03-dlt-desc">
+  <title id="2026-09-21-5a4b63fa-03-dlt-title">Dead Letter Topic Processing Flow</title>
+  <desc id="2026-09-21-5a4b63fa-03-dlt-desc">Shows the flow where a message that has exhausted retry topics and reached the Dead Letter Topic passes through a DLT handler, sends an alert, saves a failure record, then branches to manual re-publish or archive based on whether reprocessing is possible.</desc>
+
+  <defs>
+    <!-- 기본 화살표 -->
+    <marker id="2026-09-21-5a4b63fa-03-arr" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0,8 3,0 6" fill="#3f545c"/>
+    </marker>
+    <!-- 액센트 화살표 -->
+    <marker id="2026-09-21-5a4b63fa-03-arr-acc" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0,8 3,0 6" fill="#0d5763"/>
+    </marker>
+    <!-- muted 화살표 -->
+    <marker id="2026-09-21-5a4b63fa-03-arr-muted" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0,8 3,0 6" fill="#6c8188"/>
+    </marker>
+  </defs>
+
+  <!-- 배경 -->
+  <rect width="960" height="440" fill="#f8fafb"/>
+
+  <!-- ───────── 커넥터 (nodes 보다 먼저) ───────── -->
+
+  <!-- RT → DLT -->
+  <line x1="152" y1="120" x2="220" y2="120" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-21-5a4b63fa-03-arr)"/>
+
+  <!-- DLT → H -->
+  <line x1="324" y1="120" x2="392" y2="120" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-21-5a4b63fa-03-arr-acc)"/>
+
+  <!-- H → AL  (위쪽 분기: 오른쪽으로 나가 위로 꺾기) -->
+  <!-- H 중심 (444, 120), AL 중심 (620, 56) -->
+  <path d="M 496 108 L 496 56 L 564 56"
+        stroke="#6c8188" stroke-width="1" fill="none" marker-end="url(#2026-09-21-5a4b63fa-03-arr-muted)"/>
+
+  <!-- H → DB  (아래쪽 분기: 오른쪽으로 나가 아래로 꺾기) -->
+  <!-- DB 중심 (620, 184) -->
+  <path d="M 496 132 L 496 184 L 564 184"
+        stroke="#6c8188" stroke-width="1" fill="none" marker-end="url(#2026-09-21-5a4b63fa-03-arr-muted)"/>
+
+  <!-- H → Q2  (가운데 직선) -->
+  <line x1="496" y1="120" x2="564" y2="120" stroke="#0d5763" stroke-width="1.2" fill="none" marker-end="url(#2026-09-21-5a4b63fa-03-arr-acc)"/>
+
+  <!-- Q2 → REP  (예 — 위쪽) -->
+  <!-- Q2 중심 (636, 120), REP 중심 (800, 56) -->
+  <path d="M 660 108 L 660 56 L 748" 
+        stroke="#3f545c" stroke-width="1" fill="none"/>
+  <line x1="660" y1="108" x2="660" y2="56" stroke="#3f545c" stroke-width="1" fill="none"/>
+  <line x1="660" y1="56" x2="748" y2="56" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-21-5a4b63fa-03-arr)"/>
+
+  <!-- 라벨: 예 -->
+  <rect x="647" y="70" width="24" height="14" rx="2" fill="#f8fafb"/>
+  <text x="659" y="80" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Yes</text>
+
+  <!-- Q2 → ARC  (아니오 — 아래쪽) -->
+  <!-- ARC 중심 (800, 184) -->
+  <path d="M 660 132 L 660 184 L 748 184"
+        stroke="#6c8188" stroke-width="1" fill="none" marker-end="url(#2026-09-21-5a4b63fa-03-arr-muted)"/>
+
+  <!-- 라벨: 아니오 -->
+  <rect x="634" y="150" width="44" height="14" rx="2" fill="#f8fafb"/>
+  <text x="656" y="160" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">No</text>
+
+  <!-- ───────── 노드 ───────── -->
+
+  <!-- RT: 재시도 토픽 소진 (warn — 주황) -->
+  <rect x="28" y="92" width="124" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="28" y="92" width="124" height="56" rx="6" fill="#F5E8CC" stroke="#A96A08" stroke-width="1.2"/>
+  <rect x="36" y="100" width="32" height="12" rx="2" fill="transparent" stroke="rgba(169,106,8,0.4)" stroke-width="0.8"/>
+  <text x="52" y="109" fill="rgba(169,106,8,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">TOPIC</text>
+  <text x="90" y="122" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Retry Topic</text>
+  <text x="90" y="138" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Exhausted</text>
+
+  <!-- DLT: Dead Letter Topic (stop — 빨강) -->
+  <rect x="220" y="92" width="104" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="220" y="92" width="104" height="56" rx="6" fill="#F1D9D4" stroke="#94382B" stroke-width="1.2"/>
+  <rect x="228" y="100" width="28" height="12" rx="2" fill="transparent" stroke="rgba(148,56,43,0.4)" stroke-width="0.8"/>
+  <text x="242" y="109" fill="rgba(148,56,43,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">DLT</text>
+  <text x="272" y="122" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Dead Letter</text>
+  <text x="272" y="138" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">Topic</text>
+
+  <!-- H: DLT 핸들러 (focal — accent) -->
+  <rect x="392" y="92" width="104" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="392" y="92" width="104" height="56" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="400" y="100" width="40" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.4)" stroke-width="0.8"/>
+  <text x="420" y="109" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">HANDLER</text>
+  <text x="444" y="128" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">DLT Handler</text>
+
+  <!-- AL: 알림 발송 (muted) -->
+  <rect x="564" y="28" width="112" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="564" y="28" width="112" height="56" rx="6" fill="#eef2f4" stroke="#c3d0d4" stroke-width="1"/>
+  <rect x="572" y="36" width="28" height="12" rx="2" fill="transparent" stroke="rgba(99,129,136,0.4)" stroke-width="0.8"/>
+  <text x="586" y="45" fill="rgba(99,129,136,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">ALERT</text>
+  <text x="620" y="60" fill="#3f545c" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Send Alert</text>
+  <text x="620" y="76" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">Slack · PD</text>
+
+  <!-- Q2: 재처리 가능? (diamond, focal — accent) -->
+  <!-- 중심 (636, 120), 대각선 크기 36×28 -->
+  <rect x="556" y="92" width="160" height="56" rx="0" fill="#f8fafb" opacity="0"/>
+  <polygon points="636,92 712,120 636,148 560,120"
+           fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="636" y="116" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Retriable</text>
+  <text x="636" y="130" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">?</text>
+
+  <!-- DB: 장애 기록 저장 (muted) -->
+  <rect x="564" y="156" width="112" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="564" y="156" width="112" height="56" rx="6" fill="#eef2f4" stroke="#c3d0d4" stroke-width="1"/>
+  <rect x="572" y="164" width="20" height="12" rx="2" fill="transparent" stroke="rgba(99,129,136,0.4)" stroke-width="0.8"/>
+  <text x="582" y="173" fill="rgba(99,129,136,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">DB</text>
+  <text x="620" y="188" fill="#3f545c" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Save Failure</text>
+  <text x="620" y="204" fill="#3f545c" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Record</text>
+
+  <!-- REP: 수동 재발행 (ok — 초록) -->
+  <rect x="748" y="28" width="112" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="748" y="28" width="112" height="56" rx="6" fill="#D6E9DE" stroke="#286D50" stroke-width="1.2"/>
+  <rect x="756" y="36" width="28" height="12" rx="2" fill="transparent" stroke="rgba(40,109,80,0.4)" stroke-width="0.8"/>
+  <text x="770" y="45" fill="rgba(40,109,80,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">RETRY</text>
+  <text x="804" y="60" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Manual Republish</text>
+  <text x="804" y="76" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">re-publish</text>
+
+  <!-- ARC: 아카이브 (muted) -->
+  <rect x="748" y="156" width="112" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="748" y="156" width="112" height="56" rx="6" fill="#eef2f4" stroke="#c3d0d4" stroke-width="1"/>
+  <rect x="756" y="164" width="40" height="12" rx="2" fill="transparent" stroke="rgba(99,129,136,0.4)" stroke-width="0.8"/>
+  <text x="776" y="173" fill="rgba(99,129,136,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">ARCHIVE</text>
+  <text x="804" y="196" fill="#3f545c" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Archive</text>
+
+  <!-- ───────── 범례 ───────── -->
+  <line x1="28" y1="362" x2="932" y2="362" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+  <text x="28" y="378" fill="#6c8188" font-size="8" font-family="'IBM Plex Mono', monospace" letter-spacing="0.14em">LEGEND</text>
+
+  <!-- warn -->
+  <rect x="100" y="368" width="12" height="12" rx="2" fill="#F5E8CC" stroke="#A96A08" stroke-width="1"/>
+  <text x="118" y="378" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">Retries Exhausted</text>
+
+  <!-- stop -->
+  <rect x="220" y="368" width="12" height="12" rx="2" fill="#F1D9D4" stroke="#94382B" stroke-width="1"/>
+  <text x="238" y="378" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">DLT Received</text>
+
+  <!-- acc -->
+  <rect x="320" y="368" width="12" height="12" rx="2" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="338" y="378" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">Key Step</text>
+
+  <!-- ok -->
+  <rect x="428" y="368" width="12" height="12" rx="2" fill="#D6E9DE" stroke="#286D50" stroke-width="1"/>
+  <text x="446" y="378" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">Recovery</text>
+
+  <!-- mute -->
+  <rect x="500" y="368" width="12" height="12" rx="2" fill="#eef2f4" stroke="#c3d0d4" stroke-width="1"/>
+  <text x="518" y="378" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">Auxiliary</text>
+
+</svg>
+</body>
+</html>

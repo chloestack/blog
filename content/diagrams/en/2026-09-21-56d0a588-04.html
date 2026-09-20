@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 500" role="img" aria-labelledby="2026-09-21-56d0a588-04-cl-title 2026-09-21-56d0a588-04-cl-desc">
+  <title id="2026-09-21-56d0a588-04-cl-title">Java ClassLoader Hierarchy</title>
+  <desc id="2026-09-21-56d0a588-04-cl-desc">App ClassLoader provides a shared API, with Plugin A and Plugin B beneath it each loading different jackson versions in isolation, illustrating the class loader hierarchy.</desc>
+
+  <defs>
+    <marker id="2026-09-21-56d0a588-04-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-09-21-56d0a588-04-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <marker id="2026-09-21-56d0a588-04-arrow-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3a548f"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="720" height="500" fill="#f8fafb"/>
+
+  <!-- ── Connectors (drawn before boxes) ── -->
+
+  <!-- APP → PA: right edge of APP → left edge of PA -->
+  <!-- APP center: 360,120  PA center: 188,252 -->
+  <!-- Route: from APP bottom-left attach (316,148) down to y=196, left to x=188, down to PA top (188,228) -->
+  <path d="M316,148 L316,196 Q316,204 308,204 L188,204 Q180,204 180,212 L180,228" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-21-56d0a588-04-arrow)"/>
+
+  <!-- APP → PB: from APP bottom-right attach (404,148) down to y=196, right to x=532, down to PB top -->
+  <path d="M404,148 L404,196 Q404,204 412,204 L532,204 Q540,204 540,212 L540,228" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-21-56d0a588-04-arrow)"/>
+
+  <!-- PA → IA: PA bottom (188,280) down to IA top (188,364) -->
+  <line x1="188" y1="280" x2="188" y2="364" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-21-56d0a588-04-arrow)"/>
+
+  <!-- PB → IB: PB bottom (532,280) down to IB top (532,364) -->
+  <line x1="532" y1="280" x2="532" y2="364" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-21-56d0a588-04-arrow)"/>
+
+  <!-- ── Nodes ── -->
+
+  <!-- APP ClassLoader (focal) -->
+  <rect x="268" y="88" width="184" height="60" rx="6" fill="#f8fafb"/>
+  <rect x="268" y="88" width="184" height="60" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <rect x="276" y="96" width="32" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="292" y="105" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">PARENT</text>
+  <text x="360" y="124" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">App ClassLoader</text>
+  <text x="360" y="140" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">Shared API</text>
+
+  <!-- Plugin A CL (warn treatment) -->
+  <rect x="100" y="228" width="176" height="52" rx="6" fill="#f8fafb"/>
+  <rect x="100" y="228" width="176" height="52" rx="6" fill="rgba(18,33,39,0.04)" stroke="#3f545c" stroke-width="1"/>
+  <rect x="108" y="236" width="28" height="12" rx="2" fill="transparent" stroke="rgba(63,84,92,0.40)" stroke-width="0.8"/>
+  <text x="122" y="245" fill="rgba(63,84,92,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">CL</text>
+  <text x="188" y="260" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Plugin A CL</text>
+  <text x="188" y="274" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">jackson 2.14</text>
+
+  <!-- Plugin B CL (warn treatment) -->
+  <rect x="444" y="228" width="176" height="52" rx="6" fill="#f8fafb"/>
+  <rect x="444" y="228" width="176" height="52" rx="6" fill="rgba(18,33,39,0.04)" stroke="#3f545c" stroke-width="1"/>
+  <rect x="452" y="236" width="28" height="12" rx="2" fill="transparent" stroke="rgba(63,84,92,0.40)" stroke-width="0.8"/>
+  <text x="466" y="245" fill="rgba(63,84,92,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">CL</text>
+  <text x="532" y="260" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Plugin B CL</text>
+  <text x="532" y="274" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">jackson 2.15</text>
+
+  <!-- Plugin A 구현체 -->
+  <rect x="104" y="364" width="168" height="52" rx="6" fill="#f8fafb"/>
+  <rect x="104" y="364" width="168" height="52" rx="6" fill="rgba(58,84,143,0.06)" stroke="rgba(58,84,143,0.50)" stroke-width="1"/>
+  <rect x="112" y="372" width="28" height="12" rx="2" fill="transparent" stroke="rgba(58,84,143,0.40)" stroke-width="0.8"/>
+  <text x="126" y="381" fill="rgba(58,84,143,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">IMPL</text>
+  <text x="188" y="396" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Plugin A</text>
+  <text x="188" y="410" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Impl</text>
+
+  <!-- Plugin B 구현체 -->
+  <rect x="448" y="364" width="168" height="52" rx="6" fill="#f8fafb"/>
+  <rect x="448" y="364" width="168" height="52" rx="6" fill="rgba(58,84,143,0.06)" stroke="rgba(58,84,143,0.50)" stroke-width="1"/>
+  <rect x="456" y="372" width="28" height="12" rx="2" fill="transparent" stroke="rgba(58,84,143,0.40)" stroke-width="0.8"/>
+  <text x="470" y="381" fill="rgba(58,84,143,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">IMPL</text>
+  <text x="532" y="396" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Plugin B</text>
+  <text x="532" y="410" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Impl</text>
+
+  <!-- Isolation zone label (decorative zone hint) -->
+  <rect x="64" y="216" width="248" height="220" rx="8" fill="none" stroke="rgba(18,33,39,0.08)" stroke-width="1" stroke-dasharray="4,3"/>
+  <text x="72" y="210" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.12em">PLUGIN A ISOLATION</text>
+
+  <rect x="408" y="216" width="248" height="220" rx="8" fill="none" stroke="rgba(18,33,39,0.08)" stroke-width="1" stroke-dasharray="4,3"/>
+  <text x="416" y="210" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.12em">PLUGIN B ISOLATION</text>
+
+  <!-- ── Legend ── -->
+  <line x1="40" y1="456" x2="680" y2="456" stroke="rgba(18,33,39,0.10)" stroke-width="0.8"/>
+
+  <text x="40" y="470" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.14em">LEGEND</text>
+
+  <!-- focal swatch -->
+  <rect x="108" y="460" width="14" height="14" rx="2" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="128" y="471" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">Parent ClassLoader</text>
+
+  <!-- child swatch -->
+  <rect x="276" y="460" width="14" height="14" rx="2" fill="rgba(18,33,39,0.04)" stroke="#3f545c" stroke-width="1"/>
+  <text x="296" y="471" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">Plugin ClassLoader</text>
+
+  <!-- impl swatch -->
+  <rect x="460" y="460" width="14" height="14" rx="2" fill="rgba(58,84,143,0.06)" stroke="rgba(58,84,143,0.50)" stroke-width="1"/>
+  <text x="480" y="471" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">Impl Class</text>
+</svg>
+</body>
+</html>
