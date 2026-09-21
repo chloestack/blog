@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>컨테이너 레이어 취약점 스캔</title>
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; font-family: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; }
+  .diagram-wrap { width: 100%; max-width: 960px; margin: 0 auto; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<div class="diagram-wrap">
+<svg viewBox="0 0 960 600" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="2026-09-22-98ddabe9-03-trivy-layers-title 2026-09-22-98ddabe9-03-trivy-layers-desc">
+  <title id="2026-09-22-98ddabe9-03-trivy-layers-title">컨테이너 레이어 취약점 스캔</title>
+  <desc id="2026-09-22-98ddabe9-03-trivy-layers-desc">Docker 이미지의 네 레이어(베이스, 설치, 의존성, 진입점) 중 설치 레이어와 의존성 레이어에서 각각 OS CVE와 라이브러리 취약점이 검출되는 구조를 보여주는 흐름도.</desc>
+
+  <defs>
+    <!-- arrow markers -->
+    <marker id="2026-09-22-98ddabe9-03-tl-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-09-22-98ddabe9-03-tl-arrow-warn" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#a96a08"/>
+    </marker>
+    <marker id="2026-09-22-98ddabe9-03-tl-arrow-stop" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#94382b"/>
+    </marker>
+    <marker id="2026-09-22-98ddabe9-03-tl-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+  </defs>
+
+  <!-- background -->
+  <rect width="960" height="600" fill="#f8fafb"/>
+
+  <!-- ═══════════════════════════════════════════════
+       LAYER PIPELINE — top row y=180, boxes 120×60
+       L1 x=60  L2 x=240  L3 x=420  L4 x=600
+       ═══════════════════════════════════════════════ -->
+
+  <!-- connector L1→L2 (drawn before boxes) -->
+  <line x1="180" y1="210" x2="236" y2="210" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-22-98ddabe9-03-tl-arrow)"/>
+
+  <!-- connector L2→L3 -->
+  <line x1="360" y1="210" x2="416" y2="210" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-22-98ddabe9-03-tl-arrow)"/>
+
+  <!-- connector L3→L4 -->
+  <line x1="540" y1="210" x2="596" y2="210" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-22-98ddabe9-03-tl-arrow)"/>
+
+  <!-- connector L2→V1 (OS CVE) elbow: right edge of L2 → down → V1 top
+       L2 right edge = 360, center y = 210
+       V1 center = (260, 380), top y = 348
+       Elbow: (360,210) → (360,280) → (260,280) → (260,344) -->
+  <path d="M 360 224 L 360 280 L 264 280 L 264 344" fill="none" stroke="#a96a08" stroke-width="1.2" stroke-dasharray="5,3" marker-end="url(#2026-09-22-98ddabe9-03-tl-arrow-warn)"/>
+
+  <!-- connector L3→V2 (Lib CVE) elbow: right edge of L3 → down → V2 top
+       L3 right edge = 540, center y = 210
+       V2 center = (480, 380), top y = 348
+       Elbow: (540,224) → (540,280) → (484,280) → (484,344) -->
+  <path d="M 540 224 L 540 280 L 484 280 L 484 344" fill="none" stroke="#94382b" stroke-width="1.2" stroke-dasharray="5,3" marker-end="url(#2026-09-22-98ddabe9-03-tl-arrow-stop)"/>
+
+  <!-- ─── L1: 베이스 레이어 (muted) ─── -->
+  <rect x="60" y="180" width="120" height="60" rx="6" fill="#f8fafb"/>
+  <rect x="60" y="180" width="120" height="60" rx="6" fill="#eef2f4" stroke="#c3d0d4" stroke-width="1"/>
+  <rect x="68" y="188" width="36" height="12" rx="2" fill="transparent" stroke="rgba(63,84,92,0.40)" stroke-width="0.8"/>
+  <text x="86" y="197" fill="rgba(63,84,92,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">LAYER</text>
+  <text x="120" y="215" fill="#3f545c" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">FROM</text>
+  <text x="120" y="230" fill="#6c8188" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">베이스 레이어</text>
+
+  <!-- ─── L2: 설치 레이어 (warn) ─── -->
+  <rect x="240" y="180" width="120" height="60" rx="6" fill="#f8fafb"/>
+  <rect x="240" y="180" width="120" height="60" rx="6" fill="#f5e8cc" stroke="#a96a08" stroke-width="1.2"/>
+  <rect x="248" y="188" width="36" height="12" rx="2" fill="transparent" stroke="rgba(169,106,8,0.40)" stroke-width="0.8"/>
+  <text x="266" y="197" fill="rgba(169,106,8,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">LAYER</text>
+  <text x="300" y="215" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">RUN apt-get</text>
+  <text x="300" y="230" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">설치 레이어</text>
+
+  <!-- ─── L3: 의존성 레이어 (warn) ─── -->
+  <rect x="420" y="180" width="120" height="60" rx="6" fill="#f8fafb"/>
+  <rect x="420" y="180" width="120" height="60" rx="6" fill="#f5e8cc" stroke="#a96a08" stroke-width="1.2"/>
+  <rect x="428" y="188" width="36" height="12" rx="2" fill="transparent" stroke="rgba(169,106,8,0.40)" stroke-width="0.8"/>
+  <text x="446" y="197" fill="rgba(169,106,8,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">LAYER</text>
+  <text x="480" y="215" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">COPY 앱</text>
+  <text x="480" y="230" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">의존성 레이어</text>
+
+  <!-- ─── L4: 진입점 (muted) ─── -->
+  <rect x="600" y="180" width="120" height="60" rx="6" fill="#f8fafb"/>
+  <rect x="600" y="180" width="120" height="60" rx="6" fill="#eef2f4" stroke="#c3d0d4" stroke-width="1"/>
+  <rect x="608" y="188" width="36" height="12" rx="2" fill="transparent" stroke="rgba(63,84,92,0.40)" stroke-width="0.8"/>
+  <text x="626" y="197" fill="rgba(63,84,92,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">LAYER</text>
+  <text x="660" y="215" fill="#3f545c" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">CMD</text>
+  <text x="660" y="230" fill="#6c8188" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">진입점</text>
+
+  <!-- ═══════════════════════════════════════════════
+       VULNERABILITY NODES — bottom row y=344, h=72
+       V1 x=204  V2 x=424
+       ═══════════════════════════════════════════════ -->
+
+  <!-- ─── V1: OS 취약점 (stop / danger) ─── -->
+  <rect x="204" y="344" width="120" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="204" y="344" width="120" height="72" rx="6" fill="#f1d9d4" stroke="#94382b" stroke-width="1.2"/>
+  <rect x="212" y="352" width="32" height="12" rx="2" fill="transparent" stroke="rgba(148,56,43,0.40)" stroke-width="0.8"/>
+  <text x="228" y="361" fill="rgba(148,56,43,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">CVE</text>
+  <text x="264" y="378" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">OS 취약점</text>
+  <text x="264" y="394" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">apt 패키지</text>
+
+  <!-- ─── V2: 라이브러리 취약점 (stop / danger) ─── -->
+  <rect x="424" y="344" width="132" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="424" y="344" width="132" height="72" rx="6" fill="#f1d9d4" stroke="#94382b" stroke-width="1.2"/>
+  <rect x="432" y="352" width="32" height="12" rx="2" fill="transparent" stroke="rgba(148,56,43,0.40)" stroke-width="0.8"/>
+  <text x="448" y="361" fill="rgba(148,56,43,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">CVE</text>
+  <text x="490" y="378" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">라이브러리</text>
+  <text x="490" y="394" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">취약점</text>
+
+  <!-- ─── Arrow edge labels ─── -->
+  <!-- L2→V1 label "OS CVE" — sits above the elbow horizontal segment at (310, 280) -->
+  <rect x="292" y="262" width="40" height="13" rx="2" fill="#f8fafb"/>
+  <text x="312" y="272" fill="#a96a08" font-size="9" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.06em">OS CVE</text>
+
+  <!-- L3→V2 label "Lib CVE" — sits above the elbow horizontal segment at (512, 280) -->
+  <rect x="492" y="262" width="44" height="13" rx="2" fill="#f8fafb"/>
+  <text x="514" y="272" fill="#94382b" font-size="9" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.06em">Lib CVE</text>
+
+  <!-- ═══════════════════════════════════════════════
+       TRIVY SCAN LABEL — accent callout band
+       ═══════════════════════════════════════════════ -->
+  <!-- Scan bracket line under layer row -->
+  <line x1="240" y1="256" x2="540" y2="256" stroke="#0d5763" stroke-width="0.8" stroke-dasharray="3,3"/>
+  <rect x="330" y="246" width="100" height="14" rx="2" fill="#f8fafb"/>
+  <text x="380" y="256" fill="#0d5763" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">TRIVY SCAN</text>
+
+  <!-- ═══════════════════════════════════════════════
+       LEGEND strip
+       ═══════════════════════════════════════════════ -->
+  <line x1="40" y1="502" x2="920" y2="502" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+  <text x="40" y="518" fill="#6c8188" font-size="8" font-family="'IBM Plex Mono', monospace" letter-spacing="0.14em">LEGEND</text>
+
+  <!-- muted box -->
+  <rect x="116" y="508" width="12" height="12" rx="2" fill="#eef2f4" stroke="#c3d0d4" stroke-width="1"/>
+  <text x="134" y="518" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">취약점 없음</text>
+
+  <!-- warn box -->
+  <rect x="240" y="508" width="12" height="12" rx="2" fill="#f5e8cc" stroke="#a96a08" stroke-width="1.2"/>
+  <text x="258" y="518" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">취약점 포함 레이어</text>
+
+  <!-- stop box -->
+  <rect x="400" y="508" width="12" height="12" rx="2" fill="#f1d9d4" stroke="#94382b" stroke-width="1.2"/>
+  <text x="418" y="518" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">검출된 취약점</text>
+
+  <!-- dashed line sample -->
+  <line x1="560" y1="514" x2="590" y2="514" stroke="#a96a08" stroke-width="1.2" stroke-dasharray="4,3"/>
+  <text x="600" y="518" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">CVE 흐름</text>
+
+</svg>
+</div>
+</body>
+</html>

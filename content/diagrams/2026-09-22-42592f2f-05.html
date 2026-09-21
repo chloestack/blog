@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ROWS vs RANGE 프레임 선택</title>
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; }
+  .diagram-wrap { width: 100%; max-width: 960px; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<div class="diagram-wrap">
+<svg viewBox="0 0 960 600" role="img" aria-labelledby="2026-09-22-42592f2f-05-frame-select-title 2026-09-22-42592f2f-05-frame-select-desc"
+     xmlns="http://www.w3.org/2000/svg">
+  <title id="2026-09-22-42592f2f-05-frame-select-title">ROWS vs RANGE 프레임 방식 선택</title>
+  <desc id="2026-09-22-42592f2f-05-frame-select-desc">시계열 데이터에 결측일이 있을 때 ROWS 프레임은 물리적 행 수를 기준으로 하여 기간 부정확 경고로 이어지고, RANGE INTERVAL 프레임은 날짜 기준 범위를 사용하여 정확한 집계로 이어지는 분기 흐름을 보여준다.</desc>
+
+  <defs>
+    <!-- 기본 화살표 -->
+    <marker id="2026-09-22-42592f2f-05-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <!-- 강조 화살표 (accent) -->
+    <marker id="2026-09-22-42592f2f-05-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <!-- 경고 화살표 -->
+    <marker id="2026-09-22-42592f2f-05-arrow-warn" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+  </defs>
+
+  <!-- 배경 -->
+  <rect width="960" height="600" fill="#f8fafb"/>
+
+  <!-- ─────────────────────────────────────────
+       화살표 (노드보다 먼저)
+  ───────────────────────────────────────── -->
+
+  <!-- D → Q (수직, 중앙선 x=480) -->
+  <path d="M 480 140 L 480 188" stroke="#3f545c" stroke-width="1" fill="none" marker-end="url(#2026-09-22-42592f2f-05-arrow)"/>
+
+  <!-- Q → R (왼쪽 분기: 수직 아래 후 수평 왼쪽) -->
+  <!-- Q 다이아몬드 중앙 (480,236), 왼쪽 꼭짓점 x=420 -->
+  <!-- R 노드 중앙 (244,316) -->
+  <path d="M 420 236 Q 244 236 244 280" stroke="#3f545c" stroke-width="1" fill="none" marker-end="url(#2026-09-22-42592f2f-05-arrow)" stroke-dasharray="0"/>
+  <!-- label: ROWS 6 PRECEDING -->
+  <rect x="274" y="220" width="100" height="16" rx="2" fill="#f8fafb"/>
+  <text x="324" y="232" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.04em">ROWS 6 PRECEDING</text>
+
+  <!-- Q → G (오른쪽 분기: 수직 아래 후 수평 오른쪽) -->
+  <!-- Q 다이아몬드 중앙 (480,236), 오른쪽 꼭짓점 x=540 -->
+  <!-- G 노드 중앙 (716,316) -->
+  <path d="M 540 236 Q 716 236 716 280" stroke="#0d5763" stroke-width="1.2" fill="none" marker-end="url(#2026-09-22-42592f2f-05-arrow-accent)"/>
+  <!-- label: RANGE INTERVAL 6 DAY -->
+  <rect x="578" y="220" width="140" height="16" rx="2" fill="#f8fafb"/>
+  <text x="648" y="232" fill="#0d5763" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.04em">RANGE INTERVAL 6 DAY</text>
+
+  <!-- R → WARN (수직) -->
+  <path d="M 244 368 L 244 408" stroke="#3f545c" stroke-width="1" fill="none" marker-end="url(#2026-09-22-42592f2f-05-arrow)"/>
+
+  <!-- G → OK (수직) -->
+  <path d="M 716 368 L 716 408" stroke="#0d5763" stroke-width="1.2" fill="none" marker-end="url(#2026-09-22-42592f2f-05-arrow-accent)"/>
+
+  <!-- ─────────────────────────────────────────
+       노드
+  ───────────────────────────────────────── -->
+
+  <!-- D: 시계열 데이터 (input 처리 — 중앙 상단) -->
+  <rect x="360" y="72" width="240" height="68" rx="6" fill="#f8fafb"/>
+  <rect x="360" y="72" width="240" height="68" rx="6" fill="rgba(58,84,143,0.07)" stroke="#3a548f" stroke-width="1"/>
+  <!-- 태그 -->
+  <rect x="368" y="80" width="28" height="12" rx="2" fill="transparent" stroke="rgba(58,84,143,0.40)" stroke-width="0.8"/>
+  <text x="382" y="89" fill="rgba(58,84,143,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">INPUT</text>
+  <!-- 이름 -->
+  <text x="480" y="110" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">시계열 데이터</text>
+  <!-- 서브라벨 -->
+  <text x="480" y="128" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">결측일 포함</text>
+
+  <!-- Q: 프레임 방식 선택 (결정 다이아몬드 — accent focal) -->
+  <!-- 중앙 480, y 범위 188~284, 세로 폭 96, 가로 폭 120 -->
+  <!-- 꼭짓점: top(480,188) right(540,236) bottom(480,284) left(420,236) -->
+  <polygon points="480,188 540,236 480,284 420,236" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.5"/>
+  <text x="480" y="231" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">프레임 방식</text>
+  <text x="480" y="248" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">선택</text>
+
+  <!-- R: 물리적 6행 이전 (warn 처리) -->
+  <rect x="144" y="280" width="200" height="88" rx="6" fill="#f8fafb"/>
+  <rect x="144" y="280" width="200" height="88" rx="6" fill="rgba(169,106,8,0.07)" stroke="rgba(169,106,8,0.60)" stroke-width="1"/>
+  <!-- 태그 -->
+  <rect x="152" y="288" width="32" height="12" rx="2" fill="transparent" stroke="rgba(169,106,8,0.40)" stroke-width="0.8"/>
+  <text x="168" y="297" fill="rgba(169,106,8,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">ROWS</text>
+  <!-- 이름 -->
+  <text x="244" y="324" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">물리적 6행 이전</text>
+  <!-- 서브라벨 -->
+  <text x="244" y="344" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">결측일 무시</text>
+
+  <!-- G: 날짜 기준 6일 이전 (ok/focal 처리) -->
+  <rect x="616" y="280" width="200" height="88" rx="6" fill="#f8fafb"/>
+  <rect x="616" y="280" width="200" height="88" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.5"/>
+  <!-- 태그 -->
+  <rect x="624" y="288" width="36" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="642" y="297" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">RANGE</text>
+  <!-- 이름 -->
+  <text x="716" y="324" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">날짜 기준 6일 이전</text>
+  <!-- 서브라벨 -->
+  <text x="716" y="344" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">결측일 포함 범위</text>
+
+  <!-- WARN: 결측일 있으면 기간 부정확 -->
+  <rect x="144" y="408" width="200" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="144" y="408" width="200" height="72" rx="6" fill="rgba(148,56,43,0.06)" stroke="rgba(148,56,43,0.55)" stroke-width="1" stroke-dasharray="4,3"/>
+  <!-- 태그 -->
+  <rect x="152" y="416" width="36" height="12" rx="2" fill="transparent" stroke="rgba(148,56,43,0.35)" stroke-width="0.8"/>
+  <text x="170" y="425" fill="rgba(148,56,43,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">주의</text>
+  <!-- 이름 -->
+  <text x="244" y="450" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">결측일 있으면</text>
+  <text x="244" y="468" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">기간 부정확</text>
+
+  <!-- OK: 날짜 단위 정확한 집계 -->
+  <rect x="616" y="408" width="200" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="616" y="408" width="200" height="72" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.5"/>
+  <!-- 태그 -->
+  <rect x="624" y="416" width="36" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="642" y="425" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">권장</text>
+  <!-- 이름 -->
+  <text x="716" y="450" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">날짜 단위</text>
+  <text x="716" y="468" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">정확한 집계</text>
+
+  <!-- ─────────────────────────────────────────
+       범례 (하단 구분선 + 항목)
+  ───────────────────────────────────────── -->
+  <line x1="40" y1="532" x2="920" y2="532" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+
+  <!-- 범례 레이블 -->
+  <text x="40" y="548" fill="#6c8188" font-size="9" font-family="'IBM Plex Mono', monospace" letter-spacing="0.14em">LEGEND</text>
+
+  <!-- ROWS — 경고 색상 -->
+  <rect x="112" y="538" width="12" height="12" rx="2" fill="rgba(169,106,8,0.07)" stroke="rgba(169,106,8,0.60)" stroke-width="1"/>
+  <text x="130" y="548" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">ROWS 프레임 (물리적 행)</text>
+
+  <!-- RANGE — 권장 색상 -->
+  <rect x="340" y="538" width="12" height="12" rx="2" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.5"/>
+  <text x="358" y="548" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">RANGE 프레임 (날짜 기준, 권장)</text>
+
+  <!-- 주의 — 점선 -->
+  <rect x="592" y="538" width="12" height="12" rx="2" fill="rgba(148,56,43,0.06)" stroke="rgba(148,56,43,0.55)" stroke-width="1" stroke-dasharray="4,3"/>
+  <text x="610" y="548" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">주의 결과</text>
+
+</svg>
+</div>
+</body>
+</html>

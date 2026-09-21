@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<svg viewBox="0 0 960 600" role="img" aria-labelledby="2026-09-22-775c5f50-08-litellm-pitfalls-title 2026-09-22-775c5f50-08-litellm-pitfalls-desc" xmlns="http://www.w3.org/2000/svg">
+  <title id="2026-09-22-775c5f50-08-litellm-pitfalls-title">LiteLLM 멀티 LLM 프록시 — 흔한 함정과 해법</title>
+  <desc id="2026-09-22-775c5f50-08-litellm-pitfalls-desc">세 가지 흔한 함정(Redis 없이 수평 확장, 폴백 순환, 타임아웃 역전)과 각각의 해법을 보여주는 흐름도.</desc>
+
+  <defs>
+    <!-- 기본 화살표 (muted) -->
+    <marker id="2026-09-22-775c5f50-08-arr" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <!-- 문제→함정 화살표 (accent) -->
+    <marker id="2026-09-22-775c5f50-08-arr-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <!-- 함정→해법 화살표 (red-muted) -->
+    <marker id="2026-09-22-775c5f50-08-arr-stop" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#94382b"/>
+    </marker>
+    <!-- 해법 화살표 (green-muted) -->
+    <marker id="2026-09-22-775c5f50-08-arr-ok" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#286d50"/>
+    </marker>
+  </defs>
+
+  <!-- 배경 -->
+  <rect width="960" height="600" fill="#f8fafb"/>
+
+  <!-- ─────────────────────────────────────────────
+       화살표: PROBLEM → 세 함정 (accent)
+       오른쪽 엣지 x=196, 중심 y=300
+       R1 왼쪽 x=264 y=168, R2 y=300, R3 y=432
+  ───────────────────────────────────────────── -->
+
+  <!-- PROBLEM → R1: 오른쪽에서 꺾어 위로 -->
+  <path d="M 196,300 L 248,300 L 248,168 L 264,168"
+        fill="none" stroke="#0d5763" stroke-width="1.2"
+        marker-end="url(#2026-09-22-775c5f50-08-arr-accent)"/>
+
+  <!-- PROBLEM → R2: 직선 -->
+  <path d="M 196,300 L 264,300"
+        fill="none" stroke="#0d5763" stroke-width="1.2"
+        marker-end="url(#2026-09-22-775c5f50-08-arr-accent)"/>
+
+  <!-- PROBLEM → R3: 오른쪽에서 꺾어 아래로 -->
+  <path d="M 196,300 L 248,300 L 248,432 L 264,432"
+        fill="none" stroke="#0d5763" stroke-width="1.2"
+        marker-end="url(#2026-09-22-775c5f50-08-arr-accent)"/>
+
+  <!-- ─────────────────────────────────────────────
+       화살표: 함정 → 해법
+       R1 오른쪽 x=424, y=168 → S1 왼쪽 x=560 y=168
+       R2 오른쪽 x=424, y=300 → S2 왼쪽 x=560 y=300
+       R3 오른쪽 x=424, y=432 → S3 왼쪽 x=560 y=432
+  ───────────────────────────────────────────── -->
+  <path d="M 424,168 L 560,168"
+        fill="none" stroke="#94382b" stroke-width="1"
+        marker-end="url(#2026-09-22-775c5f50-08-arr-stop)"/>
+  <path d="M 424,300 L 560,300"
+        fill="none" stroke="#94382b" stroke-width="1"
+        marker-end="url(#2026-09-22-775c5f50-08-arr-stop)"/>
+  <path d="M 424,432 L 560,432"
+        fill="none" stroke="#94382b" stroke-width="1"
+        marker-end="url(#2026-09-22-775c5f50-08-arr-stop)"/>
+
+  <!-- ─────────────────────────────────────────────
+       노드: PROBLEM (focal) — 중앙 왼쪽
+       cx=108, cy=300, w=176, h=56
+       x=20, y=272
+  ───────────────────────────────────────────── -->
+  <!-- opaque mask -->
+  <rect x="20" y="272" width="176" height="56" rx="6" fill="#f8fafb"/>
+  <!-- focal box -->
+  <rect x="20" y="272" width="176" height="56" rx="6"
+        fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.5"/>
+  <!-- type tag -->
+  <rect x="28" y="278" width="28" height="12" rx="2"
+        fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="42" y="287"
+        fill="rgba(13,87,99,0.8)" font-size="7" font-weight="500"
+        font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.08em">문제</text>
+  <!-- label -->
+  <text x="108" y="307"
+        fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">흔한 함정</text>
+
+  <!-- ─────────────────────────────────────────────
+       노드: R1 — Redis 없이 수평 확장
+       x=264, y=140, w=160, h=56
+  ───────────────────────────────────────────── -->
+  <rect x="264" y="140" width="160" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="264" y="140" width="160" height="56" rx="6"
+        fill="#f1d9d4" stroke="#94382b" stroke-width="1.2"/>
+  <rect x="272" y="146" width="28" height="12" rx="2"
+        fill="transparent" stroke="rgba(148,56,43,0.40)" stroke-width="0.8"/>
+  <text x="286" y="155"
+        fill="rgba(148,56,43,0.8)" font-size="7" font-weight="500"
+        font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.08em">함정</text>
+  <text x="344" y="168"
+        fill="#122127" font-size="13" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Redis 없이</text>
+  <text x="344" y="184"
+        fill="#3f545c" font-size="11" font-weight="400"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">수평 확장</text>
+
+  <!-- ─────────────────────────────────────────────
+       노드: R2 — 폴백 순환
+       x=264, y=272, w=160, h=56
+  ───────────────────────────────────────────── -->
+  <rect x="264" y="272" width="160" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="264" y="272" width="160" height="56" rx="6"
+        fill="#f1d9d4" stroke="#94382b" stroke-width="1.2"/>
+  <rect x="272" y="278" width="28" height="12" rx="2"
+        fill="transparent" stroke="rgba(148,56,43,0.40)" stroke-width="0.8"/>
+  <text x="286" y="287"
+        fill="rgba(148,56,43,0.8)" font-size="7" font-weight="500"
+        font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.08em">함정</text>
+  <text x="344" y="300"
+        fill="#122127" font-size="13" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">폴백 순환</text>
+  <text x="344" y="316"
+        fill="#3f545c" font-size="11" font-weight="400"
+        font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle">A→B→A</text>
+
+  <!-- ─────────────────────────────────────────────
+       노드: R3 — 타임아웃 역전
+       x=264, y=404, w=160, h=56
+  ───────────────────────────────────────────── -->
+  <rect x="264" y="404" width="160" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="264" y="404" width="160" height="56" rx="6"
+        fill="#f1d9d4" stroke="#94382b" stroke-width="1.2"/>
+  <rect x="272" y="410" width="28" height="12" rx="2"
+        fill="transparent" stroke="rgba(148,56,43,0.40)" stroke-width="0.8"/>
+  <text x="286" y="419"
+        fill="rgba(148,56,43,0.8)" font-size="7" font-weight="500"
+        font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.08em">함정</text>
+  <text x="344" y="432"
+        fill="#122127" font-size="13" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">타임아웃 역전</text>
+  <text x="344" y="448"
+        fill="#3f545c" font-size="11" font-weight="400"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">부적절한 TTL 설정</text>
+
+  <!-- ─────────────────────────────────────────────
+       노드: S1 — Redis 연결 카운터 공유
+       x=560, y=140, w=172, h=56
+  ───────────────────────────────────────────── -->
+  <rect x="560" y="140" width="172" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="560" y="140" width="172" height="56" rx="6"
+        fill="#d6e9de" stroke="#286d50" stroke-width="1.2"/>
+  <rect x="568" y="146" width="28" height="12" rx="2"
+        fill="transparent" stroke="rgba(40,109,80,0.40)" stroke-width="0.8"/>
+  <text x="582" y="155"
+        fill="rgba(40,109,80,0.8)" font-size="7" font-weight="500"
+        font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.08em">해법</text>
+  <text x="646" y="168"
+        fill="#122127" font-size="13" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Redis 연결</text>
+  <text x="646" y="184"
+        fill="#3f545c" font-size="11" font-weight="400"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">카운터 공유</text>
+
+  <!-- ─────────────────────────────────────────────
+       노드: S2 — 단방향 체인
+       x=560, y=272, w=172, h=56
+  ───────────────────────────────────────────── -->
+  <rect x="560" y="272" width="172" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="560" y="272" width="172" height="56" rx="6"
+        fill="#d6e9de" stroke="#286d50" stroke-width="1.2"/>
+  <rect x="568" y="278" width="28" height="12" rx="2"
+        fill="transparent" stroke="rgba(40,109,80,0.40)" stroke-width="0.8"/>
+  <text x="582" y="287"
+        fill="rgba(40,109,80,0.8)" font-size="7" font-weight="500"
+        font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.08em">해법</text>
+  <text x="646" y="300"
+        fill="#122127" font-size="13" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">단방향 체인</text>
+  <text x="646" y="316"
+        fill="#3f545c" font-size="11" font-weight="400"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">저비용 → 고비용</text>
+
+  <!-- ─────────────────────────────────────────────
+       노드: S3 — 프록시 < 클라이언트 TTL
+       x=560, y=404, w=172, h=56
+  ───────────────────────────────────────────── -->
+  <rect x="560" y="404" width="172" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="560" y="404" width="172" height="56" rx="6"
+        fill="#d6e9de" stroke="#286d50" stroke-width="1.2"/>
+  <rect x="568" y="410" width="28" height="12" rx="2"
+        fill="transparent" stroke="rgba(40,109,80,0.40)" stroke-width="0.8"/>
+  <text x="582" y="419"
+        fill="rgba(40,109,80,0.8)" font-size="7" font-weight="500"
+        font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.08em">해법</text>
+  <text x="646" y="432"
+        fill="#122127" font-size="13" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">프록시 TTL</text>
+  <text x="646" y="448"
+        fill="#3f545c" font-size="11" font-weight="400"
+        font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle">&lt; 클라이언트 TTL</text>
+
+  <!-- ─────────────────────────────────────────────
+       레전드 — 하단 수평 스트립
+  ───────────────────────────────────────────── -->
+  <line x1="32" y1="532" x2="928" y2="532"
+        stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+
+  <!-- 레전드 라벨 -->
+  <text x="32" y="548"
+        fill="#6c8188" font-size="10" font-weight="500"
+        font-family="'IBM Plex Mono', monospace"
+        letter-spacing="0.14em">LEGEND</text>
+
+  <!-- focal -->
+  <rect x="104" y="538" width="14" height="14" rx="3"
+        fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="124" y="549"
+        fill="#3f545c" font-size="11" font-weight="400"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">문제</text>
+
+  <!-- stop -->
+  <rect x="184" y="538" width="14" height="14" rx="3"
+        fill="#f1d9d4" stroke="#94382b" stroke-width="1.2"/>
+  <text x="204" y="549"
+        fill="#3f545c" font-size="11" font-weight="400"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">함정</text>
+
+  <!-- ok -->
+  <rect x="264" y="538" width="14" height="14" rx="3"
+        fill="#d6e9de" stroke="#286d50" stroke-width="1.2"/>
+  <text x="284" y="549"
+        fill="#3f545c" font-size="11" font-weight="400"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">해법</text>
+
+</svg>
+</body>
+</html>

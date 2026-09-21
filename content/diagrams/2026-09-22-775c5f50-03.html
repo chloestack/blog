@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<svg viewBox="0 0 960 480" xmlns="http://www.w3.org/2000/svg"
+     role="img" aria-labelledby="2026-09-22-775c5f50-03-litellm-title 2026-09-22-775c5f50-03-litellm-desc">
+  <title id="2026-09-22-775c5f50-03-litellm-title">LiteLLM 멀티 LLM 프록시 게이트웨이 구성도</title>
+  <desc id="2026-09-22-775c5f50-03-litellm-desc">팀A·B·C 서비스가 각자의 Virtual Key로 LiteLLM 프록시에 요청을 보내면, 프록시가 예산별로 GPT-4o(OpenAI)와 claude-sonnet(Anthropic)에 라우팅하고, Virtual Key 정보는 PostgreSQL에 저장한다.</desc>
+
+  <defs>
+    <!-- Arrow markers -->
+    <marker id="2026-09-22-775c5f50-03-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-09-22-775c5f50-03-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <marker id="2026-09-22-775c5f50-03-arrow-muted" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#6c8188"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="960" height="480" fill="#f8fafb"/>
+
+  <!-- ── Arrows (drawn before boxes) ── -->
+
+  <!-- 팀A → GW -->
+  <path d="M 196 108 L 356 108 L 356 220" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-22-775c5f50-03-arrow)"/>
+  <!-- 팀B → GW -->
+  <path d="M 196 224 L 356 224" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-22-775c5f50-03-arrow)"/>
+  <!-- 팀C → GW -->
+  <path d="M 196 340 L 356 340 L 356 248" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-22-775c5f50-03-arrow)"/>
+
+  <!-- GW → GPT-4o (top output) -->
+  <path d="M 520 212 L 600 212 L 600 148 L 664 148" fill="none" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-22-775c5f50-03-arrow-accent)"/>
+  <!-- Label for GW→GPT-4o -->
+  <rect x="560" y="166" width="72" height="14" rx="2" fill="#f8fafb"/>
+  <text x="596" y="176" fill="#0d5763" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.04em">$500/월</text>
+
+  <!-- GW → claude-sonnet (bottom output) -->
+  <path d="M 520 236 L 600 236 L 600 300 L 664 300" fill="none" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-22-775c5f50-03-arrow-accent)"/>
+  <!-- Label for GW→claude -->
+  <rect x="560" y="254" width="72" height="14" rx="2" fill="#f8fafb"/>
+  <text x="596" y="264" fill="#0d5763" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.04em">$200/월</text>
+
+  <!-- GW → DB (down) -->
+  <path d="M 436 268 L 436 344" fill="none" stroke="#6c8188" stroke-width="1" stroke-dasharray="5,4" marker-end="url(#2026-09-22-775c5f50-03-arrow-muted)"/>
+
+  <!-- ── TEAM INPUT NODES ── -->
+
+  <!-- 팀A -->
+  <rect x="32" y="80" width="164" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="32" y="80" width="164" height="56" rx="6" fill="rgba(58,84,143,0.08)" stroke="#3a548f" stroke-width="1"/>
+  <rect x="40" y="88" width="28" height="12" rx="2" fill="transparent" stroke="rgba(58,84,143,0.40)" stroke-width="0.8"/>
+  <text x="54" y="97" fill="rgba(58,84,143,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">SVC</text>
+  <text x="114" y="111" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">팀A 서비스</text>
+  <text x="114" y="127" fill="#3f545c" font-size="9" font-family="'IBM Plex Mono', monospace" text-anchor="middle">sk-teamA-***</text>
+
+  <!-- 팀B -->
+  <rect x="32" y="196" width="164" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="32" y="196" width="164" height="56" rx="6" fill="rgba(58,84,143,0.08)" stroke="#3a548f" stroke-width="1"/>
+  <rect x="40" y="204" width="28" height="12" rx="2" fill="transparent" stroke="rgba(58,84,143,0.40)" stroke-width="0.8"/>
+  <text x="54" y="213" fill="rgba(58,84,143,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">SVC</text>
+  <text x="114" y="227" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">팀B 서비스</text>
+  <text x="114" y="243" fill="#3f545c" font-size="9" font-family="'IBM Plex Mono', monospace" text-anchor="middle">sk-teamB-***</text>
+
+  <!-- 팀C -->
+  <rect x="32" y="312" width="164" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="32" y="312" width="164" height="56" rx="6" fill="rgba(58,84,143,0.08)" stroke="#3a548f" stroke-width="1"/>
+  <rect x="40" y="320" width="28" height="12" rx="2" fill="transparent" stroke="rgba(58,84,143,0.40)" stroke-width="0.8"/>
+  <text x="54" y="329" fill="rgba(58,84,143,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">SVC</text>
+  <text x="114" y="343" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">팀C 서비스</text>
+  <text x="114" y="359" fill="#3f545c" font-size="9" font-family="'IBM Plex Mono', monospace" text-anchor="middle">sk-teamC-***</text>
+
+  <!-- ── FOCAL: LiteLLM 프록시 (GATEWAY) ── -->
+  <rect x="356" y="184" width="164" height="80" rx="6" fill="#f8fafb"/>
+  <rect x="356" y="184" width="164" height="80" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="364" y="192" width="36" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="382" y="201" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">PROXY</text>
+  <text x="438" y="230" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">LiteLLM 프록시</text>
+  <text x="438" y="250" fill="#3f545c" font-size="9" font-family="'IBM Plex Mono', monospace" text-anchor="middle">Virtual Key 인증 · 예산 제어</text>
+
+  <!-- ── MODEL TARGETS ── -->
+
+  <!-- GPT-4o -->
+  <rect x="664" y="116" width="164" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="664" y="116" width="164" height="64" rx="6" fill="rgba(255,255,255,0.9)" stroke="#122127" stroke-width="1"/>
+  <rect x="672" y="124" width="32" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="688" y="133" fill="rgba(18,33,39,0.7)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">LLM</text>
+  <text x="746" y="154" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">GPT-4o</text>
+  <text x="746" y="170" fill="#3f545c" font-size="9" font-family="'IBM Plex Mono', monospace" text-anchor="middle">OpenAI Direct</text>
+
+  <!-- claude-sonnet -->
+  <rect x="664" y="268" width="164" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="664" y="268" width="164" height="64" rx="6" fill="rgba(255,255,255,0.9)" stroke="#122127" stroke-width="1"/>
+  <rect x="672" y="276" width="32" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="688" y="285" fill="rgba(18,33,39,0.7)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">LLM</text>
+  <text x="746" y="305" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">claude-sonnet</text>
+  <text x="746" y="321" fill="#3f545c" font-size="9" font-family="'IBM Plex Mono', monospace" text-anchor="middle">Anthropic</text>
+
+  <!-- ── DB STORE ── -->
+  <!-- Cylinder shape via rect + ellipses -->
+  <rect x="356" y="356" width="164" height="60" rx="0" fill="#f8fafb"/>
+  <rect x="356" y="364" width="164" height="52" rx="0" fill="rgba(18,33,39,0.05)" stroke="none"/>
+  <!-- cylinder body -->
+  <rect x="356" y="372" width="164" height="44" fill="rgba(18,33,39,0.05)" stroke="#c3d0d4" stroke-width="1"/>
+  <!-- top ellipse -->
+  <ellipse cx="438" cy="372" rx="82" ry="12" fill="rgba(238,242,244,0.95)" stroke="#c3d0d4" stroke-width="1"/>
+  <!-- bottom ellipse (inside) -->
+  <ellipse cx="438" cy="416" rx="82" ry="12" fill="rgba(238,242,244,0.95)" stroke="#c3d0d4" stroke-width="1"/>
+  <!-- cover sides -->
+  <rect x="356" y="372" width="164" height="44" fill="rgba(238,242,244,0.5)" stroke="none"/>
+  <line x1="356" y1="372" x2="356" y2="416" stroke="#c3d0d4" stroke-width="1"/>
+  <line x1="520" y1="372" x2="520" y2="416" stroke="#c3d0d4" stroke-width="1"/>
+  <!-- top ellipse redraw on top -->
+  <ellipse cx="438" cy="372" rx="82" ry="12" fill="#eef2f4" stroke="#c3d0d4" stroke-width="1"/>
+  <!-- DB tag -->
+  <rect x="364" y="366" width="24" height="12" rx="2" fill="transparent" stroke="rgba(99,129,136,0.40)" stroke-width="0.8"/>
+  <text x="376" y="375" fill="rgba(99,129,136,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">DB</text>
+  <text x="438" y="397" fill="#3f545c" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Virtual Key DB</text>
+  <text x="438" y="412" fill="#6c8188" font-size="9" font-family="'IBM Plex Mono', monospace" text-anchor="middle">PostgreSQL</text>
+
+  <!-- ── Legend strip ── -->
+  <line x1="32" y1="452" x2="928" y2="452" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+  <text x="32" y="466" fill="#6c8188" font-size="8" font-family="'IBM Plex Mono', monospace" letter-spacing="0.14em">LEGEND</text>
+
+  <!-- 팀 서비스 swatch -->
+  <rect x="104" y="458" width="12" height="12" rx="2" fill="rgba(58,84,143,0.08)" stroke="#3a548f" stroke-width="1"/>
+  <text x="120" y="468" fill="#3f545c" font-size="9" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">팀 서비스 (Virtual Key)</text>
+
+  <!-- Proxy swatch -->
+  <rect x="284" y="458" width="12" height="12" rx="2" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="300" y="468" fill="#3f545c" font-size="9" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">LiteLLM 프록시 (게이트웨이)</text>
+
+  <!-- Model swatch -->
+  <rect x="488" y="458" width="12" height="12" rx="2" fill="white" stroke="#122127" stroke-width="1"/>
+  <text x="504" y="468" fill="#3f545c" font-size="9" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">LLM 백엔드</text>
+
+  <!-- DB swatch -->
+  <rect x="596" y="458" width="12" height="12" rx="2" fill="#eef2f4" stroke="#c3d0d4" stroke-width="1"/>
+  <text x="612" y="468" fill="#3f545c" font-size="9" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">저장소</text>
+
+  <!-- Dashed arrow swatch -->
+  <line x1="696" y1="464" x2="716" y2="464" stroke="#6c8188" stroke-width="1" stroke-dasharray="5,4" marker-end="url(#2026-09-22-775c5f50-03-arrow-muted)"/>
+  <text x="720" y="468" fill="#3f545c" font-size="9" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">키 관리 (비동기)</text>
+
+</svg>
+</body>
+</html>

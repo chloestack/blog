@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; font-family: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; }
+  .diagram-wrap { width: 100%; max-width: 960px; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<div class="diagram-wrap">
+<svg viewBox="0 0 960 360" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="2026-09-22-42592f2f-02-frame-title 2026-09-22-42592f2f-02-frame-desc">
+  <title id="2026-09-22-42592f2f-02-frame-title">OVER 절 프레임 설계 흐름</title>
+  <desc id="2026-09-22-42592f2f-02-frame-desc">동률 행 존재 여부에 따라 ROWS 프레임(물리적 행 수 기준)과 RANGE 프레임(ORDER BY 값 단위)을 선택하는 의사결정 흐름도</desc>
+
+  <defs>
+    <!-- arrow markers -->
+    <marker id="2026-09-22-42592f2f-02-arr" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0,8 3,0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-09-22-42592f2f-02-arr-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0,8 3,0 6" fill="#0d5763"/>
+    </marker>
+  </defs>
+
+  <!-- background -->
+  <rect width="960" height="360" fill="#f8fafb"/>
+
+  <!-- ===================== ARROWS (drawn before boxes) ===================== -->
+
+  <!-- A → Q  (horizontal) -->
+  <line x1="212" y1="136" x2="284" y2="136" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-22-42592f2f-02-arr)"/>
+
+  <!-- Q → R  (Yes branch, going right-down then right: elbow) -->
+  <!-- Q center: 352,136  R center: 552,80 -->
+  <!-- path: from right of Q (412,136) → elbow right then up -->
+  <path d="M412,136 L480,136 L480,80 L516,80" fill="none" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-22-42592f2f-02-arr-accent)"/>
+  <!-- label "아니오" -->
+  <rect x="423" y="88" width="44" height="16" rx="2" fill="#f8fafb"/>
+  <text x="445" y="99" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">아니오</text>
+
+  <!-- Q → G  (No branch, going right-down) -->
+  <!-- path: from right of Q (412,136) → elbow right then down -->
+  <path d="M412,136 L480,136 L480,192 L516,192" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-22-42592f2f-02-arr)"/>
+  <!-- label "예" -->
+  <rect x="428" y="160" width="24" height="16" rx="2" fill="#f8fafb"/>
+  <text x="440" y="171" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">예</text>
+
+  <!-- R → R2 (horizontal) -->
+  <line x1="688" y1="80" x2="724" y2="80" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-22-42592f2f-02-arr)"/>
+
+  <!-- G → G2 (horizontal) -->
+  <line x1="688" y1="192" x2="724" y2="192" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-22-42592f2f-02-arr)"/>
+
+  <!-- ===================== NODES ===================== -->
+
+  <!-- A: OVER 절 설계 — focal (accent) -->
+  <rect x="60" y="108" width="152" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="60" y="108" width="152" height="56" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <!-- tag -->
+  <rect x="68" y="114" width="28" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.4)" stroke-width="0.8"/>
+  <text x="82" y="123" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono',monospace" text-anchor="middle" letter-spacing="0.08em">STEP</text>
+  <!-- label -->
+  <text x="136" y="143" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">OVER 절 설계</text>
+
+  <!-- Q: 동률 행이 있나 — decision diamond -->
+  <!-- diamond center: 352,136, half-w=60, half-h=44 -->
+  <polygon points="352,92 412,136 352,180 292,136" fill="#f8fafb"/>
+  <polygon points="352,92 412,136 352,180 292,136" fill="rgba(13,87,99,0.06)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="352" y="130" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">동률 행이</text>
+  <text x="352" y="146" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">있나?</text>
+
+  <!-- R: ROWS 프레임 -->
+  <rect x="516" y="52" width="172" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="516" y="52" width="172" height="56" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <!-- tag -->
+  <rect x="524" y="58" width="36" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.3)" stroke-width="0.8"/>
+  <text x="542" y="67" fill="rgba(18,33,39,0.7)" font-size="7" font-family="'IBM Plex Mono',monospace" text-anchor="middle" letter-spacing="0.08em">FRAME</text>
+  <!-- label line 1 -->
+  <text x="602" y="86" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Mono',monospace" text-anchor="middle">ROWS 프레임</text>
+  <!-- sublabel -->
+  <text x="602" y="100" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono',monospace" text-anchor="middle">물리적 행 수 기준</text>
+
+  <!-- G: RANGE 프레임 -->
+  <rect x="516" y="164" width="172" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="516" y="164" width="172" height="56" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <!-- tag -->
+  <rect x="524" y="170" width="36" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.3)" stroke-width="0.8"/>
+  <text x="542" y="179" fill="rgba(18,33,39,0.7)" font-size="7" font-family="'IBM Plex Mono',monospace" text-anchor="middle" letter-spacing="0.08em">FRAME</text>
+  <!-- label -->
+  <text x="602" y="198" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Mono',monospace" text-anchor="middle">RANGE 프레임</text>
+  <!-- sublabel -->
+  <text x="602" y="212" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono',monospace" text-anchor="middle">ORDER BY 값 단위</text>
+
+  <!-- R2: 정확한 n개 행 항상 포함 — muted store -->
+  <rect x="724" y="52" width="180" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="724" y="52" width="180" height="56" rx="6" fill="rgba(18,33,39,0.04)" stroke="#c3d0d4" stroke-width="1"/>
+  <text x="814" y="77" fill="#122127" font-size="13" font-weight="500" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">정확한 n개 행</text>
+  <text x="814" y="95" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">항상 포함</text>
+
+  <!-- G2: 같은 값 행 함께 집계 — muted store -->
+  <rect x="724" y="164" width="180" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="724" y="164" width="180" height="56" rx="6" fill="rgba(18,33,39,0.04)" stroke="#c3d0d4" stroke-width="1"/>
+  <text x="814" y="189" fill="#122127" font-size="13" font-weight="500" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">같은 값 행</text>
+  <text x="814" y="207" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">함께 집계</text>
+
+  <!-- ===================== LEGEND ===================== -->
+  <line x1="32" y1="292" x2="928" y2="292" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+
+  <text x="32" y="308" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono',monospace" letter-spacing="0.14em">LEGEND</text>
+
+  <!-- focal -->
+  <rect x="104" y="298" width="16" height="12" rx="3" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="126" y="309" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif">시작 단계</text>
+
+  <!-- decision -->
+  <polygon points="196,310 208,304 220,310 208,316" fill="rgba(13,87,99,0.06)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="228" y="313" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif">의사결정</text>
+
+  <!-- step (backend) -->
+  <rect x="308" y="298" width="16" height="12" rx="3" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <text x="330" y="309" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif">프레임 유형</text>
+
+  <!-- store (muted) -->
+  <rect x="428" y="298" width="16" height="12" rx="3" fill="rgba(18,33,39,0.04)" stroke="#c3d0d4" stroke-width="1"/>
+  <text x="450" y="309" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif">결과 특성</text>
+
+</svg>
+</div>
+</body>
+</html>

@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<title>LAG/LEAD 윈도우 함수 흐름</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; font-family: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif; }
+  .diagram-wrap { display: block; width: 100%; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<div class="diagram-wrap">
+<svg viewBox="0 0 960 420" role="img" aria-labelledby="2026-09-22-42592f2f-06-lag-lead-title 2026-09-22-42592f2f-06-lag-lead-desc" xmlns="http://www.w3.org/2000/svg">
+  <title id="2026-09-22-42592f2f-06-lag-lead-title">LAG / LEAD 윈도우 함수 흐름</title>
+  <desc id="2026-09-22-42592f2f-06-lag-lead-desc">이전 행(LAG)과 현재 행, 다음 행(LEAD)의 관계를 보여주고, 현재 행에서 전일 대비 성장률을 계산할 때 이전값이 NULL인지 분기하여 기본값 반환 또는 성장률 계산으로 이어지는 흐름도.</desc>
+
+  <defs>
+    <!-- 화살표 마커 -->
+    <marker id="2026-09-22-42592f2f-06-arr" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-09-22-42592f2f-06-arr-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <marker id="2026-09-22-42592f2f-06-arr-muted" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#6c8188"/>
+    </marker>
+  </defs>
+
+  <!-- 배경 -->
+  <rect width="960" height="420" fill="#f8fafb"/>
+
+  <!-- ───────────────────────────────
+       화살표 (노드보다 먼저 그림)
+  ─────────────────────────────────── -->
+
+  <!-- P → C (이전 행 → 현재 행) -->
+  <path d="M 188,156 L 256,156" stroke="#6c8188" stroke-width="1" fill="none" marker-end="url(#2026-09-22-42592f2f-06-arr-muted)"/>
+
+  <!-- C → N (현재 행 → 다음 행) -->
+  <path d="M 388,156 L 456,156" stroke="#6c8188" stroke-width="1" fill="none" marker-end="url(#2026-09-22-42592f2f-06-arr-muted)"/>
+
+  <!-- C → D (전일 대비 계산) : 현재 행 하단에서 계산식 박스로 -->
+  <path d="M 322,204 L 322,248 L 480,248 L 480,204" stroke="#3f545c" stroke-width="1" fill="none" marker-end="url(#2026-09-22-42592f2f-06-arr)"/>
+  <!-- 라벨 -->
+  <rect x="348" y="232" width="68" height="13" rx="2" fill="#f8fafb"/>
+  <text x="382" y="242" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="500">전일 대비 계산</text>
+
+  <!-- D → CHK (계산식 → 분기) -->
+  <path d="M 564,156 L 628,156" stroke="#3f545c" stroke-width="1" fill="none" marker-end="url(#2026-09-22-42592f2f-06-arr)"/>
+
+  <!-- CHK → DEF (예, 위로) -->
+  <path d="M 692,120 L 692,76 L 776,76 L 776,112" stroke="#3f545c" stroke-width="1" fill="none" marker-end="url(#2026-09-22-42592f2f-06-arr)"/>
+  <rect x="714" y="60" width="18" height="13" rx="2" fill="#f8fafb"/>
+  <text x="723" y="70" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">예</text>
+
+  <!-- CHK → RATE (아니오, 오른쪽) -->
+  <path d="M 748,156 L 812,156" stroke="#3f545c" stroke-width="1" fill="none" marker-end="url(#2026-09-22-42592f2f-06-arr)"/>
+  <rect x="756" y="140" width="36" height="13" rx="2" fill="#f8fafb"/>
+  <text x="774" y="150" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="500">아니오</text>
+
+  <!-- ───────────────────────────────
+       노드
+  ─────────────────────────────────── -->
+
+  <!-- P: 이전 행 / LAG(1) — muted 처리 -->
+  <rect x="48" y="116" width="140" height="80" rx="6" fill="#f8fafb"/>
+  <rect x="48" y="116" width="140" height="80" rx="6" fill="rgba(18,33,39,0.03)" stroke="#c3d0d4" stroke-width="1"/>
+  <!-- 타입 태그 -->
+  <rect x="56" y="122" width="28" height="12" rx="2" fill="transparent" stroke="rgba(108,129,136,0.40)" stroke-width="0.8"/>
+  <text x="70" y="131" fill="rgba(108,129,136,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">행</text>
+  <!-- 이름 -->
+  <text x="118" y="162" fill="#3f545c" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">이전 행</text>
+  <!-- 서브라벨 -->
+  <text x="118" y="180" fill="#6c8188" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">LAG(1)</text>
+
+  <!-- C: 현재 행 — focal/accent -->
+  <rect x="256" y="116" width="132" height="80" rx="6" fill="#f8fafb"/>
+  <rect x="256" y="116" width="132" height="80" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <!-- 타입 태그 -->
+  <rect x="264" y="122" width="28" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="278" y="131" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">행</text>
+  <!-- 이름 -->
+  <text x="322" y="162" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">현재 행</text>
+
+  <!-- N: 다음 행 / LEAD(1) — muted 처리 -->
+  <rect x="456" y="116" width="140" height="80" rx="6" fill="#f8fafb"/>
+  <rect x="456" y="116" width="140" height="80" rx="6" fill="rgba(18,33,39,0.03)" stroke="#c3d0d4" stroke-width="1"/>
+  <!-- 타입 태그 -->
+  <rect x="464" y="122" width="28" height="12" rx="2" fill="transparent" stroke="rgba(108,129,136,0.40)" stroke-width="0.8"/>
+  <text x="478" y="131" fill="rgba(108,129,136,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">행</text>
+  <!-- 이름 -->
+  <text x="526" y="162" fill="#3f545c" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">다음 행</text>
+  <!-- 서브라벨 -->
+  <text x="526" y="180" fill="#6c8188" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">LEAD(1)</text>
+
+  <!-- D: 계산식 박스 — 현재값-이전값 / 이전값×100 -->
+  <rect x="396" y="204" width="168" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="396" y="204" width="168" height="72" rx="6" fill="rgba(18,33,39,0.05)" stroke="#3f545c" stroke-width="1"/>
+  <!-- 타입 태그 -->
+  <rect x="404" y="210" width="28" height="12" rx="2" fill="transparent" stroke="rgba(63,84,92,0.40)" stroke-width="0.8"/>
+  <text x="418" y="219" fill="rgba(63,84,92,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">식</text>
+  <!-- 이름 라인1 -->
+  <text x="480" y="244" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">현재값 − 이전값</text>
+  <!-- 이름 라인2 -->
+  <text x="480" y="262" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">÷ 이전값 × 100</text>
+
+  <!-- CHK: 분기 다이아몬드 — focal/accent -->
+  <!-- 다이아몬드: cx=692, cy=156, 반폭=56, 반높=36 -->
+  <polygon points="692,120 748,156 692,192 636,156" fill="#f8fafb"/>
+  <polygon points="692,120 748,156 692,192 636,156" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="692" y="152" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">이전값이</text>
+  <text x="692" y="168" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">NULL인가?</text>
+
+  <!-- DEF: 기본값 반환 또는 NULL -->
+  <rect x="736" y="112" width="152" height="68" rx="6" fill="#f8fafb"/>
+  <rect x="736" y="112" width="152" height="68" rx="6" fill="rgba(18,33,39,0.05)" stroke="#6c8188" stroke-width="1" stroke-dasharray="4,3"/>
+  <!-- 타입 태그 -->
+  <rect x="744" y="118" width="36" height="12" rx="2" fill="transparent" stroke="rgba(108,129,136,0.40)" stroke-width="0.8"/>
+  <text x="762" y="127" fill="rgba(108,129,136,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">예외</text>
+  <!-- 이름 라인1 -->
+  <text x="812" y="152" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">기본값 반환</text>
+  <!-- 이름 라인2 -->
+  <text x="812" y="168" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">또는 NULL</text>
+
+  <!-- RATE: 성장률 계산 -->
+  <rect x="812" y="116" width="120" height="80" rx="6" fill="#f8fafb"/>
+  <rect x="812" y="116" width="120" height="80" rx="6" fill="rgba(18,33,39,0.05)" stroke="#3f545c" stroke-width="1"/>
+  <!-- 타입 태그 -->
+  <rect x="820" y="122" width="28" height="12" rx="2" fill="transparent" stroke="rgba(63,84,92,0.40)" stroke-width="0.8"/>
+  <text x="834" y="131" fill="rgba(63,84,92,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">결과</text>
+  <!-- 이름 -->
+  <text x="872" y="155" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">성장률</text>
+  <text x="872" y="175" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">계산</text>
+
+  <!-- ───────────────────────────────
+       범례 구분선 + 범례
+  ─────────────────────────────────── -->
+  <line x1="32" y1="352" x2="928" y2="352" stroke="rgba(18,33,39,0.10)" stroke-width="0.8"/>
+
+  <!-- 범례 항목들 -->
+  <text x="32" y="370" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.14em">LEGEND</text>
+
+  <!-- 현재 행 (focal) -->
+  <rect x="104" y="360" width="16" height="16" rx="4" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="128" y="372" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500">현재 행 (기준)</text>
+
+  <!-- 흐름 노드 -->
+  <rect x="264" y="360" width="16" height="16" rx="4" fill="rgba(18,33,39,0.05)" stroke="#3f545c" stroke-width="1"/>
+  <text x="288" y="372" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500">처리 단계</text>
+
+  <!-- 선택/예외 -->
+  <rect x="400" y="360" width="16" height="16" rx="4" fill="rgba(18,33,39,0.05)" stroke="#6c8188" stroke-width="1" stroke-dasharray="4,3"/>
+  <text x="424" y="372" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500">예외 / 선택</text>
+
+  <!-- 주변 행 -->
+  <rect x="536" y="360" width="16" height="16" rx="4" fill="rgba(18,33,39,0.03)" stroke="#c3d0d4" stroke-width="1"/>
+  <text x="560" y="372" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500">주변 행</text>
+
+  <!-- NULL 분기 다이아몬드 범례 -->
+  <polygon points="684,368 700,360 716,368 700,376" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="724" y="372" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500">분기 조건</text>
+
+</svg>
+</div>
+</body>
+</html>

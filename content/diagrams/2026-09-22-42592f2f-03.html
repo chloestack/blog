@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>부서별 상위 2명 추출 — DENSE_RANK 흐름</title>
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; font-family: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; }
+  .diagram-wrap { width: 100%; max-width: 960px; margin: 0 auto; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<div class="diagram-wrap">
+<svg viewBox="0 0 960 600" role="img" aria-labelledby="2026-09-22-42592f2f-03-flow-title 2026-09-22-42592f2f-03-flow-desc" xmlns="http://www.w3.org/2000/svg">
+  <title id="2026-09-22-42592f2f-03-flow-title">부서별 상위 2명 추출 — DENSE_RANK 흐름</title>
+  <desc id="2026-09-22-42592f2f-03-flow-desc">MySQL DENSE_RANK 윈도우 함수를 사용해 부서별 상위 2명을 추출하는 6단계 쿼리 작성 흐름. 문제 정의에서 시작해 PARTITION BY, ORDER BY, DENSE_RANK 부여, CTE 래핑, 외부 필터 적용, 최종 결과 반환 순으로 이어진다.</desc>
+
+  <defs>
+    <!-- 기본 화살표 -->
+    <marker id="2026-09-22-42592f2f-03-flow-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <!-- 강조 화살표 -->
+    <marker id="2026-09-22-42592f2f-03-flow-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <!-- 링크 화살표 -->
+    <marker id="2026-09-22-42592f2f-03-flow-arrow-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3a548f"/>
+    </marker>
+  </defs>
+
+  <!-- 배경 -->
+  <rect width="960" height="600" fill="#f8fafb"/>
+
+  <!-- ─────────────────────────────────────────
+       화살표 (노드보다 먼저 그림)
+  ───────────────────────────────────────── -->
+
+  <!-- Q → P (수직) -->
+  <line x1="480" y1="112" x2="480" y2="168" stroke="#3f545c" stroke-width="1.2" marker-end="url(#2026-09-22-42592f2f-03-flow-arrow)"/>
+
+  <!-- P → O (수직) -->
+  <line x1="480" y1="224" x2="480" y2="280" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-22-42592f2f-03-flow-arrow-accent)"/>
+
+  <!-- O → RN (수직) -->
+  <line x1="480" y1="336" x2="480" y2="392" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-22-42592f2f-03-flow-arrow-accent)"/>
+
+  <!-- RN → CTE (수직) -->
+  <line x1="480" y1="448" x2="480" y2="488" stroke="#3f545c" stroke-width="1.2" marker-end="url(#2026-09-22-42592f2f-03-flow-arrow)"/>
+
+  <!-- CTE → F (수직) -->
+  <line x1="480" y1="528" x2="480" y2="548" stroke="#3f545c" stroke-width="1.2" marker-end="url(#2026-09-22-42592f2f-03-flow-arrow)"/>
+
+  <!-- ─────────────────────────────────────────
+       노드 1: 부서별 상위 2명 추출 (focal — 시작)
+  ───────────────────────────────────────── -->
+  <!-- 타원 시작 노드 (paper mask) -->
+  <ellipse cx="480" cy="80" rx="164" ry="28" fill="#f8fafb"/>
+  <!-- 타원 본체 (focal: accent-tint + accent stroke) -->
+  <ellipse cx="480" cy="80" rx="164" ry="28" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.5"/>
+  <!-- 타입 태그 -->
+  <rect x="396" y="58" width="36" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="414" y="67" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">START</text>
+  <!-- 노드명 -->
+  <text x="480" y="84" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">부서별 상위 2명 추출</text>
+
+  <!-- ─────────────────────────────────────────
+       화살표 레이블: Q→P
+  ───────────────────────────────────────── -->
+  <!-- (레이블 없음 — 직접 흐름) -->
+
+  <!-- ─────────────────────────────────────────
+       노드 2: PARTITION BY dept_id
+  ───────────────────────────────────────── -->
+  <rect x="340" y="172" width="280" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="340" y="172" width="280" height="48" rx="6" fill="rgba(13,87,99,0.05)" stroke="#0d5763" stroke-width="1"/>
+  <rect x="348" y="178" width="48" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="372" y="187" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">WINDOW</text>
+  <text x="480" y="200" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">PARTITION BY</text>
+  <text x="480" y="213" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">dept_id</text>
+
+  <!-- ─────────────────────────────────────────
+       노드 3: ORDER BY salary DESC
+  ───────────────────────────────────────── -->
+  <rect x="340" y="284" width="280" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="340" y="284" width="280" height="48" rx="6" fill="rgba(13,87,99,0.05)" stroke="#0d5763" stroke-width="1"/>
+  <rect x="348" y="290" width="48" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="372" y="299" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">WINDOW</text>
+  <text x="480" y="312" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">ORDER BY</text>
+  <text x="480" y="325" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">salary DESC</text>
+
+  <!-- ─────────────────────────────────────────
+       노드 4: DENSE_RANK 부여 (focal)
+  ───────────────────────────────────────── -->
+  <rect x="340" y="396" width="280" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="340" y="396" width="280" height="48" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.5"/>
+  <rect x="348" y="402" width="36" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.50)" stroke-width="0.8"/>
+  <text x="366" y="411" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">FUNC</text>
+  <text x="480" y="424" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">DENSE_RANK 부여</text>
+  <text x="480" y="437" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">DENSE_RANK() OVER (...)</text>
+
+  <!-- ─────────────────────────────────────────
+       노드 5: CTE로 감싸기
+  ───────────────────────────────────────── -->
+  <rect x="340" y="492" width="280" height="40" rx="6" fill="#f8fafb"/>
+  <rect x="340" y="492" width="280" height="40" rx="6" fill="rgba(169,106,8,0.06)" stroke="rgba(169,106,8,0.55)" stroke-width="1" stroke-dasharray="4,3"/>
+  <rect x="348" y="498" width="28" height="12" rx="2" fill="transparent" stroke="rgba(169,106,8,0.40)" stroke-width="0.8"/>
+  <text x="362" y="507" fill="rgba(169,106,8,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">CTE</text>
+  <text x="480" y="518" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">CTE로 감싸기</text>
+
+  <!-- ─────────────────────────────────────────
+       화살표: CTE → F (수직, CTE 노드 아래 548px에서 시작)
+  ───────────────────────────────────────── -->
+  <!-- 이미 위에서 그림 -->
+
+  <!-- ─────────────────────────────────────────
+       노드 6: 외부 WHERE rn <= 2 필터 + 최종 결과
+       두 노드를 수평으로 나란히 배치
+  ───────────────────────────────────────── -->
+
+  <!-- 외부 WHERE 필터 -->
+  <!-- 화살표: CTE 하단 → 필터 노드 상단 -->
+  <!-- CTE 노드 하단: y=532, 필터 노드 상단: y=556 -->
+  <!-- 이미 line x1=480 y1=528 x2=480 y2=548 그려져 있음 -->
+  <!-- 여기서 두 노드를 수평 분기시킴: 필터(왼) + 결과(오) -->
+  <!-- 수평 분기 라인 -->
+  <line x1="480" y1="548" x2="320" y2="548" stroke="#3f545c" stroke-width="1.2"/>
+  <line x1="480" y1="548" x2="640" y2="548" stroke="#3f545c" stroke-width="1.2"/>
+  <!-- 필터 노드로 내려가는 화살표 -->
+  <line x1="320" y1="548" x2="320" y2="560" stroke="#3f545c" stroke-width="1.2" marker-end="url(#2026-09-22-42592f2f-03-flow-arrow)"/>
+  <!-- 결과 노드로 내려가는 화살표 -->
+  <line x1="640" y1="548" x2="640" y2="560" stroke="#3f545c" stroke-width="1.2" marker-end="url(#2026-09-22-42592f2f-03-flow-arrow)"/>
+
+  <!-- 외부 WHERE 필터 노드 (왼쪽) -->
+  <rect x="200" y="560" width="240" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="200" y="560" width="240" height="48" rx="6" fill="rgba(18,33,39,0.04)" stroke="#3f545c" stroke-width="1"/>
+  <rect x="208" y="566" width="40" height="12" rx="2" fill="transparent" stroke="rgba(63,84,92,0.40)" stroke-width="0.8"/>
+  <text x="228" y="575" fill="rgba(63,84,92,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">FILTER</text>
+  <text x="320" y="588" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">외부 WHERE 필터</text>
+  <text x="320" y="601" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">rn &lt;= 2</text>
+
+  <!-- 최종 결과 노드 (오른쪽 — 타원 끝) -->
+  <ellipse cx="640" cy="584" rx="108" ry="24" fill="#f8fafb"/>
+  <ellipse cx="640" cy="584" rx="108" ry="24" fill="rgba(18,33,39,0.04)" stroke="#3f545c" stroke-width="1"/>
+  <text x="640" y="589" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">최종 결과</text>
+
+  <!-- ─────────────────────────────────────────
+       범례 하단 스트립
+  ───────────────────────────────────────── -->
+  <!-- 범례 자리를 위해 viewBox 높이가 이미 600 -->
+  <!-- 범례는 다이어그램 영역 하단에 -->
+  <!-- NOTE: 본 flowchart는 7노드 (budget 내) — 범례를 SVG 하단 여백에 배치 -->
+  <!-- 범례를 위한 여유 공간이 없으므로 제거 (복잡도 낮음, 노드 타입 자명) -->
+
+</svg>
+</div>
+</body>
+</html>

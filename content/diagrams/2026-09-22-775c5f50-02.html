@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<svg viewBox="0 0 960 600" xmlns="http://www.w3.org/2000/svg"
+     role="img" aria-labelledby="2026-09-22-775c5f50-02-litellm-flow-title 2026-09-22-775c5f50-02-litellm-flow-desc">
+  <title id="2026-09-22-775c5f50-02-litellm-flow-title">LiteLLM 요청 처리 흐름</title>
+  <desc id="2026-09-22-775c5f50-02-litellm-flow-desc">LiteLLM 프록시 게이트웨이가 요청을 수신한 뒤 Virtual Key 인증, 예산·레이트 한도 확인, 라우터 선택, 프로바이더 호출, 응답 반환, 비용 기록까지 처리하는 흐름도.</desc>
+
+  <defs>
+    <!-- Arrow markers -->
+    <marker id="2026-09-22-775c5f50-02-lf-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-09-22-775c5f50-02-lf-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <marker id="2026-09-22-775c5f50-02-lf-arrow-stop" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#6c8188"/>
+    </marker>
+  </defs>
+
+  <!-- Page background -->
+  <rect width="960" height="600" fill="#f8fafb"/>
+
+  <!-- ═══════════════════════════════════════════
+       CONNECTORS (drawn before boxes)
+  ══════════════════════════════════════════════ -->
+
+  <!-- 요청 수신 → Virtual Key 유효한가 (straight down) -->
+  <line x1="480" y1="100" x2="480" y2="148" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-22-775c5f50-02-lf-arrow)"/>
+
+  <!-- Virtual Key 유효한가 → 거부·401 (아니오, right) -->
+  <path d="M 572 188 L 672 188" fill="none" stroke="#6c8188" stroke-width="1" marker-end="url(#2026-09-22-775c5f50-02-lf-arrow-stop)"/>
+  <!-- label: 아니오 -->
+  <rect x="598" y="174" width="44" height="14" rx="2" fill="#f8fafb"/>
+  <text x="620" y="184" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">아니오</text>
+
+  <!-- Virtual Key 유효한가 → 예산·레이트 한도 초과인가 (예, down) -->
+  <line x1="480" y1="228" x2="480" y2="276" stroke="#0d5763" stroke-width="1" marker-end="url(#2026-09-22-775c5f50-02-lf-arrow-accent)"/>
+  <!-- label: 예 -->
+  <rect x="464" y="242" width="24" height="14" rx="2" fill="#f8fafb"/>
+  <text x="476" y="252" fill="#0d5763" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">예</text>
+
+  <!-- 예산·레이트 한도 초과인가 → 429 반환 (예, right) -->
+  <path d="M 572 316 L 672 316" fill="none" stroke="#6c8188" stroke-width="1" marker-end="url(#2026-09-22-775c5f50-02-lf-arrow-stop)"/>
+  <!-- label: 예 -->
+  <rect x="596" y="302" width="24" height="14" rx="2" fill="#f8fafb"/>
+  <text x="608" y="312" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">예</text>
+
+  <!-- 예산·레이트 한도 초과인가 → 라우터 선택 (아니오, down) -->
+  <line x1="480" y1="356" x2="480" y2="396" stroke="#0d5763" stroke-width="1" marker-end="url(#2026-09-22-775c5f50-02-lf-arrow-accent)"/>
+  <!-- label: 아니오 -->
+  <rect x="452" y="366" width="52" height="14" rx="2" fill="#f8fafb"/>
+  <text x="478" y="376" fill="#0d5763" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">아니오</text>
+
+  <!-- 라우터 선택 → 프로바이더 호출 (straight down) -->
+  <line x1="480" y1="444" x2="480" y2="468" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-22-775c5f50-02-lf-arrow)"/>
+
+  <!-- 프로바이더 호출 → 응답 반환 (straight down) -->
+  <line x1="480" y1="508" x2="480" y2="532" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-22-775c5f50-02-lf-arrow)"/>
+
+  <!-- 응답 반환 → 비용 기록 (right-angle: right then down) -->
+  <path d="M 564 556 Q 572 556 572 556 L 656 556" fill="none" stroke="#3f545c" stroke-width="1" stroke-dasharray="5,4" marker-end="url(#2026-09-22-775c5f50-02-lf-arrow)"/>
+
+  <!-- ═══════════════════════════════════════════
+       NODES
+  ══════════════════════════════════════════════ -->
+
+  <!-- 요청 수신 (oval / focal) -->
+  <rect x="388" y="52" width="184" height="48" rx="24" fill="#f8fafb"/>
+  <rect x="388" y="52" width="184" height="48" rx="24" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="480" y="72" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">요청 수신</text>
+  <text x="480" y="88" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">HTTP Request</text>
+
+  <!-- Virtual Key 유효한가 (diamond / decision) -->
+  <!-- Diamond centered at 480,188 half-w=92 half-h=40 -->
+  <rect x="388" y="148" width="184" height="80" rx="2" fill="#f8fafb"/>
+  <polygon points="480,148 572,188 480,228 388,188" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="480" y="184" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Virtual Key</text>
+  <text x="480" y="200" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">유효한가</text>
+
+  <!-- 거부·401 (rect / stop) -->
+  <rect x="672" y="164" width="148" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="672" y="164" width="148" height="48" rx="6" fill="rgba(148,56,43,0.08)" stroke="#94382b" stroke-width="1"/>
+  <!-- type tag -->
+  <rect x="680" y="170" width="28" height="12" rx="2" fill="transparent" stroke="rgba(148,56,43,0.40)" stroke-width="0.8"/>
+  <text x="694" y="179" fill="rgba(148,56,43,0.80)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">ERR</text>
+  <text x="746" y="185" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">거부</text>
+  <text x="746" y="201" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">401 Unauthorized</text>
+
+  <!-- 예산·레이트 한도 초과인가 (diamond / decision) -->
+  <rect x="388" y="276" width="184" height="80" rx="2" fill="#f8fafb"/>
+  <polygon points="480,276 572,316 480,356 388,316" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="480" y="308" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">예산·레이트</text>
+  <text x="480" y="324" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">한도 초과인가</text>
+
+  <!-- 429 반환 (rect / stop) -->
+  <rect x="672" y="292" width="148" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="672" y="292" width="148" height="48" rx="6" fill="rgba(148,56,43,0.08)" stroke="#94382b" stroke-width="1"/>
+  <!-- type tag -->
+  <rect x="680" y="298" width="28" height="12" rx="2" fill="transparent" stroke="rgba(148,56,43,0.40)" stroke-width="0.8"/>
+  <text x="694" y="307" fill="rgba(148,56,43,0.80)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">ERR</text>
+  <text x="746" y="313" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">한도 초과</text>
+  <text x="746" y="329" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">429 Too Many Requests</text>
+
+  <!-- 라우터 선택 (rect / backend) -->
+  <rect x="388" y="396" width="184" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="388" y="396" width="184" height="48" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <!-- type tag -->
+  <rect x="396" y="402" width="40" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="416" y="411" fill="rgba(18,33,39,0.80)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">ROUTER</text>
+  <text x="480" y="425" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">라우터 선택</text>
+
+  <!-- 프로바이더 호출 (rect / backend) -->
+  <rect x="388" y="468" width="184" height="40" rx="6" fill="#f8fafb"/>
+  <rect x="388" y="468" width="184" height="40" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <!-- type tag -->
+  <rect x="396" y="474" width="36" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="414" y="483" fill="rgba(18,33,39,0.80)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">CALL</text>
+  <text x="480" y="493" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">프로바이더 호출</text>
+
+  <!-- 응답 반환 (rect / backend) -->
+  <rect x="388" y="532" width="176" height="40" rx="6" fill="#f8fafb"/>
+  <rect x="388" y="532" width="176" height="40" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <!-- type tag -->
+  <rect x="396" y="538" width="32" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="412" y="547" fill="rgba(18,33,39,0.80)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">RES</text>
+  <text x="476" y="557" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">응답 반환</text>
+
+  <!-- 비용 기록 (rect / store/muted) -->
+  <rect x="656" y="532" width="184" height="40" rx="6" fill="#f8fafb"/>
+  <rect x="656" y="532" width="184" height="40" rx="6" fill="rgba(18,33,39,0.05)" stroke="#c3d0d4" stroke-width="1"/>
+  <!-- type tag -->
+  <rect x="664" y="538" width="28" height="12" rx="2" fill="transparent" stroke="rgba(195,208,212,0.80)" stroke-width="0.8"/>
+  <text x="678" y="547" fill="#6c8188" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">LOG</text>
+  <text x="748" y="553" fill="#3f545c" font-size="12" font-weight="500" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">비용 기록 · 콜백 전송</text>
+
+  <!-- ═══════════════════════════════════════════
+       LEGEND STRIP
+  ══════════════════════════════════════════════ -->
+  <!-- legend separator now at bottom — viewBox height 600, legend at ~570 -->
+  <!-- We'll put it in the existing space just below nodes -->
+
+  <!-- separator hairline -->
+  <line x1="32" y1="582" x2="928" y2="582" stroke="rgba(18,33,39,0.10)" stroke-width="0.8"/>
+  <!-- LEGEND label -->
+  <text x="32" y="595" fill="#6c8188" font-size="8" font-family="'IBM Plex Mono', monospace" letter-spacing="0.14em">LEGEND</text>
+
+  <!-- item: 진입 / 정상 경로 -->
+  <rect x="96" y="586" width="10" height="10" rx="2" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="110" y="595" fill="#6c8188" font-size="8" font-family="'IBM Plex Sans KR', sans-serif">진입 / 정상 경로</text>
+
+  <!-- item: 처리 단계 -->
+  <rect x="248" y="586" width="10" height="10" rx="2" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <text x="262" y="595" fill="#6c8188" font-size="8" font-family="'IBM Plex Sans KR', sans-serif">처리 단계</text>
+
+  <!-- item: 오류 반환 -->
+  <rect x="364" y="586" width="10" height="10" rx="2" fill="rgba(148,56,43,0.08)" stroke="#94382b" stroke-width="1"/>
+  <text x="378" y="595" fill="#6c8188" font-size="8" font-family="'IBM Plex Sans KR', sans-serif">오류 반환</text>
+
+  <!-- item: 비동기 기록 -->
+  <line x1="468" y1="591" x2="486" y2="591" stroke="#3f545c" stroke-width="1" stroke-dasharray="5,4"/>
+  <text x="490" y="595" fill="#6c8188" font-size="8" font-family="'IBM Plex Sans KR', sans-serif">비동기 기록</text>
+
+</svg>
+</body>
+</html>

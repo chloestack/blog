@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 24px; }
+  .diagram-wrap { width: 100%; max-width: 960px; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<div class="diagram-wrap">
+<svg viewBox="0 0 960 400" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="2026-09-22-42592f2f-08-wf-title 2026-09-22-42592f2f-08-wf-desc">
+  <title id="2026-09-22-42592f2f-08-wf-title">WINDOW 절 최적화 판단 흐름</title>
+  <desc id="2026-09-22-42592f2f-08-wf-desc">여러 OVER 절이 동일한 PARTITION BY·ORDER BY를 공유하는지 판단해 WINDOW 절 추출 여부를 결정하는 플로차트. 공유 시 정렬 패스 1회로 줄어들고, 다를 경우 OVER 수만큼 정렬 패스가 발생한다.</desc>
+
+  <defs>
+    <!-- Arrow markers -->
+    <marker id="2026-09-22-42592f2f-08-wf-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-09-22-42592f2f-08-wf-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <marker id="2026-09-22-42592f2f-08-wf-arrow-warn" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="960" height="400" fill="#f8fafb"/>
+
+  <!-- ═══════════════════════════════════════════
+       ARROWS (drawn before boxes for z-order)
+  ═══════════════════════════════════════════ -->
+
+  <!-- A → Q: horizontal line -->
+  <path d="M 248,164 L 332,164" stroke="#3f545c" stroke-width="1" fill="none" marker-end="url(#2026-09-22-42592f2f-08-wf-arrow)"/>
+
+  <!-- Q → B: exit right-top — orthogonal elbow going right then up into B -->
+  <!-- Q right edge at 488,164; B center at 596,100; B left edge at 516,100 -->
+  <path d="M 488,148 L 516,148 L 516,112" stroke="#0d5763" stroke-width="1.2" fill="none" marker-end="url(#2026-09-22-42592f2f-08-wf-arrow-accent)" stroke-dasharray="none"/>
+  <!-- 예 label -->
+  <rect x="490" y="126" width="20" height="12" rx="2" fill="#f8fafb"/>
+  <text x="500" y="135" fill="#0d5763" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">예</text>
+
+  <!-- Q → C: exit right-bottom — orthogonal elbow going right then down into C -->
+  <!-- Q right edge at 488,180; C left edge at 516,228 -->
+  <path d="M 488,180 L 516,180 L 516,216" stroke="#3f545c" stroke-width="1" fill="none" marker-end="url(#2026-09-22-42592f2f-08-wf-arrow)"/>
+  <!-- 아니오 label -->
+  <rect x="487" y="188" width="38" height="12" rx="2" fill="#f8fafb"/>
+  <text x="506" y="197" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500" text-anchor="middle">아니오</text>
+
+  <!-- B → OK: horizontal -->
+  <!-- B right edge at 676,100; OK left edge at 720,100 -->
+  <path d="M 676,100 L 720,100" stroke="#0d5763" stroke-width="1.2" fill="none" marker-end="url(#2026-09-22-42592f2f-08-wf-arrow-accent)"/>
+
+  <!-- C → BAD: horizontal -->
+  <!-- C right edge at 676,244; BAD left edge at 720,244 -->
+  <path d="M 676,244 L 720,244" stroke="#3f545c" stroke-width="1" fill="none" marker-end="url(#2026-09-22-42592f2f-08-wf-arrow)"/>
+
+
+  <!-- ═══════════════════════════════════════════
+       NODE: A — 시작 (input)
+       x=60, y=136, w=188, h=56, cx=154, cy=164
+  ═══════════════════════════════════════════ -->
+  <rect x="60" y="136" width="188" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="60" y="136" width="188" height="56" rx="6" fill="rgba(58,84,143,0.07)" stroke="#3a548f" stroke-width="1"/>
+  <!-- tag -->
+  <rect x="68" y="143" width="28" height="12" rx="2" fill="transparent" stroke="rgba(58,84,143,0.5)" stroke-width="0.8"/>
+  <text x="82" y="152" fill="rgba(58,84,143,0.85)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">INPUT</text>
+  <!-- label -->
+  <text x="154" y="169" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">OVER 절 다수 작성</text>
+
+  <!-- ═══════════════════════════════════════════
+       NODE: Q — 결정 다이아몬드
+       center: 410,164  half-w=78  half-h=36
+  ═══════════════════════════════════════════ -->
+  <!-- opaque mask -->
+  <polygon points="410,128 488,164 410,200 332,164" fill="#f8fafb"/>
+  <!-- styled diamond -->
+  <polygon points="410,128 488,164 410,200 332,164" fill="rgba(13,87,99,0.07)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="410" y="158" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">동일한 PARTITION BY</text>
+  <text x="410" y="173" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">ORDER BY인가?</text>
+
+  <!-- ═══════════════════════════════════════════
+       NODE: B — WINDOW 절 추출 (focal)
+       x=516, y=72, w=160, h=56, cx=596, cy=100
+  ═══════════════════════════════════════════ -->
+  <rect x="516" y="72" width="160" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="516" y="72" width="160" height="56" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.5"/>
+  <!-- tag -->
+  <rect x="524" y="79" width="44" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.45)" stroke-width="0.8"/>
+  <text x="546" y="88" fill="rgba(13,87,99,0.85)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">WINDOW</text>
+  <!-- label line 1 -->
+  <text x="596" y="102" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">WINDOW 절로</text>
+  <text x="596" y="118" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">공통 정의 추출</text>
+
+  <!-- ═══════════════════════════════════════════
+       NODE: C — 각자 OVER 절 유지 (backend)
+       x=516, y=216, w=160, h=56, cx=596, cy=244
+  ═══════════════════════════════════════════ -->
+  <rect x="516" y="216" width="160" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="516" y="216" width="160" height="56" rx="6" fill="rgba(169,106,8,0.06)" stroke="rgba(169,106,8,0.6)" stroke-width="1"/>
+  <!-- tag -->
+  <rect x="524" y="223" width="24" height="12" rx="2" fill="transparent" stroke="rgba(169,106,8,0.4)" stroke-width="0.8"/>
+  <text x="536" y="232" fill="rgba(169,106,8,0.85)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">OVER</text>
+  <!-- label -->
+  <text x="596" y="246" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">각자 다른</text>
+  <text x="596" y="262" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">OVER 절 유지</text>
+
+  <!-- ═══════════════════════════════════════════
+       NODE: OK — 결과 (good)
+       x=720, y=72, w=176, h=56, cx=808, cy=100
+  ═══════════════════════════════════════════ -->
+  <rect x="720" y="72" width="176" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="720" y="72" width="176" height="56" rx="6" fill="rgba(40,109,80,0.08)" stroke="rgba(40,109,80,0.7)" stroke-width="1"/>
+  <!-- tag -->
+  <rect x="728" y="79" width="28" height="12" rx="2" fill="transparent" stroke="rgba(40,109,80,0.45)" stroke-width="0.8"/>
+  <text x="742" y="88" fill="rgba(40,109,80,0.85)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">GOOD</text>
+  <!-- label -->
+  <text x="808" y="102" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">정렬 패스 1회</text>
+  <text x="808" y="118" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">공유</text>
+
+  <!-- ═══════════════════════════════════════════
+       NODE: BAD — 결과 (warn)
+       x=720, y=216, w=176, h=56, cx=808, cy=244
+  ═══════════════════════════════════════════ -->
+  <rect x="720" y="216" width="176" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="720" y="216" width="176" height="56" rx="6" fill="rgba(148,56,43,0.07)" stroke="rgba(148,56,43,0.6)" stroke-width="1"/>
+  <!-- tag -->
+  <rect x="728" y="223" width="28" height="12" rx="2" fill="transparent" stroke="rgba(148,56,43,0.4)" stroke-width="0.8"/>
+  <text x="742" y="232" fill="rgba(148,56,43,0.85)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">COST</text>
+  <!-- label -->
+  <text x="808" y="246" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">OVER 수만큼</text>
+  <text x="808" y="262" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">정렬 패스 발생</text>
+
+  <!-- ═══════════════════════════════════════════
+       LEGEND STRIP
+  ═══════════════════════════════════════════ -->
+  <line x1="40" y1="332" x2="920" y2="332" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+  <text x="40" y="348" fill="#6c8188" font-size="8" font-family="'IBM Plex Mono', monospace" letter-spacing="0.14em">LEGEND</text>
+
+  <!-- 최적 경로 -->
+  <rect x="120" y="337" width="10" height="10" rx="2" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.5"/>
+  <text x="136" y="347" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">최적 경로 (WINDOW 절)</text>
+
+  <!-- 비용 증가 -->
+  <rect x="320" y="337" width="10" height="10" rx="2" fill="rgba(148,56,43,0.07)" stroke="rgba(148,56,43,0.6)" stroke-width="1"/>
+  <text x="336" y="347" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">비용 증가 (다중 정렬)</text>
+
+  <!-- 주의 -->
+  <rect x="520" y="337" width="10" height="10" rx="2" fill="rgba(169,106,8,0.06)" stroke="rgba(169,106,8,0.6)" stroke-width="1"/>
+  <text x="536" y="347" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">개별 OVER 절 유지</text>
+
+  <!-- 결정 -->
+  <polygon points="726,342 732,337 738,342 732,347" fill="rgba(13,87,99,0.07)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="745" y="347" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">분기 결정</text>
+
+</svg>
+</div>
+</body>
+</html>

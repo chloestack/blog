@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 340" role="img" aria-labelledby="2026-09-22-98ddabe9-06-trivy-flow-title 2026-09-22-98ddabe9-06-trivy-flow-desc">
+  <title id="2026-09-22-98ddabe9-06-trivy-flow-title">Trivy 취약점 스캔 파이프라인 흐름</title>
+  <desc id="2026-09-22-98ddabe9-06-trivy-flow-desc">PR 빌드 트리거에서 시작해 캐시 유효 여부를 판단하고, 유효하면 즉시 스캔하고 그렇지 않으면 trivy-db를 다운로드해 캐시 저장 후 스캔하여 SARIF 결과를 업로드하는 CI 파이프라인.</desc>
+
+  <defs>
+    <!-- Arrow markers -->
+    <marker id="2026-09-22-98ddabe9-06-arr" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-09-22-98ddabe9-06-arr-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <marker id="2026-09-22-98ddabe9-06-arr-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3a548f"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="960" height="340" fill="#f8fafb"/>
+
+  <!-- ─────────────────────────────────────────────
+       ARROWS (drawn before boxes, z-order)
+  ───────────────────────────────────────────── -->
+
+  <!-- PR → CK (horizontal) -->
+  <line x1="196" y1="152" x2="272" y2="152" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-22-98ddabe9-06-arr)"/>
+
+  <!-- CK → SC (예: right exit → SC) via elbow -->
+  <!-- CK right edge x=352, SC left edge x=468; both at y=152 → straight -->
+  <line x1="352" y1="152" x2="428" y2="152" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-22-98ddabe9-06-arr-accent)"/>
+  <!-- label: 예 -->
+  <rect x="374" y="132" width="24" height="12" rx="2" fill="#f8fafb"/>
+  <text x="386" y="141" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">예</text>
+
+  <!-- CK → DL (아니오: bottom exit of diamond → DL below) -->
+  <!-- CK center x=312, y=152; bottom of diamond at y=196 -->
+  <!-- DL center x=312+0=312... actually let's place DL at x=272, y=256 to go below -->
+  <!-- CK bottom (312,196) → DL top (312,228) elbow to (272,228) is overkill; straight down then right -->
+  <!-- DL is at x=228, y=228 center → top at y=204 -->
+  <path d="M312,196 L312,216 Q312,220 308,220 L272,220 Q268,220 268,224 L268,204" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-22-98ddabe9-06-arr)"/>
+  <!-- label: 아니오 -->
+  <rect x="280" y="200" width="44" height="12" rx="2" fill="#f8fafb"/>
+  <text x="302" y="209" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">아니오</text>
+
+  <!-- DL → CA (horizontal right) -->
+  <line x1="328" y1="256" x2="428" y2="256" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-22-98ddabe9-06-arr)"/>
+
+  <!-- CA → SC (right of CA → bottom of SC via elbow) -->
+  <!-- CA right x=528, y=256; SC bottom x=488+60=548 center x=508, bottom y=180 -->
+  <!-- elbow: from (528,256) go right to x=564, go up to y=152 = SC right y, then left to SC right (568,152) -->
+  <!-- SC right edge: x=568 -->
+  <path d="M528,256 L560,256 Q564,256 564,252 L564,156 Q564,152 560,152 L568,152" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-22-98ddabe9-06-arr)"/>
+
+  <!-- SC → R (horizontal) -->
+  <line x1="568" y1="152" x2="708" y2="152" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-22-98ddabe9-06-arr)"/>
+
+  <!-- ─────────────────────────────────────────────
+       NODES (drawn after arrows)
+  ───────────────────────────────────────────── -->
+
+  <!-- PR 빌드 트리거 (input node: muted@0.10 fill, soft stroke) -->
+  <!-- x=60, y=120, w=136, h=64 -->
+  <rect x="60" y="120" width="136" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="60" y="120" width="136" height="64" rx="6" fill="rgba(63,84,92,0.10)" stroke="#6c8188" stroke-width="1"/>
+  <rect x="68" y="126" width="28" height="12" rx="2" fill="transparent" stroke="rgba(108,129,136,0.40)" stroke-width="0.8"/>
+  <text x="82" y="135" fill="rgba(108,129,136,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">CI</text>
+  <text x="128" y="156" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">PR 빌드</text>
+  <text x="128" y="172" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">트리거</text>
+
+  <!-- CK 캐시 유효한가 (diamond decision, focal: accent-tint / accent) -->
+  <!-- center 312,152 — diamond half-width=40, half-height=44 -->
+  <polygon points="312,108 352,152 312,196 272,152" fill="#f8fafb"/>
+  <polygon points="312,108 352,152 312,196 272,152" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="312" y="148" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">캐시</text>
+  <text x="312" y="163" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">유효한가?</text>
+
+  <!-- DL trivy-db 다운로드 (backend: white / ink) -->
+  <!-- x=228, y=228, w=144, h=56 -->
+  <rect x="228" y="228" width="144" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="228" y="228" width="144" height="56" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="236" y="234" width="48" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="260" y="243" fill="rgba(18,33,39,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">DOWNLOAD</text>
+  <text x="300" y="262" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">trivy-db</text>
+  <text x="300" y="276" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">다운로드</text>
+
+  <!-- CA 캐시 저장 (store: ink@0.05 / muted) -->
+  <!-- x=428, y=228, w=144, h=56 -->
+  <rect x="428" y="228" width="144" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="428" y="228" width="144" height="56" rx="6" fill="rgba(18,33,39,0.05)" stroke="#3f545c" stroke-width="1"/>
+  <rect x="436" y="234" width="36" height="12" rx="2" fill="transparent" stroke="rgba(63,84,92,0.40)" stroke-width="0.8"/>
+  <text x="454" y="243" fill="rgba(63,84,92,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">CACHE</text>
+  <text x="500" y="260" fill="#3f545c" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">캐시 저장</text>
+  <text x="500" y="275" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">Actions Cache</text>
+
+  <!-- SC 스캔 즉시 실행 (backend: white / ink) -->
+  <!-- x=428, y=120, w=140, h=64 -->
+  <rect x="428" y="120" width="140" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="428" y="120" width="140" height="64" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="436" y="126" width="40" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="456" y="135" fill="rgba(18,33,39,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">SCAN</text>
+  <text x="498" y="156" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">스캔 즉시</text>
+  <text x="498" y="172" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">실행</text>
+
+  <!-- R SARIF 결과 업로드 (backend: white / ink) -->
+  <!-- x=708, y=120, w=160, h=64 -->
+  <rect x="708" y="120" width="160" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="708" y="120" width="160" height="64" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="716" y="126" width="44" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="738" y="135" fill="rgba(18,33,39,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">OUTPUT</text>
+  <text x="788" y="156" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">SARIF 결과</text>
+  <text x="788" y="172" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">업로드</text>
+
+  <!-- ─────────────────────────────────────────────
+       LEGEND
+  ───────────────────────────────────────────── -->
+  <line x1="40" y1="308" x2="920" y2="308" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+  <text x="40" y="322" fill="#3f545c" font-size="8" font-family="'IBM Plex Mono', monospace" letter-spacing="0.14em">LEGEND</text>
+
+  <!-- focal: 캐시 판단 -->
+  <polygon points="88,316 96,322 88,328 80,322" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="100" y="325" fill="#3f545c" font-size="8" font-family="'IBM Plex Sans KR', sans-serif">캐시 판단 (분기)</text>
+
+  <!-- step -->
+  <rect x="248" y="316" width="16" height="12" rx="3" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <text x="268" y="325" fill="#3f545c" font-size="8" font-family="'IBM Plex Sans KR', sans-serif">실행 단계</text>
+
+  <!-- store -->
+  <rect x="380" y="316" width="16" height="12" rx="3" fill="rgba(18,33,39,0.05)" stroke="#3f545c" stroke-width="1"/>
+  <text x="400" y="325" fill="#3f545c" font-size="8" font-family="'IBM Plex Sans KR', sans-serif">저장소 / 캐시</text>
+
+  <!-- input -->
+  <rect x="508" y="316" width="16" height="12" rx="3" fill="rgba(63,84,92,0.10)" stroke="#6c8188" stroke-width="1"/>
+  <text x="528" y="325" fill="#3f545c" font-size="8" font-family="'IBM Plex Sans KR', sans-serif">트리거 / 입력</text>
+
+</svg>
+</body>
+</html>

@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; font-family: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 360"
+     role="img" aria-labelledby="2026-09-22-98ddabe9-08-trivy-pipeline-title 2026-09-22-98ddabe9-08-trivy-pipeline-desc">
+  <title id="2026-09-22-98ddabe9-08-trivy-pipeline-title">Trivy 컨테이너 취약점 스캔 파이프라인</title>
+  <desc id="2026-09-22-98ddabe9-08-trivy-pipeline-desc">코드 커밋부터 이미지 빌드, 병렬 이미지 스캔과 SBOM 생성, 취약점 통과 여부 판정, 레지스트리 푸시 및 클러스터 재스캔까지의 CI/CD 파이프라인 흐름을 보여주는 플로차트.</desc>
+
+  <defs>
+    <!-- Arrow markers -->
+    <marker id="2026-09-22-98ddabe9-08-tp-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-09-22-98ddabe9-08-tp-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <marker id="2026-09-22-98ddabe9-08-tp-arrow-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3a548f"/>
+    </marker>
+    <marker id="2026-09-22-98ddabe9-08-tp-arrow-stop" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#94382b"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="960" height="360" fill="#f8fafb"/>
+
+  <!--
+    Layout (LR flow, top-down for parallel branches):
+    C(60,160)  B(200,160)  SI(340,100)  G(500,160)  P(640,160)  OP(800,160)
+                           SB(340,220)
+    F(640,260)
+    All boxes 112×48, diamond G is 52×52
+  -->
+
+  <!-- ═══ ARROWS (drawn before boxes) ═══ -->
+
+  <!-- C → B -->
+  <line x1="172" y1="184" x2="196" y2="184"
+        stroke="#3a548f" stroke-width="1.2" marker-end="url(#2026-09-22-98ddabe9-08-tp-arrow-link)"/>
+
+  <!-- B → SI (up-right elbow) -->
+  <path d="M 256,184 L 268,184 Q 276,184 276,176 L 276,132 Q 276,124 284,124 L 336,124"
+        fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-22-98ddabe9-08-tp-arrow)"/>
+
+  <!-- B → SB (down-right elbow) -->
+  <path d="M 256,184 L 268,184 Q 276,184 276,192 L 276,244 Q 276,252 284,252 L 336,252"
+        fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-22-98ddabe9-08-tp-arrow)"/>
+
+  <!-- SI → G (down-right elbow to diamond) -->
+  <path d="M 452,124 L 472,124 Q 480,124 480,132 L 480,156"
+        fill="none" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-22-98ddabe9-08-tp-arrow-accent)"/>
+
+  <!-- SB → G (up-right elbow to diamond) -->
+  <path d="M 452,252 L 472,252 Q 480,252 480,244 L 480,216"
+        fill="none" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-22-98ddabe9-08-tp-arrow-accent)"/>
+
+  <!-- G → P (yes, right) -->
+  <line x1="532" y1="184" x2="636" y2="184"
+        stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-22-98ddabe9-08-tp-arrow-accent)"/>
+
+  <!-- G → F (no, down then right elbow) -->
+  <path d="M 480,216 L 480,260 Q 480,268 488,268 L 636,268"
+        fill="none" stroke="#94382b" stroke-width="1" stroke-dasharray="5,3" marker-end="url(#2026-09-22-98ddabe9-08-tp-arrow-stop)"/>
+
+  <!-- P → OP -->
+  <line x1="752" y1="184" x2="796" y2="184"
+        stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-22-98ddabe9-08-tp-arrow)"/>
+
+  <!-- ═══ ARROW LABELS ═══ -->
+
+  <!-- "예" label on G→P -->
+  <rect x="564" y="172" width="20" height="14" rx="2" fill="#f8fafb"/>
+  <text x="574" y="182" fill="#0d5763" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500" text-anchor="middle">예</text>
+
+  <!-- "아니오" label on G→F -->
+  <rect x="490" y="246" width="40" height="14" rx="2" fill="#f8fafb"/>
+  <text x="510" y="256" fill="#94382b" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500" text-anchor="middle">아니오</text>
+
+  <!-- ═══ NODE BOXES ═══ -->
+
+  <!-- C: 코드 커밋 (input/new — link blue) -->
+  <rect x="60" y="160" width="112" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="60" y="160" width="112" height="48" rx="6" fill="rgba(58,84,143,0.08)" stroke="#3a548f" stroke-width="1"/>
+  <rect x="68" y="167" width="28" height="12" rx="2" fill="transparent" stroke="rgba(58,84,143,0.40)" stroke-width="0.8"/>
+  <text x="82" y="176" fill="rgba(58,84,143,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">GIT</text>
+  <text x="116" y="189" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">코드 커밋</text>
+
+  <!-- B: 이미지 빌드 (backend — ink) -->
+  <rect x="200" y="160" width="112" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="200" y="160" width="112" height="48" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="208" y="167" width="36" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="226" y="176" fill="rgba(18,33,39,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">BUILD</text>
+  <text x="256" y="189" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">이미지 빌드</text>
+
+  <!-- SI: 이미지 스캔 (focal — accent teal) -->
+  <rect x="336" y="100" width="116" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="336" y="100" width="116" height="48" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <rect x="344" y="107" width="36" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="362" y="116" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">SCAN</text>
+  <text x="394" y="129" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">이미지 스캔</text>
+  <text x="394" y="143" fill="#3f545c" font-size="9" font-family="'IBM Plex Mono', monospace" text-anchor="middle">trivy image</text>
+
+  <!-- SB: SBOM 생성 (focal — accent teal) -->
+  <rect x="336" y="228" width="116" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="336" y="228" width="116" height="48" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <rect x="344" y="235" width="36" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="362" y="244" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">SBOM</text>
+  <text x="394" y="257" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">SBOM 생성</text>
+  <text x="394" y="271" fill="#3f545c" font-size="9" font-family="'IBM Plex Mono', monospace" text-anchor="middle">trivy sbom</text>
+
+  <!-- G: 통과 (decision diamond) -->
+  <!-- Diamond centered at (480, 184), half-size 36 -->
+  <rect x="444" y="148" width="72" height="72" rx="4" fill="#f8fafb" transform="rotate(45 480 184)"/>
+  <rect x="444" y="148" width="72" height="72" rx="0" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2" transform="rotate(45 480 184)"/>
+  <text x="480" y="188" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">통과?</text>
+
+  <!-- P: 레지스트리 푸시 (backend — ink) -->
+  <rect x="636" y="160" width="116" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="636" y="160" width="116" height="48" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="644" y="167" width="44" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="666" y="176" fill="rgba(18,33,39,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">REGISTRY</text>
+  <text x="694" y="189" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">레지스트리 푸시</text>
+
+  <!-- F: 파이프라인 중단 (stop — red dashed) -->
+  <rect x="636" y="244" width="116" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="636" y="244" width="116" height="48" rx="6" fill="rgba(148,56,43,0.06)" stroke="#94382b" stroke-width="1" stroke-dasharray="4,3"/>
+  <rect x="644" y="251" width="36" height="12" rx="2" fill="transparent" stroke="rgba(148,56,43,0.40)" stroke-width="0.8"/>
+  <text x="662" y="260" fill="rgba(148,56,43,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">FAIL</text>
+  <text x="694" y="273" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">파이프라인 중단</text>
+
+  <!-- OP: Trivy Operator 클러스터 재스캔 (muted/external) -->
+  <rect x="796" y="152" width="136" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="796" y="152" width="136" height="64" rx="6" fill="rgba(18,33,39,0.03)" stroke="rgba(18,33,39,0.30)" stroke-width="1"/>
+  <rect x="804" y="159" width="52" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.25)" stroke-width="0.8"/>
+  <text x="830" y="168" fill="rgba(18,33,39,0.6)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">OPERATOR</text>
+  <text x="864" y="185" fill="#3f545c" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Trivy Operator</text>
+  <text x="864" y="201" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">클러스터 재스캔</text>
+
+  <!-- ═══ LEGEND ═══ -->
+  <line x1="32" y1="324" x2="928" y2="324" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+  <text x="32" y="340" fill="#6c8188" font-size="8" font-family="'IBM Plex Mono', monospace" letter-spacing="0.14em">LEGEND</text>
+
+  <!-- Focal (스캔 단계) -->
+  <rect x="100" y="330" width="10" height="10" rx="2" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="115" y="339" fill="#3f545c" font-size="9" font-family="'IBM Plex Sans KR', sans-serif">스캔 단계</text>
+
+  <!-- Step (단계) -->
+  <rect x="200" y="330" width="10" height="10" rx="2" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <text x="215" y="339" fill="#3f545c" font-size="9" font-family="'IBM Plex Sans KR', sans-serif">빌드·배포 단계</text>
+
+  <!-- Input -->
+  <rect x="332" y="330" width="10" height="10" rx="2" fill="rgba(58,84,143,0.08)" stroke="#3a548f" stroke-width="1"/>
+  <text x="347" y="339" fill="#3f545c" font-size="9" font-family="'IBM Plex Sans KR', sans-serif">트리거</text>
+
+  <!-- Stop -->
+  <rect x="420" y="330" width="10" height="10" rx="2" fill="rgba(148,56,43,0.06)" stroke="#94382b" stroke-width="1" stroke-dasharray="4,3"/>
+  <text x="435" y="339" fill="#3f545c" font-size="9" font-family="'IBM Plex Sans KR', sans-serif">실패 종료</text>
+
+  <!-- External -->
+  <rect x="508" y="330" width="10" height="10" rx="2" fill="rgba(18,33,39,0.03)" stroke="rgba(18,33,39,0.30)" stroke-width="1"/>
+  <text x="523" y="339" fill="#3f545c" font-size="9" font-family="'IBM Plex Sans KR', sans-serif">클러스터 운영</text>
+
+</svg>
+</body>
+</html>

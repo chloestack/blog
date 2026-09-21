@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LiteLLM 예산 제어 흐름</title>
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; }
+  .diagram-wrap { width: 100%; max-width: 960px; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<div class="diagram-wrap">
+<svg viewBox="0 0 960 660" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="2026-09-22-775c5f50-07-budget-flow-title 2026-09-22-775c5f50-07-budget-flow-desc">
+  <title id="2026-09-22-775c5f50-07-budget-flow-title">LiteLLM 예산 제어 흐름</title>
+  <desc id="2026-09-22-775c5f50-07-budget-flow-desc">API 요청이 들어오면 누적 비용 한도를 확인해 초과 시 429를 반환하고, 통과 시 비용을 누적한 뒤 80% 임박 여부를 판단해 Slack 알럿을 전송하거나 완료 처리하는 흐름.</desc>
+
+  <defs>
+    <!-- 기본 화살표 -->
+    <marker id="2026-09-22-775c5f50-07-arr" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <!-- accent 화살표 -->
+    <marker id="2026-09-22-775c5f50-07-arr-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <!-- 경고(block) 화살표 -->
+    <marker id="2026-09-22-775c5f50-07-arr-stop" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#94382b"/>
+    </marker>
+  </defs>
+
+  <!-- 배경 -->
+  <rect width="960" height="660" fill="#f8fafb"/>
+
+  <!-- ===== 커넥터 (노드보다 먼저) ===== -->
+
+  <!-- REQ → BC (수직, 아래) -->
+  <line x1="480" y1="96" x2="480" y2="152" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-22-775c5f50-07-arr)"/>
+
+  <!-- BC → PROCEED (아니오, 오른쪽) -->
+  <path d="M 532 192 L 620 192" fill="none" stroke="#0d5763" stroke-width="1" marker-end="url(#2026-09-22-775c5f50-07-arr-accent)"/>
+  <!-- 라벨: 아니오 -->
+  <rect x="548" y="180" width="40" height="14" rx="2" fill="#f8fafb"/>
+  <text x="568" y="191" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="500">아니오</text>
+
+  <!-- BC → BLOCK (예, 왼쪽) -->
+  <path d="M 428 192 L 320 192" fill="none" stroke="#94382b" stroke-width="1" marker-end="url(#2026-09-22-775c5f50-07-arr-stop)"/>
+  <!-- 라벨: 예 -->
+  <rect x="354" y="180" width="28" height="14" rx="2" fill="#f8fafb"/>
+  <text x="368" y="191" fill="#94382b" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="500">예</text>
+
+  <!-- PROCEED → COST (수직) -->
+  <line x1="700" y1="228" x2="700" y2="284" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-22-775c5f50-07-arr)"/>
+
+  <!-- COST → ALERT (수직) -->
+  <line x1="700" y1="332" x2="700" y2="388" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-22-775c5f50-07-arr)"/>
+
+  <!-- ALERT → NOTIFY (예, 왼쪽) -->
+  <path d="M 648 428 L 560 428" fill="none" stroke="#0d5763" stroke-width="1" marker-end="url(#2026-09-22-775c5f50-07-arr-accent)"/>
+  <!-- 라벨: 예 -->
+  <rect x="580" y="416" width="28" height="14" rx="2" fill="#f8fafb"/>
+  <text x="594" y="427" fill="#0d5763" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="500">예</text>
+
+  <!-- ALERT → DONE (아니오, 오른쪽) -->
+  <path d="M 752 428 L 820 428" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-22-775c5f50-07-arr)"/>
+  <!-- 라벨: 아니오 -->
+  <rect x="756" y="416" width="40" height="14" rx="2" fill="#f8fafb"/>
+  <text x="776" y="427" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="500">아니오</text>
+
+  <!-- ===== 노드 ===== -->
+
+  <!-- REQ: 시작 타원 (input 처리) — cx=480, cy=72, rx=88, ry=24 -->
+  <rect x="392" y="60" width="176" height="36" fill="#f8fafb"/>
+  <ellipse cx="480" cy="78" rx="88" ry="18" fill="rgba(58,84,143,0.08)" stroke="#3a548f" stroke-width="1"/>
+  <text x="480" y="82" fill="#122127" font-size="12" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">API 요청</text>
+
+  <!-- BC: 결정 다이아몬드 — 중심 cx=480, cy=192, 가로60, 세로40 -->
+  <!-- mask -->
+  <rect x="420" y="152" width="120" height="80" fill="#f8fafb"/>
+  <!-- diamond (accent) -->
+  <polygon points="480,152 540,192 480,232 420,192" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="480" y="188" fill="#122127" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">누적 비용</text>
+  <text x="480" y="202" fill="#122127" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">한도 초과?</text>
+
+  <!-- BLOCK: 정지 박스 — x=220, y=168, w=160, h=48 -->
+  <rect x="220" y="168" width="160" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="220" y="168" width="160" height="48" rx="6" fill="rgba(148,56,43,0.06)" stroke="#94382b" stroke-width="1"/>
+  <!-- type tag -->
+  <rect x="228" y="174" width="30" height="11" rx="2" fill="transparent" stroke="rgba(148,56,43,0.40)" stroke-width="0.8"/>
+  <text x="243" y="182" fill="rgba(148,56,43,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">STOP</text>
+  <text x="300" y="195" fill="#122127" font-size="12" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">429 반환</text>
+  <text x="300" y="209" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">Budget Exceeded</text>
+
+  <!-- PROCEED: 처리 박스 — x=620, y=168, w=160, h=60 -->
+  <rect x="620" y="168" width="160" height="60" rx="6" fill="#f8fafb"/>
+  <rect x="620" y="168" width="160" height="60" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <!-- type tag -->
+  <rect x="628" y="174" width="30" height="11" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="643" y="182" fill="rgba(13,87,99,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">STEP</text>
+  <text x="700" y="203" fill="#122127" font-size="12" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">요청 처리</text>
+
+  <!-- COST: 처리 박스 — x=620, y=284, w=160, h=48 -->
+  <rect x="620" y="284" width="160" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="620" y="284" width="160" height="48" rx="6" fill="rgba(13,87,99,0.06)" stroke="#3f545c" stroke-width="1"/>
+  <rect x="628" y="290" width="30" height="11" rx="2" fill="transparent" stroke="rgba(63,84,92,0.40)" stroke-width="0.8"/>
+  <text x="643" y="298" fill="rgba(63,84,92,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">STEP</text>
+  <text x="700" y="314" fill="#122127" font-size="12" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">비용 누적</text>
+
+  <!-- ALERT: 결정 다이아몬드 — 중심 cx=700, cy=428, 가로52, 세로40 -->
+  <rect x="648" y="388" width="104" height="80" fill="#f8fafb"/>
+  <polygon points="700,388 752,428 700,468 648,428" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="700" y="424" fill="#122127" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">80%</text>
+  <text x="700" y="438" fill="#122127" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">임박?</text>
+
+  <!-- NOTIFY: 알럿 박스 — x=400, y=400, w=160, h=56 -->
+  <rect x="400" y="400" width="160" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="400" y="400" width="160" height="56" rx="6" fill="rgba(169,106,8,0.07)" stroke="#a96a08" stroke-width="1"/>
+  <rect x="408" y="406" width="36" height="11" rx="2" fill="transparent" stroke="rgba(169,106,8,0.40)" stroke-width="0.8"/>
+  <text x="426" y="414" fill="rgba(169,106,8,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">ALERT</text>
+  <text x="480" y="434" fill="#122127" font-size="12" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">Slack 알럿 전송</text>
+
+  <!-- DONE: 종료 타원 — cx=876, cy=428 -->
+  <rect x="800" y="410" width="152" height="36" fill="#f8fafb"/>
+  <ellipse cx="876" cy="428" rx="56" ry="18" fill="rgba(195,208,212,0.30)" stroke="#c3d0d4" stroke-width="1"/>
+  <text x="876" y="432" fill="#3f545c" font-size="12" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500" text-anchor="middle">완료</text>
+
+  <!-- ===== 범례 ===== -->
+  <line x1="40" y1="588" x2="920" y2="588" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+  <text x="40" y="604" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.14em">LEGEND</text>
+
+  <!-- 범례 항목 -->
+  <!-- 시작/종료 타원 -->
+  <ellipse cx="128" cy="604" rx="22" ry="9" fill="rgba(58,84,143,0.08)" stroke="#3a548f" stroke-width="1"/>
+  <text x="156" y="608" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">시작 / 종료</text>
+
+  <!-- 처리 단계 -->
+  <rect x="248" y="596" width="44" height="18" rx="4" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="300" y="608" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">처리 단계</text>
+
+  <!-- 결정 -->
+  <polygon points="398,605 414,597 430,605 414,613" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="440" y="609" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">결정</text>
+
+  <!-- 알럿/경고 -->
+  <rect x="508" y="596" width="44" height="18" rx="4" fill="rgba(169,106,8,0.07)" stroke="#a96a08" stroke-width="1"/>
+  <text x="560" y="608" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">알럿 / 경고</text>
+
+  <!-- 차단 -->
+  <rect x="656" y="596" width="44" height="18" rx="4" fill="rgba(148,56,43,0.06)" stroke="#94382b" stroke-width="1"/>
+  <text x="708" y="608" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">차단 응답</text>
+
+</svg>
+</div>
+</body>
+</html>

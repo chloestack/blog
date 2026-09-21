@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; font-family: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 600" role="img" aria-labelledby="2026-09-22-98ddabe9-05-trivy-title 2026-09-22-98ddabe9-05-trivy-desc">
+  <title id="2026-09-22-98ddabe9-05-trivy-title">Trivy SBOM 취약점 스캔 파이프라인</title>
+  <desc id="2026-09-22-98ddabe9-05-trivy-desc">빌드 산출물에서 SBOM을 생성하고 CycloneDX·SPDX 형식으로 분기해 취약점 스캔, Dependency Track, 라이선스 컴플라이언스로 이어지는 파이프라인 흐름.</desc>
+
+  <defs>
+    <marker id="2026-09-22-98ddabe9-05-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-09-22-98ddabe9-05-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <marker id="2026-09-22-98ddabe9-05-arrow-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3a548f"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="960" height="600" fill="#f8fafb"/>
+
+  <!-- ── Connectors (drawn before boxes) ── -->
+
+  <!-- 빌드 산출물 → SBOM 생성 (vertical, straight) -->
+  <line x1="480" y1="120" x2="480" y2="168" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-22-98ddabe9-05-arrow-accent)"/>
+
+  <!-- SBOM 생성 → CycloneDX (diagonal → orthogonal: go down then left) -->
+  <path d="M 440 228 L 440 256 L 292 256 L 292 280" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-22-98ddabe9-05-arrow)"/>
+
+  <!-- SBOM 생성 → SPDX (diagonal → orthogonal: go down then right) -->
+  <path d="M 520 228 L 520 256 L 672 256 L 672 280" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-22-98ddabe9-05-arrow)"/>
+
+  <!-- CycloneDX → 취약점 스캔 (vertical) -->
+  <line x1="256" y1="352" x2="256" y2="400" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-22-98ddabe9-05-arrow)"/>
+
+  <!-- CycloneDX → Dependency Track (orthogonal: right then down) -->
+  <path d="M 328 316 L 388 316 L 388 400" fill="none" stroke="#3a548f" stroke-width="1" stroke-dasharray="5,4" marker-end="url(#2026-09-22-98ddabe9-05-arrow-link)"/>
+
+  <!-- SPDX → 라이선스 컴플라이언스 (vertical) -->
+  <line x1="672" y1="352" x2="672" y2="400" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-22-98ddabe9-05-arrow)"/>
+
+  <!-- ── Nodes ── -->
+
+  <!-- 빌드 산출물 (input type: muted@0.10 / soft stroke) -->
+  <rect x="360" y="56" width="240" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="360" y="56" width="240" height="64" rx="6" fill="rgba(63,84,92,0.10)" stroke="#6c8188" stroke-width="1"/>
+  <rect x="368" y="64" width="36" height="12" rx="2" fill="transparent" stroke="rgba(108,129,136,0.40)" stroke-width="0.8"/>
+  <text x="386" y="73" fill="rgba(108,129,136,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">INPUT</text>
+  <text x="480" y="87" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">빌드 산출물</text>
+  <text x="480" y="106" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">이미지 · 패키지</text>
+
+  <!-- SBOM 생성 (focal / accent) -->
+  <rect x="368" y="168" width="224" height="60" rx="6" fill="#f8fafb"/>
+  <rect x="368" y="168" width="224" height="60" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="376" y="176" width="44" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="398" y="185" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">PROCESS</text>
+  <text x="480" y="202" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">SBOM 생성</text>
+  <text x="480" y="218" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">trivy sbom</text>
+
+  <!-- CycloneDX (backend / white) -->
+  <rect x="176" y="280" width="152" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="176" y="280" width="152" height="72" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="184" y="288" width="44" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="206" y="297" fill="rgba(18,33,39,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">FORMAT</text>
+  <text x="252" y="318" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">CycloneDX</text>
+  <text x="252" y="336" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">JSON / XML</text>
+
+  <!-- SPDX (backend / white) -->
+  <rect x="596" y="280" width="152" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="596" y="280" width="152" height="72" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="604" y="288" width="44" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="626" y="297" fill="rgba(18,33,39,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">FORMAT</text>
+  <text x="672" y="318" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">SPDX</text>
+  <text x="672" y="336" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">JSON / Tag-Value</text>
+
+  <!-- 취약점 스캔 (focal / accent — 2nd accent element) -->
+  <rect x="168" y="400" width="176" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="168" y="400" width="176" height="64" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="176" y="408" width="44" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="198" y="417" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">SCAN</text>
+  <text x="256" y="438" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">취약점 스캔</text>
+  <text x="256" y="454" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">trivy sbom</text>
+
+  <!-- Dependency Track (external / store type) -->
+  <rect x="344" y="400" width="188" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="344" y="400" width="188" height="64" rx="6" fill="rgba(18,33,39,0.03)" stroke="rgba(18,33,39,0.30)" stroke-width="1"/>
+  <rect x="352" y="408" width="44" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.24)" stroke-width="0.8"/>
+  <text x="374" y="417" fill="rgba(18,33,39,0.6)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">PLATFORM</text>
+  <text x="438" y="438" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Dependency Track</text>
+  <text x="438" y="454" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">플랫폼</text>
+
+  <!-- 라이선스 컴플라이언스 (optional / muted) -->
+  <rect x="580" y="400" width="188" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="580" y="400" width="188" height="64" rx="6" fill="rgba(18,33,39,0.02)" stroke="rgba(18,33,39,0.20)" stroke-width="1" stroke-dasharray="4,3"/>
+  <rect x="588" y="408" width="44" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.16)" stroke-width="0.8"/>
+  <text x="610" y="417" fill="rgba(18,33,39,0.5)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">COMPLY</text>
+  <text x="674" y="438" fill="#3f545c" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">라이선스</text>
+  <text x="674" y="454" fill="#3f545c" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">컴플라이언스</text>
+
+  <!-- ── Legend ── -->
+  <line x1="32" y1="524" x2="928" y2="524" stroke="rgba(18,33,39,0.10)" stroke-width="0.8"/>
+  <text x="32" y="540" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.14em">LEGEND</text>
+
+  <!-- Focal -->
+  <rect x="104" y="530" width="14" height="14" rx="3" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="124" y="541" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif">주요 단계</text>
+
+  <!-- Input -->
+  <rect x="232" y="530" width="14" height="14" rx="3" fill="rgba(63,84,92,0.10)" stroke="#6c8188" stroke-width="1"/>
+  <text x="252" y="541" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif">입력</text>
+
+  <!-- Backend -->
+  <rect x="332" y="530" width="14" height="14" rx="3" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <text x="352" y="541" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif">형식 / 단계</text>
+
+  <!-- External -->
+  <rect x="460" y="530" width="14" height="14" rx="3" fill="rgba(18,33,39,0.03)" stroke="rgba(18,33,39,0.30)" stroke-width="1"/>
+  <text x="480" y="541" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif">외부 플랫폼</text>
+
+  <!-- Optional dashed -->
+  <rect x="592" y="530" width="14" height="14" rx="3" fill="rgba(18,33,39,0.02)" stroke="rgba(18,33,39,0.20)" stroke-width="1" stroke-dasharray="4,3"/>
+  <text x="612" y="541" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif">선택 단계</text>
+
+  <!-- Link arrow -->
+  <line x1="720" y1="537" x2="744" y2="537" stroke="#3a548f" stroke-width="1" stroke-dasharray="5,4" marker-end="url(#2026-09-22-98ddabe9-05-arrow-link)"/>
+  <text x="752" y="541" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif">외부 연동</text>
+</svg>
+</body>
+</html>

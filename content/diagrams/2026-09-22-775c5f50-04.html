@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 520" role="img" aria-labelledby="2026-09-22-775c5f50-04-routing-title 2026-09-22-775c5f50-04-routing-desc">
+  <title id="2026-09-22-775c5f50-04-routing-title">LiteLLM 라우팅 전략 선택 흐름</title>
+  <desc id="2026-09-22-775c5f50-04-routing-desc">서비스 유형(실시간 챗, 배치·분류, 균등 분산)에 따라 적합한 LiteLLM 라우팅 전략과 주요 설정 포인트를 보여주는 의사결정 흐름도</desc>
+
+  <defs>
+    <!-- Arrow markers -->
+    <marker id="2026-09-22-775c5f50-04-routing-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-09-22-775c5f50-04-routing-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="960" height="520" fill="#f8fafb"/>
+
+  <!-- ─── ARROWS (drawn before boxes) ─── -->
+
+  <!-- Q → RT (왼쪽 아래) -->
+  <path d="M 360 156 L 236 156 L 236 248" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-22-775c5f50-04-routing-arrow)"/>
+
+  <!-- Q → BT (아래) -->
+  <path d="M 432 168 L 432 248" fill="none" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-22-775c5f50-04-routing-arrow-accent)"/>
+
+  <!-- Q → EQ (오른쪽 아래) -->
+  <path d="M 504 156 L 628 156 L 628 248" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-22-775c5f50-04-routing-arrow)"/>
+
+  <!-- RT → RP (아래) -->
+  <path d="M 236 312 L 236 368" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-22-775c5f50-04-routing-arrow)"/>
+
+  <!-- BT → CP (아래) -->
+  <path d="M 432 312 L 432 368" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-22-775c5f50-04-routing-arrow)"/>
+
+  <!-- EQ → SP (아래) -->
+  <path d="M 628 312 L 628 368" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-22-775c5f50-04-routing-arrow)"/>
+
+  <!-- Arrow label: 서비스 유형 -->
+  <rect x="268" y="134" width="72" height="14" rx="2" fill="#f8fafb"/>
+  <text x="304" y="144" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">서비스 유형</text>
+
+  <!-- ─── NODES ─── -->
+
+  <!-- Decision diamond: 어떤 서비스인가 (focal) -->
+  <!-- Diamond center: (432, 120) -->
+  <rect x="340" y="60" width="184" height="120" rx="6" fill="#f8fafb"/>
+  <polygon points="432,64 544,120 432,176 320,120" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="432" y="114" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">어떤 서비스인가?</text>
+  <text x="432" y="132" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">routing strategy</text>
+
+  <!-- RT: 실시간 챗 -->
+  <rect x="144" y="248" width="184" height="64" rx="6" fill="#ffffff"/>
+  <rect x="144" y="248" width="184" height="64" rx="6" fill="rgba(13,87,99,0.04)" stroke="#3f545c" stroke-width="1"/>
+  <rect x="152" y="256" width="40" height="12" rx="2" fill="transparent" stroke="rgba(63,84,92,0.4)" stroke-width="0.8"/>
+  <text x="172" y="265" fill="rgba(63,84,92,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.06em">MODE</text>
+  <text x="236" y="284" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">실시간 챗</text>
+  <text x="236" y="300" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">latency-based</text>
+
+  <!-- BT: 배치·분류 (focal accent) -->
+  <rect x="340" y="248" width="184" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="340" y="248" width="184" height="64" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="348" y="256" width="40" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.4)" stroke-width="0.8"/>
+  <text x="368" y="265" fill="rgba(13,87,99,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.06em">MODE</text>
+  <text x="432" y="284" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">배치·분류</text>
+  <text x="432" y="300" fill="#0d5763" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">cost-based</text>
+
+  <!-- EQ: 균등 분산 -->
+  <rect x="536" y="248" width="184" height="64" rx="6" fill="#ffffff"/>
+  <rect x="536" y="248" width="184" height="64" rx="6" fill="rgba(13,87,99,0.04)" stroke="#3f545c" stroke-width="1"/>
+  <rect x="544" y="256" width="40" height="12" rx="2" fill="transparent" stroke="rgba(63,84,92,0.4)" stroke-width="0.8"/>
+  <text x="564" y="265" fill="rgba(63,84,92,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.06em">MODE</text>
+  <text x="628" y="284" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">균등 분산</text>
+  <text x="628" y="300" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">least-busy</text>
+
+  <!-- RP: P70 레이턴시 추적 필요 (store/secondary) -->
+  <rect x="144" y="368" width="184" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="144" y="368" width="184" height="64" rx="6" fill="rgba(45,49,66,0.04)" stroke="#6c8188" stroke-width="1"/>
+  <rect x="152" y="376" width="36" height="12" rx="2" fill="transparent" stroke="rgba(108,129,136,0.4)" stroke-width="0.8"/>
+  <text x="170" y="385" fill="rgba(108,129,136,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.06em">KEY</text>
+  <text x="236" y="403" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">P70 레이턴시 추적</text>
+  <text x="236" y="420" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">설정 필수</text>
+
+  <!-- CP: 비용 모델 설정 필수 (store/secondary) -->
+  <rect x="340" y="368" width="184" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="340" y="368" width="184" height="64" rx="6" fill="rgba(45,49,66,0.04)" stroke="#6c8188" stroke-width="1"/>
+  <rect x="348" y="376" width="36" height="12" rx="2" fill="transparent" stroke="rgba(108,129,136,0.4)" stroke-width="0.8"/>
+  <text x="366" y="385" fill="rgba(108,129,136,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.06em">KEY</text>
+  <text x="432" y="403" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">비용 모델 설정</text>
+  <text x="432" y="420" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">설정 필수</text>
+
+  <!-- SP: 단순 설정 시작점 (muted) -->
+  <rect x="536" y="368" width="184" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="536" y="368" width="184" height="64" rx="6" fill="rgba(45,49,66,0.02)" stroke="#c3d0d4" stroke-width="1"/>
+  <rect x="544" y="376" width="36" height="12" rx="2" fill="transparent" stroke="rgba(195,208,212,0.6)" stroke-width="0.8"/>
+  <text x="562" y="385" fill="rgba(195,208,212,0.9)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.06em">TIP</text>
+  <text x="628" y="403" fill="#3f545c" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">단순 설정</text>
+  <text x="628" y="420" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">시작점으로 추천</text>
+
+  <!-- ─── LEGEND ─── -->
+  <line x1="40" y1="476" x2="920" y2="476" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+
+  <text x="40" y="492" fill="#6c8188" font-size="9" font-family="'IBM Plex Mono', monospace" letter-spacing="0.14em">LEGEND</text>
+
+  <!-- legend: 선택 기준 (focal diamond) -->
+  <polygon points="136,490 148,484 160,490 148,496" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="168" y="494" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">선택 기준</text>
+
+  <!-- legend: 라우팅 전략 -->
+  <rect x="244" y="484" width="16" height="12" rx="3" fill="rgba(13,87,99,0.04)" stroke="#3f545c" stroke-width="1"/>
+  <text x="268" y="494" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">라우팅 전략</text>
+
+  <!-- legend: 핵심 설정 항목 -->
+  <rect x="372" y="484" width="16" height="12" rx="3" fill="rgba(45,49,66,0.04)" stroke="#6c8188" stroke-width="1"/>
+  <text x="396" y="494" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">핵심 설정 항목</text>
+
+  <!-- legend: 권장 시작점 -->
+  <rect x="508" y="484" width="16" height="12" rx="3" fill="rgba(45,49,66,0.02)" stroke="#c3d0d4" stroke-width="1"/>
+  <text x="532" y="494" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">권장 시작점</text>
+</svg>
+</body>
+</html>

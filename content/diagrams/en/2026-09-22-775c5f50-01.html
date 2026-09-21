@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LiteLLM Proxy Gateway Architecture</title>
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; font-family: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; }
+  .diagram-wrap { width: 100%; max-width: 960px; margin: 0 auto; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<div class="diagram-wrap">
+<svg viewBox="0 0 960 480" role="img" aria-labelledby="2026-09-22-775c5f50-01-litellm-title 2026-09-22-775c5f50-01-litellm-desc" xmlns="http://www.w3.org/2000/svg">
+  <title id="2026-09-22-775c5f50-01-litellm-title">LiteLLM Multi-LLM Proxy Gateway Architecture</title>
+  <desc id="2026-09-22-775c5f50-01-litellm-desc">A client (OpenAI SDK) sends a request to the LiteLLM proxy (:4000); the router routes by model to OpenAI, Anthropic, or Google AI; callbacks record cost and logs.</desc>
+
+  <defs>
+    <!-- 기본 화살표 -->
+    <marker id="2026-09-22-775c5f50-01-arr" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <!-- 액센트 화살표 -->
+    <marker id="2026-09-22-775c5f50-01-arr-acc" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <!-- 소프트 화살표 -->
+    <marker id="2026-09-22-775c5f50-01-arr-soft" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#6c8188"/>
+    </marker>
+  </defs>
+
+  <!-- 배경 -->
+  <rect width="960" height="480" fill="#f8fafb"/>
+
+  <!-- ─────────────────────────────────────────────
+       커넥터 (박스보다 먼저)
+  ───────────────────────────────────────────── -->
+
+  <!-- 클라이언트 → 프록시: C 오른쪽(196) → P 왼쪽(268) y=200 -->
+  <path d="M 196 200 L 268 200" stroke="#0d5763" stroke-width="1.2" fill="none" marker-end="url(#2026-09-22-775c5f50-01-arr-acc)"/>
+  <!-- 화살표 라벨 마스크 -->
+  <rect x="196" y="178" width="72" height="14" rx="2" fill="#f8fafb"/>
+  <text x="232" y="189" fill="#6c8188" font-size="9" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.06em">POST /chat</text>
+
+  <!-- 프록시 → 라우터: P 오른쪽(456) → R 왼쪽(528) y=200 -->
+  <path d="M 456 200 L 528 200" stroke="#0d5763" stroke-width="1.2" fill="none" marker-end="url(#2026-09-22-775c5f50-01-arr-acc)"/>
+
+  <!-- 라우터 → OpenAI: R 오른쪽(684) y=200 → OA 왼쪽(756) y=116 -->
+  <!-- 수직 → 수평 엘보우 -->
+  <path d="M 684 188 C 684 188 700 188 700 172 L 700 124 C 700 116 708 116 716 116 L 756 116"
+        stroke="#3f545c" stroke-width="1" fill="none" marker-end="url(#2026-09-22-775c5f50-01-arr)"/>
+  <!-- 라벨 -->
+  <rect x="698" y="134" width="52" height="13" rx="2" fill="#f8fafb"/>
+  <text x="724" y="144" fill="#6c8188" font-size="9" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.05em">GPT-4o</text>
+
+  <!-- 라우터 → Anthropic: R 오른쪽(684) y=200 → AN 왼쪽(756) y=200 -->
+  <path d="M 684 200 L 756 200" stroke="#3f545c" stroke-width="1" fill="none" marker-end="url(#2026-09-22-775c5f50-01-arr)"/>
+  <!-- 라벨 -->
+  <rect x="688" y="179" width="56" height="13" rx="2" fill="#f8fafb"/>
+  <text x="716" y="189" fill="#6c8188" font-size="9" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.04em">claude-3.5</text>
+
+  <!-- 라우터 → Google: R 오른쪽(684) y=200 → GO 왼쪽(756) y=284 -->
+  <path d="M 684 212 C 684 212 700 212 700 228 L 700 276 C 700 284 708 284 716 284 L 756 284"
+        stroke="#3f545c" stroke-width="1" fill="none" marker-end="url(#2026-09-22-775c5f50-01-arr)"/>
+  <!-- 라벨 -->
+  <rect x="696" y="244" width="60" height="13" rx="2" fill="#f8fafb"/>
+  <text x="726" y="254" fill="#6c8188" font-size="9" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.04em">gemini-flash</text>
+
+  <!-- 프록시 → 콜백: P 아래쪽(362) y=244 → CB 위쪽(362) y=348 -->
+  <path d="M 362 244 L 362 348" stroke="#6c8188" stroke-width="1" stroke-dasharray="5,4" fill="none" marker-end="url(#2026-09-22-775c5f50-01-arr-soft)"/>
+  <!-- 라벨 -->
+  <rect x="334" y="292" width="56" height="13" rx="2" fill="#f8fafb"/>
+  <text x="362" y="302" fill="#6c8188" font-size="9" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.06em">cost·log</text>
+
+  <!-- ─────────────────────────────────────────────
+       노드
+  ───────────────────────────────────────────── -->
+
+  <!-- 클라이언트 (input 타입) x=60 y=164 w=136 h=72 cx=128 cy=200 -->
+  <rect x="60" y="164" width="136" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="60" y="164" width="136" height="72" rx="6" fill="rgba(63,84,92,0.10)" stroke="#6c8188" stroke-width="1"/>
+  <rect x="68" y="172" width="32" height="12" rx="2" fill="transparent" stroke="rgba(108,129,136,0.40)" stroke-width="0.8"/>
+  <text x="84" y="181" fill="rgba(108,129,136,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">CLIENT</text>
+  <text x="128" y="205" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Client</text>
+  <text x="128" y="222" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">OpenAI SDK</text>
+
+  <!-- LiteLLM 프록시 (focal) x=268 y=156 w=188 h=88 cx=362 cy=200 -->
+  <rect x="268" y="156" width="188" height="88" rx="6" fill="#f8fafb"/>
+  <rect x="268" y="156" width="188" height="88" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="276" y="164" width="32" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="292" y="173" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">PROXY</text>
+  <text x="362" y="197" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">LiteLLM Proxy</text>
+  <text x="362" y="216" fill="#0d5763" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">:4000</text>
+
+  <!-- 라우터 (focal) x=528 y=164 w=156 h=72 cx=606 cy=200 -->
+  <rect x="528" y="164" width="156" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="528" y="164" width="156" height="72" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="536" y="172" width="32" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="552" y="181" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">ROUTER</text>
+  <text x="606" y="201" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Router</text>
+  <text x="606" y="218" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">Model Map · LB</text>
+
+  <!-- OpenAI (external) x=756 y=80 w=132 h=72 cx=822 cy=116 -->
+  <rect x="756" y="80" width="132" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="756" y="80" width="132" height="72" rx="6" fill="rgba(18,33,39,0.03)" stroke="rgba(18,33,39,0.30)" stroke-width="1"/>
+  <rect x="764" y="88" width="36" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.25)" stroke-width="0.8"/>
+  <text x="782" y="97" fill="rgba(18,33,39,0.55)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">EXTERNAL</text>
+  <text x="822" y="117" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">OpenAI</text>
+  <text x="822" y="134" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">gpt-4o</text>
+
+  <!-- Anthropic (external) x=756 y=164 w=132 h=72 cx=822 cy=200 -->
+  <rect x="756" y="164" width="132" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="756" y="164" width="132" height="72" rx="6" fill="rgba(18,33,39,0.03)" stroke="rgba(18,33,39,0.30)" stroke-width="1"/>
+  <rect x="764" y="172" width="36" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.25)" stroke-width="0.8"/>
+  <text x="782" y="181" fill="rgba(18,33,39,0.55)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">EXTERNAL</text>
+  <text x="822" y="201" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Anthropic</text>
+  <text x="822" y="218" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">claude-3-5-sonnet</text>
+
+  <!-- Google AI (external) x=756 y=248 w=132 h=72 cx=822 cy=284 -->
+  <rect x="756" y="248" width="132" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="756" y="248" width="132" height="72" rx="6" fill="rgba(18,33,39,0.03)" stroke="rgba(18,33,39,0.30)" stroke-width="1"/>
+  <rect x="764" y="256" width="36" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.25)" stroke-width="0.8"/>
+  <text x="782" y="265" fill="rgba(18,33,39,0.55)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">EXTERNAL</text>
+  <text x="822" y="285" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Google AI</text>
+  <text x="822" y="302" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">gemini-flash</text>
+
+  <!-- 콜백 (store/optional) x=296 y=348 w=132 h=68 cx=362 cy=382 -->
+  <rect x="296" y="348" width="132" height="68" rx="6" fill="#f8fafb"/>
+  <rect x="296" y="348" width="132" height="68" rx="6" fill="rgba(18,33,39,0.02)" stroke="rgba(18,33,39,0.20)" stroke-width="1" stroke-dasharray="4,3"/>
+  <rect x="304" y="356" width="36" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.18)" stroke-width="0.8"/>
+  <text x="322" y="365" fill="rgba(18,33,39,0.45)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">CALLBACK</text>
+  <text x="362" y="385" fill="#3f545c" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Callback</text>
+  <text x="362" y="402" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">cost · log</text>
+
+  <!-- ─────────────────────────────────────────────
+       범례 (하단 수평 스트립)
+  ───────────────────────────────────────────── -->
+  <line x1="40" y1="432" x2="920" y2="432" stroke="rgba(18,33,39,0.10)" stroke-width="0.8"/>
+
+  <text x="40" y="448" fill="#3f545c" font-size="8" font-family="'IBM Plex Mono', monospace" letter-spacing="0.14em">LEGEND</text>
+
+  <!-- focal -->
+  <rect x="112" y="438" width="12" height="12" rx="3" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="130" y="448" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">Core Component</text>
+
+  <!-- external -->
+  <rect x="260" y="438" width="12" height="12" rx="3" fill="rgba(18,33,39,0.03)" stroke="rgba(18,33,39,0.30)" stroke-width="1"/>
+  <text x="278" y="448" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">External Service</text>
+
+  <!-- input -->
+  <rect x="388" y="438" width="12" height="12" rx="3" fill="rgba(63,84,92,0.10)" stroke="#6c8188" stroke-width="1"/>
+  <text x="406" y="448" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">Client</text>
+
+  <!-- optional/dashed -->
+  <rect x="512" y="438" width="12" height="12" rx="3" fill="rgba(18,33,39,0.02)" stroke="rgba(18,33,39,0.20)" stroke-width="1" stroke-dasharray="4,3"/>
+  <text x="530" y="448" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">Async · Callback</text>
+
+  <!-- accent arrow -->
+  <line x1="636" y1="444" x2="660" y2="444" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-22-775c5f50-01-arr-acc)"/>
+  <text x="668" y="448" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">Main Request Flow</text>
+
+  <!-- default arrow -->
+  <line x1="772" y1="444" x2="796" y2="444" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-22-775c5f50-01-arr)"/>
+  <text x="804" y="448" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">Model Route</text>
+
+</svg>
+</div>
+</body>
+</html>

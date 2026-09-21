@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; }
+  .diagram-wrap { width: 100%; max-width: 960px; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<div class="diagram-wrap">
+<svg viewBox="0 0 960 260" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="2026-09-22-42592f2f-04-winfunc-title 2026-09-22-42592f2f-04-winfunc-desc">
+  <title id="2026-09-22-42592f2f-04-winfunc-title">윈도우 함수 누적합 처리 흐름</title>
+  <desc id="2026-09-22-42592f2f-04-winfunc-desc">일별 매출 행이 파티션 분할, 정렬, UNBOUNDED PRECEDING 프레임 집계를 거쳐 누적합 컬럼으로 추가되고, 최종적으로 파티션 합계 대비 비율로 계산되는 처리 흐름을 보여줍니다.</desc>
+
+  <defs>
+    <!-- 화살표 마커 -->
+    <marker id="2026-09-22-42592f2f-04-wf-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-09-22-42592f2f-04-wf-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+  </defs>
+
+  <!-- 배경 -->
+  <rect width="960" height="260" fill="#f8fafb"/>
+
+  <!-- ── 화살표 (박스보다 먼저) ── -->
+  <!-- A → B -->
+  <line x1="148" y1="104" x2="192" y2="104" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-22-42592f2f-04-wf-arrow)"/>
+  <!-- B → C -->
+  <line x1="316" y1="104" x2="360" y2="104" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-22-42592f2f-04-wf-arrow)"/>
+  <!-- C → D -->
+  <line x1="484" y1="104" x2="528" y2="104" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-22-42592f2f-04-wf-arrow-accent)"/>
+  <!-- D → E -->
+  <line x1="672" y1="104" x2="716" y2="104" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-22-42592f2f-04-wf-arrow-accent)"/>
+  <!-- E → F -->
+  <line x1="840" y1="104" x2="864" y2="104" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-22-42592f2f-04-wf-arrow)"/>
+
+  <!-- ── 노드 A: 일별 매출 행 (input) ── -->
+  <rect x="16" y="76" width="132" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="16" y="76" width="132" height="56" rx="6" fill="rgba(58,84,143,0.08)" stroke="#3a548f" stroke-width="1"/>
+  <rect x="24" y="82" width="24" height="12" rx="2" fill="transparent" stroke="rgba(58,84,143,0.40)" stroke-width="0.8"/>
+  <text x="36" y="91" fill="rgba(58,84,143,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">IN</text>
+  <text x="82" y="107" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">일별 매출 행</text>
+
+  <!-- ── 노드 B: PARTITION BY month (step) ── -->
+  <rect x="192" y="72" width="124" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="192" y="72" width="124" height="64" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <rect x="200" y="78" width="36" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="218" y="87" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">PART</text>
+  <text x="254" y="103" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">파티션 분할</text>
+  <text x="254" y="118" fill="#3f545c" font-size="9" font-family="'IBM Plex Mono', monospace" text-anchor="middle">PARTITION BY month</text>
+
+  <!-- ── 노드 C: ORDER BY sale_date (step) ── -->
+  <rect x="360" y="72" width="124" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="360" y="72" width="124" height="64" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <rect x="368" y="78" width="32" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="384" y="87" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">SORT</text>
+  <text x="422" y="103" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">행 정렬</text>
+  <text x="422" y="118" fill="#3f545c" font-size="9" font-family="'IBM Plex Mono', monospace" text-anchor="middle">ORDER BY sale_date</text>
+
+  <!-- ── 노드 D: SUM OVER (focal) ── -->
+  <rect x="528" y="56" width="144" height="96" rx="6" fill="#f8fafb"/>
+  <rect x="528" y="56" width="144" height="96" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.5"/>
+  <rect x="536" y="62" width="40" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.50)" stroke-width="0.8"/>
+  <text x="556" y="71" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">FRAME</text>
+  <text x="600" y="93" fill="#0d5763" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">프레임 집계</text>
+  <text x="600" y="109" fill="#3f545c" font-size="8.5" font-family="'IBM Plex Mono', monospace" text-anchor="middle">SUM() OVER (</text>
+  <text x="600" y="121" fill="#3f545c" font-size="8.5" font-family="'IBM Plex Mono', monospace" text-anchor="middle">UNBOUNDED PRECEDING</text>
+  <text x="600" y="133" fill="#3f545c" font-size="8.5" font-family="'IBM Plex Mono', monospace" text-anchor="middle">~ CURRENT ROW)</text>
+
+  <!-- ── 노드 E: 누적합 컬럼 추가 (focal) ── -->
+  <rect x="716" y="72" width="124" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="716" y="72" width="124" height="64" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.5"/>
+  <rect x="724" y="78" width="36" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.50)" stroke-width="0.8"/>
+  <text x="742" y="87" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">OUT</text>
+  <text x="778" y="103" fill="#0d5763" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">누적합 컬럼 추가</text>
+  <text x="778" y="118" fill="#3f545c" font-size="9" font-family="'IBM Plex Mono', monospace" text-anchor="middle">행 수 유지</text>
+
+  <!-- ── 노드 F: 비율 계산 (store/muted) ── -->
+  <rect x="864" y="76" width="80" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="864" y="76" width="80" height="56" rx="6" fill="rgba(18,33,39,0.03)" stroke="#c3d0d4" stroke-width="1"/>
+  <rect x="872" y="82" width="28" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.20)" stroke-width="0.8"/>
+  <text x="886" y="91" fill="rgba(63,84,92,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">CALC</text>
+  <text x="904" y="107" fill="#3f545c" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">비율 산출</text>
+  <text x="904" y="120" fill="#6c8188" font-size="9" font-family="'IBM Plex Mono', monospace" text-anchor="middle">행값 ÷ 합계</text>
+
+  <!-- ── 범례 구분선 ── -->
+  <line x1="30" y1="190" x2="930" y2="190" stroke="rgba(18,33,39,0.10)" stroke-width="0.8"/>
+
+  <!-- 범례 항목들 -->
+  <text x="30" y="205" fill="#3f545c" font-size="8" font-family="'IBM Plex Mono', monospace" letter-spacing="0.14em">LEGEND</text>
+
+  <!-- 범례: 입력 -->
+  <rect x="100" y="196" width="12" height="12" rx="2" fill="rgba(58,84,143,0.08)" stroke="#3a548f" stroke-width="1"/>
+  <text x="118" y="206" fill="#3f545c" font-size="9" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">입력</text>
+
+  <!-- 범례: 윈도우 처리 -->
+  <rect x="176" y="196" width="12" height="12" rx="2" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.5"/>
+  <text x="194" y="206" fill="#3f545c" font-size="9" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">윈도우 처리</text>
+
+  <!-- 범례: 결과 -->
+  <rect x="316" y="196" width="12" height="12" rx="2" fill="rgba(18,33,39,0.03)" stroke="#c3d0d4" stroke-width="1"/>
+  <text x="334" y="206" fill="#3f545c" font-size="9" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">파생 결과</text>
+
+  <!-- 범례: 핵심 단계 표시 -->
+  <rect x="436" y="196" width="12" height="12" rx="2" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.5"/>
+  <text x="454" y="206" fill="#0d5763" font-size="9" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">굵은 테두리 = 핵심 단계</text>
+</svg>
+</div>
+</body>
+</html>

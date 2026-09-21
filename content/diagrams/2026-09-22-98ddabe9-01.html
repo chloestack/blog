@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+  .diagram-wrap { width: 100%; max-width: 960px; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<div class="diagram-wrap">
+<svg viewBox="0 0 960 440" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="2026-09-22-98ddabe9-01-trivy-scan-title 2026-09-22-98ddabe9-01-trivy-scan-desc">
+  <title id="2026-09-22-98ddabe9-01-trivy-scan-title">Trivy 스캔 파이프라인</title>
+  <desc id="2026-09-22-98ddabe9-01-trivy-scan-desc">스캔 타겟(이미지·파일시스템·SBOM·IaC)이 Trivy 스캐너로 입력되어 취약점·설정오류·시크릿·라이선스 네 가지 결과로 출력되는 흐름을 보여주는 다이어그램.</desc>
+
+  <defs>
+    <!-- arrow-muted -->
+    <marker id="2026-09-22-98ddabe9-01-arr" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0,8 3,0 6" fill="#3f545c"/>
+    </marker>
+    <!-- arrow-accent -->
+    <marker id="2026-09-22-98ddabe9-01-arr-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0,8 3,0 6" fill="#0d5763"/>
+    </marker>
+    <!-- arrow-link -->
+    <marker id="2026-09-22-98ddabe9-01-arr-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0,8 3,0 6" fill="#3a548f"/>
+    </marker>
+  </defs>
+
+  <!-- background -->
+  <rect width="960" height="440" fill="#f8fafb"/>
+
+  <!-- ────────────────────────────────────────────
+       ARROWS — drawn before boxes
+  ──────────────────────────────────────────── -->
+
+  <!-- 스캔 타겟 → 이미지 (right-angle: right from T, up to target row) -->
+  <!-- T center: 108,164  target attach: 248,100 -->
+  <path d="M168,164 H208 V100 H248" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-22-98ddabe9-01-arr)"/>
+
+  <!-- 스캔 타겟 → 파일시스템 -->
+  <!-- T center: 108,164  target attach: 248,168 -->
+  <path d="M168,164 H248" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-22-98ddabe9-01-arr)"/>
+
+  <!-- 스캔 타겟 → SBOM -->
+  <!-- T center: 108,220  target attach: 248,236 -->
+  <path d="M168,188 H208 V236 H248" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-22-98ddabe9-01-arr)"/>
+
+  <!-- 스캔 타겟 → IaC -->
+  <!-- T center: 108,164  target attach: 248,304 -->
+  <path d="M168,180 H196 V304 H248" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-22-98ddabe9-01-arr)"/>
+
+  <!-- 이미지 → 스캐너 -->
+  <!-- source right: 368,100  dest left: 492,220 -->
+  <path d="M368,100 H432 V220 H492" fill="none" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-22-98ddabe9-01-arr-accent)"/>
+
+  <!-- 파일시스템 → 스캐너 -->
+  <!-- source right: 368,168  dest left: 492,220 -->
+  <path d="M368,168 H432 V220 H492" fill="none" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-22-98ddabe9-01-arr-accent)"/>
+
+  <!-- SBOM → 스캐너 -->
+  <!-- source right: 368,236  dest left: 492,220 -->
+  <path d="M368,236 H432 V220 H492" fill="none" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-22-98ddabe9-01-arr-accent)"/>
+
+  <!-- IaC → 스캐너 -->
+  <!-- source right: 368,304  dest left: 492,220 -->
+  <path d="M368,304 H432 V220 H492" fill="none" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-22-98ddabe9-01-arr-accent)"/>
+
+  <!-- 스캐너 → 취약점 -->
+  <!-- source right: 620,220  dest left: 720,112 -->
+  <path d="M620,208 H664 V112 H720" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-22-98ddabe9-01-arr)"/>
+
+  <!-- 스캐너 → 설정오류 -->
+  <!-- source right: 620,220  dest left: 720,180 -->
+  <path d="M620,216 H664 V180 H720" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-22-98ddabe9-01-arr)"/>
+
+  <!-- 스캐너 → 시크릿 -->
+  <!-- source right: 620,220  dest left: 720,260 -->
+  <path d="M620,224 H664 V260 H720" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-22-98ddabe9-01-arr)"/>
+
+  <!-- 스캐너 → 라이선스 -->
+  <!-- source right: 620,220  dest left: 720,328 -->
+  <path d="M620,232 H664 V328 H720" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-22-98ddabe9-01-arr)"/>
+
+  <!-- ────────────────────────────────────────────
+       COLUMN 1 — 스캔 타겟 (input treatment)
+       box: x=36 y=140 w=132 h=48
+  ──────────────────────────────────────────── -->
+  <rect x="36" y="140" width="132" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="36" y="140" width="132" height="48" rx="6" fill="rgba(63,84,92,0.10)" stroke="#6c8188" stroke-width="1"/>
+  <rect x="44" y="148" width="32" height="12" rx="2" fill="transparent" stroke="rgba(108,129,136,0.40)" stroke-width="0.8"/>
+  <text x="60" y="157" fill="rgba(108,129,136,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">INPUT</text>
+  <text x="102" y="170" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif" text-anchor="middle">스캔 타겟</text>
+
+  <!-- ────────────────────────────────────────────
+       COLUMN 2 — 4 target type boxes
+       Each: w=120 h=44
+       x=248
+       이미지: y=78, 파일시스템: y=146, SBOM: y=214, IaC: y=282
+  ──────────────────────────────────────────── -->
+
+  <!-- 이미지 -->
+  <rect x="248" y="78" width="120" height="44" rx="6" fill="#f8fafb"/>
+  <rect x="248" y="78" width="120" height="44" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <rect x="256" y="86" width="32" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="272" y="95" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">IMAGE</text>
+  <text x="308" y="106" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif" text-anchor="middle">이미지</text>
+  <text x="308" y="118" fill="#3f545c" font-size="9" font-family="'IBM Plex Mono', monospace" text-anchor="middle">registry · local</text>
+
+  <!-- 파일시스템 -->
+  <rect x="248" y="146" width="120" height="44" rx="6" fill="#f8fafb"/>
+  <rect x="248" y="146" width="120" height="44" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <rect x="256" y="154" width="28" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="270" y="163" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">FS</text>
+  <text x="308" y="174" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif" text-anchor="middle">파일시스템</text>
+  <text x="308" y="186" fill="#3f545c" font-size="9" font-family="'IBM Plex Mono', monospace" text-anchor="middle">Git repo</text>
+
+  <!-- SBOM -->
+  <rect x="248" y="214" width="120" height="44" rx="6" fill="#f8fafb"/>
+  <rect x="248" y="214" width="120" height="44" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <rect x="256" y="222" width="36" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="274" y="231" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">SBOM</text>
+  <text x="308" y="242" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif" text-anchor="middle">SBOM 파일</text>
+  <text x="308" y="254" fill="#3f545c" font-size="9" font-family="'IBM Plex Mono', monospace" text-anchor="middle">CycloneDX · SPDX</text>
+
+  <!-- IaC -->
+  <rect x="248" y="282" width="120" height="44" rx="6" fill="#f8fafb"/>
+  <rect x="248" y="282" width="120" height="44" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <rect x="256" y="290" width="24" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="268" y="299" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">IaC</text>
+  <text x="308" y="310" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif" text-anchor="middle">IaC 코드</text>
+  <text x="308" y="322" fill="#3f545c" font-size="9" font-family="'IBM Plex Mono', monospace" text-anchor="middle">tf · k8s · CF</text>
+
+  <!-- ────────────────────────────────────────────
+       COLUMN 3 — 스캐너 (focal, accent)
+       box: x=492 y=180 w=128 h=80
+  ──────────────────────────────────────────── -->
+  <rect x="492" y="180" width="128" height="80" rx="6" fill="#f8fafb"/>
+  <rect x="492" y="180" width="128" height="80" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="500" y="188" width="44" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.50)" stroke-width="0.8"/>
+  <text x="522" y="197" fill="rgba(13,87,99,0.85)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">SCANNER</text>
+  <text x="556" y="222" fill="#0d5763" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif" text-anchor="middle">스캐너</text>
+  <text x="556" y="240" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">Trivy</text>
+
+  <!-- ────────────────────────────────────────────
+       COLUMN 4 — 4 result boxes
+       x=720, w=164
+       취약점: y=88  설정오류: y=158  시크릿: y=236  라이선스: y=308
+  ──────────────────────────────────────────── -->
+
+  <!-- 취약점 (vuln) — ok 계열 -->
+  <rect x="720" y="88" width="164" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="720" y="88" width="164" height="48" rx="6" fill="rgba(40,109,80,0.08)" stroke="#286d50" stroke-width="1"/>
+  <rect x="728" y="96" width="32" height="12" rx="2" fill="transparent" stroke="rgba(40,109,80,0.40)" stroke-width="0.8"/>
+  <text x="744" y="105" fill="rgba(40,109,80,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">VULN</text>
+  <text x="802" y="118" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif" text-anchor="middle">취약점</text>
+  <text x="802" y="130" fill="#3f545c" font-size="9" font-family="'IBM Plex Mono', monospace" text-anchor="middle">CVE · CVSS</text>
+
+  <!-- 설정오류 (misconfig) — warn 계열 -->
+  <rect x="720" y="156" width="164" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="720" y="156" width="164" height="48" rx="6" fill="rgba(169,106,8,0.08)" stroke="#a96a08" stroke-width="1"/>
+  <rect x="728" y="164" width="52" height="12" rx="2" fill="transparent" stroke="rgba(169,106,8,0.40)" stroke-width="0.8"/>
+  <text x="754" y="173" fill="rgba(169,106,8,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">MISCONFIG</text>
+  <text x="802" y="186" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif" text-anchor="middle">설정오류</text>
+  <text x="802" y="198" fill="#3f545c" font-size="9" font-family="'IBM Plex Mono', monospace" text-anchor="middle">IaC · container</text>
+
+  <!-- 시크릿 (secret) — warn 계열 -->
+  <rect x="720" y="236" width="164" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="720" y="236" width="164" height="48" rx="6" fill="rgba(169,106,8,0.08)" stroke="#a96a08" stroke-width="1"/>
+  <rect x="728" y="244" width="40" height="12" rx="2" fill="transparent" stroke="rgba(169,106,8,0.40)" stroke-width="0.8"/>
+  <text x="748" y="253" fill="rgba(169,106,8,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">SECRET</text>
+  <text x="802" y="266" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif" text-anchor="middle">시크릿</text>
+  <text x="802" y="278" fill="#3f545c" font-size="9" font-family="'IBM Plex Mono', monospace" text-anchor="middle">key · token · password</text>
+
+  <!-- 라이선스 (license) — ok 계열 -->
+  <rect x="720" y="308" width="164" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="720" y="308" width="164" height="48" rx="6" fill="rgba(40,109,80,0.08)" stroke="#286d50" stroke-width="1"/>
+  <rect x="728" y="316" width="52" height="12" rx="2" fill="transparent" stroke="rgba(40,109,80,0.40)" stroke-width="0.8"/>
+  <text x="754" y="325" fill="rgba(40,109,80,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">LICENSE</text>
+  <text x="802" y="338" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif" text-anchor="middle">라이선스</text>
+  <text x="802" y="350" fill="#3f545c" font-size="9" font-family="'IBM Plex Mono', monospace" text-anchor="middle">OSS compliance</text>
+
+  <!-- ────────────────────────────────────────────
+       LEGEND strip
+  ──────────────────────────────────────────── -->
+  <line x1="36" y1="392" x2="924" y2="392" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+
+  <!-- 범례 라벨 -->
+  <text x="36" y="408" fill="#3f545c" font-size="8" font-family="'IBM Plex Mono', monospace" letter-spacing="0.14em">LEGEND</text>
+
+  <!-- 입력 -->
+  <rect x="104" y="398" width="36" height="14" rx="3" fill="rgba(63,84,92,0.10)" stroke="#6c8188" stroke-width="1"/>
+  <text x="122" y="409" fill="#3f545c" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle">입력</text>
+
+  <!-- 스캔 대상 -->
+  <rect x="152" y="398" width="60" height="14" rx="3" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="182" y="409" fill="#0d5763" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle">스캔 대상</text>
+
+  <!-- 결과: 정상 -->
+  <rect x="224" y="398" width="60" height="14" rx="3" fill="rgba(40,109,80,0.08)" stroke="#286d50" stroke-width="1"/>
+  <text x="254" y="409" fill="#286d50" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle">결과: 정상</text>
+
+  <!-- 결과: 주의 -->
+  <rect x="296" y="398" width="60" height="14" rx="3" fill="rgba(169,106,8,0.08)" stroke="#a96a08" stroke-width="1"/>
+  <text x="326" y="409" fill="#a96a08" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle">결과: 주의</text>
+
+</svg>
+</div>
+</body>
+</html>

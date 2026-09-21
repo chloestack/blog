@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>윈도우 함수 최적화 흐름</title>
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; font-family: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 600" role="img" aria-labelledby="2026-09-22-42592f2f-07-wf-opt-title 2026-09-22-42592f2f-07-wf-opt-desc">
+  <title id="2026-09-22-42592f2f-07-wf-opt-title">윈도우 함수 최적화 흐름도</title>
+  <desc id="2026-09-22-42592f2f-07-wf-opt-desc">EXPLAIN ANALYZE 실행 후 Windowing 노드를 확인하고, Using filesort 유무와 처리 행 수 과다 여부에 따라 복합 인덱스 추가 또는 WHERE 조건 축소로 분기하는 MySQL 8.0 윈도우 함수 최적화 절차.</desc>
+
+  <defs>
+    <!-- 기본 화살표 -->
+    <marker id="2026-09-22-42592f2f-07-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <!-- 강조 화살표 (accent) -->
+    <marker id="2026-09-22-42592f2f-07-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+  </defs>
+
+  <!-- 배경 -->
+  <rect width="960" height="600" fill="#f8fafb"/>
+
+  <!-- ══════════════════════════════════════════
+       화살표 — 노드보다 먼저 그림 (z-order)
+  ══════════════════════════════════════════ -->
+
+  <!-- E → W (수직) -->
+  <path d="M 480,112 L 480,156" stroke="#3f545c" stroke-width="1" fill="none" marker-end="url(#2026-09-22-42592f2f-07-arrow)"/>
+
+  <!-- W → Q1 (수직) -->
+  <path d="M 480,208 L 480,252" stroke="#3f545c" stroke-width="1" fill="none" marker-end="url(#2026-09-22-42592f2f-07-arrow)"/>
+
+  <!-- Q1 → I (예: 오른쪽) -->
+  <path d="M 536,296 L 644,296 L 644,340" stroke="#3f545c" stroke-width="1" fill="none" marker-end="url(#2026-09-22-42592f2f-07-arrow)"/>
+  <!-- 라벨: 예 -->
+  <rect x="576" y="280" width="24" height="14" rx="2" fill="#f8fafb"/>
+  <text x="588" y="291" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="500">예</text>
+
+  <!-- Q1 → Q2 (아니오: 수직) -->
+  <path d="M 480,340 L 480,380" stroke="#3f545c" stroke-width="1" fill="none" marker-end="url(#2026-09-22-42592f2f-07-arrow)"/>
+  <!-- 라벨: 아니오 -->
+  <rect x="454" y="344" width="44" height="14" rx="2" fill="#f8fafb"/>
+  <text x="476" y="355" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="500">아니오</text>
+
+  <!-- Q2 → F (예: 오른쪽) -->
+  <path d="M 536,424 L 644,424 L 644,460" stroke="#3f545c" stroke-width="1" fill="none" marker-end="url(#2026-09-22-42592f2f-07-arrow)"/>
+  <!-- 라벨: 예 -->
+  <rect x="576" y="408" width="24" height="14" rx="2" fill="#f8fafb"/>
+  <text x="588" y="419" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="500">예</text>
+
+  <!-- Q2 → OK (아니오: 왼쪽) -->
+  <path d="M 424,424 L 316,424 L 316,460" stroke="#0d5763" stroke-width="1" fill="none" marker-end="url(#2026-09-22-42592f2f-07-arrow-accent)"/>
+  <!-- 라벨: 아니오 -->
+  <rect x="336" y="408" width="44" height="14" rx="2" fill="#f8fafb"/>
+  <text x="358" y="419" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="500">아니오</text>
+
+  <!-- ══════════════════════════════════════════
+       노드
+  ══════════════════════════════════════════ -->
+
+  <!-- E: EXPLAIN ANALYZE 실행 (focal — 시작점) -->
+  <!-- 마스크 -->
+  <rect x="348" y="60" width="264" height="52" rx="6" fill="#f8fafb"/>
+  <!-- 박스 -->
+  <rect x="348" y="60" width="264" height="52" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <!-- 타입 태그 -->
+  <rect x="356" y="66" width="36" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.4)" stroke-width="0.8"/>
+  <text x="374" y="75" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">START</text>
+  <!-- 이름 -->
+  <text x="480" y="87" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">EXPLAIN ANALYZE 실행</text>
+
+  <!-- W: Windowing 노드 확인 (backend) -->
+  <rect x="348" y="156" width="264" height="52" rx="6" fill="#f8fafb"/>
+  <rect x="348" y="156" width="264" height="52" rx="6" fill="rgba(13,87,99,0.04)" stroke="#0d5763" stroke-width="1"/>
+  <rect x="356" y="162" width="36" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.35)" stroke-width="0.8"/>
+  <text x="374" y="171" fill="rgba(13,87,99,0.75)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">CHECK</text>
+  <text x="480" y="183" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Windowing 노드 확인</text>
+
+  <!-- Q1: Using filesort 있나 (decision diamond) -->
+  <!-- 다이아몬드: 중심 (480, 296), 너비 112, 높이 88 -->
+  <polygon points="480,252 536,296 480,340 424,296" fill="#eef2f4" stroke="#0d5763" stroke-width="1"/>
+  <text x="480" y="290" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Using filesort</text>
+  <text x="480" y="306" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">있나?</text>
+
+  <!-- Q2: 처리 행 수 과다한가 (decision diamond) -->
+  <!-- 다이아몬드: 중심 (480, 424), 너비 112, 높이 88 -->
+  <polygon points="480,380 536,424 480,468 424,424" fill="#eef2f4" stroke="#0d5763" stroke-width="1"/>
+  <text x="480" y="418" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">처리 행 수</text>
+  <text x="480" y="434" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">과다한가?</text>
+
+  <!-- I: 복합 인덱스 추가 (action — 오른쪽 가지) -->
+  <rect x="556" y="340" width="176" height="60" rx="6" fill="#f8fafb"/>
+  <rect x="556" y="340" width="176" height="60" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="564" y="346" width="36" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.4)" stroke-width="0.8"/>
+  <text x="582" y="355" fill="rgba(18,33,39,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">INDEX</text>
+  <text x="644" y="371" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">파티션+정렬 키</text>
+  <text x="644" y="387" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">복합 인덱스 추가</text>
+
+  <!-- F: WHERE 조건으로 입력 행 축소 (action — 오른쪽 가지) -->
+  <rect x="556" y="460" width="176" height="60" rx="6" fill="#f8fafb"/>
+  <rect x="556" y="460" width="176" height="60" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="564" y="466" width="36" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.4)" stroke-width="0.8"/>
+  <text x="582" y="475" fill="rgba(18,33,39,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">FILTER</text>
+  <text x="644" y="491" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">WHERE 조건으로</text>
+  <text x="644" y="507" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">입력 행 축소</text>
+
+  <!-- OK: 최적 상태 유지 (focal — 결과) -->
+  <rect x="228" y="460" width="176" height="60" rx="6" fill="#f8fafb"/>
+  <rect x="228" y="460" width="176" height="60" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <rect x="236" y="466" width="24" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.4)" stroke-width="0.8"/>
+  <text x="248" y="475" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">OK</text>
+  <text x="316" y="487" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">최적 상태</text>
+  <text x="316" y="503" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">유지</text>
+
+  <!-- ══════════════════════════════════════════
+       범례 (하단 구분선 + 수평 스트립)
+  ══════════════════════════════════════════ -->
+  <line x1="30" y1="552" x2="930" y2="552" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+  <text x="30" y="566" fill="#6c8188" font-size="8" font-family="'IBM Plex Mono', monospace" letter-spacing="0.14em">LEGEND</text>
+
+  <!-- 범례 항목: 시작 -->
+  <rect x="100" y="558" width="28" height="16" rx="4" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="136" y="570" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">시작 / 결과</text>
+
+  <!-- 범례 항목: 확인 단계 -->
+  <rect x="240" y="558" width="28" height="16" rx="4" fill="rgba(13,87,99,0.04)" stroke="#0d5763" stroke-width="1"/>
+  <text x="276" y="570" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">확인 단계</text>
+
+  <!-- 범례 항목: 판단 -->
+  <polygon points="378,566 392,558 406,566 392,574" fill="#eef2f4" stroke="#0d5763" stroke-width="1"/>
+  <text x="416" y="570" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">판단</text>
+
+  <!-- 범례 항목: 조치 -->
+  <rect x="488" y="558" width="28" height="16" rx="4" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <text x="524" y="570" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">조치</text>
+
+</svg>
+</body>
+</html>
