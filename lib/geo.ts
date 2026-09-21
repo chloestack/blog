@@ -17,6 +17,10 @@ export type LocaleRequest = {
   userAgent: string | null;
   /** lang 쿠키 값. 방문자가 직접 고른 언어. */
   cookie: string | null;
+  /** Referer. 사이트 안에서 온 이동인지 보려고 쓴다. */
+  referer?: string | null;
+  /** 지금 요청의 host. Referer와 견줘 같은 사이트인지 가른다. */
+  host?: string | null;
 };
 
 /**
@@ -42,12 +46,40 @@ function prefersKorean(acceptLanguage: string | null): boolean {
     .some((tag) => tag === "ko" || tag.startsWith("ko-"));
 }
 
+/**
+ * 접속 국가를 모르는 경우는 헤더가 아예 없는 것 말고도 있다. Cloudflare는 알 수
+ * 없는 주소에 XX, Tor 출구에 T1을 적어 보낸다. 이런 값을 나라 이름으로 믿으면
+ * "KR이 아니다"가 되어, 한국에서 영어로 설정된 브라우저로 보는 사람이 영문으로
+ * 밀려난다.
+ */
+const UNKNOWN_COUNTRIES = new Set(["XX", "T1"]);
+
+function knownCountry(country: string | null): string | null {
+  const code = country?.trim().toUpperCase();
+  return code && !UNKNOWN_COUNTRIES.has(code) ? code : null;
+}
+
 function guessLocale(country: string | null, acceptLanguage: string | null): Locale {
-  if (country?.toUpperCase() === "KR") return "ko";
+  // 어디서 왔는지 모르면 원본을 보여 준다. 로컬과 테스트도 여기에 해당한다.
+  const code = knownCountry(country);
+  if (!code) return "ko";
+  if (code === "KR") return "ko";
   if (prefersKorean(acceptLanguage)) return "ko";
-  // 지역도 언어도 모르면 원본을 보여 준다. 로컬과 테스트가 여기에 해당한다.
-  if (!country && !acceptLanguage) return "ko";
   return "en";
+}
+
+/**
+ * 사이트 안에서 링크를 눌러 온 이동인지 본다. 읽던 도중에 지면이 갈아엎히는 일을
+ * 막으려고, 지역 추측은 처음 들어올 때만 한다 — 방문자가 직접 고른 쿠키는 이와
+ * 무관하게 계속 듣는다.
+ */
+function isInternalNavigation(request: LocaleRequest): boolean {
+  if (!request.referer || !request.host) return false;
+  try {
+    return new URL(request.referer).host === request.host;
+  } catch {
+    return false;
+  }
 }
 
 /** 한국어 글 주소를 같은 글의 영문 주소로 옮긴다. 번역본이 없으면 null. */
@@ -74,7 +106,14 @@ export function localeRedirect(request: LocaleRequest): string | null {
   if (isBot(request.userAgent)) return null;
 
   const cookieLocale = request.cookie && isLocale(request.cookie) ? request.cookie : null;
-  const want = cookieLocale ?? guessLocale(request.country, request.acceptLanguage);
+  let want: Locale;
+  if (cookieLocale) {
+    want = cookieLocale;
+  } else {
+    // 첫 진입에서만 지역을 본다. 사이트 안에서 글을 넘겨 가는 중에는 건드리지 않는다.
+    if (isInternalNavigation(request)) return null;
+    want = guessLocale(request.country, request.acceptLanguage);
+  }
   if (want !== "en") return null;
 
   return englishPath(request.pathname);

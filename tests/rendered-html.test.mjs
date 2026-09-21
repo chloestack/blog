@@ -493,6 +493,48 @@ test("a post without a translation is served as it is", async () => {
   assert.equal(response.status, 200);
 });
 
+/**
+ * 지역 추측은 첫 진입에서만 한다. 사이트 안에서 글을 넘겨 가는 중에 지면이
+ * 영문으로 갈아엎히면 읽던 사람이 길을 잃는다.
+ */
+test("browsing inside the site is never flipped by geography", async () => {
+  const [pair] = readEnglishPosts();
+  if (!pair) return;
+  const korean = `/posts/${encodeURIComponent(pair.koSlug)}`;
+  const inside = { ...FROM_ABROAD, referer: "http://localhost/" };
+
+  const response = await render(korean, visitor(inside));
+  assert.equal(response.status, 200, "flipped a visitor who clicked a link inside the site");
+
+  // 다른 사이트에서 들어온 첫 진입은 그대로 옮긴다.
+  const outside = await render(korean, visitor({ ...FROM_ABROAD, referer: "https://news.ycombinator.com/" }));
+  assert.equal(outside.status, 302);
+
+  // 직접 고른 언어는 사이트 안 이동에서도 계속 듣는다.
+  const chose = await render(korean, visitor({ ...inside, cookie: "lang=en" }));
+  assert.equal(chose.status, 302);
+  assert.equal(new URL(chose.headers.get("location")).pathname, `/en/posts/${pair.slug}`);
+});
+
+/**
+ * 접속 국가를 모를 때 쓰는 값(Cloudflare의 XX, T1)을 나라로 믿으면 "KR이 아니다"가
+ * 되어, 한국에서 영어로 설정된 브라우저로 보는 사람이 영문으로 밀려난다.
+ */
+test("an unknown country code keeps the korean page", async () => {
+  const [pair] = readEnglishPosts();
+  if (!pair) return;
+  const korean = `/posts/${encodeURIComponent(pair.koSlug)}`;
+
+  for (const code of ["XX", "T1", ""]) {
+    const response = await render(korean, visitor({ "cf-ipcountry": code, "accept-language": "en-US,en;q=0.9" }));
+    assert.equal(response.status, 200, `redirected on an unknown country code: ${code || "(empty)"}`);
+  }
+
+  // 국가 헤더가 아예 없는 경우도 같다.
+  const noHeader = await render(korean, visitor({ "accept-language": "en-US,en;q=0.9" }));
+  assert.equal(noHeader.status, 200);
+});
+
 /** 언어를 직접 고르면 쿠키로 남고, 주소에서 파라미터는 지워진다. */
 test("the language switch remembers the choice", async () => {
   const response = await render("/en?lang=en", visitor(FROM_KOREA));

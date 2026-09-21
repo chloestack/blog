@@ -29,6 +29,9 @@ export default function proxy(request: NextRequest) {
     acceptLanguage: request.headers.get("accept-language"),
     userAgent: request.headers.get("user-agent"),
     cookie: request.cookies.get(LOCALE_COOKIE)?.value ?? null,
+    // 사이트 안에서 눌러 온 이동인지 본다. 읽는 도중에 지면이 바뀌지 않게 한다.
+    referer: request.headers.get("referer"),
+    host: request.headers.get("host") ?? url.host,
   });
   if (!target) return NextResponse.next();
 
@@ -37,6 +40,6 @@ export default function proxy(request: NextRequest) {
   const response = NextResponse.redirect(destination, 302);
   // 이 응답은 방문자마다 다르다. 중간 캐시가 한 사람의 결과를 남에게 주면 안 된다.
   response.headers.set("cache-control", "no-store");
-  response.headers.set("vary", "accept-language, cookie");
+  response.headers.set("vary", "accept-language, cookie, referer");
   return response;
 }
