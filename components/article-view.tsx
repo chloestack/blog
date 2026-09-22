@@ -2,8 +2,8 @@ import Link from "next/link";
 import { MermaidDiagrams } from "@/components/mermaid-diagrams";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
-import { STRINGS, localePrefix, switchHref } from "@/lib/i18n";
-import { counterpartSlug, getRelatedPosts, getSeriesPosts, hasDiagrams, postHref, renderMarkdown, toneFor, type Post } from "@/lib/posts";
+import { STRINGS, localePrefix } from "@/lib/i18n";
+import { getRelatedPosts, getSeriesPosts, hasDiagrams, postHref, renderMarkdown, toneFor, type Post } from "@/lib/posts";
 
 export function ArticleView({ post }: { post: Post }) {
   const locale = post.locale;
@@ -19,7 +19,7 @@ export function ArticleView({ post }: { post: Post }) {
 
   return (
     <main>
-      <SiteHeader locale={locale} homeHref={home} switchTo={switchHref(locale, counterpartSlug(post))} />
+      <SiteHeader locale={locale} homeHref={home} />
 
       <div className="wrap">
         <article className="article">

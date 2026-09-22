@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
-import { STRINGS, switchHref } from "@/lib/i18n";
+import { STRINGS } from "@/lib/i18n";
 
 export const metadata: Metadata = {
   title: "개인정보처리방침",
@@ -21,7 +21,7 @@ export const metadata: Metadata = {
 export default function PrivacyPage() {
   return (
     <main>
-      <SiteHeader locale="ko" homeHref="/" switchTo={switchHref("ko", null)} />
+      <SiteHeader locale="ko" homeHref="/" />
 
       <div className="wrap">
         <article className="article">

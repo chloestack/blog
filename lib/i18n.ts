@@ -60,9 +60,6 @@ export type Strings = {
   /** 방문자 수 앞에 붙는 말. 숫자는 굵게 따로 그린다. */
   visitsToday: string;
   visitsTotal: string;
-  /** 다른 언어로 넘어가는 링크에 찍히는 말. */
-  switchTo: string;
-  switchToAria: string;
   /** 숫자를 지역 표기로 찍을 때 쓰는 로케일 태그. */
   numberLocale: string;
 };
@@ -92,8 +89,6 @@ export const STRINGS: Record<Locale, Strings> = {
     privacy: "개인정보처리방침",
     visitsToday: "오늘",
     visitsTotal: "전체",
-    switchTo: "English",
-    switchToAria: "Read this site in English",
     numberLocale: "ko-KR",
   },
   en: {
@@ -120,8 +115,6 @@ export const STRINGS: Record<Locale, Strings> = {
     privacy: "Privacy policy",
     visitsToday: "Today",
     visitsTotal: "Total",
-    switchTo: "한국어",
-    switchToAria: "이 사이트를 한국어로 보기",
     numberLocale: "en-US",
   },
 };
@@ -129,16 +122,4 @@ export const STRINGS: Record<Locale, Strings> = {
 /** 다른 언어와 짝이 되는 주소. */
 export function otherLocale(locale: Locale): Locale {
   return locale === "ko" ? "en" : "ko";
-}
-
-/**
- * 언어 전환 링크의 주소. `?lang=`은 미들웨어가 쿠키로 옮기고 지워 준다 —
- * 한 번 누르면 그 뒤로는 지역을 보고 옮기지 않는다.
- * 짝이 되는 글이 없으면 그 언어의 목록으로 보낸다.
- */
-export function switchHref(locale: Locale, counterpartSlug: string | null): string {
-  const target = otherLocale(locale);
-  const prefix = localePrefix(target);
-  const path = counterpartSlug ? `${prefix}/posts/${encodeURIComponent(counterpartSlug)}` : prefix || "/";
-  return `${path}?lang=${target}`;
 }

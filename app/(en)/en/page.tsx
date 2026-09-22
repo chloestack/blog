@@ -1,7 +1,7 @@
 import { PostBrowser } from "@/components/post-browser";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
-import { STRINGS, switchHref } from "@/lib/i18n";
+import { STRINGS } from "@/lib/i18n";
 import { getAllPosts, toCard } from "@/lib/posts";
 
 export default function EnglishHome() {
@@ -10,7 +10,7 @@ export default function EnglishHome() {
 
   return (
     <main>
-      <SiteHeader locale="en" homeHref="#top" switchTo={switchHref("en", null)} wide />
+      <SiteHeader locale="en" homeHref="#top" wide />
 
       <div className="wrap wide" id="top">
         <PostBrowser posts={posts} locale="en" />

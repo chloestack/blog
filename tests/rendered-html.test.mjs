@@ -397,8 +397,7 @@ test("the english pages stand on their own locale", async () => {
 
   assert.match(html, /<html lang="en">/i);
   assert.match(html, /<section class="articles"[^>]*aria-label="Posts"/);
-  // 머리의 언어 전환 링크만은 상대 언어로 적는다 — 그 한 줄은 빼고 본다.
-  const body = html.slice(0, html.indexOf("</main>")).replace(/<a [^>]*class="lang-switch"[^>]*>.*?<\/a>/s, "");
+  const body = html.slice(0, html.indexOf("</main>"));
   assert.doesNotMatch(body, /[가-힣]/, "korean copy leaked into the english page");
 
   for (const post of readEnglishPosts()) {
@@ -541,8 +540,8 @@ test("an unknown country code keeps the korean page", async () => {
   assert.equal(noHeader.status, 200);
 });
 
-/** 언어를 직접 고르면 쿠키로 남고, 주소에서 파라미터는 지워진다. */
-test("the language switch remembers the choice", async () => {
+/** `?lang=`으로 언어를 고르면 쿠키로 남고, 주소에서 파라미터는 지워진다. */
+test("the lang parameter remembers the choice", async () => {
   const response = await render("/en?lang=en", visitor(FROM_KOREA));
   assert.equal(response.status, 302);
 
@@ -551,11 +550,11 @@ test("the language switch remembers the choice", async () => {
   assert.equal(location.search, "");
   assert.match(response.headers.get("set-cookie") ?? "", /lang=en/);
 
-  // 두 지면 모두 상대 언어로 가는 링크를 머리에 세운다.
-  const ko = await (await render("/")).text();
-  assert.match(ko, /<a [^>]*href="\/en\?lang=en"[^>]*class="lang-switch"/);
-  const en = await (await render("/en")).text();
-  assert.match(en, /<a [^>]*href="\/\?lang=ko"[^>]*class="lang-switch"/);
+  // 머리에는 언어 전환 링크를 두지 않는다.
+  for (const path of ["/", "/en"]) {
+    const html = await (await render(path)).text();
+    assert.doesNotMatch(html, /class="lang-switch"/, `language switch left on ${path}`);
+  }
 });
 
 /** 피드도 언어마다 하나씩 선다. 리더가 두 언어를 섞어 받지 않도록. */
