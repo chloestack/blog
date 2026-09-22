@@ -52,7 +52,7 @@ MySQL 8.0.13부터 도입된 **함수 기반 인덱스(Functional Index)**는 �
 
 옵티마이저가 이 인덱스를 선택하려면 WHERE 절의 표현식이 인덱스에 등록된 표현식과 정확히 일치해야 합니다. 예를 들어 `JSON_UNQUOTE(JSON_EXTRACT(doc, '$.status'))`로 인덱스를 만들었는데 쿼리에서 `doc->>'$.status'`를 쓰면, MySQL 8.0에서는 `->>` 연산자가 `JSON_UNQUOTE(JSON_EXTRACT(...))` 와 동치임을 옵티마이저가 인식하므로 대부분 정상 동작합니다. 그러나 복잡한 중첩 표현식이 들어갈수록 명시적인 표현식 일치를 직접 확인하는 것이 더 안전합니다.
 
-```
+```text
 쿼리 실행 흐름 (함수 기반 인덱스)
 ─────────────────────────────────────────────────
 SELECT ... WHERE JSON_EXTRACT(doc, '$.status') = 'active'
@@ -132,7 +132,7 @@ WHERE JSON_UNQUOTE(JSON_EXTRACT(meta, '$.channel')) = 'mobile';
 
 `EXPLAIN`과 `EXPLAIN ANALYZE`는 JSON 쿼리 최적화 작업에서 핵심 도구입니다. `EXPLAIN`은 옵티마이저가 선택한 실행 계획을 보여주고, `EXPLAIN ANALYZE`는 실제 실행 통계(실행 시간, 처리된 행 수)까지 포함합니다. 인덱스가 제대로 동작하는지 확인할 때 `type` 컬럼을 가장 먼저 살펴봐야 합니다. `ALL`은 풀 테이블 스캔, `index`는 인덱스 전체 스캔, `range`는 범위 스캔, `ref`는 비고유 인덱스 조회를 의미합니다. JSON 경로 조건에 인덱스가 적용되었다면 `ref` 또는 `range`가 나타나야 합니다.
 
-```
+```text
 EXPLAIN 결과 핵심 컬럼 해석 (orders 테이블 예시)
 ───────────────────────────────────────────────────────
 type  │ key                   │ rows     │ filtered │ Extra
@@ -192,7 +192,7 @@ WHERE JSON_UNQUOTE(JSON_EXTRACT(meta, '$.channel')) = 'mobile';
 
 최적화의 효과를 명확히 확인하려면 실제 데이터와 함께 `EXPLAIN ANALYZE`를 비교해봐야 합니다. 중요한 것은 단순히 실행 시간이 줄어드는 것 이상으로, 행 단위 JSON 파싱 비용이 완전히 제거되고 I/O가 인덱스 페이지 위주로 집중된다는 구조적 변화입니다. 특히 JSON 문서의 크기가 클수록—메타 데이터가 수백 바이트에서 수 킬로바이트에 이르는 경우—풀 스캔 시의 파싱 비용이 더욱 커지므로 인덱스 효과도 두드러집니다.
 
-```
+```text
 최적화 전후 실행 특성 비교 (orders 테이블 5,000만 행 기준)
 ────────────────────────────────────────────────────────────
 항목               변경전 (풀 스캔)       변경후 (인덱스 스캔)
@@ -268,7 +268,7 @@ Generated Column 기반 인덱스의 가장 흔한 실수는 **표현식 불일�
 
 둘째, **Performance Schema**의 `events_statements_summary_by_digest` 테이블을 통해 특정 쿼리 패턴의 평균 실행 시간과 `SUM_ROWS_EXAMINED` 대비 `SUM_ROWS_SENT` 비율을 추적할 수 있습니다. 셋째, `SHOW INDEX FROM orders` 명령과 `information_schema.STATISTICS`를 통해 인덱스의 카디널리티를 확인할 수 있습니다. 카디널리티가 지나치게 낮으면 옵티마이저가 인덱스 사용을 포기할 가능성이 높습니다. `ANALYZE TABLE` 명령으로 통계를 갱신하면 옵티마이저의 판단 정확도를 높일 수 있습니다.
 
-```
+```text
 인덱스 효율 모니터링 체크리스트
 ────────────────────────────────────────────────────────────
 [1] EXPLAIN type 확인

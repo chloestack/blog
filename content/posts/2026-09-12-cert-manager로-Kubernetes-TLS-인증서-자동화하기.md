@@ -47,7 +47,7 @@ Kubernetes 클러스터에서 HTTPS 서비스를 운영하다 보면 TLS 인증�
 
 cert-manager는 Kubernetes의 컨트롤러 패턴을 충실히 따릅니다. 핵심 컴포넌트는 cert-manager 컨트롤러, cainjector, webhook 세 가지입니다. 컨트롤러는 Certificate, CertificateRequest, Order, Challenge 같은 커스텀 리소스(CRD)의 상태를 지속적으로 감시하며 desired state와 current state의 차이를 조정합니다. 이 과정이 Kubernetes의 reconciliation loop와 동일한 방식으로 동작하기 때문에, 인증서 발급이나 갱신 중 네트워크 오류가 발생하더라도 컨트롤러가 지수 백오프(exponential backoff) 전략으로 자동 재시도합니다. cainjector는 cert-manager가 관리하는 CA 번들을 ValidatingWebhookConfiguration, MutatingWebhookConfiguration, CRD에 자동으로 주입하는 역할을 담당합니다. webhook은 CRD 리소스 생성 시 유효성 검사와 기본값 설정을 수행합니다. 이 세 컴포넌트가 독립적으로 배포되기 때문에 각각 별도로 스케일링하거나 모니터링할 수 있다는 점도 운영 측면에서 유리합니다.
 
-```
+```text
 cert-manager 아키텍처 전체 구조
 
   ┌───────────────────────────────────────────────────┐
@@ -86,7 +86,7 @@ cert-manager가 도입하는 CRD는 단순히 인증서를 담는 그릇이 아�
 
 실제 인증서 발급이 어떤 단계로 이루어지는지 이해하면 문제가 생겼을 때 어느 리소스를 먼저 확인해야 하는지 명확해집니다. Certificate 리소스가 생성되면 컨트롤러는 참조된 Issuer/ClusterIssuer를 확인하고 CertificateRequest를 생성합니다. ACME 방식이라면 Order가 생성되고, ACME 서버(Let's Encrypt 등)에 주문이 접수됩니다. 서버는 도메인 소유권 증명을 위한 챌린지 토큰을 내려줍니다. HTTP-01이라면 cert-manager가 클러스터 내에 임시 Pod와 Service를 생성해 챌린지를 처리하고, DNS-01이라면 DNS 공급자 API를 통해 TXT 레코드를 추가합니다. 챌린지 검증이 완료되면 ACME 서버가 서명된 인증서를 발급하고, cert-manager는 이를 지정된 Kubernetes Secret에 `tls.crt`와 `tls.key` 키로 저장합니다. Certificate 리소스의 `status.conditions`가 `Ready: True`로 변경되면 발급이 완료된 것입니다.
 
-```
+```text
 인증서 발급 단계별 흐름
 
   [사용자: Certificate 생성]

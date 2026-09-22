@@ -55,7 +55,7 @@ status: "draft"
 
 `java.lang.Thread` 클래스에는 `ThreadLocal.ThreadLocalMap threadLocals`라는 패키지-프라이빗 필드가 선언되어 있습니다. `ThreadLocalMap`은 `HashMap`과 달리 내부적으로 `Entry` 배열을 사용하는 맞춤형 해시 맵입니다. 각 `Entry`는 `ThreadLocal` 인스턴스를 키로, 실제 저장하려는 값을 값으로 갖습니다. 중요한 점은 이 `Entry`의 키가 `WeakReference<ThreadLocal<?>>`로 선언되어 있다는 것입니다. 이 구조는 `ThreadLocal` 인스턴스에 대한 외부 강한 참조가 모두 사라졌을 때 GC가 해당 키를 수거할 수 있도록 허용하기 위한 설계입니다.
 
-```
+```text
 Thread 객체
 └── threadLocals: ThreadLocalMap
       └── Entry[] (해시 배열)
@@ -88,7 +88,7 @@ Thread 객체
 
 `ThreadLocal`의 `set()`, `get()`, `remove()` 메서드가 실제로 어떻게 동작하는지 이해하면 올바른 사용 패턴을 도출하는 데 큰 도움이 됩니다. 각 메서드는 현재 스레드의 `threadLocals` 맵을 읽거나 쓰는 방식으로 작동하며, 해시 충돌은 선형 탐사(linear probing)로 해결합니다.
 
-```
+```text
 [set() 흐름]
 ThreadLocal.set(value)
   → Thread.currentThread().threadLocals 획득
@@ -149,7 +149,7 @@ ThreadLocal.remove()
 
 예를 들어, `ThreadLocal<Map<String, Object>>`에 요청 속성을 저장하는 패턴을 생각해 봅니다. 이 맵에 서블릿 `HttpSession`, JPA `EntityManager`, 데이터베이스 커넥션 래퍼 등이 담겨 있다면, `ThreadLocal`의 직접 값은 `Map` 객체이지만 실제로 GC에서 살아남는 객체 그래프는 수백 킬로바이트에서 수 메가바이트에 달할 수 있습니다.
 
-```
+```text
 Thread
   └── ThreadLocalMap
         └── Entry.value → HashMap  ← 작아 보이지만...
@@ -362,7 +362,7 @@ JDK 20부터 Preview로 도입된 **Scoped Values**(JEP 446, JDK 21 두 번째 P
 
 GC 로그는 `-Xlog:gc*:file=/var/log/app/gc.log:time,uptime:filecount=5,filesize=20m` 옵션으로 활성화합니다. GCViewer나 GCEasy 도구로 분석하면 힙 사용 패턴과 GC 효율을 시각적으로 파악할 수 있습니다. 특히 Full GC 직후 힙 점유율이 이전 Full GC 직후보다 지속적으로 높아지는 패턴이 메모리 누수의 전형적 신호입니다.
 
-```
+```text
 정상 패턴 (GC 후 수렴):
 힙  │  /\/\/\/\/\/\/\/\/\
 사용│ /  기준선 유지      

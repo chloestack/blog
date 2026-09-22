@@ -55,7 +55,7 @@ Spring Session은 **세션 추상화 계층(Session Abstraction Layer)**을 도�
 
 서블릿 필터 체인에는 `SessionRepositoryFilter`가 등록되어, 모든 HTTP 요청이 이 필터를 거치도록 합니다. 이 필터는 서블릿 컨테이너의 `HttpServletRequest`를 `SessionRepositoryRequestWrapper`로 감싸는데, 이 래퍼 클래스가 `getSession()` 호출을 가로채어 내장 세션 대신 외부 저장소의 세션을 반환합니다. `@Autowired HttpSession`으로 세션을 주입받는 기존 코드는 아무런 변경 없이 외부 저장소를 활용하게 됩니다. 이처럼 표준 서블릿 API의 모양은 그대로 유지하면서 동작만 교체하는 설계 덕분에 마이그레이션 비용이 매우 낮습니다.
 
-```
+```text
 HTTP 요청
     │
     ▼
@@ -220,7 +220,7 @@ Redis 기반 세션 관리에서 성능에 가장 직접적인 영향을 미치�
 
 Spring Session이 Redis에 저장하는 세션 구조를 이해하면 최적화 방향이 명확해집니다. Redis의 **Hash 자료구조**를 사용하며, 기본적으로 다음과 같은 키 패턴으로 데이터가 저장됩니다.
 
-```
+```text
 myapp:session:sessions:{sessionId}           # 세션 데이터 Hash
 myapp:session:sessions:expires:{sessionId}   # 만료 처리용 String 키
 myapp:session:expirations:{timestamp}        # 만료 시간 인덱스 Sorted Set

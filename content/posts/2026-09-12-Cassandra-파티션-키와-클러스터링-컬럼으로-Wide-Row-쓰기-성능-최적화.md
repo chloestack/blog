@@ -42,7 +42,7 @@ Cassandra의 데이터는 **파티션(Partition)** 단위로 노드에 분산됩
 
 이 구조에서 핵심은 **쓰기가 항상 순차(Sequential) I/O** 라는 점입니다. 랜덤 I/O가 없기 때문에 HDD에서도 높은 쓰기 처리량을 낼 수 있습니다. 단, 이 이점을 누리려면 같은 파티션 내 데이터가 하나의 SSTable 세그먼트에 연속적으로 배치되어야 합니다. 파티션 키 설계가 잘못되면 같은 파티션 데이터가 여러 SSTable에 흩어지고, Compaction 부담이 증가하여 쓰기 성능이 오히려 저하됩니다.
 
-```
+```text
 Cassandra 쓰기 경로
 
 클라이언트 요청
@@ -143,7 +143,7 @@ VALUES ('sensor-001', '2026-09-12', toTimestamp(now()), 23.5, 65.2);
 
 Wide Row 패턴의 핵심은 바로 여기에 있습니다. 하나의 파티션 안에 클러스터링 컬럼으로 수천~수백만 행을 정렬하여 저장하면, "최근 N건 조회"나 "특정 시간 범위 조회" 같은 쿼리를 인덱스 없이 순차 읽기로 처리할 수 있습니다.
 
-```
+```text
 Wide Row 물리 저장 구조 (파티션 내부)
 
 파티션 키: ('sensor-001', '2026-09-12')
@@ -245,7 +245,7 @@ Cassandra에서 **BATCH** 문은 여러 쓰기를 묶어 원자적으로 처리�
 
 파티션 키 설계가 올바르더라도 데이터 패턴이 예상과 달라지면 핫스팟이 발생할 수 있습니다. 운영 환경에서는 주기적으로 파티션 크기를 모니터링해야 합니다. Cassandra는 `nodetool tablehistograms` 명령으로 파티션 크기 분포를 확인할 수 있으며, `nodetool toppartitions`(Cassandra 4.0+)로 실시간으로 크기가 큰 파티션을 찾을 수 있습니다.
 
-```
+```text
 nodetool toppartitions 명령 활용 예시
 
 $ nodetool toppartitions iot sensor_readings 10 1000

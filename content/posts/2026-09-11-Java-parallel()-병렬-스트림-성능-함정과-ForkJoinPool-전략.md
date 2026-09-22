@@ -44,7 +44,7 @@ Java 8의 Stream API가 등장했을 때, `parallel()` 메서드는 개발자들
 
 ForkJoinPool의 핵심 특징은 **Work-Stealing** 알고리즘입니다. 각 워커 스레드는 자신만의 양방향 큐(deque)를 가지며, 작업을 큐의 앞쪽(head)에서 꺼내 처리합니다. 자신의 큐가 비었을 때는 다른 스레드의 큐 뒤쪽(tail)에서 작업을 훔쳐옵니다. 이 비대칭적 접근 방식은 스레드 간 락 경합을 최소화하면서도 유휴 스레드가 발생하지 않도록 균형을 맞춥니다.
 
-```
+```text
 [워커 스레드 1 deque]            [워커 스레드 2 deque]
 HEAD → [T1][T2][T3] ← TAIL      HEAD → [T4][T5] ← TAIL
          ↑ 자신의 큐 앞쪽에서                ↑ 스레드1 큐 뒤쪽에서
@@ -76,7 +76,7 @@ HEAD → [T1][T2][T3] ← TAIL      HEAD → [T4][T5] ← TAIL
 
 스트림 파이프라인이 `parallel()`과 함께 실행될 때의 처리 흐름을 이해하면, 어느 지점에서 병목이 발생하는지 파악할 수 있습니다. 분할과 합산 단계 모두 비용이 발생한다는 점을 인식해야 합니다.
 
-```
+```text
 소스(Source)
     │
     ▼
@@ -227,7 +227,7 @@ public class IsolatedForkJoinPoolExample {
 
 ForkJoinPool의 Work-Stealing은 워커 스레드의 유휴 상태를 최소화하는 데 탁월하지만, 지나치게 작은 단위로 작업이 분할되면 오히려 오버헤드가 커집니다. `RecursiveTask`나 `RecursiveAction`을 직접 구현할 때는 **임계값(threshold)**을 설정하여 일정 크기 이하의 작업은 순차 처리하도록 제어합니다.
 
-```
+```text
 작업 분할 전략 (Threshold = 1000)
 
 [0 ~ 8000] → fork
@@ -268,7 +268,7 @@ ForkJoinPool의 Work-Stealing은 워커 스레드의 유휴 상태를 최소화�
 
 운영 중인 서비스에서 병렬 스트림의 문제를 조기에 감지하려면 ForkJoinPool의 상태 지표를 모니터링해야 합니다. `ForkJoinPool` 인스턴스는 여러 상태 조회 메서드를 제공하며, Micrometer나 Prometheus를 활용해 주기적으로 수집하고 대시보드에 시각화할 수 있습니다.
 
-```
+```text
 ForkJoinPool 모니터링 지표 요약
 
 getActiveThreadCount()   → 현재 작업 중인 워커 스레드 수

@@ -44,7 +44,7 @@ OpenFeign은 이 문제를 인터페이스 선언만으로 해결했지만, Spri
 
 Spring은 `HttpServiceProxyFactory`를 통해 런타임에 인터페이스의 프록시 구현체를 생성합니다. 이 프록시는 메서드 호출을 가로채 어노테이션 메타데이터를 분석하고, 실제 HTTP 요청을 구성하여 등록된 클라이언트(`WebClient` 또는 `RestClient`)로 전달합니다.
 
-```
+```text
 [인터페이스 정의]
    │  @HttpExchange("/users")
    │  @GetExchange("/{id}")
@@ -198,7 +198,7 @@ public WebClient webClientWithAuth(WebClient.Builder builder,
 
 `WebClient.Builder`에 `defaultStatusHandler()`를 등록하거나, `onStatus()` 연산자를 통해 상태 코드별 예외 변환 로직을 적용합니다. 이 처리는 `ExchangeFilterFunction`과 동일하게 `WebClient` 수준에서 적용되므로, 인터페이스 메서드마다 예외 처리 코드를 반복하지 않아도 됩니다.
 
-```
+```text
 [외부 API 응답]
      │
      ├─ 200 OK          → 정상 역직렬화
@@ -232,7 +232,7 @@ public WebClient webClientWithAuth(WebClient.Builder builder,
 
 `@HttpExchange`는 새로운 HTTP 클라이언트가 아니라 기존 클라이언트(`WebClient` 또는 `RestClient`) 위에 선언적 레이어를 추가한 추상화입니다. 따라서 성능 특성은 사용하는 어댑터에 따라 결정됩니다. WebClient 어댑터를 사용하는 경우 Reactor Netty 기반의 이벤트 루프 모델로 동작하여 높은 동시성 환경에서 스레드 효율이 뛰어납니다. RestClient 어댑터는 Apache HttpClient 5나 JDK HttpClient 위에서 동기 방식으로 동작합니다.
 
-```
+```text
 처리량 (동시 요청 100개 기준, 대략적 경향)
 
 RestTemplate (스레드풀 블로킹)
@@ -303,7 +303,7 @@ OpenFeign과의 비교도 중요합니다. OpenFeign은 Spring Cloud와의 통�
 
 서비스 수가 늘어나 여러 `@HttpExchange` 인터페이스가 생기면, 각 외부 서비스별로 설정 클래스를 분리하고 베이스 URL, 타임아웃, 재시도 정책을 독립적으로 관리합니다. 하나의 `WebClient`를 모든 클라이언트가 공유하면 타임아웃 조정 시 의도치 않은 부수 효과가 발생할 수 있습니다.
 
-```
+```text
 [권장 패키지 구조]
 
 infrastructure/

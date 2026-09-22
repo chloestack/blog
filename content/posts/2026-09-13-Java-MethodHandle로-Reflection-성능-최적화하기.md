@@ -54,7 +54,7 @@ JVM의 JIT 컴파일러는 자주 호출되는 메서드를 인라이닝하여 �
 
 반면 MethodHandle은 JVM 명세 수준에서 직접 지원됩니다. `invokeExact()` 또는 `invoke()` 호출은 `invokevirtual` 바이트코드와 유사하게 취급될 수 있어, JIT가 MethodHandle 체인을 분석하고 인라이닝을 적용할 수 있습니다. 이것이 MethodHandle이 Reflection보다 성능상 우위를 가지는 핵심 이유입니다.
 
-```
+```text
 [Reflection 호출 경로]
 호출자 코드
    ↓
@@ -241,7 +241,7 @@ LambdaMetafactory 방식의 가장 큰 장점은 **호출 시점의 오버헤드
 
 MethodHandle의 성능 이점을 최대화하려면 올바른 캐싱 전략이 필수입니다. Lookup 과정에서 발생하는 비용(접근 검사, 메서드 탐색)은 캐싱으로 완전히 제거할 수 있습니다. 가장 권장되는 패턴은 `static final` 필드에 MethodHandle을 저장하는 것입니다. JIT 컴파일러는 `static final` 참조를 상수로 취급하여 더욱 적극적인 최적화를 수행합니다.
 
-```
+```text
 캐싱 전략별 비교
 
 static final 필드   ──▶  최고 성능 (JIT 상수 취급)
@@ -325,7 +325,7 @@ MethodHandle을 처음 적용할 때 가장 자주 겪는 문제는 `WrongMethod
 
 두 번째 함정은 Lookup 객체의 잘못된 생성입니다. `MethodHandles.lookup()`은 호출 위치의 클래스 컨텍스트를 캡처하므로, 헬퍼 메서드 내에서 호출하면 헬퍼 클래스의 Lookup이 생성됩니다. 이 Lookup으로는 원래 의도했던 클래스의 private 멤버에 접근할 수 없습니다. 정확한 Lookup을 얻으려면 해당 클래스 내부에서 직접 `MethodHandles.lookup()`을 호출해야 합니다.
 
-```
+```text
 자주 발생하는 오류 유형과 원인
 
 WrongMethodTypeException
