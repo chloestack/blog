@@ -345,6 +345,22 @@ test("mermaid blocks become diagram placeholders", async () => {
   assert.doesNotMatch(prose, /<pre class="mermaid">[^<]*<(?!\/pre>)/, "diagram source is not escaped");
 });
 
+/** 코드 블록은 언어 이름을 적은 머리와 함께 한 틀에 담기고, 서버에서 색칠된다. */
+test("code blocks are highlighted inside one frame", async () => {
+  const [file] = fs
+    .readdirSync(POSTS_DIR)
+    .filter((name) => name.endsWith(".md"))
+    .filter((name) => /^```java\b/m.test(fs.readFileSync(path.join(POSTS_DIR.pathname, name), "utf8")));
+  if (!file) return;
+
+  const html = await (await render(`/posts/${encodeURIComponent(file.replace(/\.md$/, ""))}`)).text();
+  const prose = html.slice(html.indexOf('class="prose"'), html.indexOf("</article>"));
+  assert.match(prose, /<figure class="code-block" data-lang="java"><figcaption class="code-head"><span class="code-lang">java<\/span>/);
+  assert.match(prose, /<span style="color:var\(--code-token-keyword\)">/, "java code was not highlighted");
+  // 틀 밖에 맨 <pre>가 남지 않는다 — mermaid 원문만 예외다.
+  assert.doesNotMatch(prose.replace(/<figure class="code-block"[\s\S]*?<\/figure>/g, ""), /<pre(?! class="mermaid")/);
+});
+
 /**
  * 방문자 수는 저장소가 연결됐을 때만 센다. 로컬·테스트에는 연결 정보가 없으니
  * API는 null을 돌려주고, 목록 머리의 방문자 수 자리는 비어 있어야 한다.

@@ -2,6 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import matter from "gray-matter";
 import { Marked } from "marked";
+import { parseCodeInfo, renderCodeBlock } from "@/lib/highlight";
 import { localePrefix, type Locale } from "@/lib/i18n";
 
 export type Post = {
@@ -195,11 +196,12 @@ marked.use({
   renderer: {
     // mermaid 블록은 서버에서는 원문을 담아 두고, 브라우저에서 그림으로 바꾼다
     // (components/mermaid-diagrams.tsx). 스크립트가 돌지 않아도 원문은 읽힌다.
+    // 나머지 코드 블록은 모두 같은 틀에 담아 서버에서 색칠한다(lib/highlight.ts).
     code({ text, lang }) {
-      const kind = lang?.trim();
+      const kind = parseCodeInfo(lang).lang;
       if (kind === "diagram") return `<figure class="diagram diagram-svg">${readDiagramSvg(text.trim())}</figure>\n`;
-      if (kind !== "mermaid") return false;
-      return `<figure class="diagram"><pre class="mermaid">${escapeHtml(text)}</pre></figure>\n`;
+      if (kind === "mermaid") return `<figure class="diagram"><pre class="mermaid">${escapeHtml(text)}</pre></figure>\n`;
+      return renderCodeBlock(text, lang);
     },
   },
 });

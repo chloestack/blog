@@ -167,6 +167,21 @@ footer { display: grid; gap: 2.2rem; padding: 2.6rem 0 3rem; border-top: 1px sol
 .prose code { padding: .1rem .32rem; background: var(--surface-2); border: 1px solid var(--line-2); font-family: var(--mono); font-size: .84em; color: var(--ink); }
 .prose pre { margin: 1.15rem 0; padding: 1.2rem 1.3rem; overflow-x: auto; background: var(--ink); color: #cfdbde; font-family: var(--mono); font-size: .78rem; line-height: 1.85; }
 .prose pre code { padding: 0; border: 0; background: none; color: inherit; font-size: inherit; }
+/* 코드 블록(lib/highlight.ts). 위에 언어 이름을 적은 머리, 아래에 색칠한 코드가 한 틀에 들어간다.
+   색은 Shiki가 CSS 변수로만 내보내므로 여기서 정한다 — 사이트 강조색(청록·점토·올리브·남색)을
+   어두운 바탕에서 읽히도록 밝게 옮긴 값이다. */
+.prose figure.code-block {
+  --code-background: var(--ink); --code-foreground: #cfdbde;
+  --code-token-keyword: #7fc4cf; --code-token-string: #c5d48c; --code-token-string-expression: #c5d48c;
+  --code-token-function: #a9bbeb; --code-token-constant: #e3b488; --code-token-parameter: #e2c9dc;
+  --code-token-punctuation: #93a8ae; --code-token-comment: #7b949b; --code-token-link: #7fc4cf;
+  margin: 1.15rem 0; background: var(--code-background); border: 1px solid #0b161a;
+}
+.prose .code-head { display: flex; align-items: center; gap: .9rem; min-height: 2.1rem; padding: 0 1.3rem; border-bottom: 1px solid rgba(207,219,222,.1); background: #1a2d34; font-family: var(--mono); font-size: .66rem; letter-spacing: .1em; }
+.prose .code-lang { color: var(--code-token-keyword); font-weight: 600; text-transform: uppercase; }
+.prose .code-title { overflow: hidden; color: var(--code-foreground); letter-spacing: .02em; text-overflow: ellipsis; white-space: nowrap; }
+.prose figure.code-block pre { margin: 0; background: none !important; color: var(--code-foreground); }
+.prose figure.code-block pre:focus-visible { outline-offset: -2px; }
 .prose table { display: block; width: 100%; margin: 1.2rem 0; overflow-x: auto; border-collapse: collapse; font-size: .97rem; }
 .prose th, .prose td { padding: .6rem .8rem; border: 1px solid var(--line); text-align: left; vertical-align: top; }
 .prose td { background: var(--surface-2); }
@@ -193,6 +208,7 @@ footer { display: grid; gap: 2.2rem; padding: 2.6rem 0 3rem; border-top: 1px sol
   .article { padding-top: 2.4rem; }
   .related-list { grid-template-columns: minmax(0, 1fr); }
   .prose pre { padding: 1rem; font-size: .72rem; }
+  .prose .code-head { padding: 0 1rem; }
 }
 
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } *, *::before, *::after { transition-duration: .01ms !important; } }
