@@ -109,6 +109,11 @@ test("every page closes with the naver analytics tag", async () => {
     // RSC 페이로드에도 같은 문자열이 실리므로, 문서 부분만 놓고 센다.
     const document = html.slice(0, bodyEnd);
     assert.equal(document.split("wcs_do()").length - 1, 1, `analytics tag is duplicated: ${pathname}`);
+
+    // Google 태그도 같은 레이아웃이 한 번만 싣는다. 로더는 <head>로 끌어올려진다.
+    const gtagLoader = document.indexOf('src="https://www.googletagmanager.com/gtag/js?id=G-PES3ZK8G87"');
+    assert.ok(gtagLoader > 0 && gtagLoader < document.indexOf("</head>"), `google tag loader is not in the head: ${pathname}`);
+    assert.equal(document.split("gtag('config', 'G-PES3ZK8G87')").length - 1, 1, `google tag config missing or duplicated: ${pathname}`);
   }
 });
 
@@ -226,6 +231,7 @@ test("the privacy policy stands on its own page", async () => {
   const sections = [...html.matchAll(/<h2>(\d)\. /g)].map((match) => match[1]);
   assert.deepEqual(sections, ["1", "2", "3", "4", "5", "6", "7", "8"]);
   assert.match(html, /네이버 애널리틱스/, "the policy hides the analytics it actually runs");
+  assert.match(html, /Google 애널리틱스/, "the policy hides the analytics it actually runs");
   assert.match(html, /mailto:contact@pistamond\.dev/);
   assert.match(html, /Upstash/, "the policy does not disclose the visit counter");
   assert.match(html, /시행일: 2026년 9월 16일/);

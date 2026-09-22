@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { AdSense, ADSENSE_CLIENT } from "@/components/adsense";
-import { NaverAnalytics } from "@/components/analytics";
+import { GoogleAnalytics, NaverAnalytics } from "@/components/analytics";
 import { OG_LOCALE, SITE_DESCRIPTION } from "@/lib/i18n";
 import "../globals.css";
 
@@ -31,5 +31,5 @@ export const metadata: Metadata = {
 };
 
 export default function EnglishLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <html lang="en"><body>{children}<AdSense /><NaverAnalytics /></body></html>;
+  return <html lang="en"><body>{children}<AdSense /><NaverAnalytics /><GoogleAnalytics /></body></html>;
 }

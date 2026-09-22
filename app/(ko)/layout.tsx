@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { AdSense, ADSENSE_CLIENT } from "@/components/adsense";
-import { NaverAnalytics } from "@/components/analytics";
+import { GoogleAnalytics, NaverAnalytics } from "@/components/analytics";
 import { OG_LOCALE, SITE_DESCRIPTION } from "@/lib/i18n";
 import "../globals.css";
 
@@ -42,5 +42,5 @@ export const metadata: Metadata = {
 
 export default function KoreanLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   // 측정 태그는 </body> 바로 앞, 페이지 내용 다음에 온다.
-  return <html lang="ko"><body>{children}<AdSense /><NaverAnalytics /></body></html>;
+  return <html lang="ko"><body>{children}<AdSense /><NaverAnalytics /><GoogleAnalytics /></body></html>;
 }

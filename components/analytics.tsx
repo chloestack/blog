@@ -25,3 +25,28 @@ export function NaverAnalytics() {
     </>
   );
 }
+
+/**
+ * Google 태그(gtag.js) — Google 애널리틱스 4.
+ *
+ * 네이버 태그와 같은 자리에서 같은 규칙으로 돈다. dataLayer와 gtag('js')는 늘 세워
+ * 두되, 집계를 시작하는 config는 운영 도메인에서만 부른다.
+ */
+export const GA_MEASUREMENT_ID = "G-PES3ZK8G87";
+
+const GTAG_SNIPPET = `window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+if(location.hostname === "blog.pistamond.dev") {
+gtag('config', '${GA_MEASUREMENT_ID}');
+}`;
+
+export function GoogleAnalytics() {
+  return (
+    <>
+      {/* async 로더라 React가 <head>로 끌어올린다. 구글이 권하는 자리와 같다. */}
+      <script async src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`} />
+      <script dangerouslySetInnerHTML={{ __html: GTAG_SNIPPET }} />
+    </>
+  );
+}
