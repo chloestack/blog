@@ -11,7 +11,7 @@
 </style>
 </head>
 <body>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 600" role="img" aria-labelledby="2026-09-23-bf87766d-08-sc-cost-title 2026-09-23-bf87766d-08-sc-cost-desc">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 620" role="img" aria-labelledby="2026-09-23-bf87766d-08-sc-cost-title 2026-09-23-bf87766d-08-sc-cost-desc">
   <title id="2026-09-23-bf87766d-08-sc-cost-title">Semantic Cache 비용 절감 흐름</title>
   <desc id="2026-09-23-bf87766d-08-sc-cost-desc">월 10만 건 요청이 Semantic Cache 분기를 거쳐 히트(임베딩 비용 $1)와 미스(LLM API $249)로 나뉘어 총 $250/월이 되고, 캐시 없을 때 $415 대비 $165(40%) 절감됨을 보여주는 흐름도.</desc>
 
@@ -29,7 +29,7 @@
   </defs>
 
   <!-- Background -->
-  <rect width="960" height="600" fill="#f8fafb"/>
+  <rect width="960" height="620" fill="#f8fafb"/>
 
   <!-- ─── ARROWS (drawn before boxes) ─── -->
 
@@ -51,16 +51,16 @@
   <text x="630" y="222" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="500">6만 건 미스</text>
 
   <!-- CHEAP → TOTAL (down-right elbow): CHEAP center (280,372) → down to y=448 → right to TOTAL x=480 -->
-  <path d="M280,400 L280,448 L432,448" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-23-bf87766d-08-sc-arrow)"/>
+  <path d="M280,372 L280,456 L372,456" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-23-bf87766d-08-sc-arrow)"/>
 
   <!-- COSTLY → TOTAL (down-left elbow): COSTLY center (680,372) → down to y=448 → left to TOTAL x=480 -->
-  <path d="M680,400 L680,448 L528,448" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-23-bf87766d-08-sc-arrow)"/>
+  <path d="M680,372 L680,456 L588,456" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-23-bf87766d-08-sc-arrow)"/>
 
   <!-- TOTAL → SAVE (down) -->
-  <line x1="480" y1="468" x2="480" y2="516" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-23-bf87766d-08-sc-arrow-accent)"/>
+  <line x1="480" y1="484" x2="480" y2="516" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-23-bf87766d-08-sc-arrow-accent)"/>
 
   <!-- BASE → SAVE (right-down elbow): BASE center (160,504) → right to x=392 → (horizontal join) -->
-  <path d="M240,504 L392,504 L392,536 L432,536" fill="none" stroke="#3a548f" stroke-width="1" marker-end="url(#2026-09-23-bf87766d-08-sc-arrow-link)"/>
+  <path d="M240,504 L340,504 L340,544 L372,544" fill="none" stroke="#3a548f" stroke-width="1" marker-end="url(#2026-09-23-bf87766d-08-sc-arrow-link)"/>
 
   <!-- ─── NODES ─── -->
 

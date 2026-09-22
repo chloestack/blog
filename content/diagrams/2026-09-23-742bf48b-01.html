@@ -53,13 +53,13 @@
 
   <!-- K -.-> M : ThreadLocal 키 → ThreadLocalMap (점선, GC 후 키 소멸 값은 남음) -->
   <!-- K 중심 x=480, y=420 → M 중심 x=480, y=120 -->
-  <!-- 경로: K 상단(480,392) → 왼쪽 우회 (380,392) → (380,144) → M 왼쪽(408,144) -->
-  <path d="M 480 392 L 340 392 L 340 120 L 408 120" fill="none" stroke="#a96a08" stroke-width="1" stroke-dasharray="5,4" marker-end="url(#2026-09-23-742bf48b-01-arrow-warn)"/>
+  <!-- 경로: K 왼쪽(256,420) → 좌측 우회 (240,420) → (240,144) → M 왼쪽 엣지(336,144) -->
+  <path d="M 256 420 L 240 420 L 240 144 L 336 144" fill="none" stroke="#a96a08" stroke-width="1" stroke-dasharray="5,4" marker-end="url(#2026-09-23-742bf48b-01-arrow-warn)"/>
 
   <!-- 점선 레이블 -->
-  <rect x="282" y="236" width="116" height="28" rx="2" fill="#f8fafb"/>
-  <text x="340" y="248" fill="#a96a08" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="500">GC 후 키 소멸</text>
-  <text x="340" y="260" fill="#a96a08" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="500">값은 남음</text>
+  <rect x="178" y="236" width="116" height="28" rx="2" fill="#f8fafb"/>
+  <text x="236" y="248" fill="#a96a08" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="500">GC 후 키 소멸</text>
+  <text x="236" y="260" fill="#a96a08" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="500">값은 남음</text>
 
   <!-- V2 → L : 잔류값 → 메모리 누수 -->
   <line x1="580" y1="308" x2="580" y2="360" stroke="#94382b" stroke-width="1" marker-end="url(#2026-09-23-742bf48b-01-arrow-stop)"/>
@@ -108,12 +108,12 @@
   <text x="580" y="420" fill="#94382b" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">데이터 오염</text>
 
   <!-- K: ThreadLocal 키 (warn — 경고) -->
-  <rect x="396" y="388" width="168" height="64" rx="6" fill="#f8fafb"/>
-  <rect x="396" y="388" width="168" height="64" rx="6" fill="rgba(169,106,8,0.08)" stroke="#a96a08" stroke-width="1" stroke-dasharray="4,3"/>
-  <rect x="404" y="396" width="20" height="12" rx="2" fill="transparent" stroke="rgba(169,106,8,0.40)" stroke-width="0.8"/>
-  <text x="414" y="405" fill="rgba(169,106,8,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">KEY</text>
-  <text x="480" y="424" fill="#122127" font-size="14" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">ThreadLocal 키</text>
-  <text x="480" y="440" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">약한 참조 (WeakReference)</text>
+  <rect x="256" y="388" width="168" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="256" y="388" width="168" height="64" rx="6" fill="rgba(169,106,8,0.08)" stroke="#a96a08" stroke-width="1" stroke-dasharray="4,3"/>
+  <rect x="264" y="396" width="20" height="12" rx="2" fill="transparent" stroke="rgba(169,106,8,0.40)" stroke-width="0.8"/>
+  <text x="274" y="405" fill="rgba(169,106,8,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">KEY</text>
+  <text x="340" y="424" fill="#122127" font-size="14" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">ThreadLocal 키</text>
+  <text x="340" y="440" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">약한 참조 (WeakReference)</text>
 
   <!-- ─────────────────────────────────────────────
        범례 (하단 구분선 + 가로 나열)
