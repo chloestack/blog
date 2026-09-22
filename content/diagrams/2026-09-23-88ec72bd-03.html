@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; font-family: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<svg viewBox="0 0 960 460" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="2026-09-23-88ec72bd-03-title 2026-09-23-88ec72bd-03-desc">
+  <title id="2026-09-23-88ec72bd-03-title">원문 한 건의 수집이 위키 여러 페이지를 건드린다</title>
+  <desc id="2026-09-23-88ec72bd-03-desc">원문 한 건을 수집하면 요약 페이지가 새로 생기고, 그 내용이 걸쳐 있는 기존 엔티티 페이지들이 함께 갱신되며, 색인과 로그도 갱신되는 확산 구조를 보여주는 그림.</desc>
+
+  <defs>
+    <marker id="2026-09-23-88ec72bd-03-arr" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-09-23-88ec72bd-03-arr-acc" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <marker id="2026-09-23-88ec72bd-03-arr-ok" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#286d50"/>
+    </marker>
+  </defs>
+
+  <rect width="960" height="460" fill="#f8fafb"/>
+
+  <!-- ── 화살표 (노드보다 먼저) ── -->
+
+  <!-- 원문 → ingest -->
+  <path d="M 212,226 L 288,226" fill="none" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-23-88ec72bd-03-arr-acc)"/>
+
+  <!-- ingest → 새 요약 페이지 -->
+  <path d="M 468,226 L 512,226 L 512,86 L 556,86" fill="none" stroke="#286d50" stroke-width="1.2" marker-end="url(#2026-09-23-88ec72bd-03-arr-ok)"/>
+  <!-- ingest → 엔티티 A -->
+  <path d="M 468,226 L 512,226 L 512,154 L 556,154" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-23-88ec72bd-03-arr)"/>
+  <!-- ingest → 엔티티 B -->
+  <path d="M 468,226 L 556,226" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-23-88ec72bd-03-arr)"/>
+  <!-- ingest → index.md -->
+  <path d="M 468,226 L 512,226 L 512,298 L 556,298" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-23-88ec72bd-03-arr)"/>
+  <!-- ingest → log.md -->
+  <path d="M 468,226 L 512,226 L 512,366 L 556,366" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-23-88ec72bd-03-arr)"/>
+
+  <!-- ── 원문 ── -->
+  <rect x="32" y="190" width="180" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="32" y="190" width="180" height="72" rx="6" fill="rgba(18,33,39,0.03)" stroke="rgba(18,33,39,0.30)" stroke-width="1"/>
+  <rect x="44" y="198" width="28" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.25)" stroke-width="0.8"/>
+  <text x="58" y="207" fill="rgba(18,33,39,0.6)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">RAW</text>
+  <text x="122" y="230" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">원문 1건</text>
+  <text x="122" y="248" fill="#6c8188" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">약 3,000 토큰</text>
+
+  <!-- ── ingest ── -->
+  <rect x="288" y="190" width="180" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="288" y="190" width="180" height="72" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="300" y="198" width="40" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="320" y="207" fill="rgba(13,87,99,0.85)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">INGEST</text>
+  <text x="378" y="230" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">수집 · 컴파일</text>
+  <text x="378" y="248" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">읽고 · 쓰고 · 다시 링크</text>
+
+  <!-- ── 결과 페이지들 ── -->
+  <rect x="556" y="60" width="372" height="52" rx="6" fill="#f8fafb"/>
+  <rect x="556" y="60" width="372" height="52" rx="6" fill="rgba(40,109,80,0.08)" stroke="#286d50" stroke-width="1.2"/>
+  <rect x="568" y="68" width="28" height="12" rx="2" fill="transparent" stroke="rgba(40,109,80,0.40)" stroke-width="0.8"/>
+  <text x="582" y="77" fill="rgba(40,109,80,0.85)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">NEW</text>
+  <text x="742" y="96" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">요약 페이지 — 새로 생성</text>
+
+  <rect x="556" y="128" width="372" height="52" rx="6" fill="#f8fafb"/>
+  <rect x="556" y="128" width="372" height="52" rx="6" fill="rgba(169,106,8,0.07)" stroke="#a96a08" stroke-width="1"/>
+  <rect x="568" y="136" width="44" height="12" rx="2" fill="transparent" stroke="rgba(169,106,8,0.40)" stroke-width="0.8"/>
+  <text x="590" y="145" fill="rgba(169,106,8,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">UPDATE</text>
+  <text x="742" y="164" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">엔티티 페이지 A — 서술 보강</text>
+
+  <rect x="556" y="200" width="372" height="52" rx="6" fill="#f8fafb"/>
+  <rect x="556" y="200" width="372" height="52" rx="6" fill="rgba(169,106,8,0.07)" stroke="#a96a08" stroke-width="1"/>
+  <rect x="568" y="208" width="44" height="12" rx="2" fill="transparent" stroke="rgba(169,106,8,0.40)" stroke-width="0.8"/>
+  <text x="590" y="217" fill="rgba(169,106,8,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">UPDATE</text>
+  <text x="742" y="236" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">엔티티 페이지 B — 상호 참조 추가</text>
+
+  <rect x="556" y="272" width="372" height="52" rx="6" fill="#f8fafb"/>
+  <rect x="556" y="272" width="372" height="52" rx="6" fill="rgba(18,33,39,0.05)" stroke="#3f545c" stroke-width="1"/>
+  <rect x="568" y="280" width="36" height="12" rx="2" fill="transparent" stroke="rgba(63,84,92,0.40)" stroke-width="0.8"/>
+  <text x="586" y="289" fill="rgba(63,84,92,0.75)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">INDEX</text>
+  <text x="742" y="308" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">index.md — 목차 갱신</text>
+
+  <rect x="556" y="340" width="372" height="52" rx="6" fill="#f8fafb"/>
+  <rect x="556" y="340" width="372" height="52" rx="6" fill="rgba(18,33,39,0.05)" stroke="#3f545c" stroke-width="1"/>
+  <rect x="568" y="348" width="28" height="12" rx="2" fill="transparent" stroke="rgba(63,84,92,0.40)" stroke-width="0.8"/>
+  <text x="582" y="357" fill="rgba(63,84,92,0.75)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">LOG</text>
+  <text x="742" y="376" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">log.md — 추가 전용 기록</text>
+
+  <text x="32" y="300" fill="#6c8188" font-size="11" font-family="'IBM Plex Sans KR', sans-serif">원문 하나가</text>
+  <text x="32" y="318" fill="#6c8188" font-size="11" font-family="'IBM Plex Sans KR', sans-serif">페이지 10~15개를</text>
+  <text x="32" y="336" fill="#6c8188" font-size="11" font-family="'IBM Plex Sans KR', sans-serif">건드릴 수 있다.</text>
+
+  <!-- ── 범례 ── -->
+  <line x1="32" y1="416" x2="928" y2="416" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+  <rect x="32" y="430" width="12" height="12" rx="2" fill="rgba(40,109,80,0.08)" stroke="#286d50" stroke-width="1"/>
+  <text x="52" y="440" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">새로 생성</text>
+
+  <rect x="168" y="430" width="12" height="12" rx="2" fill="rgba(169,106,8,0.07)" stroke="#a96a08" stroke-width="1"/>
+  <text x="188" y="440" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">기존 페이지 수정</text>
+
+  <rect x="340" y="430" width="12" height="12" rx="2" fill="rgba(18,33,39,0.05)" stroke="#3f545c" stroke-width="1"/>
+  <text x="360" y="440" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">보조 파일</text>
+
+  <rect x="480" y="430" width="12" height="12" rx="2" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="500" y="440" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">가장 비싼 연산</text>
+</svg>
+</body>
+</html>

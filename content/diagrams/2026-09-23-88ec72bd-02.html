@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; font-family: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<svg viewBox="0 0 960 460" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="2026-09-23-88ec72bd-02-title 2026-09-23-88ec72bd-02-desc">
+  <title id="2026-09-23-88ec72bd-02-title">LLM Wiki의 세 계층</title>
+  <desc id="2026-09-23-88ec72bd-02-desc">불변인 원문(raw), LLM이 소유하는 위키(wiki), 사람이 관리하는 규약 문서(schema)의 세 계층과 그 사이의 읽기·쓰기 방향을 나타낸 그림. 질의는 위키를 향하고, 오류가 나면 원문으로 되짚는다.</desc>
+
+  <defs>
+    <marker id="2026-09-23-88ec72bd-02-arr" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-09-23-88ec72bd-02-arr-acc" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <marker id="2026-09-23-88ec72bd-02-arr-soft" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#6c8188"/>
+    </marker>
+  </defs>
+
+  <rect width="960" height="460" fill="#f8fafb"/>
+
+  <!-- ── 화살표 (노드보다 먼저) ── -->
+
+  <!-- schema → wiki -->
+  <path d="M 480,104 L 480,148" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-23-88ec72bd-02-arr)"/>
+
+  <!-- raw → wiki (읽기 전용) -->
+  <path d="M 280,250 L 356,250" fill="none" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-23-88ec72bd-02-arr-acc)"/>
+
+  <!-- wiki → 질의 -->
+  <path d="M 600,250 L 696,250" fill="none" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-23-88ec72bd-02-arr-acc)"/>
+
+  <!-- wiki → raw (출처 되짚기) -->
+  <path d="M 420,348 L 420,378 L 160,378 L 160,352" fill="none" stroke="#6c8188" stroke-width="1" stroke-dasharray="5,4" marker-end="url(#2026-09-23-88ec72bd-02-arr-soft)"/>
+
+  <!-- ── schema 계층 ── -->
+  <rect x="340" y="36" width="280" height="68" rx="6" fill="#f8fafb"/>
+  <rect x="340" y="36" width="280" height="68" rx="6" fill="rgba(58,84,143,0.08)" stroke="#3a548f" stroke-width="1.2"/>
+  <rect x="352" y="44" width="52" height="12" rx="2" fill="transparent" stroke="rgba(58,84,143,0.40)" stroke-width="0.8"/>
+  <text x="378" y="53" fill="rgba(58,84,143,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">SCHEMA</text>
+  <text x="480" y="76" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">AGENTS.md · CLAUDE.md</text>
+  <text x="480" y="94" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">사람이 직접 쓰는 유일한 계층</text>
+
+  <!-- 화살표 라벨 -->
+  <rect x="490" y="118" width="72" height="14" rx="2" fill="#f8fafb"/>
+  <text x="526" y="129" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.04em">규약 적용</text>
+
+  <!-- ── raw 계층 ── -->
+  <rect x="40" y="152" width="240" height="196" rx="8" fill="rgba(18,33,39,0.03)" stroke="#c3d0d4" stroke-width="0.8"/>
+  <rect x="52" y="160" width="28" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.25)" stroke-width="0.8"/>
+  <text x="66" y="169" fill="rgba(18,33,39,0.6)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">RAW</text>
+  <text x="160" y="182" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="600">원문 — 불변</text>
+
+  <rect x="60" y="196" width="200" height="40" rx="4" fill="#f8fafb"/>
+  <rect x="60" y="196" width="200" height="40" rx="4" fill="#ffffff" stroke="rgba(18,33,39,0.30)" stroke-width="1"/>
+  <text x="160" y="221" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">논문 · PDF</text>
+
+  <rect x="60" y="246" width="200" height="40" rx="4" fill="#f8fafb"/>
+  <rect x="60" y="246" width="200" height="40" rx="4" fill="#ffffff" stroke="rgba(18,33,39,0.30)" stroke-width="1"/>
+  <text x="160" y="271" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">벤더 문서</text>
+
+  <rect x="60" y="296" width="200" height="40" rx="4" fill="#f8fafb"/>
+  <rect x="60" y="296" width="200" height="40" rx="4" fill="#ffffff" stroke="rgba(18,33,39,0.30)" stroke-width="1"/>
+  <text x="160" y="321" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">회의록 · 로그</text>
+
+  <!-- ── wiki 계층 ── -->
+  <rect x="360" y="152" width="240" height="196" rx="8" fill="rgba(13,87,99,0.04)" stroke="#0d5763" stroke-width="0.8" stroke-dasharray="4,4"/>
+  <rect x="372" y="160" width="28" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="386" y="169" fill="rgba(13,87,99,0.85)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">WIKI</text>
+  <text x="480" y="182" fill="#0d5763" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="600">LLM이 소유 · 일관성 책임</text>
+
+  <!-- 페이지 사이 연결선 (마커 없음) -->
+  <line x1="480" y1="236" x2="480" y2="246" stroke="rgba(13,87,99,0.35)" stroke-width="1"/>
+  <line x1="480" y1="286" x2="480" y2="296" stroke="rgba(13,87,99,0.35)" stroke-width="1"/>
+
+  <rect x="380" y="196" width="200" height="40" rx="4" fill="#f8fafb"/>
+  <rect x="380" y="196" width="200" height="40" rx="4" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="480" y="221" fill="#122127" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">엔티티 페이지</text>
+
+  <rect x="380" y="246" width="200" height="40" rx="4" fill="#f8fafb"/>
+  <rect x="380" y="246" width="200" height="40" rx="4" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="480" y="271" fill="#122127" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">개념 페이지</text>
+
+  <rect x="380" y="296" width="200" height="40" rx="4" fill="#f8fafb"/>
+  <rect x="380" y="296" width="200" height="40" rx="4" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="480" y="321" fill="#122127" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">index.md · log.md</text>
+
+  <!-- ── 질의 ── -->
+  <rect x="700" y="214" width="220" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="700" y="214" width="220" height="72" rx="6" fill="rgba(40,109,80,0.08)" stroke="#286d50" stroke-width="1.2"/>
+  <rect x="712" y="222" width="36" height="12" rx="2" fill="transparent" stroke="rgba(40,109,80,0.40)" stroke-width="0.8"/>
+  <text x="730" y="231" fill="rgba(40,109,80,0.85)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">QUERY</text>
+  <text x="810" y="254" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">질의 · 답변</text>
+  <text x="810" y="272" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">원문이 아니라 위키에 묻는다</text>
+
+  <!-- 화살표 라벨 -->
+  <rect x="286" y="228" width="68" height="14" rx="2" fill="#f8fafb"/>
+  <text x="320" y="239" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.04em">읽기 전용</text>
+
+  <rect x="614" y="228" width="68" height="14" rx="2" fill="#f8fafb"/>
+  <text x="648" y="239" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.04em">페이지 조회</text>
+
+  <rect x="232" y="362" width="116" height="14" rx="2" fill="#f8fafb"/>
+  <text x="290" y="373" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.04em">출처 되짚기 (citation)</text>
+
+  <text x="40" y="404" fill="#6c8188" font-size="11" font-family="'IBM Plex Sans KR', sans-serif">LLM은 raw를 절대 수정하지 않는다. 위키가 오염됐을 때 돌아갈 기준점이기 때문이다.</text>
+
+  <!-- ── 범례 ── -->
+  <line x1="40" y1="420" x2="920" y2="420" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+  <rect x="40" y="434" width="12" height="12" rx="2" fill="rgba(58,84,143,0.08)" stroke="#3a548f" stroke-width="1"/>
+  <text x="60" y="444" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">사람이 관리</text>
+
+  <rect x="200" y="434" width="12" height="12" rx="2" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="220" y="444" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">LLM이 관리</text>
+
+  <rect x="360" y="434" width="12" height="12" rx="2" fill="#ffffff" stroke="rgba(18,33,39,0.30)" stroke-width="1"/>
+  <text x="380" y="444" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">불변 원문</text>
+
+  <line x1="512" y1="440" x2="536" y2="440" stroke="#6c8188" stroke-width="1" stroke-dasharray="5,4"/>
+  <text x="544" y="444" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">검증 경로</text>
+</svg>
+</body>
+</html>

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; font-family: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<svg viewBox="0 0 960 470" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="2026-09-23-88ec72bd-05-title 2026-09-23-88ec72bd-05-desc">
+  <title id="2026-09-23-88ec72bd-05-title">위키가 썩는 다섯 가지 증상과 lint의 분담</title>
+  <desc id="2026-09-23-88ec72bd-05-desc">깨진 링크, 고아 페이지, 색인 누락은 스크립트로 기계 검사할 수 있고, 모순 서술과 낡은 주장은 의미를 읽어야 하므로 LLM 검사가 필요하다는 분담을 보여주는 그림.</desc>
+
+  <defs>
+    <marker id="2026-09-23-88ec72bd-05-arr-ok" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#286d50"/>
+    </marker>
+    <marker id="2026-09-23-88ec72bd-05-arr-acc" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+  </defs>
+
+  <rect width="960" height="470" fill="#f8fafb"/>
+
+  <text x="32" y="36" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif">증상</text>
+  <text x="612" y="36" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif">누가 잡는가</text>
+
+  <!-- ── 화살표 (노드보다 먼저) ── -->
+  <!-- 기계 검사로 모이는 세 증상 -->
+  <path d="M 332,82 L 470,82 L 470,146 L 608,146" fill="none" stroke="#286d50" stroke-width="1" marker-end="url(#2026-09-23-88ec72bd-05-arr-ok)"/>
+  <path d="M 332,146 L 608,146" fill="none" stroke="#286d50" stroke-width="1" marker-end="url(#2026-09-23-88ec72bd-05-arr-ok)"/>
+  <path d="M 332,210 L 470,210 L 470,146 L 608,146" fill="none" stroke="#286d50" stroke-width="1" marker-end="url(#2026-09-23-88ec72bd-05-arr-ok)"/>
+
+  <!-- LLM 검사로 모이는 두 증상 -->
+  <path d="M 332,290 L 470,290 L 470,326 L 608,326" fill="none" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-23-88ec72bd-05-arr-acc)"/>
+  <path d="M 332,354 L 470,354 L 470,326 L 608,326" fill="none" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-23-88ec72bd-05-arr-acc)"/>
+
+  <!-- ── 증상 ── -->
+  <rect x="32" y="56" width="300" height="52" rx="6" fill="#f8fafb"/>
+  <rect x="32" y="56" width="300" height="52" rx="6" fill="rgba(148,56,43,0.07)" stroke="#94382b" stroke-width="1"/>
+  <text x="182" y="80" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">깨진 링크</text>
+  <text x="182" y="98" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">참조가 이름 변경을 못 따라감</text>
+
+  <rect x="32" y="120" width="300" height="52" rx="6" fill="#f8fafb"/>
+  <rect x="32" y="120" width="300" height="52" rx="6" fill="rgba(148,56,43,0.07)" stroke="#94382b" stroke-width="1"/>
+  <text x="182" y="144" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">고아 페이지</text>
+  <text x="182" y="162" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">들어오는 링크가 0</text>
+
+  <rect x="32" y="184" width="300" height="52" rx="6" fill="#f8fafb"/>
+  <rect x="32" y="184" width="300" height="52" rx="6" fill="rgba(148,56,43,0.07)" stroke="#94382b" stroke-width="1"/>
+  <text x="182" y="208" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">색인 누락</text>
+  <text x="182" y="226" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">index.md 갱신이 빠짐</text>
+
+  <rect x="32" y="264" width="300" height="52" rx="6" fill="#f8fafb"/>
+  <rect x="32" y="264" width="300" height="52" rx="6" fill="rgba(169,106,8,0.07)" stroke="#a96a08" stroke-width="1"/>
+  <text x="182" y="288" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">모순 서술</text>
+  <text x="182" y="306" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">원문 두 건이 다른 말을 함</text>
+
+  <rect x="32" y="328" width="300" height="52" rx="6" fill="#f8fafb"/>
+  <rect x="32" y="328" width="300" height="52" rx="6" fill="rgba(169,106,8,0.07)" stroke="#a96a08" stroke-width="1"/>
+  <text x="182" y="352" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">낡은 주장</text>
+  <text x="182" y="370" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">원문은 갱신, 페이지는 그대로</text>
+
+  <!-- ── 검사 주체 ── -->
+  <rect x="608" y="92" width="320" height="108" rx="6" fill="#f8fafb"/>
+  <rect x="608" y="92" width="320" height="108" rx="6" fill="rgba(40,109,80,0.08)" stroke="#286d50" stroke-width="1.2"/>
+  <rect x="620" y="100" width="52" height="12" rx="2" fill="transparent" stroke="rgba(40,109,80,0.40)" stroke-width="0.8"/>
+  <text x="646" y="109" fill="rgba(40,109,80,0.85)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">SCRIPT</text>
+  <text x="768" y="136" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">기계 검사</text>
+  <text x="768" y="158" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">링크 파싱 · 색인 대조 · 참조 수 세기</text>
+  <text x="768" y="180" fill="#286d50" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">비용 거의 0 · 매 수집마다</text>
+
+  <rect x="608" y="272" width="320" height="108" rx="6" fill="#f8fafb"/>
+  <rect x="608" y="272" width="320" height="108" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="620" y="280" width="36" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="638" y="289" fill="rgba(13,87,99,0.85)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">LLM</text>
+  <text x="768" y="316" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">LLM 검사</text>
+  <text x="768" y="338" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">의미를 읽어야 판정 가능</text>
+  <text x="768" y="360" fill="#0d5763" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">비싸다 · 범위를 좁혀야 한다</text>
+
+  <text x="32" y="412" fill="#6c8188" font-size="11" font-family="'IBM Plex Sans KR', sans-serif">LLM 검사는 위키 전체를 다시 읽는 일이다. log.md를 근거로 최근 수집이 건드린 페이지 주변만 범위로 잡는다.</text>
+
+  <!-- ── 범례 ── -->
+  <line x1="32" y1="428" x2="928" y2="428" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+  <rect x="32" y="442" width="12" height="12" rx="2" fill="rgba(148,56,43,0.07)" stroke="#94382b" stroke-width="1"/>
+  <text x="52" y="452" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">구조가 깨짐</text>
+
+  <rect x="188" y="442" width="12" height="12" rx="2" fill="rgba(169,106,8,0.07)" stroke="#a96a08" stroke-width="1"/>
+  <text x="208" y="452" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">내용이 틀어짐</text>
+
+  <rect x="348" y="442" width="12" height="12" rx="2" fill="rgba(40,109,80,0.08)" stroke="#286d50" stroke-width="1"/>
+  <text x="368" y="452" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">스크립트로 충분</text>
+
+  <rect x="516" y="442" width="12" height="12" rx="2" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="536" y="452" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">LLM이 필요</text>
+</svg>
+</body>
+</html>

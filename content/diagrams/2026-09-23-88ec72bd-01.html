@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; font-family: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<svg viewBox="0 0 960 420" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="2026-09-23-88ec72bd-01-title 2026-09-23-88ec72bd-01-desc">
+  <title id="2026-09-23-88ec72bd-01-title">RAG와 LLM Wiki의 질의 경로 대비</title>
+  <desc id="2026-09-23-88ec72bd-01-desc">RAG는 질의마다 임베딩과 벡터 검색, 청크 합성을 반복하는 반면, LLM Wiki는 수집 시점에 원문을 한 번 컴파일해 두고 질의할 때는 정리된 위키 페이지만 읽는 구조를 두 개의 레인으로 비교한 그림.</desc>
+
+  <defs>
+    <marker id="2026-09-23-88ec72bd-01-arr" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-09-23-88ec72bd-01-arr-acc" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <marker id="2026-09-23-88ec72bd-01-arr-warn" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#a96a08"/>
+    </marker>
+  </defs>
+
+  <rect width="960" height="420" fill="#f8fafb"/>
+
+  <!-- ── 레인 A 제목 ── -->
+  <text x="24" y="44" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif">RAG — 질의마다 전체 경로를 다시 탄다</text>
+  <text x="24" y="62" fill="#6c8188" font-size="11" font-family="'IBM Plex Mono', monospace" letter-spacing="0.04em">합성이 질의 시점에 일어난다</text>
+
+  <!-- ── 레인 A 화살표 (노드보다 먼저) ── -->
+  <path d="M 168,112 L 212,112" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-23-88ec72bd-01-arr)"/>
+  <path d="M 360,112 L 404,112" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-23-88ec72bd-01-arr)"/>
+  <path d="M 552,112 L 596,112" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-23-88ec72bd-01-arr)"/>
+  <path d="M 744,112 L 788,112" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-23-88ec72bd-01-arr)"/>
+
+  <!-- ── 레인 A 노드 ── -->
+  <rect x="24" y="80" width="144" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="24" y="80" width="144" height="64" rx="6" fill="rgba(58,84,143,0.08)" stroke="#3a548f" stroke-width="1"/>
+  <rect x="32" y="88" width="32" height="12" rx="2" fill="transparent" stroke="rgba(58,84,143,0.40)" stroke-width="0.8"/>
+  <text x="48" y="97" fill="rgba(58,84,143,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">INPUT</text>
+  <text x="96" y="122" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">질문</text>
+
+  <rect x="216" y="80" width="144" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="216" y="80" width="144" height="64" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="224" y="88" width="44" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.35)" stroke-width="0.8"/>
+  <text x="246" y="97" fill="rgba(18,33,39,0.7)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">SEARCH</text>
+  <text x="288" y="118" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">임베딩 · 벡터 검색</text>
+  <text x="288" y="134" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">질의마다 실행</text>
+
+  <rect x="408" y="80" width="144" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="408" y="80" width="144" height="64" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="416" y="88" width="40" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.35)" stroke-width="0.8"/>
+  <text x="436" y="97" fill="rgba(18,33,39,0.7)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">CHUNK</text>
+  <text x="480" y="118" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">청크 5개</text>
+  <text x="480" y="134" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">약 4,000 토큰</text>
+
+  <rect x="600" y="80" width="144" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="600" y="80" width="144" height="64" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="608" y="88" width="32" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.35)" stroke-width="0.8"/>
+  <text x="624" y="97" fill="rgba(18,33,39,0.7)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">LLM</text>
+  <text x="672" y="122" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">합성</text>
+
+  <rect x="792" y="80" width="144" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="792" y="80" width="144" height="64" rx="6" fill="rgba(18,33,39,0.03)" stroke="rgba(18,33,39,0.30)" stroke-width="1"/>
+  <text x="864" y="118" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">답변</text>
+  <text x="864" y="134" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">남지 않는다</text>
+
+  <text x="24" y="170" fill="#6c8188" font-size="11" font-family="'IBM Plex Sans KR', sans-serif">같은 질문을 다시 물어도 첫 번째와 같은 비용이 든다.</text>
+
+  <!-- ── 레인 B 제목 ── -->
+  <text x="24" y="212" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif">LLM Wiki — 수집 때 한 번 컴파일하고 재사용한다</text>
+  <text x="24" y="230" fill="#6c8188" font-size="11" font-family="'IBM Plex Mono', monospace" letter-spacing="0.04em">합성이 수집 시점으로 앞당겨진다</text>
+
+  <!-- ── 레인 B 화살표 ── -->
+  <path d="M 168,280 L 212,280" fill="none" stroke="#a96a08" stroke-width="1" stroke-dasharray="5,4" marker-end="url(#2026-09-23-88ec72bd-01-arr-warn)"/>
+  <path d="M 360,280 L 404,280" fill="none" stroke="#a96a08" stroke-width="1" stroke-dasharray="5,4" marker-end="url(#2026-09-23-88ec72bd-01-arr-warn)"/>
+  <path d="M 552,280 L 596,280" fill="none" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-23-88ec72bd-01-arr-acc)"/>
+  <path d="M 744,280 L 788,280" fill="none" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-23-88ec72bd-01-arr-acc)"/>
+
+  <!-- ── 레인 B 노드 ── -->
+  <rect x="24" y="248" width="144" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="24" y="248" width="144" height="64" rx="6" fill="rgba(18,33,39,0.03)" stroke="rgba(18,33,39,0.30)" stroke-width="1"/>
+  <rect x="32" y="256" width="28" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.25)" stroke-width="0.8"/>
+  <text x="46" y="265" fill="rgba(18,33,39,0.6)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">RAW</text>
+  <text x="96" y="290" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">원문</text>
+  <text x="96" y="306" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">불변</text>
+
+  <rect x="216" y="248" width="144" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="216" y="248" width="144" height="64" rx="6" fill="rgba(169,106,8,0.07)" stroke="#a96a08" stroke-width="1" stroke-dasharray="4,3"/>
+  <rect x="224" y="256" width="40" height="12" rx="2" fill="transparent" stroke="rgba(169,106,8,0.40)" stroke-width="0.8"/>
+  <text x="244" y="265" fill="rgba(169,106,8,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">INGEST</text>
+  <text x="288" y="286" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">수집 · 컴파일</text>
+  <text x="288" y="302" fill="#a96a08" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">최초 1회 · 비싸다</text>
+
+  <rect x="408" y="248" width="144" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="408" y="248" width="144" height="64" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="416" y="256" width="32" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="432" y="265" fill="rgba(13,87,99,0.85)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">WIKI</text>
+  <text x="480" y="286" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">위키 페이지</text>
+  <text x="480" y="302" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">약 1,800 토큰</text>
+
+  <rect x="600" y="248" width="144" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="600" y="248" width="144" height="64" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="608" y="256" width="32" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.35)" stroke-width="0.8"/>
+  <text x="624" y="265" fill="rgba(18,33,39,0.7)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">LLM</text>
+  <text x="672" y="290" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">합성</text>
+
+  <rect x="792" y="248" width="144" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="792" y="248" width="144" height="64" rx="6" fill="rgba(40,109,80,0.08)" stroke="#286d50" stroke-width="1"/>
+  <text x="864" y="286" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">답변</text>
+  <text x="864" y="302" fill="#286d50" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">위키로 환원 가능</text>
+
+  <text x="24" y="338" fill="#6c8188" font-size="11" font-family="'IBM Plex Sans KR', sans-serif">두 번째 질문부터는 컴파일된 페이지만 읽는다. 답이 쓸 만하면 다시 페이지가 된다.</text>
+
+  <!-- ── 범례 ── -->
+  <line x1="24" y1="370" x2="936" y2="370" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+  <text x="24" y="392" fill="#3f545c" font-size="9" font-family="'IBM Plex Mono', monospace" letter-spacing="0.14em">LEGEND</text>
+
+  <line x1="104" y1="388" x2="128" y2="388" stroke="#3f545c" stroke-width="1"/>
+  <text x="136" y="392" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">질의마다 반복</text>
+
+  <line x1="256" y1="388" x2="280" y2="388" stroke="#a96a08" stroke-width="1" stroke-dasharray="5,4"/>
+  <text x="288" y="392" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">최초 1회</text>
+
+  <rect x="396" y="382" width="12" height="12" rx="2" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="416" y="392" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">컴파일된 산출물</text>
+
+  <rect x="552" y="382" width="12" height="12" rx="2" fill="rgba(18,33,39,0.03)" stroke="rgba(18,33,39,0.30)" stroke-width="1"/>
+  <text x="572" y="392" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">원문 · 휘발되는 결과</text>
+</svg>
+</body>
+</html>

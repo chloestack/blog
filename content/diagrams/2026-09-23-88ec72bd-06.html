@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; font-family: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<svg viewBox="0 0 960 620" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="2026-09-23-88ec72bd-06-title 2026-09-23-88ec72bd-06-desc">
+  <title id="2026-09-23-88ec72bd-06-title">RAG와 LLM Wiki 선택 기준</title>
+  <desc id="2026-09-23-88ec72bd-06-desc">원문 교체 빈도, 질의 반복성, 원문 인용 요구라는 세 가지 조건을 차례로 물어 RAG와 LLM Wiki 중 무엇을 쓸지 가르는 의사결정 흐름도. 판단이 애매하면 위키를 앞에 두고 원문 RAG로 폴백하는 구성을 권한다.</desc>
+
+  <defs>
+    <marker id="2026-09-23-88ec72bd-06-arr" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-09-23-88ec72bd-06-arr-acc" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <marker id="2026-09-23-88ec72bd-06-arr-soft" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#6c8188"/>
+    </marker>
+  </defs>
+
+  <rect width="960" height="620" fill="#f8fafb"/>
+
+  <!-- ── 화살표 (노드보다 먼저) ── -->
+  <path d="M 480,72 L 480,78" fill="none" stroke="#3f545c" stroke-width="1.2" marker-end="url(#2026-09-23-88ec72bd-06-arr)"/>
+  <path d="M 480,178 L 480,218" fill="none" stroke="#3f545c" stroke-width="1.2" marker-end="url(#2026-09-23-88ec72bd-06-arr)"/>
+  <path d="M 480,318 L 480,358" fill="none" stroke="#3f545c" stroke-width="1.2" marker-end="url(#2026-09-23-88ec72bd-06-arr)"/>
+  <path d="M 480,458 L 480,496" fill="none" stroke="#0d5763" stroke-width="1.4" marker-end="url(#2026-09-23-88ec72bd-06-arr-acc)"/>
+
+  <path d="M 570,130 L 696,130" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-23-88ec72bd-06-arr)"/>
+  <path d="M 570,270 L 696,270" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-23-88ec72bd-06-arr)"/>
+  <path d="M 570,410 L 696,410" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-23-88ec72bd-06-arr)"/>
+
+  <!-- 하이브리드 안내 -->
+  <path d="M 324,534 L 376,534" fill="none" stroke="#6c8188" stroke-width="1" stroke-dasharray="5,4" marker-end="url(#2026-09-23-88ec72bd-06-arr-soft)"/>
+
+  <!-- ── 시작 ── -->
+  <rect x="380" y="20" width="200" height="52" rx="20" fill="#f8fafb"/>
+  <rect x="380" y="20" width="200" height="52" rx="20" fill="rgba(58,84,143,0.08)" stroke="#3a548f" stroke-width="1.2"/>
+  <text x="480" y="51" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">지식 베이스가 필요하다</text>
+
+  <!-- ── D1 ── -->
+  <polygon points="480,82 570,130 480,178 390,130" fill="#f8fafb"/>
+  <polygon points="480,82 570,130 480,178 390,130" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="480" y="126" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">원문이 자주</text>
+  <text x="480" y="142" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">바뀌는가?</text>
+
+  <!-- ── D2 ── -->
+  <polygon points="480,222 570,270 480,318 390,270" fill="#f8fafb"/>
+  <polygon points="480,222 570,270 480,318 390,270" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="480" y="266" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">같은 주제를</text>
+  <text x="480" y="282" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">반복해 묻는가?</text>
+
+  <!-- ── D3 ── -->
+  <polygon points="480,362 570,410 480,458 390,410" fill="#f8fafb"/>
+  <polygon points="480,362 570,410 480,458 390,410" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="480" y="406" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">원문 인용이</text>
+  <text x="480" y="422" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">필수인가?</text>
+
+  <!-- ── 결과: RAG ── -->
+  <rect x="700" y="98" width="228" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="700" y="98" width="228" height="64" rx="6" fill="rgba(18,33,39,0.05)" stroke="#3f545c" stroke-width="1"/>
+  <text x="814" y="126" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Mono', monospace" text-anchor="middle">RAG</text>
+  <text x="814" y="146" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">재수집 비용이 이득을 먹는다</text>
+
+  <rect x="700" y="238" width="228" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="700" y="238" width="228" height="64" rx="6" fill="rgba(18,33,39,0.05)" stroke="#3f545c" stroke-width="1"/>
+  <text x="814" y="266" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Mono', monospace" text-anchor="middle">RAG</text>
+  <text x="814" y="286" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">손익분기점을 넘지 못한다</text>
+
+  <rect x="700" y="378" width="228" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="700" y="378" width="228" height="64" rx="6" fill="rgba(169,106,8,0.07)" stroke="#a96a08" stroke-width="1"/>
+  <text x="814" y="406" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Mono', monospace" text-anchor="middle">RAG · 또는 출처 강제</text>
+  <text x="814" y="426" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">2차 요약은 근거로 약하다</text>
+
+  <!-- ── 결과: LLM Wiki ── -->
+  <rect x="376" y="500" width="208" height="68" rx="6" fill="#f8fafb"/>
+  <rect x="376" y="500" width="208" height="68" rx="6" fill="rgba(40,109,80,0.10)" stroke="#286d50" stroke-width="1.4"/>
+  <rect x="388" y="508" width="36" height="12" rx="2" fill="transparent" stroke="rgba(40,109,80,0.40)" stroke-width="0.8"/>
+  <text x="406" y="517" fill="rgba(40,109,80,0.85)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">WIKI</text>
+  <text x="480" y="540" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Mono', monospace" text-anchor="middle">LLM Wiki</text>
+  <text x="480" y="558" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">누적이 가치가 되는 구간</text>
+
+  <!-- ── 하이브리드 안내 ── -->
+  <rect x="60" y="486" width="264" height="96" rx="6" fill="#f8fafb"/>
+  <rect x="60" y="486" width="264" height="96" rx="6" fill="rgba(18,33,39,0.03)" stroke="rgba(18,33,39,0.30)" stroke-width="1" stroke-dasharray="4,3"/>
+  <text x="192" y="514" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">판단이 애매하다면</text>
+  <text x="192" y="536" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">위키를 1차 조회 경로로 두고</text>
+  <text x="192" y="554" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">답하지 못할 때 원문 RAG로 폴백</text>
+  <text x="192" y="572" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">폴백 로그가 다음 수집 대상이 된다</text>
+
+  <!-- ── 분기 라벨 ── -->
+  <rect x="592" y="106" width="36" height="14" rx="2" fill="#f8fafb"/>
+  <text x="610" y="117" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">예</text>
+
+  <rect x="592" y="246" width="52" height="14" rx="2" fill="#f8fafb"/>
+  <text x="618" y="257" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">아니오</text>
+
+  <rect x="592" y="386" width="36" height="14" rx="2" fill="#f8fafb"/>
+  <text x="610" y="397" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">예</text>
+
+  <rect x="492" y="188" width="52" height="14" rx="2" fill="#f8fafb"/>
+  <text x="518" y="199" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">아니오</text>
+
+  <rect x="492" y="328" width="36" height="14" rx="2" fill="#f8fafb"/>
+  <text x="510" y="339" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">예</text>
+
+  <rect x="492" y="468" width="52" height="14" rx="2" fill="#f8fafb"/>
+  <text x="518" y="479" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">아니오</text>
+
+  <!-- ── 범례 ── -->
+  <line x1="32" y1="592" x2="928" y2="592" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+  <polygon points="40,606 52,600 64,606 52,612" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="72" y="610" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">판단 지점</text>
+
+  <rect x="196" y="600" width="12" height="12" rx="2" fill="rgba(18,33,39,0.05)" stroke="#3f545c" stroke-width="1"/>
+  <text x="216" y="610" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">RAG가 맞다</text>
+
+  <rect x="356" y="600" width="12" height="12" rx="2" fill="rgba(40,109,80,0.10)" stroke="#286d50" stroke-width="1"/>
+  <text x="376" y="610" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">LLM Wiki가 맞다</text>
+
+  <rect x="536" y="600" width="12" height="12" rx="2" fill="rgba(18,33,39,0.03)" stroke="rgba(18,33,39,0.30)" stroke-width="1" stroke-dasharray="3,2"/>
+  <text x="556" y="610" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">섞어 쓰기</text>
+</svg>
+</body>
+</html>
