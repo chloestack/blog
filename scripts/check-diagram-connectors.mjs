@@ -8,6 +8,24 @@ import fs from 'fs';
 const TOL = 8.0;      // 화살표 마커 여유(하우스 스타일)
 const BURY = 10.0;    // 이보다 깊이 박스 안으로 들어가면 화살촉이 가려진다
 
+function hidden(a) {
+  return a.visibility === 'hidden' || a.display === 'none';
+}
+
+// transform="rotate(각 cx cy)" 를 점에 적용한다
+function applyTransform(pts, tf) {
+  if (!tf) return pts;
+  const m = tf.match(/rotate\(\s*(-?[\d.]+)(?:[\s,]+(-?[\d.]+)[\s,]+(-?[\d.]+))?\s*\)/);
+  if (!m) return pts;
+  const rad = (parseFloat(m[1]) * Math.PI) / 180;
+  const cx = m[2] ? parseFloat(m[2]) : 0, cy = m[3] ? parseFloat(m[3]) : 0;
+  const cos = Math.cos(rad), sin = Math.sin(rad);
+  return pts.map(([x, y]) => {
+    const dx = x - cx, dy = y - cy;
+    return [cx + dx * cos - dy * sin, cy + dx * sin + dy * cos];
+  });
+}
+
 function attrs(tag) {
   const o = {};
   for (const m of tag.matchAll(/([\w:-]+)\s*=\s*"([^"]*)"/g)) o[m[1]] = m[2];
@@ -24,9 +42,10 @@ function nodesOf(src) {
     const a = attrs(m[0]);
     const x = +a.x || 0, y = +a.y || 0, w = +a.width || 0, h = +a.height || 0;
     if (!w || !h) continue;
+    if (hidden(a)) continue;
     if (w >= VW - 1 && h >= VH - 1) continue;   // 배경
     if (h < 20 || w < 30) continue;             // 라벨 칩 / 태그
-    out.push(rectPoly(x, y, w, h));
+    out.push(applyTransform(rectPoly(x, y, w, h), a.transform));
   }
   for (const m of src.matchAll(/<(circle|ellipse)\b[^>]*>/g)) {
     const a = attrs(m[0]);
@@ -47,8 +66,9 @@ function nodesOf(src) {
     const pts = [];
     for (let i = 0; i + 1 < n.length; i += 2) pts.push([n[i], n[i + 1]]);
     const xs = pts.map((p) => p[0]), ys = pts.map((p) => p[1]);
+    if (hidden(a)) continue;
     if (Math.max(...xs) - Math.min(...xs) < 30 || Math.max(...ys) - Math.min(...ys) < 20) continue;
-    out.push(pts);
+    out.push(applyTransform(pts, a.transform));
   }
   return out;
 }
@@ -128,38 +148,60 @@ for (const f of files) {
     return c >= 2;
   });
 
+  // 마커 없는 스트로크 선분 = 버스선/합류선. 여기에 닿아도 연결된 것으로 본다
+  const buses = [];
+  for (const m of src.matchAll(/<(path|line)\b[^>]*>/g)) {
+    const a = attrs(m[0]);
+    if (hidden(a) || a['marker-end'] || a['marker-start']) continue;
+    if (!a.stroke || a.stroke === 'none') continue;
+    if (a.d) {
+      const pp = pathPoints(a.d);
+      if (pp) buses.push([pp.first, pp.last]);
+    } else if (a.x1 !== undefined) {
+      buses.push([[+a.x1, +a.y1], [+a.x2, +a.y2]]);
+    }
+  }
+  const onBus = (pt) => buses.some(([a, b]) => segDist(pt, a, b) <= TOL);
+
   const verdict = (pt) => {
     const ds = nodes.map((n) => signedDist(pt, n));
     const near = Math.min(...ds.map(Math.abs));
     const deepest = Math.min(...ds.filter((_, i) => !isContainer[i]));
     return { near, deepest };
   };
-  const check = (which, pt, d) => {
+  // hasMarker: 이 끝점에 화살촉이 붙어 있는가. 화살촉 없는 끝이 박스에 묻히는 건
+  // 연결선이 박스 밑으로 들어가는 것뿐이라 보이지 않는다 — 결함이 아니다.
+  const check = (which, pt, d, hasMarker) => {
     const { near, deepest } = verdict(pt);
-    if (near <= TOL) return;
-    if (deepest < -BURY) issues.push([`${which} 화살촉이 박스 안 ${(-deepest).toFixed(0)}px에 묻힘 @ (${pt.map((v) => v.toFixed(0)).join(',')})`, d]);
-    else issues.push([`${which} 박스와 ${near.toFixed(0)}px 떨어짐 @ (${pt.map((v) => v.toFixed(0)).join(',')})`, d]);
+    if (near <= TOL || onBus(pt)) return;
+    if (deepest < -BURY) {
+      if (!hasMarker) return;
+      issues.push([`${which} 화살촉이 박스 안 ${(-deepest).toFixed(0)}px에 묻힘 @ (${pt.map((v) => v.toFixed(0)).join(',')})`, d]);
+    } else issues.push([`${which} 박스와 ${near.toFixed(0)}px 떨어짐 @ (${pt.map((v) => v.toFixed(0)).join(',')})`, d]);
   };
   // 양 끝이 모두 노드에서 먼 선은 범례 샘플이므로 건너뛴다
-  const isLegendSample = (a, b) => verdict(a).near > 40 && verdict(b).near > 40;
+  const isLegendSample = (a, b) =>
+    verdict(a).near > 20 && verdict(b).near > 20 && Math.hypot(b[0] - a[0], b[1] - a[1]) < 80;
 
   for (const m of src.matchAll(/<path\b[^>]*>/g)) {
     const a = attrs(m[0]);
+    if (hidden(a)) continue;
     if (!a.d || !a.stroke || a.stroke === 'none') continue;
     if (!a['marker-end'] && !a['marker-start']) continue;
     const pp = pathPoints(a.d);
     if (!pp) { issues.push(['parse-fail', a.d]); continue; }
     if (isLegendSample(pp.first, pp.last)) continue;
-    check('시작', pp.first, a.d.slice(0, 70));
-    check('끝', pp.last, a.d.slice(0, 70));
+    check('시작', pp.first, a.d.slice(0, 70), !!a['marker-start']);
+    check('끝', pp.last, a.d.slice(0, 70), !!a['marker-end']);
   }
   for (const m of src.matchAll(/<line\b[^>]*>/g)) {
     const a = attrs(m[0]);
+    if (hidden(a)) continue;
     if (!a['marker-end'] && !a['marker-start']) continue;
     const d = `${a.x1},${a.y1} → ${a.x2},${a.y2}`;
     if (isLegendSample([+a.x1, +a.y1], [+a.x2, +a.y2])) continue;
-    check('시작', [+a.x1, +a.y1], d);
-    check('끝', [+a.x2, +a.y2], d);
+    check('시작', [+a.x1, +a.y1], d, !!a['marker-start']);
+    check('끝', [+a.x2, +a.y2], d, !!a['marker-end']);
   }
 
   const vb = src.match(/viewBox="([^"]+)"/);
