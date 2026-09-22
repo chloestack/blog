@@ -13,7 +13,7 @@
 </head>
 <body>
 <div class="diagram-wrap">
-<svg viewBox="0 0 960 600" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="2026-09-18-784fb3bd-02-constrained-decode-title 2026-09-18-784fb3bd-02-constrained-decode-desc">
+<svg viewBox="0 0 960 640" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="2026-09-18-784fb3bd-02-constrained-decode-title 2026-09-18-784fb3bd-02-constrained-decode-desc">
   <title id="2026-09-18-784fb3bd-02-constrained-decode-title">Constrained Decoding: JSON Schema-based Structured Output Flow</title>
   <desc id="2026-09-18-784fb3bd-02-constrained-decode-desc">Starting from a JSON Schema definition, a valid token mask is computed and applied to LLM Logits, then a token is selected in a repeated loop. Once JSON is complete, a structured response is output.</desc>
 
@@ -54,7 +54,7 @@
   <!-- Q "아니오" → C loop: diamond bottom tip → elbow right side → back up to C -->
   <!-- Diamond center=(480,543), bottom tip y=567 -->
   <!-- Loop goes: down from diamond bottom(480,567) → right elbow to x=760 → up to y=185 → left to C right(560,185) -->
-  <path d="M480,567 Q480,580 492,580 L752,580 Q764,580 764,568 L764,192 Q764,180 752,180 L560,180" stroke="#3f545c" stroke-width="1" stroke-dasharray="5,4" fill="none" marker-end="url(#2026-09-18-784fb3bd-02-arrow-muted)"/>
+  <path d="M480,567 L480,580 Q480,588 472,588 L348,588 Q340,588 340,580 L340,193 Q340,185 348,185 L378,185" stroke="#3f545c" stroke-width="1" stroke-dasharray="5,4" fill="none" marker-end="url(#2026-09-18-784fb3bd-02-arrow-muted)"/>
 
   <!-- ===================== NODES ===================== -->
 
@@ -123,27 +123,27 @@
   <text x="589" y="543" fill="#6c8188" font-size="12" font-weight="500" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Yes</text>
 
   <!-- "아니오" label on loop-back path, positioned near bottom of loop -->
-  <rect x="692" y="570" width="52" height="14" rx="2" fill="#f8fafb"/>
-  <text x="718" y="580" fill="#6c8188" font-size="12" font-weight="500" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">No</text>
+  <rect x="384" y="578" width="52" height="14" rx="2" fill="#f8fafb"/>
+  <text x="410" y="588" fill="#6c8188" font-size="12" font-weight="500" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">No</text>
 
   <!-- ===================== LEGEND ===================== -->
-  <line x1="32" y1="592" x2="928" y2="592" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+  <line x1="32" y1="620" x2="928" y2="620" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
 
   <!-- Legend item 1: focal/accent node -->
-  <rect x="32" y="596" width="12" height="10" rx="2" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
-  <text x="50" y="605" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.08em">mask compute step</text>
+  <rect x="32" y="624" width="12" height="10" rx="2" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="50" y="633" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.08em">mask compute step</text>
 
   <!-- Legend item 2: model logits node -->
-  <rect x="192" y="596" width="12" height="10" rx="2" fill="rgba(63,84,92,0.06)" stroke="#6c8188" stroke-width="1"/>
-  <text x="210" y="605" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.08em">LLM process</text>
+  <rect x="192" y="624" width="12" height="10" rx="2" fill="rgba(63,84,92,0.06)" stroke="#6c8188" stroke-width="1"/>
+  <text x="210" y="633" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.08em">LLM process</text>
 
   <!-- Legend item 3: output node -->
-  <rect x="312" y="596" width="12" height="10" rx="2" fill="rgba(40,109,80,0.07)" stroke="#286d50" stroke-width="1"/>
-  <text x="330" y="605" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.08em">output</text>
+  <rect x="312" y="624" width="12" height="10" rx="2" fill="rgba(40,109,80,0.07)" stroke="#286d50" stroke-width="1"/>
+  <text x="330" y="633" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.08em">output</text>
 
   <!-- Legend item 4: loop-back -->
-  <line x1="412" y1="601" x2="432" y2="601" stroke="#3f545c" stroke-width="1" stroke-dasharray="5,4" marker-end="url(#2026-09-18-784fb3bd-02-arrow-muted)"/>
-  <text x="440" y="605" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.08em">repeat loop</text>
+  <line x1="412" y1="629" x2="432" y2="629" stroke="#3f545c" stroke-width="1" stroke-dasharray="5,4" marker-end="url(#2026-09-18-784fb3bd-02-arrow-muted)"/>
+  <text x="440" y="633" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.08em">repeat loop</text>
 </svg>
 </div>
 </body>

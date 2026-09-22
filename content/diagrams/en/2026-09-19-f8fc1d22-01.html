@@ -13,7 +13,7 @@
 </head>
 <body>
 <div class="diagram-wrap">
-<svg viewBox="0 0 960 380" xmlns="http://www.w3.org/2000/svg"
+<svg viewBox="0 0 960 400" xmlns="http://www.w3.org/2000/svg"
      role="img" aria-labelledby="2026-09-19-f8fc1d22-01-wc-title 2026-09-19-f8fc1d22-01-wc-desc">
   <title id="2026-09-19-f8fc1d22-01-wc-title">WebClient vs RestTemplate — Config Layer Branching</title>
   <desc id="2026-09-19-f8fc1d22-01-wc-desc">RestTemplate's blocking model risks thread-pool exhaustion, while WebClient's non-blocking event loop enables high throughput — but an incorrect config layer causes timeout failures and pool exhaustion, whereas correct config leads to stable operation.</desc>
@@ -42,7 +42,7 @@
   </defs>
 
   <!-- 배경 -->
-  <rect width="960" height="380" fill="#f8fafb"/>
+  <rect width="960" height="400" fill="#f8fafb"/>
 
   <!-- ===================== ARROWS (drawn before boxes) ===================== -->
 
@@ -66,17 +66,17 @@
         marker-end="url(#2026-09-19-f8fc1d22-01-wc-arrow-accent)"/>
 
   <!-- 설정 레이어 → 타임아웃 미동작 (위쪽 분기) -->
-  <path d="M 636,216 V 140 H 724" fill="none" stroke="#94382b" stroke-width="1.2"
+  <path d="M 636,192 V 140 H 722" fill="none" stroke="#94382b" stroke-width="1.2"
         stroke-dasharray="5,3" marker-end="url(#2026-09-19-f8fc1d22-01-wc-arrow-danger)"/>
   <rect x="622" y="160" width="56" height="14" rx="2" fill="#f8fafb"/>
   <text x="650" y="171" fill="#94382b" font-size="10" font-family="'IBM Plex Mono', monospace"
         text-anchor="middle" letter-spacing="0.05em">Misconfigured</text>
 
   <!-- 설정 레이어 → 안정적 운영 (아래쪽 분기) -->
-  <path d="M 636,264 V 320 H 724" fill="none" stroke="#286d50" stroke-width="1.2"
+  <path d="M 636,288 V 320 H 722" fill="none" stroke="#286d50" stroke-width="1.2"
         marker-end="url(#2026-09-19-f8fc1d22-01-wc-arrow-ok)"/>
-  <rect x="622" y="278" width="56" height="14" rx="2" fill="#f8fafb"/>
-  <text x="650" y="289" fill="#286d50" font-size="10" font-family="'IBM Plex Mono', monospace"
+  <rect x="622" y="298" width="56" height="14" rx="2" fill="#f8fafb"/>
+  <text x="650" y="309" fill="#286d50" font-size="10" font-family="'IBM Plex Mono', monospace"
         text-anchor="middle" letter-spacing="0.05em">Correct Cfg</text>
 
   <!-- ===================== NODES ===================== -->
@@ -155,33 +155,33 @@
         font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Stable Operation</text>
 
   <!-- ===================== LEGEND ===================== -->
-  <line x1="40" y1="356" x2="920" y2="356"
+  <line x1="40" y1="372" x2="920" y2="372"
         stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
 
   <!-- 범례 아이템들 -->
-  <rect x="40" y="363" width="10" height="10" rx="2"
+  <rect x="40" y="381" width="10" height="10" rx="2"
         fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
-  <text x="56" y="372" fill="#3f545c" font-size="10"
+  <text x="56" y="390" fill="#3f545c" font-size="10"
         font-family="'IBM Plex Mono', monospace">Key Path</text>
 
-  <rect x="200" y="363" width="10" height="10" rx="2"
+  <rect x="200" y="381" width="10" height="10" rx="2"
         fill="rgba(169,106,8,0.07)" stroke="#a96a08" stroke-width="1"/>
-  <text x="216" y="372" fill="#3f545c" font-size="10"
+  <text x="216" y="390" fill="#3f545c" font-size="10"
         font-family="'IBM Plex Mono', monospace">Caution</text>
 
-  <rect x="360" y="363" width="10" height="10" rx="2"
+  <rect x="360" y="381" width="10" height="10" rx="2"
         fill="rgba(148,56,43,0.07)" stroke="#94382b" stroke-width="1"/>
-  <text x="376" y="372" fill="#3f545c" font-size="10"
+  <text x="376" y="390" fill="#3f545c" font-size="10"
         font-family="'IBM Plex Mono', monospace">Failure Scenario</text>
 
-  <rect x="540" y="363" width="10" height="10" rx="2"
+  <rect x="540" y="381" width="10" height="10" rx="2"
         fill="rgba(40,109,80,0.08)" stroke="#286d50" stroke-width="1"/>
-  <text x="556" y="372" fill="#3f545c" font-size="10"
+  <text x="556" y="390" fill="#3f545c" font-size="10"
         font-family="'IBM Plex Mono', monospace">Target State</text>
 
-  <line x1="680" y1="363" x2="704" y2="363"
+  <line x1="680" y1="381" x2="704" y2="381"
         stroke="#94382b" stroke-width="1" stroke-dasharray="5,3"/>
-  <text x="710" y="372" fill="#3f545c" font-size="10"
+  <text x="710" y="390" fill="#3f545c" font-size="10"
         font-family="'IBM Plex Mono', monospace">Wrong Path</text>
 
 </svg>

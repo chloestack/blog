@@ -11,7 +11,7 @@
 </style>
 </head>
 <body>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 660" role="img" aria-labelledby="2026-09-19-f8fc1d22-06-wc-diag-title 2026-09-19-f8fc1d22-06-wc-diag-desc">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 684" role="img" aria-labelledby="2026-09-19-f8fc1d22-06-wc-diag-title 2026-09-19-f8fc1d22-06-wc-diag-desc">
   <title id="2026-09-19-f8fc1d22-06-wc-diag-title">WebClient 올바른 사용 판별 흐름</title>
   <desc id="2026-09-19-f8fc1d22-06-wc-diag-desc">WebClient 사용 시 세 가지 체크포인트(인스턴스 재사용, 이벤트 루프 블로킹, 재시도 대상 오류 범위)를 순서대로 확인해 올바른 사용 여부를 판단하는 의사결정 흐름도.</desc>
 
@@ -32,7 +32,7 @@
   </defs>
 
   <!-- background -->
-  <rect width="960" height="660" fill="#f8fafb"/>
+  <rect width="960" height="684" fill="#f8fafb"/>
 
   <!-- ───────────────────────────────────────────
        CONNECTORS  (drawn before nodes)
@@ -43,7 +43,7 @@
 
   <!-- Q1 예 (right) → BAD1 -->
   <!-- Q1 right edge (616,196) → elbow right then down to BAD1 -->
-  <path d="M616,196 L680,196 L680,288 L656,288" fill="none" stroke="#94382b" stroke-width="1.2" marker-end="url(#2026-09-19-f8fc1d22-06-arr-stop)"/>
+  <path d="M616,196 L672,196 Q680,196 680,204 L680,262" fill="none" stroke="#94382b" stroke-width="1.2" marker-end="url(#2026-09-19-f8fc1d22-06-arr-stop)"/>
   <!-- label 예 on horizontal segment -->
   <rect x="630" y="182" width="24" height="14" rx="2" fill="#f8fafb"/>
   <text x="642" y="192" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR',sans-serif" text-anchor="middle">예</text>
@@ -55,7 +55,7 @@
   <text x="480" y="266" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR',sans-serif" text-anchor="middle">아니오</text>
 
   <!-- Q2 예 (right) → BAD2 -->
-  <path d="M616,344 L680,344 L680,400 L656,400" fill="none" stroke="#94382b" stroke-width="1.2" marker-end="url(#2026-09-19-f8fc1d22-06-arr-stop)"/>
+  <path d="M616,344 L672,344 Q680,344 680,352 L680,374" fill="none" stroke="#94382b" stroke-width="1.2" marker-end="url(#2026-09-19-f8fc1d22-06-arr-stop)"/>
   <rect x="630" y="330" width="24" height="14" rx="2" fill="#f8fafb"/>
   <text x="642" y="340" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR',sans-serif" text-anchor="middle">예</text>
 
@@ -65,7 +65,7 @@
   <text x="480" y="414" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR',sans-serif" text-anchor="middle">아니오</text>
 
   <!-- Q3 예 (right) → BAD3 -->
-  <path d="M616,492 L680,492 L680,508 L656,508" fill="none" stroke="#94382b" stroke-width="1.2" marker-end="url(#2026-09-19-f8fc1d22-06-arr-stop)"/>
+  <path d="M616,492 L654,492" fill="none" stroke="#94382b" stroke-width="1.2" marker-end="url(#2026-09-19-f8fc1d22-06-arr-stop)"/>
   <rect x="630" y="478" width="24" height="14" rx="2" fill="#f8fafb"/>
   <text x="642" y="488" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR',sans-serif" text-anchor="middle">예</text>
 

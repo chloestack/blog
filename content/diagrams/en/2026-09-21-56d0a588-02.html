@@ -40,10 +40,10 @@
   <line x1="172" y1="132" x2="248" y2="132" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-21-56d0a588-02-cls-arrow)"/>
 
   <!-- Q1 → DONE (부모 성공, 위쪽 경로) -->
-  <path d="M 340 108 L 340 72 L 720 72 L 720 108" fill="none" stroke="#286d50" stroke-width="1" marker-end="url(#2026-09-21-56d0a588-02-cls-arrow-ok)"/>
+  <path d="M 318 108 L 318 60 L 802 60 L 802 106" fill="none" stroke="#286d50" stroke-width="1" marker-end="url(#2026-09-21-56d0a588-02-cls-arrow-ok)"/>
   <!-- 라벨: 부모 성공 -->
-  <rect x="495" y="56" width="64" height="14" rx="2" fill="#f8fafb"/>
-  <text x="527" y="67" fill="#286d50" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500" text-anchor="middle">Parent OK</text>
+  <rect x="408" y="53" width="64" height="14" rx="2" fill="#f8fafb"/>
+  <text x="440" y="64" fill="#286d50" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500" text-anchor="middle">Parent OK</text>
 
   <!-- Q1 → Q2 (부모 실패, 오른쪽) -->
   <line x1="388" y1="132" x2="464" y2="132" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-21-56d0a588-02-cls-arrow)"/>
@@ -52,19 +52,19 @@
   <text x="427" y="129" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500" text-anchor="middle">Parent Fail</text>
 
   <!-- Q2 → LOAD (발견, 위쪽) -->
-  <path d="M 556 108 L 556 72 L 556 64 L 620 64 L 620 108" fill="none" stroke="#286d50" stroke-width="1" marker-end="url(#2026-09-21-56d0a588-02-cls-arrow-ok)"/>
+  <path d="M 532 108 L 532 84 L 670 84 L 670 106" fill="none" stroke="#286d50" stroke-width="1" marker-end="url(#2026-09-21-56d0a588-02-cls-arrow-ok)"/>
   <!-- 라벨: 발견 -->
-  <rect x="573" y="52" width="36" height="14" rx="2" fill="#f8fafb"/>
-  <text x="591" y="63" fill="#286d50" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500" text-anchor="middle">Found</text>
+  <rect x="583" y="77" width="36" height="14" rx="2" fill="#f8fafb"/>
+  <text x="601" y="88" fill="#286d50" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500" text-anchor="middle">Found</text>
 
   <!-- Q2 → ERR (미발견, 아래쪽) -->
-  <path d="M 556 156 L 556 208 L 620 208" fill="none" stroke="#94382b" stroke-width="1" marker-end="url(#2026-09-21-56d0a588-02-cls-arrow-err)"/>
+  <path d="M 532 156 L 532 208 L 618 208" fill="none" stroke="#94382b" stroke-width="1" marker-end="url(#2026-09-21-56d0a588-02-cls-arrow-err)"/>
   <!-- 라벨: 미발견 -->
   <rect x="563" y="192" width="44" height="14" rx="2" fill="#f8fafb"/>
   <text x="585" y="203" fill="#94382b" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500" text-anchor="middle">Not Found</text>
 
   <!-- LOAD → DONE -->
-  <line x1="716" y1="132" x2="720" y2="132" stroke="#286d50" stroke-width="1" marker-end="url(#2026-09-21-56d0a588-02-cls-arrow-ok)"/>
+  <line x1="720" y1="132" x2="750" y2="132" stroke="#286d50" stroke-width="1" marker-end="url(#2026-09-21-56d0a588-02-cls-arrow-ok)"/>
 
   <!-- ─── 노드 박스 ─── -->
 
@@ -74,7 +74,7 @@
   <rect x="52" y="114" width="28" height="12" rx="2" fill="transparent" stroke="rgba(108,129,136,0.40)" stroke-width="0.8"/>
   <text x="66" y="123" fill="rgba(108,129,136,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">REQ</text>
   <text x="108" y="136" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Load Request</text>
-  <text x="108" y="150" fill="#3f545c" font-size="9" font-family="'IBM Plex Mono', monospace" text-anchor="middle">ClassLoader.loadClass()</text>
+  <text x="108" y="150" fill="#3f545c" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle">ClassLoader.loadClass()</text>
 
   <!-- Q1: 부모에게 위임 결정 (focal - diamond) -->
   <!-- 마름모: 중심(318, 132), 가로 70, 세로 48 -->
@@ -99,19 +99,19 @@
   <text x="670" y="150" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Load·Verify</text>
 
   <!-- DONE: 로드 완료 (성공 상태) -->
-  <rect x="720" y="108" width="100" height="48" rx="6" fill="#f8fafb"/>
-  <rect x="720" y="108" width="100" height="48" rx="6" fill="rgba(40,109,80,0.08)" stroke="#286d50" stroke-width="1"/>
-  <rect x="728" y="114" width="28" height="12" rx="2" fill="transparent" stroke="rgba(40,109,80,0.40)" stroke-width="0.8"/>
-  <text x="742" y="123" fill="rgba(40,109,80,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">DONE</text>
-  <text x="770" y="140" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Load Complete</text>
+  <rect x="752" y="108" width="100" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="752" y="108" width="100" height="48" rx="6" fill="rgba(40,109,80,0.08)" stroke="#286d50" stroke-width="1"/>
+  <rect x="760" y="114" width="28" height="12" rx="2" fill="transparent" stroke="rgba(40,109,80,0.40)" stroke-width="0.8"/>
+  <text x="774" y="123" fill="rgba(40,109,80,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">DONE</text>
+  <text x="802" y="140" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Load Complete</text>
 
   <!-- ERR: ClassNotFoundException (error 상태) -->
   <rect x="620" y="184" width="120" height="48" rx="6" fill="#f8fafb"/>
   <rect x="620" y="184" width="120" height="48" rx="6" fill="rgba(148,56,43,0.07)" stroke="#94382b" stroke-width="1"/>
   <rect x="628" y="190" width="24" height="12" rx="2" fill="transparent" stroke="rgba(148,56,43,0.40)" stroke-width="0.8"/>
   <text x="640" y="199" fill="rgba(148,56,43,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">ERR</text>
-  <text x="680" y="206" fill="#122127" font-size="10" font-weight="600" font-family="'IBM Plex Mono', monospace" text-anchor="middle">ClassNotFound</text>
-  <text x="680" y="220" fill="#122127" font-size="10" font-weight="600" font-family="'IBM Plex Mono', monospace" text-anchor="middle">Exception</text>
+  <text x="680" y="212" fill="#122127" font-size="10" font-weight="600" font-family="'IBM Plex Mono', monospace" text-anchor="middle">ClassNotFound</text>
+  <text x="680" y="225" fill="#122127" font-size="10" font-weight="600" font-family="'IBM Plex Mono', monospace" text-anchor="middle">Exception</text>
 
   <!-- ─── 범례 ─── -->
   <line x1="44" y1="288" x2="916" y2="288" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>

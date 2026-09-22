@@ -39,10 +39,10 @@
 
   <!-- Q1 →|Yes| A : down then left -->
   <!-- Q1 bottom (364,260) → down to y=340 → left to A right edge (224,340) -->
-  <path d="M364,260 L364,340 Q364,348 356,348 L224,348" fill="none" stroke="#6c8188" stroke-width="1" marker-end="url(#2026-09-19-acc35f49-05-rp-arrow)"/>
+  <path d="M364,280 L364,340 Q364,348 356,348 L224,348" fill="none" stroke="#6c8188" stroke-width="1" marker-end="url(#2026-09-19-acc35f49-05-rp-arrow)"/>
   <!-- "Yes" label -->
-  <rect x="346" y="272" width="24" height="14" rx="2" fill="#f8fafb"/>
-  <text x="358" y="282" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Yes</text>
+  <rect x="346" y="292" width="24" height="14" rx="2" fill="#f8fafb"/>
+  <text x="358" y="302" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Yes</text>
 
   <!-- Q1 →|No| Q2 : straight right -->
   <line x1="440" y1="236" x2="508" y2="236" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-19-acc35f49-05-rp-arrow)"/>
@@ -52,23 +52,23 @@
 
   <!-- Q2 →|Minutes OK| B : up-right path -->
   <!-- Q2 top (584,212) → up to y=124 → right to B left (680,124) -->
-  <path d="M584,212 L584,124 Q584,116 592,116 L680,116" fill="none" stroke="#6c8188" stroke-width="1" marker-end="url(#2026-09-19-acc35f49-05-rp-arrow)"/>
+  <path d="M584,188 L584,124 Q584,116 592,116 L718,116" fill="none" stroke="#6c8188" stroke-width="1" marker-end="url(#2026-09-19-acc35f49-05-rp-arrow)"/>
   <!-- label -->
   <rect x="551" y="148" width="60" height="14" rx="2" fill="#f8fafb"/>
   <text x="581" y="158" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Minutes OK</text>
 
   <!-- Q2 →|&lt;1s| C : straight right -->
-  <line x1="660" y1="236" x2="680" y2="236" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-19-acc35f49-05-rp-arrow)"/>
+  <line x1="660" y1="236" x2="718" y2="236" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-19-acc35f49-05-rp-arrow)"/>
   <!-- label -->
-  <rect x="660" y="220" width="52" height="14" rx="2" fill="#f8fafb"/>
-  <text x="686" y="230" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">&lt;1 sec</text>
+  <rect x="663" y="220" width="52" height="14" rx="2" fill="#f8fafb"/>
+  <text x="689" y="230" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">&lt;1 sec</text>
 
   <!-- Q2 →|0s required| D : down-right path -->
   <!-- Q2 bottom (584,260) → down to y=348 → right to D left (680,348) -->
-  <path d="M584,260 L584,348 Q584,356 592,356 L680,356" fill="none" stroke="#6c8188" stroke-width="1" marker-end="url(#2026-09-19-acc35f49-05-rp-arrow)"/>
+  <path d="M584,284 L584,348 Q584,356 592,356 L718,356" fill="none" stroke="#6c8188" stroke-width="1" marker-end="url(#2026-09-19-acc35f49-05-rp-arrow)"/>
   <!-- label -->
-  <rect x="552" y="288" width="52" height="14" rx="2" fill="#f8fafb"/>
-  <text x="578" y="298" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">0s required</text>
+  <rect x="552" y="300" width="52" height="14" rx="2" fill="#f8fafb"/>
+  <text x="578" y="310" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">0s required</text>
 
   <!-- ───────────────────────────────────────────────
        NODES
@@ -84,7 +84,7 @@
 
   <!-- Q1: Regenerable? (decision diamond, accent) -->
   <!-- cx=364, cy=236, half-w=76, half-h=44 -->
-  <rect x="288" y="192" width="152" height="88" rx="6" fill="#f8fafb"/>
+  <polygon points="364,192 440,236 364,280 288,236" fill="#f8fafb"/>
   <polygon points="364,192 440,236 364,280 288,236" fill="rgba(13,87,99,0.06)" stroke="#0d5763" stroke-width="1.2"/>
   <text x="364" y="231" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Regenera-</text>
   <text x="364" y="246" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">ble?</text>
@@ -100,37 +100,37 @@
 
   <!-- Q2: Acceptable Loss Window (decision diamond) -->
   <!-- cx=584, cy=236, half-w=76, half-h=48 -->
-  <rect x="508" y="188" width="152" height="96" rx="6" fill="#f8fafb"/>
+  <polygon points="584,188 660,236 584,284 508,236" fill="#f8fafb"/>
   <polygon points="584,188 660,236 584,284 508,236" fill="rgba(13,87,99,0.06)" stroke="#0d5763" stroke-width="1.2"/>
   <text x="584" y="228" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Loss</text>
   <text x="584" y="243" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Tolerance</text>
 
   <!-- B: RDB only (backend / warn-ish: white fill ink stroke) -->
   <!-- x=680, cy=124, w=184, h=56 -->
-  <rect x="680" y="96" width="184" height="56" rx="6" fill="#f8fafb"/>
-  <rect x="680" y="96" width="184" height="56" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
-  <rect x="688" y="102" width="36" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.35)" stroke-width="0.8"/>
-  <text x="706" y="111" fill="rgba(18,33,39,0.7)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">RDB</text>
-  <text x="772" y="124" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">RDB Only</text>
-  <text x="772" y="139" fill="#3f545c" font-size="9" font-family="'IBM Plex Mono', monospace" text-anchor="middle">save 60 1000</text>
+  <rect x="720" y="96" width="184" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="720" y="96" width="184" height="56" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="728" y="102" width="36" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.35)" stroke-width="0.8"/>
+  <text x="746" y="111" fill="rgba(18,33,39,0.7)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">RDB</text>
+  <text x="812" y="124" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">RDB Only</text>
+  <text x="812" y="139" fill="#3f545c" font-size="9" font-family="'IBM Plex Mono', monospace" text-anchor="middle">save 60 1000</text>
 
   <!-- C: AOF everysec + RDB hybrid (focal 2nd accent) -->
   <!-- x=680, cy=236, w=184, h=56 -->
-  <rect x="680" y="208" width="184" height="56" rx="6" fill="#f8fafb"/>
-  <rect x="680" y="208" width="184" height="56" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
-  <rect x="688" y="214" width="32" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.4)" stroke-width="0.8"/>
-  <text x="704" y="223" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">AOF</text>
-  <text x="772" y="234" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">AOF everysec</text>
-  <text x="772" y="249" fill="#3f545c" font-size="9" font-family="'IBM Plex Mono', monospace" text-anchor="middle">+ RDB hybrid</text>
+  <rect x="720" y="208" width="184" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="720" y="208" width="184" height="56" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="728" y="214" width="32" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.4)" stroke-width="0.8"/>
+  <text x="744" y="223" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">AOF</text>
+  <text x="812" y="234" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">AOF everysec</text>
+  <text x="812" y="249" fill="#3f545c" font-size="9" font-family="'IBM Plex Mono', monospace" text-anchor="middle">+ RDB hybrid</text>
 
   <!-- D: AOF always (backend) -->
   <!-- x=680, cy=348, w=184, h=56 -->
-  <rect x="680" y="320" width="184" height="56" rx="6" fill="#f8fafb"/>
-  <rect x="680" y="320" width="184" height="56" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
-  <rect x="688" y="326" width="36" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.35)" stroke-width="0.8"/>
-  <text x="706" y="335" fill="rgba(18,33,39,0.7)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">AOF</text>
-  <text x="772" y="348" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">AOF always</text>
-  <text x="772" y="363" fill="#3f545c" font-size="9" font-family="'IBM Plex Mono', monospace" text-anchor="middle">perf. cost accepted</text>
+  <rect x="720" y="320" width="184" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="720" y="320" width="184" height="56" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="728" y="326" width="36" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.35)" stroke-width="0.8"/>
+  <text x="746" y="335" fill="rgba(18,33,39,0.7)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">AOF</text>
+  <text x="812" y="348" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">AOF always</text>
+  <text x="812" y="363" fill="#3f545c" font-size="9" font-family="'IBM Plex Mono', monospace" text-anchor="middle">perf. cost accepted</text>
 
   <!-- ───────────────────────────────────────────────
        LEGEND
@@ -139,7 +139,7 @@
 
   <!-- Legend: Start -->
   <rect x="32" y="540" width="12" height="12" rx="2" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
-  <text x="50" y="550" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">Start / Recommended Strategy</text>
+  <text x="50" y="550" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">Start / Recommended</text>
 
   <!-- Legend: Decision -->
   <polygon points="176,552 188,546 200,552 188,558" fill="rgba(13,87,99,0.06)" stroke="#0d5763" stroke-width="1"/>

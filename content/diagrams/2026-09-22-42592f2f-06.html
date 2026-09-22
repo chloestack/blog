@@ -45,21 +45,21 @@
   <path d="M 388,156 L 456,156" stroke="#6c8188" stroke-width="1" fill="none" marker-end="url(#2026-09-22-42592f2f-06-arr-muted)"/>
 
   <!-- C → D (전일 대비 계산) : 현재 행 하단에서 계산식 박스로 -->
-  <path d="M 322,204 L 322,248 L 480,248 L 480,204" stroke="#3f545c" stroke-width="1" fill="none" marker-end="url(#2026-09-22-42592f2f-06-arr)"/>
+  <path d="M 322,196 L 322,238" stroke="#3f545c" stroke-width="1" fill="none" marker-end="url(#2026-09-22-42592f2f-06-arr)"/>
   <!-- 라벨 -->
-  <rect x="348" y="232" width="68" height="13" rx="2" fill="#f8fafb"/>
-  <text x="382" y="242" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="500">전일 대비 계산</text>
+  <rect x="330" y="210" width="76" height="13" rx="2" fill="#f8fafb"/>
+  <text x="368" y="221" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="500">전일 대비 계산</text>
 
   <!-- D → CHK (계산식 → 분기) -->
   <path d="M 564,156 L 628,156" stroke="#3f545c" stroke-width="1" fill="none" marker-end="url(#2026-09-22-42592f2f-06-arr)"/>
 
   <!-- CHK → DEF (예, 위로) -->
-  <path d="M 692,120 L 692,76 L 776,76 L 776,112" stroke="#3f545c" stroke-width="1" fill="none" marker-end="url(#2026-09-22-42592f2f-06-arr)"/>
-  <rect x="714" y="60" width="18" height="13" rx="2" fill="#f8fafb"/>
-  <text x="723" y="70" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">예</text>
+  <path d="M 692,120 L 692,62 Q 692,54 700,54 L 778,54" stroke="#3f545c" stroke-width="1" fill="none" marker-end="url(#2026-09-22-42592f2f-06-arr)"/>
+  <rect x="683" y="78" width="18" height="13" rx="2" fill="#f8fafb"/>
+  <text x="692" y="88" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">예</text>
 
   <!-- CHK → RATE (아니오, 오른쪽) -->
-  <path d="M 748,156 L 812,156" stroke="#3f545c" stroke-width="1" fill="none" marker-end="url(#2026-09-22-42592f2f-06-arr)"/>
+  <path d="M 748,156 L 810,156" stroke="#3f545c" stroke-width="1" fill="none" marker-end="url(#2026-09-22-42592f2f-06-arr)"/>
   <rect x="756" y="140" width="36" height="13" rx="2" fill="#f8fafb"/>
   <text x="774" y="150" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="500">아니오</text>
 
@@ -99,15 +99,15 @@
   <text x="526" y="180" fill="#6c8188" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">LEAD(1)</text>
 
   <!-- D: 계산식 박스 — 현재값-이전값 / 이전값×100 -->
-  <rect x="396" y="204" width="168" height="72" rx="6" fill="#f8fafb"/>
-  <rect x="396" y="204" width="168" height="72" rx="6" fill="rgba(18,33,39,0.05)" stroke="#3f545c" stroke-width="1"/>
+  <rect x="240" y="240" width="164" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="240" y="240" width="164" height="72" rx="6" fill="rgba(18,33,39,0.05)" stroke="#3f545c" stroke-width="1"/>
   <!-- 타입 태그 -->
-  <rect x="404" y="210" width="28" height="12" rx="2" fill="transparent" stroke="rgba(63,84,92,0.40)" stroke-width="0.8"/>
-  <text x="418" y="219" fill="rgba(63,84,92,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">식</text>
+  <rect x="248" y="246" width="28" height="12" rx="2" fill="transparent" stroke="rgba(63,84,92,0.40)" stroke-width="0.8"/>
+  <text x="262" y="255" fill="rgba(63,84,92,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">식</text>
   <!-- 이름 라인1 -->
-  <text x="480" y="244" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">현재값 − 이전값</text>
+  <text x="322" y="280" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">현재값 − 이전값</text>
   <!-- 이름 라인2 -->
-  <text x="480" y="262" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">÷ 이전값 × 100</text>
+  <text x="322" y="298" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">÷ 이전값 × 100</text>
 
   <!-- CHK: 분기 다이아몬드 — focal/accent -->
   <!-- 다이아몬드: cx=692, cy=156, 반폭=56, 반높=36 -->
@@ -117,15 +117,15 @@
   <text x="692" y="168" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">NULL인가?</text>
 
   <!-- DEF: 기본값 반환 또는 NULL -->
-  <rect x="736" y="112" width="152" height="68" rx="6" fill="#f8fafb"/>
-  <rect x="736" y="112" width="152" height="68" rx="6" fill="rgba(18,33,39,0.05)" stroke="#6c8188" stroke-width="1" stroke-dasharray="4,3"/>
+  <rect x="780" y="24" width="152" height="60" rx="6" fill="#f8fafb"/>
+  <rect x="780" y="24" width="152" height="60" rx="6" fill="rgba(18,33,39,0.05)" stroke="#6c8188" stroke-width="1" stroke-dasharray="4,3"/>
   <!-- 타입 태그 -->
-  <rect x="744" y="118" width="36" height="12" rx="2" fill="transparent" stroke="rgba(108,129,136,0.40)" stroke-width="0.8"/>
-  <text x="762" y="127" fill="rgba(108,129,136,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">예외</text>
+  <rect x="788" y="30" width="36" height="12" rx="2" fill="transparent" stroke="rgba(108,129,136,0.40)" stroke-width="0.8"/>
+  <text x="806" y="39" fill="rgba(108,129,136,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">예외</text>
   <!-- 이름 라인1 -->
-  <text x="812" y="152" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">기본값 반환</text>
+  <text x="856" y="60" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">기본값 반환</text>
   <!-- 이름 라인2 -->
-  <text x="812" y="168" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">또는 NULL</text>
+  <text x="856" y="76" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">또는 NULL</text>
 
   <!-- RATE: 성장률 계산 -->
   <rect x="812" y="116" width="120" height="80" rx="6" fill="#f8fafb"/>

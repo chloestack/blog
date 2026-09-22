@@ -14,7 +14,7 @@
 </head>
 <body>
 <div class="diagram-wrap">
-<svg viewBox="0 0 960 600" role="img" aria-labelledby="2026-09-22-42592f2f-03-flow-title 2026-09-22-42592f2f-03-flow-desc" xmlns="http://www.w3.org/2000/svg">
+<svg viewBox="0 0 960 632" role="img" aria-labelledby="2026-09-22-42592f2f-03-flow-title 2026-09-22-42592f2f-03-flow-desc" xmlns="http://www.w3.org/2000/svg">
   <title id="2026-09-22-42592f2f-03-flow-title">부서별 상위 2명 추출 — DENSE_RANK 흐름</title>
   <desc id="2026-09-22-42592f2f-03-flow-desc">MySQL DENSE_RANK 윈도우 함수를 사용해 부서별 상위 2명을 추출하는 6단계 쿼리 작성 흐름. 문제 정의에서 시작해 PARTITION BY, ORDER BY, DENSE_RANK 부여, CTE 래핑, 외부 필터 적용, 최종 결과 반환 순으로 이어진다.</desc>
 
@@ -34,26 +34,26 @@
   </defs>
 
   <!-- 배경 -->
-  <rect width="960" height="600" fill="#f8fafb"/>
+  <rect width="960" height="632" fill="#f8fafb"/>
 
   <!-- ─────────────────────────────────────────
        화살표 (노드보다 먼저 그림)
   ───────────────────────────────────────── -->
 
   <!-- Q → P (수직) -->
-  <line x1="480" y1="112" x2="480" y2="168" stroke="#3f545c" stroke-width="1.2" marker-end="url(#2026-09-22-42592f2f-03-flow-arrow)"/>
+  <line x1="480" y1="108" x2="480" y2="170" stroke="#3f545c" stroke-width="1.2" marker-end="url(#2026-09-22-42592f2f-03-flow-arrow)"/>
 
   <!-- P → O (수직) -->
-  <line x1="480" y1="224" x2="480" y2="280" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-22-42592f2f-03-flow-arrow-accent)"/>
+  <line x1="480" y1="220" x2="480" y2="282" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-22-42592f2f-03-flow-arrow-accent)"/>
 
   <!-- O → RN (수직) -->
-  <line x1="480" y1="336" x2="480" y2="392" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-22-42592f2f-03-flow-arrow-accent)"/>
+  <line x1="480" y1="332" x2="480" y2="394" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-22-42592f2f-03-flow-arrow-accent)"/>
 
   <!-- RN → CTE (수직) -->
-  <line x1="480" y1="448" x2="480" y2="488" stroke="#3f545c" stroke-width="1.2" marker-end="url(#2026-09-22-42592f2f-03-flow-arrow)"/>
+  <line x1="480" y1="444" x2="480" y2="490" stroke="#3f545c" stroke-width="1.2" marker-end="url(#2026-09-22-42592f2f-03-flow-arrow)"/>
 
   <!-- CTE → F (수직) -->
-  <line x1="480" y1="528" x2="480" y2="548" stroke="#3f545c" stroke-width="1.2" marker-end="url(#2026-09-22-42592f2f-03-flow-arrow)"/>
+  <line x1="480" y1="532" x2="480" y2="558" stroke="#3f545c" stroke-width="1.2" marker-end="url(#2026-09-22-42592f2f-03-flow-arrow)"/>
 
   <!-- ─────────────────────────────────────────
        노드 1: 부서별 상위 2명 추출 (focal — 시작)
@@ -128,25 +128,25 @@
   <!-- 이미 line x1=480 y1=528 x2=480 y2=548 그려져 있음 -->
   <!-- 여기서 두 노드를 수평 분기시킴: 필터(왼) + 결과(오) -->
   <!-- 수평 분기 라인 -->
-  <line x1="480" y1="548" x2="320" y2="548" stroke="#3f545c" stroke-width="1.2"/>
-  <line x1="480" y1="548" x2="640" y2="548" stroke="#3f545c" stroke-width="1.2"/>
+  <line x1="480" y1="548" x2="480" y2="548" visibility="hidden" stroke="#3f545c" stroke-width="1.2"/>
+  <line x1="480" y1="548" x2="480" y2="548" visibility="hidden" stroke="#3f545c" stroke-width="1.2"/>
   <!-- 필터 노드로 내려가는 화살표 -->
-  <line x1="320" y1="548" x2="320" y2="560" stroke="#3f545c" stroke-width="1.2" marker-end="url(#2026-09-22-42592f2f-03-flow-arrow)"/>
+  <line x1="480" y1="548" x2="480" y2="548" visibility="hidden" stroke="#3f545c" stroke-width="1.2" marker-end="url(#2026-09-22-42592f2f-03-flow-arrow)"/>
   <!-- 결과 노드로 내려가는 화살표 -->
-  <line x1="640" y1="548" x2="640" y2="560" stroke="#3f545c" stroke-width="1.2" marker-end="url(#2026-09-22-42592f2f-03-flow-arrow)"/>
+  <line x1="600" y1="584" x2="650" y2="584" stroke="#3f545c" stroke-width="1.2" marker-end="url(#2026-09-22-42592f2f-03-flow-arrow)"/>
 
   <!-- 외부 WHERE 필터 노드 (왼쪽) -->
-  <rect x="200" y="560" width="240" height="48" rx="6" fill="#f8fafb"/>
-  <rect x="200" y="560" width="240" height="48" rx="6" fill="rgba(18,33,39,0.04)" stroke="#3f545c" stroke-width="1"/>
-  <rect x="208" y="566" width="40" height="12" rx="2" fill="transparent" stroke="rgba(63,84,92,0.40)" stroke-width="0.8"/>
-  <text x="228" y="575" fill="rgba(63,84,92,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">FILTER</text>
-  <text x="320" y="588" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">외부 WHERE 필터</text>
-  <text x="320" y="601" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">rn &lt;= 2</text>
+  <rect x="360" y="560" width="240" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="360" y="560" width="240" height="48" rx="6" fill="rgba(18,33,39,0.04)" stroke="#3f545c" stroke-width="1"/>
+  <rect x="368" y="566" width="40" height="12" rx="2" fill="transparent" stroke="rgba(63,84,92,0.40)" stroke-width="0.8"/>
+  <text x="388" y="575" fill="rgba(63,84,92,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">FILTER</text>
+  <text x="480" y="588" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">외부 WHERE 필터</text>
+  <text x="480" y="601" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">rn &lt;= 2</text>
 
   <!-- 최종 결과 노드 (오른쪽 — 타원 끝) -->
-  <ellipse cx="640" cy="584" rx="108" ry="24" fill="#f8fafb"/>
-  <ellipse cx="640" cy="584" rx="108" ry="24" fill="rgba(18,33,39,0.04)" stroke="#3f545c" stroke-width="1"/>
-  <text x="640" y="589" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">최종 결과</text>
+  <ellipse cx="760" cy="584" rx="108" ry="24" fill="#f8fafb"/>
+  <ellipse cx="760" cy="584" rx="108" ry="24" fill="rgba(18,33,39,0.04)" stroke="#3f545c" stroke-width="1"/>
+  <text x="760" y="589" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">최종 결과</text>
 
   <!-- ─────────────────────────────────────────
        범례 하단 스트립

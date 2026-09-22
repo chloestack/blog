@@ -13,7 +13,7 @@
 </head>
 <body>
 <div class="diagram-wrap">
-<svg viewBox="0 0 960 400" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="2026-09-21-184d501b-06-graphrag-chunk-title 2026-09-21-184d501b-06-graphrag-chunk-desc">
+<svg viewBox="0 0 960 424" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="2026-09-21-184d501b-06-graphrag-chunk-title 2026-09-21-184d501b-06-graphrag-chunk-desc">
   <title id="2026-09-21-184d501b-06-graphrag-chunk-title">한국어 문서 청크 크기 설정 플로우</title>
   <desc id="2026-09-21-184d501b-06-graphrag-chunk-desc">한국어 문서가 tiktoken으로 토큰화될 때 청크 크기 설정 여부에 따라 관계 추출 결과가 달라지는 분기 흐름. 기본값(1200)은 청크가 짧아 관계 추출이 불완전하고, 2000~2400 설정 시 관계 추출이 안정된다.</desc>
 
@@ -37,7 +37,7 @@
   </defs>
 
   <!-- 배경 -->
-  <rect width="960" height="400" fill="#f8fafb"/>
+  <rect width="960" height="424" fill="#f8fafb"/>
 
   <!-- ── 화살표 먼저 ── -->
 
@@ -45,7 +45,7 @@
   <line x1="156" y1="172" x2="224" y2="172" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-21-184d501b-06-arr)"/>
 
   <!-- TK → Q -->
-  <line x1="356" y1="172" x2="424" y2="172" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-21-184d501b-06-arr)"/>
+  <line x1="356" y1="172" x2="462" y2="172" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-21-184d501b-06-arr)"/>
 
   <!-- Q → SM (아래 분기: 기본값 1200) -->
   <!-- 다이아몬드 중심 (504, 172), 아래꼭짓점 (504, 212) → SM 상단 중심 (504, 252) -->
@@ -53,7 +53,7 @@
 
   <!-- Q → OK (오른쪽 분기: 2000~2400 설정) -->
   <!-- 다이아몬드 오른쪽 꼭짓점 (544, 172) → OK 왼쪽 (600, 172) -->
-  <line x1="544" y1="172" x2="596" y2="172" stroke="#286d50" stroke-width="1" marker-end="url(#2026-09-21-184d501b-06-arr-ok)"/>
+  <line x1="544" y1="172" x2="638" y2="172" stroke="#286d50" stroke-width="1" marker-end="url(#2026-09-21-184d501b-06-arr-ok)"/>
 
   <!-- SM → FIX -->
   <!-- SM 하단 중심 (504, 316) → FIX 상단 중심 (504, 336) — 오른쪽 우회 경로 -->
@@ -68,7 +68,7 @@
   <rect x="28" y="144" width="128" height="56" rx="6" fill="rgba(58,84,143,0.07)" stroke="#3a548f" stroke-width="1"/>
   <rect x="36" y="152" width="20" height="12" rx="2" fill="transparent" stroke="rgba(58,84,143,0.4)" stroke-width="0.8"/>
   <text x="46" y="161" fill="rgba(58,84,143,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">IN</text>
-  <text x="92" y="175" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">한국어 문서</text>
+  <text x="92" y="181" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">한국어 문서</text>
 
   <!-- TK: tiktoken 토큰화 (warn 타입) -->
   <!-- x=224, y=144, w=132, h=56, cx=290, cy=172 -->
@@ -76,31 +76,31 @@
   <rect x="224" y="144" width="132" height="56" rx="6" fill="#f5e8cc" stroke="#a96a08" stroke-width="1"/>
   <rect x="232" y="152" width="28" height="12" rx="2" fill="transparent" stroke="rgba(169,106,8,0.4)" stroke-width="0.8"/>
   <text x="246" y="161" fill="rgba(169,106,8,0.85)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">TOOL</text>
-  <text x="290" y="171" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">tiktoken 토큰화</text>
-  <text x="290" y="188" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">문자당 2~4 토큰</text>
+  <text x="290" y="178" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">tiktoken 토큰화</text>
+  <text x="290" y="193" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">문자당 2~4 토큰</text>
 
   <!-- Q: 결정 다이아몬드 (accent 타입) -->
   <!-- 중심 (504, 172), 반지름 40 가로, 40 세로 -->
-  <rect x="464" y="132" width="80" height="80" rx="6" fill="#f8fafb"/>
+  <polygon points="504,132 544,172 504,212 464,172" fill="#f8fafb"/>
   <polygon points="504,132 544,172 504,212 464,172" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
   <text x="504" y="168" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">청크 크기</text>
   <text x="504" y="184" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">적절한가?</text>
 
   <!-- OK: 적절한 청크 (ok 타입) -->
   <!-- x=596, y=144, w=152, h=56, cx=672, cy=172 -->
-  <rect x="596" y="144" width="152" height="56" rx="6" fill="#f8fafb"/>
-  <rect x="596" y="144" width="152" height="56" rx="6" fill="#d6e9de" stroke="#286d50" stroke-width="1"/>
-  <rect x="604" y="152" width="20" height="12" rx="2" fill="transparent" stroke="rgba(40,109,80,0.4)" stroke-width="0.8"/>
-  <text x="614" y="161" fill="rgba(40,109,80,0.85)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">OK</text>
-  <text x="672" y="168" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">2000~2400 설정</text>
-  <text x="672" y="185" fill="#286d50" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">관계 추출 안정</text>
+  <rect x="640" y="144" width="152" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="640" y="144" width="152" height="56" rx="6" fill="#d6e9de" stroke="#286d50" stroke-width="1"/>
+  <rect x="648" y="152" width="20" height="12" rx="2" fill="transparent" stroke="rgba(40,109,80,0.4)" stroke-width="0.8"/>
+  <text x="658" y="161" fill="rgba(40,109,80,0.85)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">OK</text>
+  <text x="716" y="177" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">2000~2400 설정</text>
+  <text x="716" y="193" fill="#286d50" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">관계 추출 안정</text>
 
   <!-- SM: 실제 청크 매우 짧음 (stop 타입) -->
   <!-- x=420, y=248, w=168, h=68, cx=504, cy=284 -->
   <rect x="420" y="248" width="168" height="68" rx="6" fill="#f8fafb"/>
   <rect x="420" y="248" width="168" height="68" rx="6" fill="#f1d9d4" stroke="#94382b" stroke-width="1"/>
-  <rect x="428" y="256" width="36" height="12" rx="2" fill="transparent" stroke="rgba(148,56,43,0.4)" stroke-width="0.8"/>
-  <text x="446" y="265" fill="rgba(148,56,43,0.85)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">기본값 1200</text>
+  <rect x="428" y="256" width="52" height="12" rx="2" fill="transparent" stroke="rgba(148,56,43,0.4)" stroke-width="0.8"/>
+  <text x="454" y="265" fill="rgba(148,56,43,0.85)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">기본값 1200</text>
   <text x="504" y="284" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">청크 매우 짧음</text>
   <text x="504" y="302" fill="#94382b" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">관계 추출 불완전</text>
 
@@ -110,13 +110,13 @@
   <rect x="404" y="332" width="200" height="48" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
   <rect x="412" y="340" width="36" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.4)" stroke-width="0.8"/>
   <text x="430" y="349" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">ACTION</text>
-  <text x="504" y="362" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">청크 크기 재조정 필요</text>
+  <text x="504" y="367" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">청크 크기 재조정 필요</text>
 
   <!-- ── 화살표 레이블 ── -->
 
   <!-- Q → OK 레이블: "2000~2400" -->
-  <rect x="551" y="152" width="40" height="14" rx="2" fill="#f8fafb"/>
-  <text x="571" y="162" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">권장값</text>
+  <rect x="561" y="152" width="60" height="14" rx="2" fill="#f8fafb"/>
+  <text x="591" y="162" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">권장값</text>
 
   <!-- Q → SM 레이블: "기본값" -->
   <rect x="470" y="216" width="40" height="14" rx="2" fill="#f8fafb"/>

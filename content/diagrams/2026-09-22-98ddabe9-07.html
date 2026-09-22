@@ -54,7 +54,7 @@
   ============================================================ -->
 
   <!-- CV → Q (right) -->
-  <line x1="152" y1="200" x2="224" y2="200"
+  <line x1="152" y1="200" x2="170" y2="200"
         stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-22-98ddabe9-07-arr)"/>
 
   <!-- Q → FX : yes, up-right elbow
@@ -62,7 +62,7 @@
        FX left: x=376, y=148
        Elbow: go right to x=332, arc up, go right to FX
   -->
-  <path d="M 288 200 L 332 200 Q 340 200 340 192 L 340 156 Q 340 148 348 148 L 376 148"
+  <path d="M 232 160 L 232 156 Q 232 148 240 148 L 374 148"
         fill="none" stroke="#0d5763" stroke-width="1" marker-end="url(#2026-09-22-98ddabe9-07-arr-accent)"/>
 
   <!-- Q → Q2 : no, down -->
@@ -70,7 +70,7 @@
        Q2 top point: x=432, y=236
        Elbow: go down from Q-bottom, then right to Q2-top
   -->
-  <path d="M 256 228 L 256 260 Q 256 268 264 268 L 400 268 Q 408 268 408 260 L 408 248 Q 408 236 416 236 L 404 236"
+  <path d="M 232 240 L 232 260 Q 232 268 240 268 L 366 268"
         fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-22-98ddabe9-07-arr)"/>
   <!-- Simpler re-route: Q bottom → go down to y=268, go right to Q2 left -->
   <!-- Redraw cleanly: -->
@@ -79,30 +79,30 @@
        FX right: x=512, y=148
        V left: x=744, y=200
   -->
-  <path d="M 512 148 L 628 148 Q 636 148 636 156 L 636 192 Q 636 200 644 200 L 744 200"
+  <path d="M 512 148 L 716 148 Q 724 148 724 156 L 724 192 Q 724 200 732 200 L 758 200"
         fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-22-98ddabe9-07-arr)"/>
 
   <!-- W → V -->
   <!-- W right: x=692, y=216  V left: x=744, y=200
        short elbow down then right
   -->
-  <path d="M 692 216 L 716 216 Q 724 216 724 208 L 724 204 Q 724 200 732 200 L 744 200"
+  <path d="M 692 224 L 716 224 Q 724 224 724 216 L 724 208 Q 724 200 732 200 L 758 200"
         fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-22-98ddabe9-07-arr)"/>
 
   <!-- VX → V -->
   <!-- VX right: x=692, y=308  V left: x=744, y=200
   -->
-  <path d="M 692 308 L 716 308 Q 724 308 724 300 L 724 208 Q 724 200 732 200 L 744 200"
+  <path d="M 692 316 L 716 316 Q 724 316 724 308 L 724 208 Q 724 200 732 200 L 758 200"
         fill="none" stroke="#6c8188" stroke-width="1" marker-end="url(#2026-09-22-98ddabe9-07-arr-muted)"/>
 
   <!-- Q2 → W : yes, right -->
   <!-- Q2 right point: x=464, y=260  W left: x=556, y=216 -->
-  <path d="M 464 260 L 508 260 Q 516 260 516 252 L 516 224 Q 516 216 524 216 L 556 216"
+  <path d="M 496 268 L 512 268 Q 520 268 520 260 L 520 232 Q 520 224 528 224 L 554 224"
         fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-22-98ddabe9-07-arr)"/>
 
   <!-- Q2 → VX : no, down-right -->
   <!-- Q2 bottom: x=432, y=284  VX left: x=556, y=308 -->
-  <path d="M 432 284 L 432 308 Q 432 316 440 316 L 556 316 Q 556 316 556 312 L 556 308"
+  <path d="M 432 300 L 432 308 Q 432 316 440 316 L 554 316"
         fill="none" stroke="#6c8188" stroke-width="1" marker-end="url(#2026-09-22-98ddabe9-07-arr-muted)"/>
 
   <!-- ============================================================
@@ -118,19 +118,19 @@
 
   <!-- Q: 픽스 존재하나 — decision diamond -->
   <!-- cx=256, cy=200, half-w=32, half-h=28 -->
-  <rect x="208" y="168" width="96" height="64" rx="0" fill="#f8fafb"/>
-  <polygon points="256,172 288,200 256,228 224,200"
+  <polygon points="232,160 292,200 232,240 172,200" fill="#f8fafb"/>
+  <polygon points="232,160 292,200 232,240 172,200"
            fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
-  <text x="256" y="196" text-anchor="middle" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" font-size="11" font-weight="600" fill="#122127">픽스</text>
-  <text x="256" y="212" text-anchor="middle" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" font-size="11" font-weight="600" fill="#122127">존재하나</text>
+  <text x="232" y="196" text-anchor="middle" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" font-size="11" font-weight="600" fill="#122127">픽스</text>
+  <text x="232" y="212" text-anchor="middle" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" font-size="11" font-weight="600" fill="#122127">존재하나</text>
 
   <!-- Arrow label: 예 (Q → FX) -->
-  <rect x="292" y="179" width="24" height="14" rx="2" fill="#f8fafb"/>
-  <text x="304" y="190" text-anchor="middle" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" font-size="12" font-weight="500" fill="#0d5763">예</text>
+  <rect x="292" y="132" width="24" height="14" rx="2" fill="#f8fafb"/>
+  <text x="304" y="143" text-anchor="middle" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" font-size="12" font-weight="500" fill="#0d5763">예</text>
 
   <!-- Arrow label: 아니오 (Q → Q2) -->
-  <rect x="228" y="232" width="44" height="14" rx="2" fill="#f8fafb"/>
-  <text x="250" y="243" text-anchor="middle" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" font-size="12" font-weight="500" fill="#3f545c">아니오</text>
+  <rect x="238" y="246" width="44" height="14" rx="2" fill="#f8fafb"/>
+  <text x="260" y="257" text-anchor="middle" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" font-size="12" font-weight="500" fill="#3f545c">아니오</text>
 
   <!-- FX: 즉시 패치 및 재빌드 — backend (ok) -->
   <!-- cx=444, cy=148, w=136, h=56 -->
@@ -143,47 +143,47 @@
   <!-- cx=432, cy=260, half-w=32, half-h=24 -->
   <!-- Recompute Q2 diamond to avoid overlap with Q connector path -->
   <!-- Q2 cx=432, cy=260: top=236, bottom=284, left=400, right=464 -->
-  <rect x="392" y="228" width="80" height="64" rx="0" fill="#f8fafb"/>
-  <polygon points="432,236 464,260 432,284 400,260"
+  <polygon points="432,236 496,268 432,300 368,268" fill="#f8fafb"/>
+  <polygon points="432,236 496,268 432,300 368,268"
            fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
-  <text x="432" y="256" text-anchor="middle" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" font-size="11" font-weight="600" fill="#122127">실제 영향</text>
-  <text x="432" y="272" text-anchor="middle" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" font-size="11" font-weight="600" fill="#122127">있나</text>
+  <text x="432" y="264" text-anchor="middle" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" font-size="11" font-weight="600" fill="#122127">실제 영향</text>
+  <text x="432" y="280" text-anchor="middle" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" font-size="11" font-weight="600" fill="#122127">있나</text>
 
   <!-- Fix Q→Q2 connector to avoid the FX box area -->
   <!-- Redraw on top with paper mask first -->
   <!-- Actually: clear old path segment areas by placing paper rect -->
 
   <!-- Arrow label: 예 (Q2 → W) -->
-  <rect x="469" y="247" width="24" height="14" rx="2" fill="#f8fafb"/>
-  <text x="481" y="258" text-anchor="middle" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" font-size="12" font-weight="500" fill="#3f545c">예</text>
+  <rect x="524" y="238" width="24" height="14" rx="2" fill="#f8fafb"/>
+  <text x="536" y="249" text-anchor="middle" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" font-size="12" font-weight="500" fill="#3f545c">예</text>
 
   <!-- Arrow label: 아니오 (Q2 → VX) -->
-  <rect x="434" y="288" width="44" height="14" rx="2" fill="#f8fafb"/>
-  <text x="456" y="299" text-anchor="middle" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" font-size="12" font-weight="500" fill="#6c8188">아니오</text>
+  <rect x="470" y="300" width="44" height="14" rx="2" fill="#f8fafb"/>
+  <text x="492" y="311" text-anchor="middle" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" font-size="12" font-weight="500" fill="#6c8188">아니오</text>
 
   <!-- W: 위험 수용+모니터링 — warn -->
   <!-- cx=624, cy=216, w=136, h=56 -->
-  <rect x="556" y="188" width="136" height="56" rx="6" fill="#f8fafb"/>
-  <rect x="556" y="188" width="136" height="56" rx="6" fill="rgba(169,106,8,0.08)" stroke="#a96a08" stroke-width="1"/>
-  <text x="624" y="212" text-anchor="middle" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" font-size="12" font-weight="600" fill="#122127">위험 수용</text>
-  <text x="624" y="230" text-anchor="middle" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" font-size="12" font-weight="600" fill="#3f545c">+ 모니터링</text>
+  <rect x="556" y="196" width="136" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="556" y="196" width="136" height="56" rx="6" fill="rgba(169,106,8,0.08)" stroke="#a96a08" stroke-width="1"/>
+  <text x="624" y="220" text-anchor="middle" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" font-size="12" font-weight="600" fill="#122127">위험 수용</text>
+  <text x="624" y="238" text-anchor="middle" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" font-size="12" font-weight="600" fill="#3f545c">+ 모니터링</text>
 
   <!-- VX: VEX 문서 작성·기록 — muted -->
   <!-- cx=624, cy=308, w=136, h=56 -->
-  <rect x="556" y="280" width="136" height="56" rx="6" fill="#f8fafb"/>
-  <rect x="556" y="280" width="136" height="56" rx="6" fill="rgba(195,208,212,0.20)" stroke="#c3d0d4" stroke-width="1"/>
-  <text x="624" y="304" text-anchor="middle" font-family="'IBM Plex Mono', 'ui-monospace', monospace" font-size="11" font-weight="500" fill="#3f545c">VEX</text>
-  <text x="624" y="320" text-anchor="middle" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" font-size="12" font-weight="500" fill="#6c8188">문서 작성·기록</text>
+  <rect x="556" y="292" width="136" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="556" y="292" width="136" height="48" rx="6" fill="rgba(195,208,212,0.20)" stroke="#c3d0d4" stroke-width="1"/>
+  <text x="624" y="312" text-anchor="middle" font-family="'IBM Plex Mono', 'ui-monospace', monospace" font-size="11" font-weight="500" fill="#3f545c">VEX</text>
+  <text x="624" y="330" text-anchor="middle" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" font-size="12" font-weight="500" fill="#6c8188">문서 작성·기록</text>
 
   <!-- V: 검증 후 배포 — focal / ok -->
   <!-- cx=808, cy=200, w=128, h=56 -->
-  <rect x="744" y="172" width="128" height="56" rx="6" fill="#f8fafb"/>
-  <rect x="744" y="172" width="128" height="56" rx="6" fill="rgba(40,109,80,0.10)" stroke="#286d50" stroke-width="1.5"/>
+  <rect x="760" y="172" width="128" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="760" y="172" width="128" height="56" rx="6" fill="rgba(40,109,80,0.10)" stroke="#286d50" stroke-width="1.5"/>
   <!-- Tag -->
-  <rect x="752" y="178" width="32" height="12" rx="2" fill="transparent" stroke="rgba(40,109,80,0.40)" stroke-width="0.8"/>
-  <text x="768" y="188" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="7" font-weight="500" fill="rgba(40,109,80,0.80)" letter-spacing="0.08em">DEPLOY</text>
-  <text x="808" y="200" text-anchor="middle" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" font-size="13" font-weight="600" fill="#122127">검증 후</text>
-  <text x="808" y="218" text-anchor="middle" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" font-size="13" font-weight="600" fill="#122127">배포</text>
+  <rect x="768" y="178" width="32" height="12" rx="2" fill="transparent" stroke="rgba(40,109,80,0.40)" stroke-width="0.8"/>
+  <text x="784" y="188" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="7" font-weight="500" fill="rgba(40,109,80,0.80)" letter-spacing="0.08em">DEPLOY</text>
+  <text x="824" y="204" text-anchor="middle" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" font-size="13" font-weight="600" fill="#122127">검증 후</text>
+  <text x="824" y="220" text-anchor="middle" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" font-size="13" font-weight="600" fill="#122127">배포</text>
 
   <!-- ============================================================
        LEGEND — horizontal strip

@@ -11,7 +11,7 @@
 </style>
 </head>
 <body>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 340" role="img" aria-labelledby="2026-09-22-98ddabe9-04-iac-scan-title 2026-09-22-98ddabe9-04-iac-scan-desc">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 364" role="img" aria-labelledby="2026-09-22-98ddabe9-04-iac-scan-title 2026-09-22-98ddabe9-04-iac-scan-desc">
   <title id="2026-09-22-98ddabe9-04-iac-scan-title">IaC Rego 정책 평가 흐름</title>
   <desc id="2026-09-22-98ddabe9-04-iac-scan-desc">IaC 코드가 Rego 정책 평가를 거쳐 PASS 또는 FAIL로 분기되고, FAIL은 심각도에 따라 경고 또는 파이프라인 중단으로 이어지는 흐름을 보여줍니다.</desc>
 
@@ -31,7 +31,7 @@
   </defs>
 
   <!-- 배경 -->
-  <rect width="960" height="340" fill="#f8fafb"/>
+  <rect width="960" height="364" fill="#f8fafb"/>
 
   <!-- ─────────── 커넥터 (노드보다 먼저) ─────────── -->
 
@@ -54,10 +54,10 @@
   <text x="562" y="227" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.06em">no</text>
 
   <!-- FAIL → LOW·MEDIUM (위로 꺾임) -->
-  <path d="M 780 196 L 820 196 Q 828 196 828 188 L 828 100 Q 828 92 836 92 L 852 92" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-22-98ddabe9-04-arrow)"/>
+  <path d="M 780 196 L 792 196 Q 800 196 800 188 L 800 100 Q 800 92 808 92 L 818 92" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-22-98ddabe9-04-arrow)"/>
 
   <!-- FAIL → HIGH·CRITICAL (아래로 꺾임) -->
-  <path d="M 780 228 L 820 228 Q 828 228 828 236 L 828 268 Q 828 276 836 276 L 852 276" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-22-98ddabe9-04-arrow)"/>
+  <path d="M 780 228 L 792 228 Q 800 228 800 236 L 800 268 Q 800 276 808 276 L 818 276" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-22-98ddabe9-04-arrow)"/>
 
   <!-- ─────────── 노드 ─────────── -->
 
@@ -111,23 +111,23 @@
 
   <!-- 노드 5: LOW·MEDIUM -->
   <!-- x=852, y=64, w=76, h=56 — 오른쪽 끝 -->
-  <rect x="852" y="64" width="76" height="56" rx="6" fill="#f8fafb"/>
-  <rect x="852" y="64" width="76" height="56" rx="6" fill="rgba(169,106,8,0.08)" stroke="#a96a08" stroke-width="1"/>
+  <rect x="820" y="64" width="108" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="820" y="64" width="108" height="56" rx="6" fill="rgba(169,106,8,0.08)" stroke="#a96a08" stroke-width="1"/>
   <!-- 노드 이름 -->
-  <text x="890" y="88" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">경고만</text>
+  <text x="874" y="88" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">경고만</text>
   <!-- 서브라벨 -->
-  <text x="890" y="104" fill="#a96a08" font-size="9" font-family="'IBM Plex Mono', monospace" text-anchor="middle">LOW · MEDIUM</text>
+  <text x="874" y="104" fill="#a96a08" font-size="9" font-family="'IBM Plex Mono', monospace" text-anchor="middle">LOW · MEDIUM</text>
 
   <!-- 노드 6: HIGH·CRITICAL -->
   <!-- x=852, y=248, w=76, h=56 -->
-  <rect x="852" y="248" width="76" height="56" rx="6" fill="#f8fafb"/>
-  <rect x="852" y="248" width="76" height="56" rx="6" fill="rgba(148,56,43,0.08)" stroke="#94382b" stroke-width="1.2"/>
+  <rect x="820" y="248" width="108" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="820" y="248" width="108" height="56" rx="6" fill="rgba(148,56,43,0.08)" stroke="#94382b" stroke-width="1.2"/>
   <!-- 노드 이름 -->
-  <text x="890" y="272" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">파이프라인</text>
+  <text x="874" y="272" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">파이프라인</text>
   <!-- 노드 이름 2줄 -->
-  <text x="890" y="286" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">중단</text>
+  <text x="874" y="286" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">중단</text>
   <!-- 서브라벨 -->
-  <text x="890" y="298" fill="#94382b" font-size="9" font-family="'IBM Plex Mono', monospace" text-anchor="middle">HIGH · CRITICAL</text>
+  <text x="874" y="298" fill="#94382b" font-size="9" font-family="'IBM Plex Mono', monospace" text-anchor="middle">HIGH · CRITICAL</text>
 
   <!-- ─────────── 범례 ─────────── -->
   <line x1="32" y1="324" x2="928" y2="324" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>

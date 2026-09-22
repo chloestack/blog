@@ -45,36 +45,33 @@
 
   <!-- H → AL  (위쪽 분기: 오른쪽으로 나가 위로 꺾기) -->
   <!-- H 중심 (444, 120), AL 중심 (620, 56) -->
-  <path d="M 496 108 L 496 56 L 564 56"
+  <path d="M 620 148 L 620 218"
         stroke="#6c8188" stroke-width="1" fill="none" marker-end="url(#2026-09-21-5a4b63fa-03-arr-muted)"/>
 
   <!-- H → DB  (아래쪽 분기: 오른쪽으로 나가 아래로 꺾기) -->
   <!-- DB 중심 (620, 184) -->
-  <path d="M 496 132 L 496 184 L 564 184"
+  <path d="M 676 248 L 706 248"
         stroke="#6c8188" stroke-width="1" fill="none" marker-end="url(#2026-09-21-5a4b63fa-03-arr-muted)"/>
 
   <!-- H → Q2  (가운데 직선) -->
-  <line x1="496" y1="120" x2="564" y2="120" stroke="#0d5763" stroke-width="1.2" fill="none" marker-end="url(#2026-09-21-5a4b63fa-03-arr-acc)"/>
+  <line x1="496" y1="120" x2="562" y2="120" stroke="#0d5763" stroke-width="1.2" fill="none" marker-end="url(#2026-09-21-5a4b63fa-03-arr-acc)"/>
 
   <!-- Q2 → REP  (예 — 위쪽) -->
   <!-- Q2 중심 (636, 120), REP 중심 (800, 56) -->
-  <path d="M 660 108 L 660 56 L 748" 
-        stroke="#3f545c" stroke-width="1" fill="none"/>
-  <line x1="660" y1="108" x2="660" y2="56" stroke="#3f545c" stroke-width="1" fill="none"/>
-  <line x1="660" y1="56" x2="748" y2="56" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-21-5a4b63fa-03-arr)"/>
+  <path d="M 764 212 L 764 128 Q 764 120 772 120 L 830 120" stroke="#3f545c" stroke-width="1" fill="none" marker-end="url(#2026-09-21-5a4b63fa-03-arr)"/>
 
   <!-- 라벨: 예 -->
-  <rect x="647" y="70" width="24" height="14" rx="2" fill="#f8fafb"/>
-  <text x="659" y="80" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">예</text>
+  <rect x="752" y="160" width="24" height="14" rx="2" fill="#f8fafb"/>
+  <text x="764" y="170" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">예</text>
 
   <!-- Q2 → ARC  (아니오 — 아래쪽) -->
   <!-- ARC 중심 (800, 184) -->
-  <path d="M 660 132 L 660 184 L 748 184"
+  <path d="M 764 284 L 764 296 Q 764 304 772 304 L 830 304"
         stroke="#6c8188" stroke-width="1" fill="none" marker-end="url(#2026-09-21-5a4b63fa-03-arr-muted)"/>
 
   <!-- 라벨: 아니오 -->
-  <rect x="634" y="150" width="44" height="14" rx="2" fill="#f8fafb"/>
-  <text x="656" y="160" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">아니오</text>
+  <rect x="780" y="308" width="44" height="14" rx="2" fill="#f8fafb"/>
+  <text x="802" y="318" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">아니오</text>
 
   <!-- ───────── 노드 ───────── -->
 
@@ -102,43 +99,43 @@
   <text x="444" y="128" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">DLT 핸들러</text>
 
   <!-- AL: 알림 발송 (muted) -->
-  <rect x="564" y="28" width="112" height="56" rx="6" fill="#f8fafb"/>
-  <rect x="564" y="28" width="112" height="56" rx="6" fill="#eef2f4" stroke="#c3d0d4" stroke-width="1"/>
-  <rect x="572" y="36" width="28" height="12" rx="2" fill="transparent" stroke="rgba(99,129,136,0.4)" stroke-width="0.8"/>
-  <text x="586" y="45" fill="rgba(99,129,136,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">ALERT</text>
-  <text x="620" y="60" fill="#3f545c" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">알림 발송</text>
-  <text x="620" y="76" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">Slack · PD</text>
+  <rect x="564" y="92" width="112" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="564" y="92" width="112" height="56" rx="6" fill="#eef2f4" stroke="#c3d0d4" stroke-width="1"/>
+  <rect x="572" y="100" width="28" height="12" rx="2" fill="transparent" stroke="rgba(99,129,136,0.4)" stroke-width="0.8"/>
+  <text x="586" y="109" fill="rgba(99,129,136,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">ALERT</text>
+  <text x="620" y="124" fill="#3f545c" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">알림 발송</text>
+  <text x="620" y="140" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">Slack · PD</text>
 
   <!-- Q2: 재처리 가능? (diamond, focal — accent) -->
   <!-- 중심 (636, 120), 대각선 크기 36×28 -->
   <rect x="556" y="92" width="160" height="56" rx="0" fill="#f8fafb" opacity="0"/>
-  <polygon points="636,92 712,120 636,148 560,120"
+  <polygon points="764,212 820,248 764,284 708,248"
            fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
-  <text x="636" y="116" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">재처리</text>
-  <text x="636" y="130" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">가능?</text>
+  <text x="764" y="244" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">재처리</text>
+  <text x="764" y="258" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">가능?</text>
 
   <!-- DB: 장애 기록 저장 (muted) -->
-  <rect x="564" y="156" width="112" height="56" rx="6" fill="#f8fafb"/>
-  <rect x="564" y="156" width="112" height="56" rx="6" fill="#eef2f4" stroke="#c3d0d4" stroke-width="1"/>
-  <rect x="572" y="164" width="20" height="12" rx="2" fill="transparent" stroke="rgba(99,129,136,0.4)" stroke-width="0.8"/>
-  <text x="582" y="173" fill="rgba(99,129,136,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">DB</text>
-  <text x="620" y="188" fill="#3f545c" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">장애 기록</text>
-  <text x="620" y="204" fill="#3f545c" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">저장</text>
+  <rect x="564" y="220" width="112" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="564" y="220" width="112" height="56" rx="6" fill="#eef2f4" stroke="#c3d0d4" stroke-width="1"/>
+  <rect x="572" y="228" width="20" height="12" rx="2" fill="transparent" stroke="rgba(99,129,136,0.4)" stroke-width="0.8"/>
+  <text x="582" y="237" fill="rgba(99,129,136,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">DB</text>
+  <text x="620" y="252" fill="#3f545c" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">장애 기록</text>
+  <text x="620" y="268" fill="#3f545c" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">저장</text>
 
   <!-- REP: 수동 재발행 (ok — 초록) -->
-  <rect x="748" y="28" width="112" height="56" rx="6" fill="#f8fafb"/>
-  <rect x="748" y="28" width="112" height="56" rx="6" fill="#D6E9DE" stroke="#286D50" stroke-width="1.2"/>
-  <rect x="756" y="36" width="28" height="12" rx="2" fill="transparent" stroke="rgba(40,109,80,0.4)" stroke-width="0.8"/>
-  <text x="770" y="45" fill="rgba(40,109,80,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">RETRY</text>
-  <text x="804" y="60" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">수동 재발행</text>
-  <text x="804" y="76" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">re-publish</text>
+  <rect x="832" y="92" width="112" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="832" y="92" width="112" height="56" rx="6" fill="#D6E9DE" stroke="#286D50" stroke-width="1.2"/>
+  <rect x="840" y="100" width="28" height="12" rx="2" fill="transparent" stroke="rgba(40,109,80,0.4)" stroke-width="0.8"/>
+  <text x="854" y="109" fill="rgba(40,109,80,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">RETRY</text>
+  <text x="888" y="124" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">수동 재발행</text>
+  <text x="888" y="140" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">re-publish</text>
 
   <!-- ARC: 아카이브 (muted) -->
-  <rect x="748" y="156" width="112" height="56" rx="6" fill="#f8fafb"/>
-  <rect x="748" y="156" width="112" height="56" rx="6" fill="#eef2f4" stroke="#c3d0d4" stroke-width="1"/>
-  <rect x="756" y="164" width="40" height="12" rx="2" fill="transparent" stroke="rgba(99,129,136,0.4)" stroke-width="0.8"/>
-  <text x="776" y="173" fill="rgba(99,129,136,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">ARCHIVE</text>
-  <text x="804" y="196" fill="#3f545c" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">아카이브</text>
+  <rect x="832" y="276" width="112" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="832" y="276" width="112" height="56" rx="6" fill="#eef2f4" stroke="#c3d0d4" stroke-width="1"/>
+  <rect x="840" y="284" width="40" height="12" rx="2" fill="transparent" stroke="rgba(99,129,136,0.4)" stroke-width="0.8"/>
+  <text x="860" y="293" fill="rgba(99,129,136,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">ARCHIVE</text>
+  <text x="888" y="314" fill="#3f545c" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">아카이브</text>
 
   <!-- ───────── 범례 ───────── -->
   <line x1="28" y1="362" x2="932" y2="362" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>

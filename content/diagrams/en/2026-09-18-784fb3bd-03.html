@@ -48,25 +48,25 @@
   <path d="M 636,200 L 684,200" stroke="#3f545c" stroke-width="1" fill="none" marker-end="url(#2026-09-18-784fb3bd-03-arr)"/>
 
   <!-- P → Q2 -->
-  <path d="M 804,200 L 836,200" stroke="#0d5763" stroke-width="1.2" fill="none" marker-end="url(#2026-09-18-784fb3bd-03-arr-acc)"/>
+  <path d="M 804,200 L 818,200" stroke="#0d5763" stroke-width="1.2" fill="none" marker-end="url(#2026-09-18-784fb3bd-03-arr-acc)"/>
 
   <!-- Q2 → R (예: 아래) -->
-  <path d="M 868,232 L 868,284 Q 868,292 876,292 L 916,292" stroke="#0d5763" stroke-width="1.2" fill="none" marker-end="url(#2026-09-18-784fb3bd-03-arr-acc)"/>
+  <path d="M 868,232 L 868,262" stroke="#0d5763" stroke-width="1.2" fill="none" marker-end="url(#2026-09-18-784fb3bd-03-arr-acc)"/>
   <!-- 예 레이블 -->
-  <rect x="846" y="250" width="20" height="14" rx="2" fill="#f8fafb"/>
-  <text x="856" y="261" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Yes</text>
+  <rect x="874" y="240" width="20" height="14" rx="2" fill="#f8fafb"/>
+  <text x="884" y="251" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Yes</text>
 
   <!-- Q2 → E (아니오: 위) -->
-  <path d="M 868,168 L 868,108 Q 868,100 860,100 L 736,100 Q 728,100 728,108 L 728,140" stroke="#3a548f" stroke-width="1" fill="none" stroke-dasharray="5,4" marker-end="url(#2026-09-18-784fb3bd-03-arr-link)"/>
+  <path d="M 868,168 L 868,96 Q 868,88 860,88 L 806,88" stroke="#3a548f" stroke-width="1" fill="none" stroke-dasharray="5,4" marker-end="url(#2026-09-18-784fb3bd-03-arr-link)"/>
   <!-- 아니오 레이블 -->
-  <rect x="780" y="88" width="40" height="14" rx="2" fill="#f8fafb"/>
-  <text x="800" y="99" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">No</text>
+  <rect x="848" y="122" width="40" height="14" rx="2" fill="#f8fafb"/>
+  <text x="868" y="133" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">No</text>
 
   <!-- E → A (재시도: 위 경유) -->
-  <path d="M 688,164 L 688,56 Q 688,44 676,44 L 256,44 Q 244,44 244,56 L 244,152" stroke="#3a548f" stroke-width="1" fill="none" stroke-dasharray="5,4" marker-end="url(#2026-09-18-784fb3bd-03-arr-link)"/>
+  <path d="M 684,88 L 264,88 Q 256,88 256,96 L 256,150" stroke="#3a548f" stroke-width="1" fill="none" stroke-dasharray="5,4" marker-end="url(#2026-09-18-784fb3bd-03-arr-link)"/>
   <!-- 재시도 레이블 -->
-  <rect x="430" y="32" width="56" height="14" rx="2" fill="#f8fafb"/>
-  <text x="458" y="43" fill="#3a548f" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.04em">retry</text>
+  <rect x="442" y="81" width="56" height="14" rx="2" fill="#f8fafb"/>
+  <text x="470" y="92" fill="#3a548f" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.04em">retry</text>
 
   <!-- ─── 노드 ─── -->
 
@@ -125,12 +125,12 @@
   <text x="872" y="312" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Use</text>
 
   <!-- E: 오류 맥락 재시도 -->
-  <rect x="688" y="140" width="120" height="64" rx="6" fill="#f8fafb"/>
-  <rect x="688" y="140" width="120" height="64" rx="6" fill="rgba(18,33,39,0.02)" stroke="rgba(18,33,39,0.20)" stroke-width="1" stroke-dasharray="4,3"/>
-  <rect x="696" y="146" width="36" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.20)" stroke-width="0.8"/>
-  <text x="714" y="155" fill="rgba(18,33,39,0.5)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">RETRY</text>
-  <text x="748" y="172" fill="#3f545c" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Error Context</text>
-  <text x="748" y="188" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Retry</text>
+  <rect x="684" y="56" width="120" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="684" y="56" width="120" height="64" rx="6" fill="rgba(18,33,39,0.02)" stroke="rgba(18,33,39,0.20)" stroke-width="1" stroke-dasharray="4,3"/>
+  <rect x="692" y="62" width="36" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.20)" stroke-width="0.8"/>
+  <text x="710" y="71" fill="rgba(18,33,39,0.5)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">RETRY</text>
+  <text x="744" y="92" fill="#3f545c" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Error Context</text>
+  <text x="744" y="108" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Retry</text>
 
   <!-- ─── 범례 ─── -->
   <line x1="32" y1="420" x2="928" y2="420" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>

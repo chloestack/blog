@@ -40,7 +40,7 @@
   <line x1="196" y1="180" x2="264" y2="180" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-19-f8fc1d22-05-arrow)"/>
 
   <!-- CHK → EVICT (예 / 위쪽) -->
-  <path d="M320 148 L320 108 L564 108 L564 148" fill="none" stroke="#0d5763" stroke-width="1" marker-end="url(#2026-09-19-f8fc1d22-05-arrow-accent)"/>
+  <path d="M320 148 L320 108 L598 108" fill="none" stroke="#0d5763" stroke-width="1" marker-end="url(#2026-09-19-f8fc1d22-05-arrow-accent)"/>
   <!-- 예 라벨 마스크 + 텍스트 -->
   <rect x="398" y="92" width="24" height="12" rx="2" fill="#f8fafb"/>
   <text x="410" y="101" fill="#0d5763" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500" text-anchor="middle">Yes</text>
@@ -54,8 +54,8 @@
   <!-- CHK2 → EVICT (예 / 위쪽) -->
   <path d="M504 148 L504 108" fill="none" stroke="#0d5763" stroke-width="1"/>
   <!-- 예 라벨 마스크 + 텍스트 -->
-  <rect x="482" y="92" width="24" height="12" rx="2" fill="#f8fafb"/>
-  <text x="494" y="101" fill="#0d5763" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500" text-anchor="middle">Yes</text>
+  <rect x="492" y="118" width="24" height="12" rx="2" fill="#f8fafb"/>
+  <text x="504" y="128" fill="#0d5763" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500" text-anchor="middle">Yes</text>
 
   <!-- CHK2 → REUSE (아니오 / 오른쪽) -->
   <line x1="560" y1="180" x2="636" y2="180" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-19-f8fc1d22-05-arrow)"/>
@@ -64,7 +64,7 @@
   <text x="591" y="173" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500" text-anchor="middle">No</text>
 
   <!-- EVICT → NEW (아래쪽으로) -->
-  <line x1="612" y1="212" x2="612" y2="272" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-19-f8fc1d22-05-arrow)"/>
+  <line x1="744" y1="108" x2="798" y2="108" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-19-f8fc1d22-05-arrow)"/>
 
   <!-- ───────────────────────────────────────────
        박스 노드들
@@ -91,11 +91,11 @@
   <text x="504" y="190" fill="#122127" font-size="10" font-weight="600" font-family="'IBM Plex Mono', monospace" text-anchor="middle">exceeded?</text>
 
   <!-- EVICT: eviction 제거 (focal) -->
-  <rect x="564" y="80" width="96" height="56" rx="6" fill="#f8fafb"/>
-  <rect x="564" y="80" width="96" height="56" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
-  <rect x="572" y="87" width="52" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
-  <text x="598" y="96" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">EVICTION</text>
-  <text x="612" y="117" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Evict &amp; Remove</text>
+  <rect x="600" y="80" width="144" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="600" y="80" width="144" height="56" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <rect x="608" y="87" width="52" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="634" y="96" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">EVICTION</text>
+  <text x="672" y="117" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Evict &amp; Remove</text>
 
   <!-- REUSE: 풀에 유지 재사용 가능 -->
   <rect x="636" y="152" width="144" height="56" rx="6" fill="#f8fafb"/>
@@ -106,12 +106,12 @@
   <text x="708" y="198" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Available for reuse</text>
 
   <!-- NEW: 신규 커넥션 생성 -->
-  <rect x="564" y="272" width="96" height="56" rx="6" fill="#f8fafb"/>
-  <rect x="564" y="272" width="96" height="56" rx="6" fill="rgba(255,255,255,1)" stroke="#122127" stroke-width="1"/>
-  <rect x="572" y="279" width="28" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
-  <text x="586" y="288" fill="rgba(18,33,39,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">NEW</text>
-  <text x="612" y="308" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">New Connection</text>
-  <text x="612" y="323" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Created</text>
+  <rect x="800" y="80" width="112" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="800" y="80" width="112" height="56" rx="6" fill="rgba(255,255,255,1)" stroke="#122127" stroke-width="1"/>
+  <rect x="808" y="87" width="28" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="822" y="96" fill="rgba(18,33,39,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">NEW</text>
+  <text x="856" y="113" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">New Connection</text>
+  <text x="856" y="128" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Created</text>
 
   <!-- ───────────────────────────────────────────
        범례

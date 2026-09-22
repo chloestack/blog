@@ -51,22 +51,22 @@
 
   <!-- V → D: 예 (오른쪽 아래) -->
   <!-- from diamond right tip (588,140) go right then down to D center -->
-  <path d="M 588 140 L 628 140 L 628 220 L 672 220" fill="none" stroke="#286d50" stroke-width="1.2" marker-end="url(#2026-09-18-784fb3bd-01-llm-arrow-ok)"/>
+  <path d="M 588 140 L 678 140" fill="none" stroke="#286d50" stroke-width="1.2" marker-end="url(#2026-09-18-784fb3bd-01-llm-arrow-ok)"/>
   <!-- label: 예 -->
-  <rect x="596" y="120" width="24" height="14" rx="2" fill="#f8fafb"/>
-  <text x="608" y="131" fill="#286d50" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">예</text>
+  <rect x="622" y="126" width="24" height="14" rx="2" fill="#f8fafb"/>
+  <text x="634" y="137" fill="#286d50" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">예</text>
 
   <!-- V → E: 아니오 (아래) -->
-  <path d="M 550 172 L 550 220 L 576 220" fill="none" stroke="#94382b" stroke-width="1.2" marker-end="url(#2026-09-18-784fb3bd-01-llm-arrow-warn)"/>
+  <path d="M 550 172 L 550 206" fill="none" stroke="#94382b" stroke-width="1.2" marker-end="url(#2026-09-18-784fb3bd-01-llm-arrow-warn)"/>
   <!-- label: 아니오 -->
-  <rect x="524" y="183" width="40" height="14" rx="2" fill="#f8fafb"/>
-  <text x="544" y="194" fill="#94382b" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">아니오</text>
+  <rect x="556" y="182" width="40" height="14" rx="2" fill="#f8fafb"/>
+  <text x="576" y="193" fill="#94382b" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">아니오</text>
 
   <!-- E → M: 예외 처리 → 수동 재시도 -->
-  <line x1="684" y1="220" x2="748" y2="220" stroke="#a96a08" stroke-width="1.2" marker-end="url(#2026-09-18-784fb3bd-01-llm-arrow-warn)"/>
+  <line x1="604" y1="236" x2="658" y2="236" stroke="#a96a08" stroke-width="1.2" marker-end="url(#2026-09-18-784fb3bd-01-llm-arrow-warn)"/>
 
   <!-- M → P: 수동 재시도 → 프롬프트 (위로 돌아가는 피드백 루프) -->
-  <path d="M 820 196 L 820 76 L 108 76 L 108 116" fill="none" stroke="#a96a08" stroke-width="1.2" stroke-dasharray="5,4" marker-end="url(#2026-09-18-784fb3bd-01-llm-arrow-warn)"/>
+  <path d="M 804 236 L 840 236 L 840 76 L 124 76 L 124 106" fill="none" stroke="#a96a08" stroke-width="1.2" stroke-dasharray="5,4" marker-end="url(#2026-09-18-784fb3bd-01-llm-arrow-warn)"/>
   <!-- label: 재시도 -->
   <rect x="444" y="60" width="48" height="14" rx="2" fill="#f8fafb"/>
   <text x="468" y="71" fill="#a96a08" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">재시도</text>
@@ -102,31 +102,31 @@
   <text x="550" y="150" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Mono', monospace" text-anchor="middle">파싱?</text>
 
   <!-- D: 데이터 사용 — ok/success style -->
-  <rect x="672" y="192" width="128" height="56" rx="6" fill="#f8fafb"/>
-  <rect x="672" y="192" width="128" height="56" rx="6" fill="rgba(40,109,80,0.08)" stroke="#286d50" stroke-width="1"/>
+  <rect x="680" y="112" width="128" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="680" y="112" width="128" height="56" rx="6" fill="rgba(40,109,80,0.08)" stroke="#286d50" stroke-width="1"/>
   <!-- type tag -->
-  <rect x="680" y="198" width="24" height="12" rx="2" fill="transparent" stroke="rgba(40,109,80,0.40)" stroke-width="0.8"/>
-  <text x="692" y="207" fill="rgba(40,109,80,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">OK</text>
+  <rect x="688" y="118" width="24" height="12" rx="2" fill="transparent" stroke="rgba(40,109,80,0.40)" stroke-width="0.8"/>
+  <text x="700" y="127" fill="rgba(40,109,80,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">OK</text>
   <!-- node name -->
-  <text x="736" y="228" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">데이터 사용</text>
+  <text x="744" y="148" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">데이터 사용</text>
 
   <!-- E: 예외 처리 — stop/error style -->
-  <rect x="576" y="192" width="108" height="56" rx="6" fill="#f8fafb"/>
-  <rect x="576" y="192" width="108" height="56" rx="6" fill="rgba(148,56,43,0.08)" stroke="#94382b" stroke-width="1"/>
+  <rect x="496" y="208" width="108" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="496" y="208" width="108" height="56" rx="6" fill="rgba(148,56,43,0.08)" stroke="#94382b" stroke-width="1"/>
   <!-- type tag -->
-  <rect x="584" y="198" width="32" height="12" rx="2" fill="transparent" stroke="rgba(148,56,43,0.40)" stroke-width="0.8"/>
-  <text x="600" y="207" fill="rgba(148,56,43,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">ERROR</text>
+  <rect x="504" y="214" width="32" height="12" rx="2" fill="transparent" stroke="rgba(148,56,43,0.40)" stroke-width="0.8"/>
+  <text x="520" y="223" fill="rgba(148,56,43,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">ERROR</text>
   <!-- node name -->
-  <text x="630" y="228" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">예외 처리</text>
+  <text x="550" y="244" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">예외 처리</text>
 
   <!-- M: 수동 재시도 — warn style -->
-  <rect x="748" y="192" width="144" height="56" rx="6" fill="#f8fafb"/>
-  <rect x="748" y="192" width="144" height="56" rx="6" fill="rgba(169,106,8,0.08)" stroke="#a96a08" stroke-width="1"/>
+  <rect x="660" y="208" width="144" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="660" y="208" width="144" height="56" rx="6" fill="rgba(169,106,8,0.08)" stroke="#a96a08" stroke-width="1"/>
   <!-- type tag -->
-  <rect x="756" y="198" width="32" height="12" rx="2" fill="transparent" stroke="rgba(169,106,8,0.40)" stroke-width="0.8"/>
-  <text x="772" y="207" fill="rgba(169,106,8,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">RETRY</text>
+  <rect x="668" y="214" width="32" height="12" rx="2" fill="transparent" stroke="rgba(169,106,8,0.40)" stroke-width="0.8"/>
+  <text x="684" y="223" fill="rgba(169,106,8,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">RETRY</text>
   <!-- node name -->
-  <text x="820" y="228" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">수동 재시도</text>
+  <text x="732" y="244" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">수동 재시도</text>
 
   <!-- ============================================================
        LEGEND

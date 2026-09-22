@@ -43,33 +43,33 @@ svg{display:block;width:100%;height:auto;max-width:960px}
        ============================================================ -->
 
   <!-- START → Q1 (horizontal) -->
-  <line x1="220" y1="200" x2="276" y2="200" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-21-56d0a588-07-arr)"/>
+  <line x1="160" y1="200" x2="194" y2="200" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-21-56d0a588-07-arr)"/>
 
   <!-- Q1 → ISO (horizontal, from right vertex of diamond) -->
-  <line x1="356" y1="200" x2="412" y2="200" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-21-56d0a588-07-arr-accent)"/>
+  <line x1="316" y1="200" x2="350" y2="200" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-21-56d0a588-07-arr-accent)"/>
 
   <!-- ISO → TEST (horizontal) -->
-  <line x1="532" y1="200" x2="568" y2="200" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-21-56d0a588-07-arr)"/>
+  <line x1="472" y1="200" x2="498" y2="200" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-21-56d0a588-07-arr)"/>
 
   <!-- TEST → Q2 (horizontal) -->
-  <line x1="688" y1="200" x2="744" y2="200" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-21-56d0a588-07-arr)"/>
+  <line x1="620" y1="200" x2="646" y2="200" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-21-56d0a588-07-arr)"/>
 
   <!-- Q2 → DONE (horizontal, 아니오) -->
-  <line x1="824" y1="200" x2="848" y2="200" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-21-56d0a588-07-arr)"/>
+  <line x1="768" y1="200" x2="810" y2="200" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-21-56d0a588-07-arr)"/>
 
   <!-- Q2 → back loop (예): down from Q2 bottom, left across bottom, up to Q1 bottom -->
   <!-- Q2 bottom vertex: (784, 240) → go down to y=296 → left to x=316 → up to Q1 bottom (316,240) -->
-  <path d="M784,240 L784,296 L316,296 L316,240"
+  <path d="M708,244 L708,296 L256,296 L256,246"
         fill="none" stroke="#6c8188" stroke-width="1" stroke-dasharray="5,4"
         marker-end="url(#2026-09-21-56d0a588-07-arr)"/>
 
   <!-- loop label "예" -->
-  <rect x="536" y="276" width="28" height="16" rx="2" fill="#f8fafb"/>
-  <text x="550" y="288" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle" font-weight="500">예</text>
+  <rect x="468" y="276" width="28" height="16" rx="2" fill="#f8fafb"/>
+  <text x="482" y="288" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle" font-weight="500">예</text>
 
   <!-- Q2 → DONE label "아니오" -->
-  <rect x="814" y="166" width="44" height="16" rx="2" fill="#f8fafb"/>
-  <text x="836" y="178" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle" font-weight="500">아니오</text>
+  <rect x="768" y="166" width="44" height="16" rx="2" fill="#f8fafb"/>
+  <text x="790" y="178" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle" font-weight="500">아니오</text>
 
   <!-- ============================================================
        NODES
@@ -77,61 +77,61 @@ svg{display:block;width:100%;height:auto;max-width:960px}
 
   <!-- START: 단일 CL / 현재 구조  — input type, oval (rx=20) -->
   <!-- cx=140, cy=200, w=160, h=52 -->
-  <rect x="60" y="174" width="160" height="52" rx="20" fill="#f8fafb"/>
-  <rect x="60" y="174" width="160" height="52" rx="20" fill="rgba(58,84,143,0.06)" stroke="#3a548f" stroke-width="1"/>
+  <rect x="32" y="174" width="128" height="52" rx="20" fill="#f8fafb"/>
+  <rect x="32" y="174" width="128" height="52" rx="20" fill="rgba(58,84,143,0.06)" stroke="#3a548f" stroke-width="1"/>
   <!-- tag -->
-  <rect x="68" y="180" width="32" height="12" rx="2" fill="transparent" stroke="rgba(58,84,143,0.40)" stroke-width="0.8"/>
-  <text x="84" y="189" fill="rgba(58,84,143,0.8)" font-size="7" font-family="'IBM Plex Mono',monospace" text-anchor="middle" letter-spacing="0.08em">START</text>
+  <rect x="40" y="180" width="32" height="12" rx="2" fill="transparent" stroke="rgba(58,84,143,0.40)" stroke-width="0.8"/>
+  <text x="56" y="189" fill="rgba(58,84,143,0.8)" font-size="7" font-family="'IBM Plex Mono',monospace" text-anchor="middle" letter-spacing="0.08em">START</text>
   <!-- label -->
-  <text x="140" y="199" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">단일 CL</text>
-  <text x="140" y="215" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">현재 구조</text>
+  <text x="96" y="205" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">단일 CL</text>
+  <text x="96" y="219" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">현재 구조</text>
 
   <!-- Q1: 독립 컴포넌트 식별 — decision diamond, accent (focal) -->
   <!-- cx=316, cy=200, half-w=40, half-h=40 -->
-  <polygon points="316,160 356,200 316,240 276,200" fill="#f8fafb"/>
-  <polygon points="316,160 356,200 316,240 276,200" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
-  <text x="316" y="196" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">독립 컴포넌트</text>
-  <text x="316" y="210" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">식별</text>
+  <polygon points="256,156 316,200 256,244 196,200" fill="#f8fafb"/>
+  <polygon points="256,156 316,200 256,244 196,200" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="256" y="196" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">독립 컴포넌트</text>
+  <text x="256" y="210" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">식별</text>
 
   <!-- ISO: 격리 ClassLoader 적용 — backend box, accent (focal) -->
   <!-- cx=472, cy=200, w=120, h=56 -->
-  <rect x="412" y="172" width="120" height="56" rx="6" fill="#f8fafb"/>
-  <rect x="412" y="172" width="120" height="56" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="352" y="172" width="120" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="352" y="172" width="120" height="56" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
   <!-- tag -->
-  <rect x="420" y="178" width="36" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
-  <text x="438" y="187" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono',monospace" text-anchor="middle" letter-spacing="0.08em">APPLY</text>
+  <rect x="360" y="178" width="36" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="378" y="187" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono',monospace" text-anchor="middle" letter-spacing="0.08em">APPLY</text>
   <!-- label -->
-  <text x="472" y="202" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">격리 ClassLoader</text>
-  <text x="472" y="218" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">적용</text>
+  <text x="412" y="202" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">격리 ClassLoader</text>
+  <text x="412" y="218" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">적용</text>
 
   <!-- TEST: 인터페이스 계약 검증 — backend box -->
   <!-- cx=628, cy=200, w=120, h=56 -->
-  <rect x="568" y="172" width="120" height="56" rx="6" fill="#f8fafb"/>
-  <rect x="568" y="172" width="120" height="56" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="500" y="172" width="120" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="500" y="172" width="120" height="56" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
   <!-- tag -->
-  <rect x="576" y="178" width="36" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.30)" stroke-width="0.8"/>
-  <text x="594" y="187" fill="rgba(18,33,39,0.7)" font-size="7" font-family="'IBM Plex Mono',monospace" text-anchor="middle" letter-spacing="0.08em">VERIFY</text>
+  <rect x="508" y="178" width="36" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.30)" stroke-width="0.8"/>
+  <text x="526" y="187" fill="rgba(18,33,39,0.7)" font-size="7" font-family="'IBM Plex Mono',monospace" text-anchor="middle" letter-spacing="0.08em">VERIFY</text>
   <!-- label -->
-  <text x="628" y="202" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">인터페이스 계약</text>
-  <text x="628" y="218" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">검증</text>
+  <text x="560" y="202" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">인터페이스 계약</text>
+  <text x="560" y="218" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">검증</text>
 
   <!-- Q2: 더 격리할 컴포넌트 있나 — decision diamond, muted -->
   <!-- cx=784, cy=200, half-w=40, half-h=40 -->
-  <polygon points="784,160 824,200 784,240 744,200" fill="#f8fafb"/>
-  <polygon points="784,160 824,200 784,240 744,200" fill="rgba(18,33,39,0.03)" stroke="rgba(18,33,39,0.30)" stroke-width="1"/>
-  <text x="784" y="196" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">더 격리할</text>
-  <text x="784" y="210" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">컴포넌트?</text>
+  <polygon points="708,156 768,200 708,244 648,200" fill="#f8fafb"/>
+  <polygon points="708,156 768,200 708,244 648,200" fill="rgba(18,33,39,0.03)" stroke="rgba(18,33,39,0.30)" stroke-width="1"/>
+  <text x="708" y="196" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">더 격리할</text>
+  <text x="708" y="210" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">컴포넌트?</text>
 
   <!-- DONE: 마이그레이션 완료 — store/state type oval -->
   <!-- cx=900, cy=200, w=104, h=52 -->
-  <rect x="848" y="174" width="104" height="52" rx="20" fill="#f8fafb"/>
-  <rect x="848" y="174" width="104" height="52" rx="20" fill="rgba(18,33,39,0.05)" stroke="#3f545c" stroke-width="1"/>
+  <rect x="812" y="174" width="116" height="52" rx="20" fill="#f8fafb"/>
+  <rect x="812" y="174" width="116" height="52" rx="20" fill="rgba(18,33,39,0.05)" stroke="#3f545c" stroke-width="1"/>
   <!-- tag -->
-  <rect x="856" y="180" width="32" height="12" rx="2" fill="transparent" stroke="rgba(63,84,92,0.35)" stroke-width="0.8"/>
-  <text x="872" y="189" fill="rgba(63,84,92,0.75)" font-size="7" font-family="'IBM Plex Mono',monospace" text-anchor="middle" letter-spacing="0.08em">DONE</text>
+  <rect x="820" y="180" width="32" height="12" rx="2" fill="transparent" stroke="rgba(63,84,92,0.35)" stroke-width="0.8"/>
+  <text x="836" y="189" fill="rgba(63,84,92,0.75)" font-size="7" font-family="'IBM Plex Mono',monospace" text-anchor="middle" letter-spacing="0.08em">DONE</text>
   <!-- label -->
-  <text x="900" y="201" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">마이그레이션</text>
-  <text x="900" y="217" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">완료</text>
+  <text x="870" y="205" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">마이그레이션</text>
+  <text x="870" y="219" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">완료</text>
 
   <!-- ============================================================
        LEGEND strip

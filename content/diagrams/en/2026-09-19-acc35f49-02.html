@@ -40,39 +40,39 @@
   <!-- P → F : fork() — right edge of P to top of F -->
   <!-- P center: (240,148), F center: (560,148) — same row -->
   <!-- straight horizontal: P right(360,148) → F left(468,148) -->
-  <line x1="360" y1="148" x2="461" y2="148" stroke="#0d5763" stroke-width="1.5" marker-end="url(#2026-09-19-acc35f49-02-arr-accent)"/>
+  <line x1="360" y1="148" x2="458" y2="148" stroke="#0d5763" stroke-width="1.5" marker-end="url(#2026-09-19-acc35f49-02-arr-accent)"/>
   <!-- label -->
   <rect x="383" y="129" width="56" height="14" rx="2" fill="#f8fafb"/>
   <text x="411" y="140" fill="#0d5763" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle" font-weight="600">fork()</text>
 
   <!-- F → W : memory traversal — F bottom(560,208) → W top(560,288) -->
-  <line x1="560" y1="208" x2="560" y2="281" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-19-acc35f49-02-arr)"/>
+  <line x1="560" y1="192" x2="560" y2="286" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-19-acc35f49-02-arr)"/>
   <!-- label -->
   <rect x="521" y="234" width="76" height="14" rx="2" fill="#f8fafb"/>
   <text x="559" y="245" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">mem traverse</text>
 
   <!-- P → C : write request — P bottom(240,208) → C top(240,288) -->
-  <line x1="240" y1="208" x2="240" y2="281" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-19-acc35f49-02-arr)"/>
+  <line x1="240" y1="192" x2="240" y2="286" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-19-acc35f49-02-arr)"/>
   <!-- label -->
   <rect x="181" y="234" width="100" height="14" rx="2" fill="#f8fafb"/>
   <text x="231" y="245" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">write request</text>
 
   <!-- C → P : return after copy — C top edge back to P via loop left side -->
   <!-- route: C left(160,324) → elbow at (120,324) → up to (120,148) → P left(120,148) -->
-  <path d="M 160,324 Q 112,324 112,316 L 112,156 Q 112,148 120,148 L 120,148" stroke="#3f545c" stroke-width="1" fill="none" stroke-dasharray="5,4" marker-end="url(#2026-09-19-acc35f49-02-arr)"/>
+  <path d="M 140,324 L 120,324 Q 112,324 112,316 L 112,156 Q 112,148 118,148" stroke="#3f545c" stroke-width="1" fill="none" stroke-dasharray="5,4" marker-end="url(#2026-09-19-acc35f49-02-arr)"/>
   <!-- label at mid-left segment -->
   <rect x="68" y="222" width="52" height="14" rx="2" fill="#f8fafb"/>
   <text x="94" y="233" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">apply</text>
 
   <!-- W → D : atomic replace after done — W bottom(560,388) → D top(560,468) -->
-  <line x1="560" y1="388" x2="560" y2="461" stroke="#3a548f" stroke-width="1" marker-end="url(#2026-09-19-acc35f49-02-arr-link)"/>
+  <line x1="560" y1="360" x2="560" y2="466" stroke="#3a548f" stroke-width="1" marker-end="url(#2026-09-19-acc35f49-02-arr-link)"/>
   <!-- label -->
   <rect x="489" y="414" width="144" height="14" rx="2" fill="#f8fafb"/>
   <text x="561" y="425" fill="#3a548f" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">atomic replace on done</text>
 
   <!-- F → D : exit on done (diagonal avoidance — route right of F and D) -->
   <!-- F right(652,148) → elbow right at (720,148) → down to (720,508) → D right(652,508) -->
-  <path d="M 652,148 Q 724,148 724,156 L 724,500 Q 724,508 716,508 L 659,508" stroke="#3f545c" stroke-width="1" fill="none" stroke-dasharray="5,4" marker-end="url(#2026-09-19-acc35f49-02-arr)"/>
+  <path d="M 660,148 L 716,148 Q 724,148 724,156 L 724,500 Q 724,508 716,508 L 662,508" stroke="#3f545c" stroke-width="1" fill="none" stroke-dasharray="5,4" marker-end="url(#2026-09-19-acc35f49-02-arr)"/>
   <!-- label -->
   <rect x="688" y="310" width="72" height="14" rx="2" fill="#f8fafb"/>
   <text x="724" y="321" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">exit on done</text>

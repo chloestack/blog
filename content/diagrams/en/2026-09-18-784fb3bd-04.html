@@ -61,13 +61,13 @@
   <text x="632" y="243" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="500">No</text>
 
   <!-- E → R (오류 맥락 → 재시도) -->
-  <line x1="816" y1="280" x2="868" y2="280" stroke="#a96a08" stroke-width="1.2" marker-end="url(#2026-09-18-784fb3bd-04-arrow-warn)"/>
+  <line x1="816" y1="280" x2="834" y2="280" stroke="#a96a08" stroke-width="1.2" marker-end="url(#2026-09-18-784fb3bd-04-arrow-warn)"/>
 
   <!-- R → V (재시도 → Pydantic 검증: 위로 올라가서 왼쪽 V 상단에) -->
-  <path d="M 892 252 L 892 128 L 496 128 L 496 152" fill="none" stroke="#a96a08" stroke-width="1.2" stroke-dasharray="5,4" marker-end="url(#2026-09-18-784fb3bd-04-arrow-warn)"/>
+  <path d="M 892 308 L 892 328 L 496 328 L 496 210" fill="none" stroke="#a96a08" stroke-width="1.2" stroke-dasharray="5,4" marker-end="url(#2026-09-18-784fb3bd-04-arrow-warn)"/>
   <!-- "재시도" label -->
-  <rect x="666" y="112" width="48" height="14" rx="2" fill="#f8fafb"/>
-  <text x="690" y="123" fill="#a96a08" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="500">Retry</text>
+  <rect x="666" y="321" width="48" height="14" rx="2" fill="#f8fafb"/>
+  <text x="690" y="332" fill="#a96a08" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="500">Retry</text>
 
   <!-- ─────────────── NODES ─────────────── -->
 
@@ -95,7 +95,7 @@
 
   <!-- Q: 통과? (decision diamond, accent) -->
   <!-- Diamond centered at (640, 180), half-width=28, half-height=28 -->
-  <rect x="604" y="144" width="72" height="72" rx="0" fill="#f8fafb"/>
+  <polygon points="640,152 668,180 640,208 612,180" fill="#f8fafb"/>
   <polygon points="640,152 668,180 640,208 612,180" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
   <text x="640" y="184" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Pass?</text>
 
