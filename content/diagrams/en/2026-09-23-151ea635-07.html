@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; font-family: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; }
+  .diagram-wrap { display: block; width: 100%; max-width: 960px; margin: 0 auto; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<div class="diagram-wrap">
+<svg viewBox="0 0 960 200" role="img" aria-labelledby="2026-09-23-151ea635-07-ecst-migration-title 2026-09-23-151ea635-07-ecst-migration-desc" xmlns="http://www.w3.org/2000/svg">
+  <title id="2026-09-23-151ea635-07-ecst-migration-title">ECST Migration 4 Stages</title>
+  <desc id="2026-09-23-151ea635-07-ecst-migration-desc">Flowchart showing the Event-Carried State Transfer transition procedure in 4 stages: add event publish, configure and validate projection, switch to local projection, remove sync call.</desc>
+
+  <defs>
+    <marker id="2026-09-23-151ea635-07-arrow-muted" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-09-23-151ea635-07-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+  </defs>
+
+  <!-- background -->
+  <rect width="960" height="200" fill="#f8fafb"/>
+
+  <!-- step connectors (drawn before boxes) -->
+  <!-- P1 → P2 -->
+  <line x1="220" y1="84" x2="296" y2="84" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-23-151ea635-07-arrow-muted)"/>
+  <!-- P2 → P3 -->
+  <line x1="440" y1="84" x2="516" y2="84" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-23-151ea635-07-arrow-muted)"/>
+  <!-- P3 → P4 -->
+  <line x1="660" y1="84" x2="736" y2="84" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-23-151ea635-07-arrow-accent)"/>
+
+  <!-- Step 1: Add Event Publish — "new" / link-blue tint -->
+  <!-- opaque mask -->
+  <rect x="36" y="48" width="184" height="72" rx="6" fill="#f8fafb"/>
+  <!-- box -->
+  <rect x="36" y="48" width="184" height="72" rx="6" fill="rgba(58,84,143,0.08)" stroke="#3a548f" stroke-width="1"/>
+  <!-- step tag -->
+  <rect x="44" y="56" width="44" height="12" rx="2" fill="transparent" stroke="rgba(58,84,143,0.4)" stroke-width="0.8"/>
+  <text x="66" y="65" fill="rgba(58,84,143,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">STEP 1</text>
+  <!-- label -->
+  <text x="128" y="88" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Add Event Publish</text>
+  <text x="128" y="106" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">Publish event</text>
+
+  <!-- Step 2: Configure & Validate Projection — "warn" / muted amber tint -->
+  <rect x="296" y="48" width="144" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="296" y="48" width="144" height="72" rx="6" fill="rgba(169,106,8,0.08)" stroke="#a96a08" stroke-width="1"/>
+  <rect x="304" y="56" width="44" height="12" rx="2" fill="transparent" stroke="rgba(169,106,8,0.4)" stroke-width="0.8"/>
+  <text x="326" y="65" fill="rgba(169,106,8,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">STEP 2</text>
+  <text x="368" y="84" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Configure &amp;</text>
+  <text x="368" y="102" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Validate</text>
+
+  <!-- Step 3: Switch to Local Projection — "acc" / accent teal (focal) -->
+  <rect x="516" y="48" width="144" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="516" y="48" width="144" height="72" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="524" y="56" width="44" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.5)" stroke-width="0.8"/>
+  <text x="546" y="65" fill="rgba(13,87,99,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">STEP 3</text>
+  <text x="588" y="84" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Switch to Local</text>
+  <text x="588" y="102" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Projection</text>
+
+  <!-- Step 4: Remove Sync Call — "ok" / green tint -->
+  <rect x="736" y="48" width="184" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="736" y="48" width="184" height="72" rx="6" fill="rgba(40,109,80,0.08)" stroke="#286d50" stroke-width="1"/>
+  <rect x="744" y="56" width="44" height="12" rx="2" fill="transparent" stroke="rgba(40,109,80,0.4)" stroke-width="0.8"/>
+  <text x="766" y="65" fill="rgba(40,109,80,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">STEP 4</text>
+  <text x="828" y="88" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Remove Sync Call</text>
+  <text x="828" y="106" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">Remove sync call</text>
+
+  <!-- legend separator -->
+  <line x1="36" y1="148" x2="924" y2="148" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+
+  <!-- legend items -->
+  <rect x="36" y="160" width="12" height="12" rx="2" fill="rgba(58,84,143,0.08)" stroke="#3a548f" stroke-width="1"/>
+  <text x="54" y="170" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace">Add publish</text>
+
+  <rect x="140" y="160" width="12" height="12" rx="2" fill="rgba(169,106,8,0.08)" stroke="#a96a08" stroke-width="1"/>
+  <text x="158" y="170" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace">Configure &amp; validate</text>
+
+  <rect x="248" y="160" width="12" height="12" rx="2" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="266" y="170" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace">Switch (focal)</text>
+
+  <rect x="368" y="160" width="12" height="12" rx="2" fill="rgba(40,109,80,0.08)" stroke="#286d50" stroke-width="1"/>
+  <text x="386" y="170" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace">Done</text>
+</svg>
+</div>
+</body>
+</html>

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; display: flex; justify-content: center; padding: 0; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 600" role="img" aria-labelledby="2026-09-23-bf87766d-08-sc-cost-title 2026-09-23-bf87766d-08-sc-cost-desc">
+  <title id="2026-09-23-bf87766d-08-sc-cost-title">Semantic Cache 비용 절감 흐름</title>
+  <desc id="2026-09-23-bf87766d-08-sc-cost-desc">월 10만 건 요청이 Semantic Cache 분기를 거쳐 히트(임베딩 비용 $1)와 미스(LLM API $249)로 나뉘어 총 $250/월이 되고, 캐시 없을 때 $415 대비 $165(40%) 절감됨을 보여주는 흐름도.</desc>
+
+  <defs>
+    <!-- Arrow markers -->
+    <marker id="2026-09-23-bf87766d-08-sc-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-09-23-bf87766d-08-sc-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <marker id="2026-09-23-bf87766d-08-sc-arrow-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3a548f"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="960" height="600" fill="#f8fafb"/>
+
+  <!-- ─── ARROWS (drawn before boxes) ─── -->
+
+  <!-- REQ → CHECK (down) -->
+  <line x1="480" y1="116" x2="480" y2="184" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-23-bf87766d-08-sc-arrow)"/>
+
+  <!-- CHECK → CHEAP (left-down, orthogonal elbow): exit bottom-left of diamond → go left then down -->
+  <!-- Diamond center (480,228), bottom vertex ~268, left vertex ~420 -->
+  <!-- Route: from left-mid of diamond (420,228) → left to x=280 → down to CHEAP center y=340 -->
+  <path d="M420,228 L280,228 L280,308" fill="none" stroke="#6c8188" stroke-width="1" marker-end="url(#2026-09-23-bf87766d-08-sc-arrow)" stroke-dasharray="none"/>
+  <!-- Arrow label: 4만 건 히트 -->
+  <rect x="292" y="212" width="76" height="14" rx="2" fill="#f8fafb"/>
+  <text x="330" y="222" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="500">4만 건 히트</text>
+
+  <!-- CHECK → COSTLY (right-down, orthogonal elbow): exit right then down -->
+  <path d="M540,228 L680,228 L680,308" fill="none" stroke="#6c8188" stroke-width="1" marker-end="url(#2026-09-23-bf87766d-08-sc-arrow)"/>
+  <!-- Arrow label: 6만 건 미스 -->
+  <rect x="592" y="212" width="76" height="14" rx="2" fill="#f8fafb"/>
+  <text x="630" y="222" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="500">6만 건 미스</text>
+
+  <!-- CHEAP → TOTAL (down-right elbow): CHEAP center (280,372) → down to y=448 → right to TOTAL x=480 -->
+  <path d="M280,400 L280,448 L432,448" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-23-bf87766d-08-sc-arrow)"/>
+
+  <!-- COSTLY → TOTAL (down-left elbow): COSTLY center (680,372) → down to y=448 → left to TOTAL x=480 -->
+  <path d="M680,400 L680,448 L528,448" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-23-bf87766d-08-sc-arrow)"/>
+
+  <!-- TOTAL → SAVE (down) -->
+  <line x1="480" y1="468" x2="480" y2="516" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-23-bf87766d-08-sc-arrow-accent)"/>
+
+  <!-- BASE → SAVE (right-down elbow): BASE center (160,504) → right to x=392 → (horizontal join) -->
+  <path d="M240,504 L392,504 L392,536 L432,536" fill="none" stroke="#3a548f" stroke-width="1" marker-end="url(#2026-09-23-bf87766d-08-sc-arrow-link)"/>
+
+  <!-- ─── NODES ─── -->
+
+  <!-- REQ: 월 10만 건 요청 (input type) -->
+  <rect x="372" y="60" width="216" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="372" y="60" width="216" height="56" rx="6" fill="rgba(58,84,143,0.08)" stroke="#3a548f" stroke-width="1"/>
+  <rect x="380" y="68" width="32" height="12" rx="2" fill="transparent" stroke="rgba(58,84,143,0.40)" stroke-width="0.8"/>
+  <text x="396" y="77" fill="rgba(58,84,143,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">INPUT</text>
+  <text x="480" y="95" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">월 10만 건 요청</text>
+
+  <!-- CHECK: Semantic Cache 히트율 40% (decision diamond, focal/accent) -->
+  <!-- Diamond centered at (480, 228), half-width=60, half-height=44 -->
+  <polygon points="480,184 540,228 480,272 420,228" fill="#f8fafb"/>
+  <polygon points="480,184 540,228 480,272 420,228" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="480" y="222" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Semantic Cache</text>
+  <text x="480" y="238" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">히트율 40%</text>
+
+  <!-- CHEAP: 임베딩 비용만 $1/월 (ok / good outcome) -->
+  <rect x="184" y="308" width="192" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="184" y="308" width="192" height="64" rx="6" fill="rgba(40,109,80,0.07)" stroke="#286d50" stroke-width="1"/>
+  <rect x="192" y="316" width="28" height="12" rx="2" fill="transparent" stroke="rgba(40,109,80,0.40)" stroke-width="0.8"/>
+  <text x="206" y="325" fill="rgba(40,109,80,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">HIT</text>
+  <text x="280" y="345" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">임베딩 비용만</text>
+  <text x="280" y="363" fill="#286d50" font-size="13" font-weight="600" font-family="'IBM Plex Mono', monospace" text-anchor="middle">$1/월</text>
+
+  <!-- COSTLY: LLM API 호출 $249/월 (warn / costly) -->
+  <rect x="584" y="308" width="192" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="584" y="308" width="192" height="64" rx="6" fill="rgba(169,106,8,0.07)" stroke="#a96a08" stroke-width="1"/>
+  <rect x="592" y="316" width="28" height="12" rx="2" fill="transparent" stroke="rgba(169,106,8,0.40)" stroke-width="0.8"/>
+  <text x="606" y="325" fill="rgba(169,106,8,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">MISS</text>
+  <text x="680" y="345" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">LLM API 호출</text>
+  <text x="680" y="363" fill="#a96a08" font-size="13" font-weight="600" font-family="'IBM Plex Mono', monospace" text-anchor="middle">$249/월</text>
+
+  <!-- TOTAL: 총 비용 $250/월 (accent) -->
+  <rect x="372" y="428" width="216" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="372" y="428" width="216" height="56" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="380" y="436" width="40" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="400" y="445" fill="rgba(13,87,99,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">TOTAL</text>
+  <text x="480" y="463" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">총 비용</text>
+  <text x="480" y="479" fill="#0d5763" font-size="14" font-weight="600" font-family="'IBM Plex Mono', monospace" text-anchor="middle">$250/월</text>
+
+  <!-- BASE: 캐시 없을 때 $415/월 (external/reference) -->
+  <rect x="60" y="476" width="180" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="60" y="476" width="180" height="56" rx="6" fill="rgba(148,56,43,0.06)" stroke="#94382b" stroke-width="1" stroke-dasharray="5,3"/>
+  <rect x="68" y="484" width="44" height="12" rx="2" fill="transparent" stroke="rgba(148,56,43,0.40)" stroke-width="0.8"/>
+  <text x="90" y="493" fill="rgba(148,56,43,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">BEFORE</text>
+  <text x="150" y="511" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">캐시 없을 때</text>
+  <text x="150" y="527" fill="#94382b" font-size="13" font-weight="600" font-family="'IBM Plex Mono', monospace" text-anchor="middle">$415/월</text>
+
+  <!-- SAVE: 절감액 $165/월 · 40% (ok / focal outcome) -->
+  <rect x="372" y="516" width="216" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="372" y="516" width="216" height="56" rx="6" fill="rgba(40,109,80,0.09)" stroke="#286d50" stroke-width="1.2"/>
+  <rect x="380" y="524" width="36" height="12" rx="2" fill="transparent" stroke="rgba(40,109,80,0.40)" stroke-width="0.8"/>
+  <text x="398" y="533" fill="rgba(40,109,80,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">SAVED</text>
+  <text x="480" y="551" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">절감액</text>
+  <text x="480" y="567" fill="#286d50" font-size="13" font-weight="600" font-family="'IBM Plex Mono', monospace" text-anchor="middle">$165/월 · 40%</text>
+
+  <!-- ─── LEGEND ─── -->
+  <line x1="32" y1="590" x2="928" y2="590" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+  <!-- Hit -->
+  <rect x="32" y="595" width="10" height="10" rx="2" fill="rgba(40,109,80,0.12)" stroke="#286d50" stroke-width="0.8"/>
+  <text x="48" y="604" fill="#3f545c" font-size="9" font-family="'IBM Plex Mono', monospace" letter-spacing="0.08em">HIT (절감)</text>
+  <!-- Miss -->
+  <rect x="152" y="595" width="10" height="10" rx="2" fill="rgba(169,106,8,0.12)" stroke="#a96a08" stroke-width="0.8"/>
+  <text x="168" y="604" fill="#3f545c" font-size="9" font-family="'IBM Plex Mono', monospace" letter-spacing="0.08em">MISS (API 호출)</text>
+  <!-- Before -->
+  <rect x="308" y="595" width="10" height="10" rx="2" fill="rgba(148,56,43,0.06)" stroke="#94382b" stroke-width="0.8" stroke-dasharray="3,2"/>
+  <text x="324" y="604" fill="#3f545c" font-size="9" font-family="'IBM Plex Mono', monospace" letter-spacing="0.08em">캐시 없는 기준</text>
+  <!-- Key metric -->
+  <rect x="484" y="595" width="10" height="10" rx="2" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="0.8"/>
+  <text x="500" y="604" fill="#3f545c" font-size="9" font-family="'IBM Plex Mono', monospace" letter-spacing="0.08em">핵심 지표</text>
+</svg>
+</body>
+</html>

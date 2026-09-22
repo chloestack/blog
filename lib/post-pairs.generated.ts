@@ -20,5 +20,6 @@ export const POST_PAIRS: Record<string, string> = {
   "2026-09-19-Redis-RDB와-AOF-영속성-전략-비교": "2026-09-19-redis-rdb-vs-aof-persistence-strategies",
   "2026-09-19-Spring-WebClient-타임아웃·재시도·커넥션-풀-튜닝": "2026-09-19-spring-webclient-timeout-retry-connection-pool",
   "2026-09-21-GraphRAG로-지식-그래프-기반-RAG-구현하기": "2026-09-21-implementing-knowledge-graph-rag-graphrag",
-  "2026-09-21-Java-ClassLoader-계층과-클래스-격리-구현": "2026-09-21-java-classloader-hierarchy-class-isolation"
+  "2026-09-21-Java-ClassLoader-계층과-클래스-격리-구현": "2026-09-21-java-classloader-hierarchy-class-isolation",
+  "2026-09-23-Event-Carried-State-Transfer로-마이크로서비스-동기-호출-끊기": "2026-09-23-event-carried-state-transfer-microservices"
 };

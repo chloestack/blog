@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 24px; }
+  .diagram-wrap { width: 100%; max-width: 960px; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<div class="diagram-wrap">
+<svg viewBox="0 0 960 220" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="2026-09-23-742bf48b-09-scoped-title 2026-09-23-742bf48b-09-scoped-desc">
+  <title id="2026-09-23-742bf48b-09-scoped-title">Scoped Values 전환 로드맵</title>
+  <desc id="2026-09-23-742bf48b-09-scoped-desc">ThreadLocal에서 Scoped Values로 전환하는 4단계 순차 절차를 보여주는 흐름도. 신규 기능 채택부터 레거시 순차 전환까지 왼쪽에서 오른쪽으로 진행된다.</desc>
+
+  <defs>
+    <!-- 기본 화살표 -->
+    <marker id="2026-09-23-742bf48b-09-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <!-- 강조 화살표 -->
+    <marker id="2026-09-23-742bf48b-09-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+  </defs>
+
+  <!-- 배경 -->
+  <rect width="960" height="220" fill="#f8fafb"/>
+
+  <!-- ── 화살표 (노드보다 먼저) ── -->
+  <!-- 1→2 -->
+  <line x1="236" y1="100" x2="276" y2="100" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-23-742bf48b-09-arrow)"/>
+  <!-- 2→3 -->
+  <line x1="456" y1="100" x2="496" y2="100" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-23-742bf48b-09-arrow)"/>
+  <!-- 3→4 -->
+  <line x1="676" y1="100" x2="716" y2="100" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-23-742bf48b-09-arrow)"/>
+
+  <!-- ── 1단계 노드 (신규 기능) — link 계열 파랑 ── -->
+  <!-- 불투명 마스크 -->
+  <rect x="36" y="52" width="200" height="96" rx="6" fill="#f8fafb"/>
+  <!-- 박스 -->
+  <rect x="36" y="52" width="200" height="96" rx="6" fill="rgba(58,84,143,0.08)" stroke="#3a548f" stroke-width="1"/>
+  <!-- 태그 -->
+  <rect x="44" y="60" width="24" height="12" rx="2" fill="transparent" stroke="rgba(58,84,143,0.40)" stroke-width="0.8"/>
+  <text x="56" y="69" fill="rgba(58,84,143,0.80)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">NEW</text>
+  <!-- 단계 번호 -->
+  <text x="136" y="84" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.06em">1단계</text>
+  <!-- 노드 이름 -->
+  <text x="136" y="104" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">신규 기능에</text>
+  <text x="136" y="120" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Scoped Values 채택</text>
+
+  <!-- ── 2단계 노드 (우선 전환) — accent 강조 ── -->
+  <rect x="276" y="52" width="180" height="96" rx="6" fill="#f8fafb"/>
+  <rect x="276" y="52" width="180" height="96" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <!-- 태그 -->
+  <rect x="284" y="60" width="32" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="300" y="69" fill="rgba(13,87,99,0.80)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">ACC</text>
+  <!-- 단계 번호 -->
+  <text x="366" y="84" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.06em">2단계</text>
+  <!-- 노드 이름 -->
+  <text x="366" y="104" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">InheritableThreadLocal</text>
+  <text x="366" y="120" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">우선 전환</text>
+
+  <!-- ── 3단계 노드 (프레임워크 검토) — warm 계열 ── -->
+  <rect x="496" y="52" width="180" height="96" rx="6" fill="#f8fafb"/>
+  <rect x="496" y="52" width="180" height="96" rx="6" fill="rgba(169,106,8,0.07)" stroke="#a96a08" stroke-width="1"/>
+  <!-- 태그 -->
+  <rect x="504" y="60" width="36" height="12" rx="2" fill="transparent" stroke="rgba(169,106,8,0.40)" stroke-width="0.8"/>
+  <text x="522" y="69" fill="rgba(169,106,8,0.80)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">WARN</text>
+  <!-- 단계 번호 -->
+  <text x="586" y="84" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.06em">3단계</text>
+  <!-- 노드 이름 -->
+  <text x="586" y="104" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">프레임워크 레벨</text>
+  <text x="586" y="120" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">ThreadLocal 검토</text>
+
+  <!-- ── 4단계 노드 (레거시 전환) — green 계열 ── -->
+  <rect x="716" y="52" width="180" height="96" rx="6" fill="#f8fafb"/>
+  <rect x="716" y="52" width="180" height="96" rx="6" fill="rgba(40,109,80,0.08)" stroke="#286d50" stroke-width="1"/>
+  <!-- 태그 -->
+  <rect x="724" y="60" width="20" height="12" rx="2" fill="transparent" stroke="rgba(40,109,80,0.40)" stroke-width="0.8"/>
+  <text x="734" y="69" fill="rgba(40,109,80,0.80)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">OK</text>
+  <!-- 단계 번호 -->
+  <text x="806" y="84" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.06em">4단계</text>
+  <!-- 노드 이름 -->
+  <text x="806" y="104" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">레거시 ThreadLocal</text>
+  <text x="806" y="120" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">순차 전환</text>
+
+  <!-- ── 범례 구분선 ── -->
+  <line x1="32" y1="168" x2="928" y2="168" stroke="rgba(18,33,39,0.10)" stroke-width="0.8"/>
+
+  <!-- ── 범례 ── -->
+  <text x="32" y="180" fill="#6c8188" font-size="8" font-family="'IBM Plex Mono', monospace" letter-spacing="0.14em">LEGEND</text>
+
+  <!-- 신규 -->
+  <rect x="92" y="172" width="10" height="10" rx="2" fill="rgba(58,84,143,0.08)" stroke="#3a548f" stroke-width="1"/>
+  <text x="108" y="181" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">신규 채택</text>
+
+  <!-- 우선 전환 -->
+  <rect x="196" y="172" width="10" height="10" rx="2" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="212" y="181" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">우선 전환</text>
+
+  <!-- 검토 필요 -->
+  <rect x="300" y="172" width="10" height="10" rx="2" fill="rgba(169,106,8,0.07)" stroke="#a96a08" stroke-width="1"/>
+  <text x="316" y="181" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">검토 필요</text>
+
+  <!-- 완료 가능 -->
+  <rect x="408" y="172" width="10" height="10" rx="2" fill="rgba(40,109,80,0.08)" stroke="#286d50" stroke-width="1"/>
+  <text x="424" y="181" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">완료 가능</text>
+
+</svg>
+</div>
+</body>
+</html>

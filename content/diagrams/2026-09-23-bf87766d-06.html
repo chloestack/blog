@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; font-family: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<svg viewBox="0 0 960 440" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="2026-09-23-bf87766d-06-domain-threshold-title 2026-09-23-bf87766d-06-domain-threshold-desc">
+  <title id="2026-09-23-bf87766d-06-domain-threshold-title">도메인 유형별 Semantic Cache 임계값 선택 가이드</title>
+  <desc id="2026-09-23-bf87766d-06-domain-threshold-desc">도메인 유형에 따라 Semantic Cache 유사도 임계값을 네 가지 전략으로 분기하는 의사결정 흐름도. FAQ·고객지원은 히트율 우선(0.90~0.93), 의료·법률·금융은 정확도 우선(0.95 이상), 코드·기술 문서는 균형(0.88~0.92), 개인화 포함 요청은 캐시 제외 또는 사용자별 격리.</desc>
+
+  <defs>
+    <!-- Arrow markers -->
+    <marker id="2026-09-23-bf87766d-06-dt-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-09-23-bf87766d-06-dt-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="960" height="440" fill="#f8fafb"/>
+
+  <!-- ─── CONNECTORS (drawn before boxes) ─── -->
+
+  <!-- D → T1: top-right arc route -->
+  <!-- exits diamond top-right area → goes right then curves to T1 -->
+  <path d="M 388,176 L 440,176 L 440,128 L 580,128 L 580,148" fill="none" stroke="#3f545c" stroke-width="1.2" marker-end="url(#2026-09-23-bf87766d-06-dt-arrow)"/>
+  <!-- label: FAQ · 고객지원 -->
+  <rect x="441" y="118" width="96" height="16" rx="2" fill="#f8fafb"/>
+  <text x="489" y="130" fill="#6c8188" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500" text-anchor="middle">FAQ · 고객지원</text>
+
+  <!-- D → T2: slight up route -->
+  <path d="M 388,196 L 440,196 L 440,232 L 580,232 L 580,240" fill="none" stroke="#3f545c" stroke-width="1.2" marker-end="url(#2026-09-23-bf87766d-06-dt-arrow)"/>
+  <!-- label: 의료 · 법률 · 금융 -->
+  <rect x="441" y="208" width="104" height="16" rx="2" fill="#f8fafb"/>
+  <text x="493" y="220" fill="#6c8188" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500" text-anchor="middle">의료 · 법률 · 금융</text>
+
+  <!-- D → T3: right route -->
+  <path d="M 388,216 L 440,216 L 440,312 L 580,312 L 580,328" fill="none" stroke="#3f545c" stroke-width="1.2" marker-end="url(#2026-09-23-bf87766d-06-dt-arrow)"/>
+  <!-- label: 코드 · 기술 문서 -->
+  <rect x="441" y="296" width="96" height="16" rx="2" fill="#f8fafb"/>
+  <text x="489" y="308" fill="#6c8188" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500" text-anchor="middle">코드 · 기술 문서</text>
+
+  <!-- D → T4: down route -->
+  <path d="M 360,228 L 360,400 L 580,400 L 580,412" fill="none" stroke="#3f545c" stroke-width="1.2" marker-end="url(#2026-09-23-bf87766d-06-dt-arrow)"/>
+  <!-- label: 개인화 포함 -->
+  <rect x="298" y="360" width="76" height="16" rx="2" fill="#f8fafb"/>
+  <text x="336" y="372" fill="#6c8188" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500" text-anchor="middle">개인화 포함</text>
+
+  <!-- ─── NODES ─── -->
+
+  <!-- Decision diamond: 도메인 유형 (focal) -->
+  <!-- Center: 360, 200. Half-width: 100, half-height: 52 -->
+  <polygon points="360,148 460,200 360,252 260,200" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.5"/>
+  <text x="360" y="195" fill="#122127" font-size="13" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">도메인</text>
+  <text x="360" y="212" fill="#122127" font-size="13" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">유형</text>
+
+  <!-- T1: FAQ · 고객지원 — ok (green) -->
+  <!-- opaque mask -->
+  <rect x="572" y="148" width="220" height="76" rx="6" fill="#f8fafb"/>
+  <rect x="572" y="148" width="220" height="76" rx="6" fill="#D6E9DE" stroke="#286D50" stroke-width="1.2"/>
+  <!-- tag -->
+  <rect x="584" y="156" width="52" height="12" rx="2" fill="transparent" stroke="rgba(40,109,80,0.4)" stroke-width="0.8"/>
+  <text x="610" y="165" fill="rgba(40,109,80,0.8)" font-size="9" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">THRESHOLD</text>
+  <!-- name -->
+  <text x="682" y="194" fill="#122127" font-size="13" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">FAQ · 고객지원</text>
+  <!-- sublabel -->
+  <text x="682" y="212" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">0.90 ~ 0.93 · 히트율 우선</text>
+
+  <!-- T2: 의료 · 법률 · 금융 — warn (amber) -->
+  <rect x="572" y="240" width="220" height="76" rx="6" fill="#f8fafb"/>
+  <rect x="572" y="240" width="220" height="76" rx="6" fill="#F5E8CC" stroke="#A96A08" stroke-width="1.2"/>
+  <rect x="584" y="248" width="52" height="12" rx="2" fill="transparent" stroke="rgba(169,106,8,0.4)" stroke-width="0.8"/>
+  <text x="610" y="257" fill="rgba(169,106,8,0.8)" font-size="9" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">THRESHOLD</text>
+  <text x="682" y="286" fill="#122127" font-size="13" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">의료 · 법률 · 금융</text>
+  <text x="682" y="304" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">0.95+ · 정확도 우선</text>
+
+  <!-- T3: 코드 · 기술 문서 — ok (green) -->
+  <rect x="572" y="328" width="220" height="76" rx="6" fill="#f8fafb"/>
+  <rect x="572" y="328" width="220" height="76" rx="6" fill="#D6E9DE" stroke="#286D50" stroke-width="1.2"/>
+  <rect x="584" y="336" width="52" height="12" rx="2" fill="transparent" stroke="rgba(40,109,80,0.4)" stroke-width="0.8"/>
+  <text x="610" y="345" fill="rgba(40,109,80,0.8)" font-size="9" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">THRESHOLD</text>
+  <text x="682" y="374" fill="#122127" font-size="13" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">코드 · 기술 문서</text>
+  <text x="682" y="392" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">0.88 ~ 0.92 · 균형</text>
+
+  <!-- T4: 개인화 포함 — stop (red) -->
+  <rect x="572" y="412" width="220" height="16" rx="0" fill="#f8fafb"/>
+  <!-- nudge T4 up slightly: y=396 to fit in canvas -->
+  <rect x="572" y="396" width="220" height="28" rx="6" fill="#f8fafb"/>
+  <!-- full box -->
+  <rect x="572" y="396" width="220" height="28" rx="6" fill="#f8fafb"/>
+
+  <!-- re-anchor T4 properly at y=408 with height 64 -->
+  <rect x="572" y="404" width="220" height="8" rx="0" fill="#f8fafb"/>
+
+  <!-- T4 clean redraw -->
+  <rect x="572" y="376" width="220" height="52" rx="6" fill="#f8fafb"/>
+  <rect x="572" y="376" width="220" height="52" rx="6" fill="#F1D9D4" stroke="#94382B" stroke-width="1.2"/>
+  <rect x="584" y="384" width="40" height="12" rx="2" fill="transparent" stroke="rgba(148,56,43,0.4)" stroke-width="0.8"/>
+  <text x="604" y="393" fill="rgba(148,56,43,0.8)" font-size="9" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">POLICY</text>
+  <text x="682" y="414" fill="#122127" font-size="13" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">캐시 제외 · 사용자별 격리</text>
+
+  <!-- ─── LEGEND ─── -->
+  <line x1="32" y1="432" x2="928" y2="432" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+
+  <!-- Legend item: 히트율 우선 -->
+  <rect x="32" y="444" width="10" height="10" rx="2" fill="#D6E9DE" stroke="#286D50" stroke-width="1"/>
+  <text x="48" y="453" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.06em">히트율 우선</text>
+
+  <!-- Legend item: 정확도 우선 -->
+  <rect x="160" y="444" width="10" height="10" rx="2" fill="#F5E8CC" stroke="#A96A08" stroke-width="1"/>
+  <text x="176" y="453" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.06em">정확도 우선</text>
+
+  <!-- Legend item: 균형 -->
+  <rect x="300" y="444" width="10" height="10" rx="2" fill="#D6E9DE" stroke="#286D50" stroke-width="1"/>
+  <text x="316" y="453" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.06em">균형 (balanced)</text>
+
+  <!-- Legend item: 캐시 제외 -->
+  <rect x="460" y="444" width="10" height="10" rx="2" fill="#F1D9D4" stroke="#94382B" stroke-width="1"/>
+  <text x="476" y="453" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.06em">캐시 제외</text>
+
+  <!-- Legend item: focal (decision) -->
+  <polygon points="600,453 612,448 624,453 612,458" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="632" y="453" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.06em">의사결정</text>
+
+</svg>
+</body>
+</html>

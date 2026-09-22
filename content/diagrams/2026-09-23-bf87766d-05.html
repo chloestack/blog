@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; font-family: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; }
+  .diagram-wrap { width: 100%; max-width: 960px; margin: 0 auto; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<div class="diagram-wrap">
+<svg viewBox="0 0 960 340" xmlns="http://www.w3.org/2000/svg"
+     role="img" aria-labelledby="2026-09-23-bf87766d-05-sem-cache-title 2026-09-23-bf87766d-05-sem-cache-desc">
+  <title id="2026-09-23-bf87766d-05-sem-cache-title">Semantic Cache 처리 흐름</title>
+  <desc id="2026-09-23-bf87766d-05-sem-cache-desc">사용자 질문이 전처리와 개인화 판단을 거쳐 캐시를 건너뛰거나 테넌트 네임스페이스 유사도 검색으로 이어지는 결정 흐름.</desc>
+
+  <defs>
+    <!-- arrow markers -->
+    <marker id="2026-09-23-bf87766d-05-sc-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-09-23-bf87766d-05-sc-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <marker id="2026-09-23-bf87766d-05-sc-arrow-warn" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#a96a08"/>
+    </marker>
+    <marker id="2026-09-23-bf87766d-05-sc-arrow-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3a548f"/>
+    </marker>
+  </defs>
+
+  <!-- background -->
+  <rect width="960" height="340" fill="#f8fafb"/>
+
+  <!-- ============================================================
+       ARROWS — drawn before boxes
+  ============================================================ -->
+
+  <!-- Q → PP (straight horizontal) -->
+  <line x1="116" y1="136" x2="200" y2="136" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-23-bf87766d-05-sc-arrow)"/>
+
+  <!-- PP → NS (straight horizontal) -->
+  <line x1="304" y1="136" x2="388" y2="136" stroke="#0d5763" stroke-width="1" marker-end="url(#2026-09-23-bf87766d-05-sc-arrow-accent)"/>
+
+  <!-- NS → SKIP (diagonal-free: up from top of diamond then right) -->
+  <!-- NS top vertex at (476,108), SKIP center at (636,68) -->
+  <!-- Route: right edge of diamond (x=524,y=136) → elbow right → up to SKIP -->
+  <!-- NS right vertex: (524,136); SKIP left edge: (576,68) -->
+  <!-- path: from NS right (524,136) → right to x=552 → up to y=68 → right to SKIP left (576,68) -->
+  <path d="M 524 136 L 552 136 Q 560 136 560 128 L 560 76 Q 560 68 568 68 L 576 68"
+        fill="none" stroke="#a96a08" stroke-width="1" marker-end="url(#2026-09-23-bf87766d-05-sc-arrow-warn)"/>
+  <!-- label 예 -->
+  <rect x="527" y="88" width="24" height="14" rx="2" fill="#f8fafb"/>
+  <text x="539" y="99" fill="#a96a08" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="500">예</text>
+
+  <!-- NS → TID (downward from bottom vertex, then right) -->
+  <!-- NS bottom vertex: (476,164); TID left edge: (608,204) -->
+  <!-- path: from (476,164) down to y=204, then right to TID left (608,204) -->
+  <path d="M 476 164 L 476 204 Q 476 212 484 212 L 608 212"
+        fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-23-bf87766d-05-sc-arrow)"/>
+  <!-- label 아니오 -->
+  <rect x="488" y="192" width="44" height="14" rx="2" fill="#f8fafb"/>
+  <text x="510" y="203" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="500">아니오</text>
+
+  <!-- TID → SEARCH (straight horizontal) -->
+  <line x1="720" y1="212" x2="800" y2="212" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-23-bf87766d-05-sc-arrow)"/>
+
+  <!-- ============================================================
+       NODES
+  ============================================================ -->
+
+  <!-- Q: 사용자 질문 — input treatment, muted@0.10 fill, soft stroke -->
+  <!-- x=20, y=108, w=96, h=56, cx=68, cy=136 -->
+  <rect x="20" y="108" width="96" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="20" y="108" width="96" height="56" rx="6" fill="rgba(63,84,92,0.10)" stroke="#6c8188" stroke-width="1"/>
+  <rect x="28" y="114" width="28" height="12" rx="2" fill="transparent" stroke="rgba(108,129,136,0.40)" stroke-width="0.8"/>
+  <text x="42" y="123" fill="rgba(108,129,136,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">INPUT</text>
+  <text x="68" y="140" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">사용자 질문</text>
+
+  <!-- PP: 전처리 / PII 마스킹 — focal (accent-tint, accent stroke) -->
+  <!-- x=200, y=108, w=104, h=56, cx=252, cy=136 -->
+  <rect x="200" y="108" width="104" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="200" y="108" width="104" height="56" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="208" y="114" width="28" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="222" y="123" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">STEP</text>
+  <text x="252" y="138" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">전처리</text>
+  <text x="252" y="154" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">PII 마스킹</text>
+
+  <!-- NS: 개인화 컨텍스트인가 — decision diamond, focal -->
+  <!-- diamond center (476,136), half-w=48, half-h=28 -->
+  <!-- vertices: top(476,108), right(524,136), bottom(476,164), left(428,136) -->
+  <polygon points="476,108 524,136 476,164 428,136" fill="#f8fafb"/>
+  <polygon points="476,108 524,136 476,164 428,136" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="476" y="132" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">개인화</text>
+  <text x="476" y="148" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">컨텍스트?</text>
+
+  <!-- SKIP: 캐시 건너뜀 — warn treatment (amber) -->
+  <!-- x=576, y=40, w=128, h=56, cx=640, cy=68 -->
+  <rect x="576" y="40" width="128" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="576" y="40" width="128" height="56" rx="6" fill="rgba(169,106,8,0.07)" stroke="#a96a08" stroke-width="1"/>
+  <rect x="584" y="46" width="28" height="12" rx="2" fill="transparent" stroke="rgba(169,106,8,0.40)" stroke-width="0.8"/>
+  <text x="598" y="55" fill="rgba(169,106,8,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">SKIP</text>
+  <text x="640" y="70" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">캐시 건너뜀</text>
+  <text x="640" y="86" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">직접 LLM 호출</text>
+
+  <!-- TID: 테넌트 ID / 네임스페이스 결정 — muted/store treatment -->
+  <!-- x=608, y=184, w=112, h=56, cx=664, cy=212 -->
+  <rect x="608" y="184" width="112" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="608" y="184" width="112" height="56" rx="6" fill="#eef2f4" stroke="#c3d0d4" stroke-width="1"/>
+  <rect x="616" y="190" width="28" height="12" rx="2" fill="transparent" stroke="rgba(195,208,212,0.60)" stroke-width="0.8"/>
+  <text x="630" y="199" fill="rgba(63,84,92,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">STEP</text>
+  <text x="664" y="214" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">테넌트 ID</text>
+  <text x="664" y="230" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">네임스페이스 결정</text>
+
+  <!-- SEARCH: 유사도 검색 — backend/ok treatment (green-tinted) -->
+  <!-- x=800, y=184, w=140, h=56, cx=870, cy=212 -->
+  <rect x="800" y="184" width="140" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="800" y="184" width="140" height="56" rx="6" fill="rgba(40,109,80,0.07)" stroke="#286d50" stroke-width="1"/>
+  <rect x="808" y="190" width="36" height="12" rx="2" fill="transparent" stroke="rgba(40,109,80,0.40)" stroke-width="0.8"/>
+  <text x="826" y="199" fill="rgba(40,109,80,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">SEARCH</text>
+  <text x="870" y="214" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">유사도 검색</text>
+  <text x="870" y="230" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">해당 네임스페이스</text>
+
+  <!-- ============================================================
+       LEGEND STRIP
+  ============================================================ -->
+  <line x1="30" y1="288" x2="930" y2="288" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+  <text x="30" y="304" fill="#3f545c" font-size="8" font-family="'IBM Plex Mono', monospace" letter-spacing="0.14em">LEGEND</text>
+
+  <!-- focal -->
+  <rect x="100" y="294" width="28" height="16" rx="4" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="134" y="305" fill="#3f545c" font-size="8" font-family="'IBM Plex Sans KR', sans-serif">핵심 단계</text>
+
+  <!-- warn -->
+  <rect x="220" y="294" width="28" height="16" rx="4" fill="rgba(169,106,8,0.07)" stroke="#a96a08" stroke-width="1"/>
+  <text x="254" y="305" fill="#3f545c" font-size="8" font-family="'IBM Plex Sans KR', sans-serif">우회 경로</text>
+
+  <!-- ok -->
+  <rect x="340" y="294" width="28" height="16" rx="4" fill="rgba(40,109,80,0.07)" stroke="#286d50" stroke-width="1"/>
+  <text x="374" y="305" fill="#3f545c" font-size="8" font-family="'IBM Plex Sans KR', sans-serif">캐시 조회</text>
+
+  <!-- muted -->
+  <rect x="460" y="294" width="28" height="16" rx="4" fill="#eef2f4" stroke="#c3d0d4" stroke-width="1"/>
+  <text x="494" y="305" fill="#3f545c" font-size="8" font-family="'IBM Plex Sans KR', sans-serif">보조 단계</text>
+
+  <!-- input -->
+  <rect x="580" y="294" width="28" height="16" rx="4" fill="rgba(63,84,92,0.10)" stroke="#6c8188" stroke-width="1"/>
+  <text x="614" y="305" fill="#3f545c" font-size="8" font-family="'IBM Plex Sans KR', sans-serif">입력</text>
+
+</svg>
+</div>
+</body>
+</html>

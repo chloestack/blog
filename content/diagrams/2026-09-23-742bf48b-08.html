@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 24px; }
+  .diagram-wrap { width: 100%; max-width: 720px; }
+  svg { width: 100%; height: auto; display: block; }
+</style>
+</head>
+<body>
+<div class="diagram-wrap">
+<svg viewBox="0 0 720 600" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="2026-09-23-742bf48b-08-sv-title 2026-09-23-742bf48b-08-sv-desc">
+  <title id="2026-09-23-742bf48b-08-sv-title">ScopedValue.get() 조회 흐름</title>
+  <desc id="2026-09-23-742bf48b-08-sv-desc">ScopedValue.get() 호출 시 isBound() 여부와 getOrElse() 사용 여부에 따라 값 반환, 기본값 반환, 또는 NoSuchElementException 발생으로 분기되는 결정 흐름도.</desc>
+
+  <defs>
+    <!-- Arrow markers -->
+    <marker id="2026-09-23-742bf48b-08-sv-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-09-23-742bf48b-08-sv-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <marker id="2026-09-23-742bf48b-08-sv-arrow-ok" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#286d50"/>
+    </marker>
+    <marker id="2026-09-23-742bf48b-08-sv-arrow-warn" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-09-23-742bf48b-08-sv-arrow-stop" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#94382b"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="720" height="600" fill="#f8fafb"/>
+
+  <!-- ─── Connectors (drawn before nodes) ─── -->
+
+  <!-- U → B (top center, 360,116 → 360,192) -->
+  <line x1="360" y1="116" x2="360" y2="188" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-23-742bf48b-08-sv-arrow)"/>
+
+  <!-- B → G (right exit: 예) diamond right point (416,228) → G left (480,220) -->
+  <path d="M 416,228 L 480,228" fill="none" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-23-742bf48b-08-sv-arrow-accent)"/>
+  <!-- label 예 -->
+  <rect x="432" y="216" width="24" height="14" rx="2" fill="#f8fafb"/>
+  <text x="444" y="226" fill="#0d5763" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500" text-anchor="middle">예</text>
+
+  <!-- B → C (bottom exit: 아니오) diamond bottom point (360,264) → C top (360,312) -->
+  <line x1="360" y1="264" x2="360" y2="308" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-23-742bf48b-08-sv-arrow)"/>
+  <!-- label 아니오 -->
+  <rect x="330" y="276" width="44" height="14" rx="2" fill="#f8fafb"/>
+  <text x="352" y="286" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500" text-anchor="middle">아니오</text>
+
+  <!-- C → D (right exit: 예) diamond right point (440,356) → D left (480,348) -->
+  <path d="M 440,356 L 480,356" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-23-742bf48b-08-sv-arrow-ok)"/>
+  <!-- label 예 -->
+  <rect x="448" y="344" width="24" height="14" rx="2" fill="#f8fafb"/>
+  <text x="460" y="354" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500" text-anchor="middle">예</text>
+
+  <!-- C → E (left exit: 아니오) diamond left point (280,356) → E right (224,384) 
+       route: (280,356) → (240,356) → (240,384) → (224,384) to E right edge -->
+  <path d="M 280,356 L 240,356 L 240,384" fill="none" stroke="#94382b" stroke-width="1" marker-end="url(#2026-09-23-742bf48b-08-sv-arrow-stop)"/>
+  <!-- label 아니오 -->
+  <rect x="244" y="344" width="44" height="14" rx="2" fill="#f8fafb"/>
+  <text x="266" y="354" fill="#94382b" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500" text-anchor="middle">아니오</text>
+
+  <!-- ─── Nodes ─── -->
+
+  <!-- Node U: ScopedValue.get() 호출 — input type, top -->
+  <!-- oval / rounded rect for start -->
+  <rect x="248" y="68" width="224" height="48" rx="20" fill="#f8fafb"/>
+  <rect x="248" y="68" width="224" height="48" rx="20" fill="rgba(58,84,143,0.08)" stroke="#3a548f" stroke-width="1.2"/>
+  <text x="360" y="88" fill="#122127" font-size="12" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">ScopedValue.get()</text>
+  <text x="360" y="104" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="400" text-anchor="middle">호출</text>
+
+  <!-- Node B: isBound()? — decision diamond, accent -->
+  <!-- Diamond centered at (360,228), width=112, height=72 -->
+  <polygon points="360,192 416,228 360,264 304,228" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="360" y="224" fill="#122127" font-size="11" font-family="'IBM Plex Mono', monospace" font-weight="500" text-anchor="middle">isBound()</text>
+  <text x="360" y="240" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="400" text-anchor="middle">바인딩 확인</text>
+
+  <!-- Node G: 값 반환 — ok (green) -->
+  <rect x="480" y="204" width="144" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="480" y="204" width="144" height="48" rx="6" fill="rgba(40,109,80,0.08)" stroke="#286d50" stroke-width="1.2"/>
+  <!-- type tag -->
+  <rect x="488" y="210" width="28" height="12" rx="2" fill="transparent" stroke="rgba(40,109,80,0.40)" stroke-width="0.8"/>
+  <text x="502" y="219" fill="rgba(40,109,80,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">OK</text>
+  <text x="552" y="232" fill="#122127" font-size="12" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">값 반환</text>
+  <text x="552" y="246" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">ScopedValue 값</text>
+
+  <!-- Node C: getOrElse() 사용했나 — decision diamond, warn -->
+  <!-- Diamond centered at (360,356), width=160, height=88 -->
+  <polygon points="360,312 440,356 360,400 280,356" fill="rgba(169,106,8,0.06)" stroke="#a96a08" stroke-width="1.2"/>
+  <text x="360" y="349" fill="#122127" font-size="10" font-family="'IBM Plex Mono', monospace" font-weight="500" text-anchor="middle">getOrElse()</text>
+  <text x="360" y="364" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="400" text-anchor="middle">사용 여부</text>
+
+  <!-- Node D: 기본값 반환 — ok (green) -->
+  <rect x="480" y="332" width="144" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="480" y="332" width="144" height="48" rx="6" fill="rgba(40,109,80,0.08)" stroke="#286d50" stroke-width="1.2"/>
+  <!-- type tag -->
+  <rect x="488" y="338" width="28" height="12" rx="2" fill="transparent" stroke="rgba(40,109,80,0.40)" stroke-width="0.8"/>
+  <text x="502" y="347" fill="rgba(40,109,80,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">OK</text>
+  <text x="552" y="360" fill="#122127" font-size="12" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">기본값 반환</text>
+  <text x="552" y="374" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">orElse 값</text>
+
+  <!-- Node E: NoSuchElementException — stop (red), centered at (240,408) -->
+  <rect x="112" y="360" width="256" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="112" y="360" width="256" height="64" rx="6" fill="rgba(148,56,43,0.07)" stroke="#94382b" stroke-width="1.2"/>
+  <!-- type tag -->
+  <rect x="120" y="366" width="40" height="12" rx="2" fill="transparent" stroke="rgba(148,56,43,0.40)" stroke-width="0.8"/>
+  <text x="140" y="375" fill="rgba(148,56,43,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">ERROR</text>
+  <text x="240" y="390" fill="#122127" font-size="11" font-family="'IBM Plex Mono', monospace" font-weight="600" text-anchor="middle">NoSuchElementException</text>
+  <text x="240" y="408" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="400" text-anchor="middle">런타임 예외 발생</text>
+
+  <!-- ─── Legend ─── -->
+  <line x1="32" y1="532" x2="688" y2="532" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+  <text x="32" y="544" fill="#3f545c" font-size="8" font-family="'IBM Plex Mono', monospace" letter-spacing="0.14em">LEGEND</text>
+
+  <!-- Legend items -->
+  <!-- oval = 진입점 -->
+  <rect x="96" y="534" width="44" height="16" rx="8" fill="rgba(58,84,143,0.08)" stroke="#3a548f" stroke-width="1"/>
+  <text x="118" y="546" fill="#122127" font-size="8" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">진입점</text>
+
+  <!-- diamond = 결정 -->
+  <polygon points="172,542 182,536 192,542 182,548" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="200" y="546" fill="#122127" font-size="8" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="start">결정</text>
+
+  <!-- ok rect -->
+  <rect x="240" y="534" width="44" height="16" rx="4" fill="rgba(40,109,80,0.08)" stroke="#286d50" stroke-width="1"/>
+  <text x="262" y="546" fill="#122127" font-size="8" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">정상 반환</text>
+
+  <!-- error rect -->
+  <rect x="308" y="534" width="44" height="16" rx="4" fill="rgba(148,56,43,0.07)" stroke="#94382b" stroke-width="1"/>
+  <text x="330" y="546" fill="#122127" font-size="8" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">예외 발생</text>
+
+</svg>
+</div>
+</body>
+</html>

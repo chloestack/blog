@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 24px; }
+  .diagram-wrap { width: 100%; max-width: 960px; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<div class="diagram-wrap">
+<svg viewBox="0 0 960 600" xmlns="http://www.w3.org/2000/svg"
+     role="img" aria-labelledby="2026-09-23-151ea635-05-ecst-flowchart-title 2026-09-23-151ea635-05-ecst-flowchart-desc">
+  <title id="2026-09-23-151ea635-05-ecst-flowchart-title">이벤트 버전 검증 플로우차트</title>
+  <desc id="2026-09-23-151ea635-05-ecst-flowchart-desc">수신된 이벤트의 version이 저장된 값보다 큰지 판별해 로컬 스토어를 업데이트하거나 무시한 뒤 오프셋을 커밋하는 처리 흐름.</desc>
+
+  <defs>
+    <!-- 배경 -->
+    <marker id="2026-09-23-151ea635-05-ecst-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-09-23-151ea635-05-ecst-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <marker id="2026-09-23-151ea635-05-ecst-arrow-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3a548f"/>
+    </marker>
+  </defs>
+
+  <!-- 배경 -->
+  <rect width="100%" height="100%" fill="#f8fafb"/>
+
+  <!--
+    노드 레이아웃 (중앙 x=480)
+    START (oval)       : cx=480, cy=76,  w=200, h=44
+    이벤트 수신 (rect) : cx=480, cy=164, w=200, h=52
+    version 판별 (dia) : cx=480, cy=280, w=200, h=72
+    업데이트 (rect)    : cx=316, cy=412, w=192, h=52
+    무시 (rect)        : cx=644, cy=412, w=192, h=52
+    오프셋 커밋 (rect) : cx=480, cy=524, w=200, h=44
+  -->
+
+  <!-- ─── 커넥터 (박스보다 먼저) ─── -->
+
+  <!-- START → 이벤트 수신 (직선, 같은 x) -->
+  <line x1="480" y1="98" x2="480" y2="138"
+        stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-23-151ea635-05-ecst-arrow)"/>
+
+  <!-- 이벤트 수신 → version 판별 (직선, 같은 x) -->
+  <line x1="480" y1="190" x2="480" y2="244"
+        stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-23-151ea635-05-ecst-arrow)"/>
+
+  <!-- version 판별 → 업데이트 (예, 왼쪽 꺾임) -->
+  <!-- 다이아몬드 왼쪽 꼭짓점: x=380, y=280 → 아래로 내려 x=316, y=412 -->
+  <path d="M 380,280 H 316 V 386" fill="none"
+        stroke="#0d5763" stroke-width="1" marker-end="url(#2026-09-23-151ea635-05-ecst-arrow-accent)"/>
+  <!-- "예" 라벨 -->
+  <rect x="324" y="260" width="28" height="14" rx="2" fill="#f8fafb"/>
+  <text x="338" y="271" fill="#0d5763" font-size="10" font-weight="500"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">예</text>
+
+  <!-- version 판별 → 무시 (아니오, 오른쪽 꺾임) -->
+  <!-- 다이아몬드 오른쪽 꼭짓점: x=580, y=280 → 아래로 내려 x=644, y=412 -->
+  <path d="M 580,280 H 644 V 386" fill="none"
+        stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-23-151ea635-05-ecst-arrow)"/>
+  <!-- "아니오" 라벨 -->
+  <rect x="598" y="260" width="44" height="14" rx="2" fill="#f8fafb"/>
+  <text x="620" y="271" fill="#3f545c" font-size="10" font-weight="500"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">아니오</text>
+
+  <!-- 업데이트 → 오프셋 커밋 (왼쪽에서 아래로 꺾임) -->
+  <path d="M 316,438 V 524 H 380" fill="none"
+        stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-23-151ea635-05-ecst-arrow)"/>
+
+  <!-- 무시 → 오프셋 커밋 (오른쪽에서 아래로 꺾임) -->
+  <path d="M 644,438 V 524 H 580" fill="none"
+        stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-23-151ea635-05-ecst-arrow)"/>
+
+  <!-- ─── 노드 ─── -->
+
+  <!-- START (oval) -->
+  <rect x="380" y="54" width="200" height="44" rx="22" fill="#f8fafb"/>
+  <rect x="380" y="54" width="200" height="44" rx="22"
+        fill="rgba(18,33,39,0.03)" stroke="rgba(18,33,39,0.30)" stroke-width="1"/>
+  <text x="480" y="81" fill="#122127" font-size="12" font-weight="500"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">시작</text>
+
+  <!-- 이벤트 수신 (focal: accent-tint / accent) -->
+  <rect x="380" y="138" width="200" height="52" rx="6" fill="#f8fafb"/>
+  <rect x="380" y="138" width="200" height="52" rx="6"
+        fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <!-- 타입 태그 -->
+  <rect x="388" y="144" width="42" height="12" rx="2"
+        fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="409" y="153" fill="rgba(13,87,99,0.8)" font-size="7" font-weight="500"
+        font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.08em">EVENT</text>
+  <text x="480" y="170" fill="#122127" font-size="13" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">이벤트 수신</text>
+
+  <!-- version 판별 (decision diamond) -->
+  <!-- 다이아몬드: 꼭짓점 top(480,244) right(580,280) bottom(480,316) left(380,280) -->
+  <rect x="380" y="244" width="200" height="72" rx="6" fill="#f8fafb"/>
+  <polygon points="480,244 580,280 480,316 380,280"
+           fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="480" y="277" fill="#122127" font-size="12" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">version &gt;</text>
+  <text x="480" y="293" fill="#122127" font-size="12" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">저장된 version?</text>
+
+  <!-- 로컬 스토어 업데이트 (ok: 초록) -->
+  <rect x="220" y="386" width="192" height="52" rx="6" fill="#f8fafb"/>
+  <rect x="220" y="386" width="192" height="52" rx="6"
+        fill="#d6e9de" stroke="#286d50" stroke-width="1"/>
+  <rect x="228" y="392" width="52" height="12" rx="2"
+        fill="transparent" stroke="rgba(40,109,80,0.40)" stroke-width="0.8"/>
+  <text x="254" y="401" fill="rgba(40,109,80,0.8)" font-size="7" font-weight="500"
+        font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.08em">UPDATE</text>
+  <text x="316" y="418" fill="#122127" font-size="12" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">로컬 스토어 업데이트</text>
+
+  <!-- 이벤트 무시 (warn: 노란) -->
+  <rect x="548" y="386" width="192" height="52" rx="6" fill="#f8fafb"/>
+  <rect x="548" y="386" width="192" height="52" rx="6"
+        fill="#f5e8cc" stroke="#a96a08" stroke-width="1"/>
+  <rect x="556" y="392" width="44" height="12" rx="2"
+        fill="transparent" stroke="rgba(169,106,8,0.40)" stroke-width="0.8"/>
+  <text x="578" y="401" fill="rgba(169,106,8,0.8)" font-size="7" font-weight="500"
+        font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.08em">WARN</text>
+  <text x="644" y="414" fill="#122127" font-size="12" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">이벤트 무시</text>
+  <text x="644" y="429" fill="#3f545c" font-size="10" font-weight="400"
+        font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle">(경고 로그)</text>
+
+  <!-- 오프셋 커밋 (mute: 회색) -->
+  <rect x="380" y="502" width="200" height="44" rx="6" fill="#f8fafb"/>
+  <rect x="380" y="502" width="200" height="44" rx="6"
+        fill="#eef2f4" stroke="#c3d0d4" stroke-width="1"/>
+  <rect x="388" y="508" width="52" height="12" rx="2"
+        fill="transparent" stroke="rgba(195,208,212,0.60)" stroke-width="0.8"/>
+  <text x="414" y="517" fill="#6c8188" font-size="7" font-weight="500"
+        font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.08em">COMMIT</text>
+  <text x="480" y="530" fill="#3f545c" font-size="12" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">오프셋 커밋</text>
+
+  <!-- ─── 범례 ─── -->
+  <line x1="32" y1="580" x2="928" y2="580"
+        stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+
+  <!-- 업데이트 범례 -->
+  <rect x="32" y="588" width="10" height="10" rx="2" fill="#d6e9de" stroke="#286d50" stroke-width="0.8"/>
+  <text x="48" y="597" fill="#3f545c" font-size="8" font-weight="500"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">업데이트</text>
+
+  <!-- 무시 범례 -->
+  <rect x="120" y="588" width="10" height="10" rx="2" fill="#f5e8cc" stroke="#a96a08" stroke-width="0.8"/>
+  <text x="136" y="597" fill="#3f545c" font-size="8" font-weight="500"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">무시·경고</text>
+
+  <!-- focal 범례 -->
+  <rect x="212" y="588" width="10" height="10" rx="2" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="0.8"/>
+  <text x="228" y="597" fill="#3f545c" font-size="8" font-weight="500"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">주요 단계</text>
+
+  <!-- 커밋 범례 -->
+  <rect x="304" y="588" width="10" height="10" rx="2" fill="#eef2f4" stroke="#c3d0d4" stroke-width="0.8"/>
+  <text x="320" y="597" fill="#3f545c" font-size="8" font-weight="500"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">공통 종착</text>
+
+</svg>
+</div>
+</body>
+</html>

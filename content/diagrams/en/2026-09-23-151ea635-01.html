@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; font-family: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<svg viewBox="0 0 960 400" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="2026-09-23-151ea635-01-ecst-title 2026-09-23-151ea635-01-ecst-desc">
+  <title id="2026-09-23-151ea635-01-ecst-title">Event-Carried State Transfer Flow</title>
+  <desc id="2026-09-23-151ea635-01-ecst-desc">The product service publishes state changes as events to a Kafka topic; the order service and search service each maintain a local projection and handle requests via local lookup without synchronous calls.</desc>
+
+  <defs>
+    <!-- 기본 화살표 (muted) -->
+    <marker id="2026-09-23-151ea635-01-arr" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <!-- 강조 화살표 (accent) -->
+    <marker id="2026-09-23-151ea635-01-arr-acc" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <!-- 소프트 화살표 -->
+    <marker id="2026-09-23-151ea635-01-arr-soft" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#6c8188"/>
+    </marker>
+  </defs>
+
+  <!-- 배경 -->
+  <rect width="960" height="400" fill="#f8fafb"/>
+
+  <!-- ── 화살표 레이어 (노드보다 먼저) ── -->
+
+  <!-- 상품 서비스 → Kafka (이벤트 발행) -->
+  <!-- P 우측 중앙(228,168) → T 좌측 중앙(332,168) -->
+  <path d="M228,168 L332,168" stroke="#0d5763" stroke-width="1.5" fill="none" marker-end="url(#2026-09-23-151ea635-01-arr-acc)"/>
+  <!-- 라벨 -->
+  <rect x="244" y="148" width="72" height="14" rx="2" fill="#f8fafb"/>
+  <text x="280" y="159" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.04em">Publish</text>
+
+  <!-- Kafka → 주문 서비스 (소비, 위쪽) -->
+  <!-- T 우측 상단(424,148) → O 좌측 중앙(508,120) -->
+  <path d="M424,148 L444,148 L444,120 L508,120" stroke="#3f545c" stroke-width="1" fill="none" marker-end="url(#2026-09-23-151ea635-01-arr)"/>
+  <!-- 라벨 -->
+  <rect x="428" y="100" width="36" height="14" rx="2" fill="#f8fafb"/>
+  <text x="446" y="111" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.04em">Consume</text>
+
+  <!-- Kafka → 검색 서비스 (소비, 아래쪽) -->
+  <!-- T 우측 하단(424,188) → S 좌측 중앙(508,216) -->
+  <path d="M424,188 L444,188 L444,216 L508,216" stroke="#3f545c" stroke-width="1" fill="none" marker-end="url(#2026-09-23-151ea635-01-arr)"/>
+  <!-- 라벨 -->
+  <rect x="428" y="196" width="36" height="14" rx="2" fill="#f8fafb"/>
+  <text x="446" y="207" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.04em">Consume</text>
+
+  <!-- 주문 서비스 → 주문 처리 (로컬 조회) -->
+  <!-- O 우측 중앙(668,120) → OQ 좌측 중앙(752,120) -->
+  <path d="M668,120 L752,120" stroke="#6c8188" stroke-width="1" fill="none" marker-end="url(#2026-09-23-151ea635-01-arr-soft)"/>
+  <!-- 라벨 -->
+  <rect x="682" y="100" width="56" height="14" rx="2" fill="#f8fafb"/>
+  <text x="710" y="111" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.04em">Local Lookup</text>
+
+  <!-- 검색 서비스 → 검색 처리 (로컬 조회) -->
+  <!-- S 우측 중앙(668,216) → SQ 좌측 중앙(752,216) -->
+  <path d="M668,216 L752,216" stroke="#6c8188" stroke-width="1" fill="none" marker-end="url(#2026-09-23-151ea635-01-arr-soft)"/>
+  <!-- 라벨 -->
+  <rect x="682" y="196" width="56" height="14" rx="2" fill="#f8fafb"/>
+  <text x="710" y="207" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.04em">Local Lookup</text>
+
+  <!-- ── 노드 레이어 ── -->
+
+  <!-- 상품 서비스 (focal) -->
+  <!-- x=68, y=136, w=160, h=64, cx=148, cy=168 -->
+  <rect x="68" y="136" width="160" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="68" y="136" width="160" height="64" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <!-- 태그 -->
+  <rect x="76" y="144" width="52" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="102" y="153" fill="rgba(13,87,99,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.1em">SERVICE</text>
+  <!-- 이름 -->
+  <text x="148" y="172" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Product Svc</text>
+  <!-- 부제 -->
+  <text x="148" y="189" fill="#6c8188" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">State Change</text>
+
+  <!-- Kafka 토픽 (focal) — 원통 대신 스토어 처리 -->
+  <!-- x=332, y=136, w=92, h=64 → cx=378, cy=168 -->
+  <rect x="332" y="136" width="92" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="332" y="136" width="92" height="64" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.5"/>
+  <!-- 태그 -->
+  <rect x="340" y="144" width="40" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="360" y="153" fill="rgba(13,87,99,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.1em">TOPIC</text>
+  <!-- 이름 -->
+  <text x="378" y="172" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Kafka</text>
+  <!-- 부제 -->
+  <text x="378" y="189" fill="#6c8188" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">Topic</text>
+
+  <!-- 주문 서비스 (backend) -->
+  <!-- x=508, y=88, w=160, h=64, cx=588, cy=120 -->
+  <rect x="508" y="88" width="160" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="508" y="88" width="160" height="64" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <!-- 태그 -->
+  <rect x="516" y="96" width="52" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.30)" stroke-width="0.8"/>
+  <text x="542" y="105" fill="rgba(18,33,39,0.6)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.1em">SERVICE</text>
+  <!-- 이름 -->
+  <text x="588" y="124" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Order Svc</text>
+  <!-- 부제 -->
+  <text x="588" y="141" fill="#6c8188" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">Local Projection</text>
+
+  <!-- 검색 서비스 (backend) -->
+  <!-- x=508, y=184, w=160, h=64, cx=588, cy=216 -->
+  <rect x="508" y="184" width="160" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="508" y="184" width="160" height="64" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <!-- 태그 -->
+  <rect x="516" y="192" width="52" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.30)" stroke-width="0.8"/>
+  <text x="542" y="201" fill="rgba(18,33,39,0.6)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.1em">SERVICE</text>
+  <!-- 이름 -->
+  <text x="588" y="220" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Search Svc</text>
+  <!-- 부제 -->
+  <text x="588" y="237" fill="#6c8188" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">Local Projection</text>
+
+  <!-- 주문 처리 (store) -->
+  <!-- x=752, y=88, w=140, h=64, cx=822, cy=120 -->
+  <rect x="752" y="88" width="140" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="752" y="88" width="140" height="64" rx="6" fill="rgba(18,33,39,0.05)" stroke="#3f545c" stroke-width="1"/>
+  <!-- 태그 -->
+  <rect x="760" y="96" width="40" height="12" rx="2" fill="transparent" stroke="rgba(63,84,92,0.35)" stroke-width="0.8"/>
+  <text x="780" y="105" fill="rgba(63,84,92,0.7)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.1em">PROCESS</text>
+  <!-- 이름 -->
+  <text x="822" y="124" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Order Proc.</text>
+  <!-- 부제 -->
+  <text x="822" y="141" fill="#6c8188" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">No Sync Call</text>
+
+  <!-- 검색 처리 (store) -->
+  <!-- x=752, y=184, w=140, h=64, cx=822, cy=216 -->
+  <rect x="752" y="184" width="140" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="752" y="184" width="140" height="64" rx="6" fill="rgba(18,33,39,0.05)" stroke="#3f545c" stroke-width="1"/>
+  <!-- 태그 -->
+  <rect x="760" y="192" width="40" height="12" rx="2" fill="transparent" stroke="rgba(63,84,92,0.35)" stroke-width="0.8"/>
+  <text x="780" y="201" fill="rgba(63,84,92,0.7)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.1em">PROCESS</text>
+  <!-- 이름 -->
+  <text x="822" y="220" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Search Proc.</text>
+  <!-- 부제 -->
+  <text x="822" y="237" fill="#6c8188" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">No Sync Call</text>
+
+  <!-- ── 범례 (하단 수평 스트립) ── -->
+  <line x1="40" y1="330" x2="920" y2="330" stroke="rgba(18,33,39,0.10)" stroke-width="0.8"/>
+
+  <!-- 범례 라벨 -->
+  <text x="40" y="347" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.14em">LEGEND</text>
+
+  <!-- focal: 이벤트 경로 -->
+  <rect x="84" y="337" width="12" height="12" rx="2" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="102" y="347" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif">Event path (focal)</text>
+
+  <!-- backend: 소비 서비스 -->
+  <rect x="260" y="337" width="12" height="12" rx="2" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <text x="278" y="347" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif">Consumer svc</text>
+
+  <!-- store: 로컬 처리 -->
+  <rect x="400" y="337" width="12" height="12" rx="2" fill="rgba(18,33,39,0.05)" stroke="#3f545c" stroke-width="1"/>
+  <text x="418" y="347" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif">Local proc. (no sync call)</text>
+
+  <!-- 화살표 범례 -->
+  <line x1="620" y1="343" x2="640" y2="343" stroke="#0d5763" stroke-width="1.5" marker-end="url(#2026-09-23-151ea635-01-arr-acc)"/>
+  <text x="648" y="347" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif">Event publish</text>
+
+  <line x1="740" y1="343" x2="760" y2="343" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-23-151ea635-01-arr)"/>
+  <text x="768" y="347" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif">Consume/Lookup</text>
+</svg>
+</body>
+</html>

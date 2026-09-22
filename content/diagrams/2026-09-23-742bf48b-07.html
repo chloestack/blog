@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; display: flex; justify-content: center; padding: 0; }
+  .diagram-wrap { width: 100%; max-width: 960px; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<div class="diagram-wrap">
+<svg viewBox="0 0 960 480" xmlns="http://www.w3.org/2000/svg"
+     role="img" aria-labelledby="2026-09-23-742bf48b-07-sv-title 2026-09-23-742bf48b-07-sv-desc">
+  <title id="2026-09-23-742bf48b-07-sv-title">Java 컨텍스트 전달 방법 선택 플로우차트</title>
+  <desc id="2026-09-23-742bf48b-07-sv-desc">Virtual Thread 또는 구조적 동시성 환경에서는 Scoped Values를 권장하고, 값 변경이 잦거나 레거시 통합 부담이 크면 ThreadLocal을 유지하도록 안내하는 의사결정 흐름도.</desc>
+
+  <defs>
+    <!-- Arrow markers -->
+    <marker id="2026-09-23-742bf48b-07-sv-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-09-23-742bf48b-07-sv-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <marker id="2026-09-23-742bf48b-07-sv-arrow-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3a548f"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="960" height="480" fill="#f8fafb"/>
+
+  <!-- ============================================================
+       CONNECTORS — drawn before boxes so z-order is correct
+       ============================================================ -->
+
+  <!-- N → Q1 (horizontal right, y=180) -->
+  <path d="M 220,180 L 308,180"
+        fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-23-742bf48b-07-sv-arrow)"/>
+
+  <!-- Q1 → TL : 예,자주 — go right then up -->
+  <!-- Q1 center: 360,180. TL center: 820,96. 
+       Path: right to x=500, up to y=96, right to TL left edge x=756 -->
+  <path d="M 412,180 L 500,180 L 500,96 L 756,96"
+        fill="none" stroke="#3f545c" stroke-width="1" stroke-dasharray="5,4"
+        marker-end="url(#2026-09-23-742bf48b-07-sv-arrow)"/>
+  <!-- label: 예, 자주 -->
+  <rect x="434" y="120" width="48" height="14" rx="2" fill="#f8fafb"/>
+  <text x="458" y="130" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">예, 자주</text>
+
+  <!-- Q1 → Q2 : 아니오,읽기 위주 — go right, y=180 -->
+  <path d="M 412,180 L 524,180"
+        fill="none" stroke="#0d5763" stroke-width="1" marker-end="url(#2026-09-23-742bf48b-07-sv-arrow-accent)"/>
+  <!-- label: 아니오 -->
+  <rect x="432" y="156" width="72" height="14" rx="2" fill="#f8fafb"/>
+  <text x="468" y="166" fill="#0d5763" font-size="10" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">아니오, 읽기 위주</text>
+
+  <!-- Q2 → SV : 예 — go right then down to y=280, right to SV -->
+  <!-- Q2 center: 600,180. SV center: 820,280.
+       Path: right to x=700, down to y=280, right to SV left edge x=756 -->
+  <path d="M 676,180 L 700,180 L 700,280 L 756,280"
+        fill="none" stroke="#0d5763" stroke-width="1" marker-end="url(#2026-09-23-742bf48b-07-sv-arrow-accent)"/>
+  <!-- label: 예 -->
+  <rect x="672" y="156" width="28" height="14" rx="2" fill="#f8fafb"/>
+  <text x="686" y="166" fill="#0d5763" font-size="10" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">예</text>
+
+  <!-- Q2 → Q3 : 아니오 — go down from Q2 bottom to Q3 top -->
+  <!-- Q2 center: 600,180. Q3 center: 600,364.
+       Q2 bottom: y=212. Q3 top: y=332. -->
+  <path d="M 600,212 L 600,332"
+        fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-23-742bf48b-07-sv-arrow)"/>
+  <!-- label: 아니오 -->
+  <rect x="556" y="252" width="44" height="14" rx="2" fill="#f8fafb"/>
+  <text x="578" y="262" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">아니오</text>
+
+  <!-- Q3 → TL : 예 — go right then up to y=96 -->
+  <!-- Q3 center: 600,364. TL left edge: 756,96.
+       Path: right to x=700, up to y=96, right to 756 -->
+  <path d="M 652,364 L 700,364 L 700,96 L 756,96"
+        fill="none" stroke="#3f545c" stroke-width="1" stroke-dasharray="5,4"
+        marker-end="url(#2026-09-23-742bf48b-07-sv-arrow)"/>
+  <!-- label: 예 -->
+  <rect x="668" y="340" width="28" height="14" rx="2" fill="#f8fafb"/>
+  <text x="682" y="350" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">예</text>
+
+  <!-- Q3 → SV : 아니오 — go right to SV -->
+  <!-- Q3 center: 600,364. SV center: 820,280.
+       Q3 right: 652. SV left: 756.
+       Path: right from Q3 to x=700, up to y=280, right to 756 -->
+  <path d="M 652,364 L 740,364 L 740,280 L 756,280"
+        fill="none" stroke="#0d5763" stroke-width="1" marker-end="url(#2026-09-23-742bf48b-07-sv-arrow-accent)"/>
+  <!-- label: 아니오 -->
+  <rect x="668" y="316" width="44" height="14" rx="2" fill="#f8fafb"/>
+  <text x="690" y="326" fill="#0d5763" font-size="10" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">아니오</text>
+
+  <!-- ============================================================
+       NODES
+       ============================================================ -->
+
+  <!-- N: 컨텍스트 전달 방법 선택 — Entry / Start oval -->
+  <!-- x=40, y=152, w=180, h=56, center=130,180 -->
+  <rect x="40" y="152" width="180" height="56" rx="20" fill="#f8fafb"/>
+  <rect x="40" y="152" width="180" height="56" rx="20" fill="rgba(58,84,143,0.08)" stroke="#3a548f" stroke-width="1"/>
+  <!-- tag -->
+  <rect x="52" y="160" width="28" height="11" rx="2" fill="transparent" stroke="rgba(58,84,143,0.4)" stroke-width="0.8"/>
+  <text x="66" y="168" fill="rgba(58,84,143,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">시작</text>
+  <!-- name -->
+  <text x="130" y="177" fill="#122127" font-size="12" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">컨텍스트 전달</text>
+  <text x="130" y="193" fill="#122127" font-size="12" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">방법 선택</text>
+
+  <!-- Q1: 스코프 안에서 값이 변경되나 — Decision diamond -->
+  <!-- center: 360,180. diamond half-w=52, half-h=44 -->
+  <rect x="308" y="136" width="104" height="88" fill="#f8fafb"/>
+  <polygon points="360,136 412,180 360,224 308,180"
+           fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="360" y="174" fill="#122127" font-size="10" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">스코프 안에서</text>
+  <text x="360" y="187" fill="#122127" font-size="10" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">값이 변경되나</text>
+
+  <!-- Q2: Virtual Thread 또는 구조적 동시성 — Decision diamond -->
+  <!-- center: 600,180. -->
+  <rect x="524" y="136" width="152" height="88" fill="#f8fafb"/>
+  <polygon points="600,136 676,180 600,224 524,180"
+           fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="600" y="171" fill="#122127" font-size="10" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Virtual Thread</text>
+  <text x="600" y="184" fill="#122127" font-size="10" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">또는 구조적 동시성</text>
+
+  <!-- Q3: 레거시 통합 부담 큰가 — Decision diamond -->
+  <!-- center: 600,364. -->
+  <rect x="548" y="320" width="104" height="88" fill="#f8fafb"/>
+  <polygon points="600,320 652,364 600,408 548,364"
+           fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="600" y="358" fill="#122127" font-size="10" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">레거시 통합</text>
+  <text x="600" y="371" fill="#122127" font-size="10" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">부담 큰가</text>
+
+  <!-- TL: ThreadLocal 유지 — Outcome box (warning style) -->
+  <!-- x=756, y=68, w=164, h=56, center=838,96 -->
+  <rect x="756" y="68" width="164" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="756" y="68" width="164" height="56" rx="6" fill="#f5e8cc" stroke="#a96a08" stroke-width="1"/>
+  <!-- tag -->
+  <rect x="768" y="76" width="52" height="11" rx="2" fill="transparent" stroke="rgba(169,106,8,0.4)" stroke-width="0.8"/>
+  <text x="794" y="84" fill="rgba(169,106,8,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">THREAD LOCAL</text>
+  <!-- name -->
+  <text x="838" y="99" fill="#122127" font-size="12" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">ThreadLocal 유지</text>
+
+  <!-- SV: Scoped Values 권장 — Focal outcome box (accent) -->
+  <!-- x=756, y=252, w=164, h=56, center=838,280 -->
+  <rect x="756" y="252" width="164" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="756" y="252" width="164" height="56" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <!-- tag -->
+  <rect x="768" y="260" width="60" height="11" rx="2" fill="transparent" stroke="rgba(13,87,99,0.4)" stroke-width="0.8"/>
+  <text x="798" y="268" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">RECOMMENDED</text>
+  <!-- name line 1 -->
+  <text x="838" y="285" fill="#122127" font-size="12" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Scoped Values 권장</text>
+
+  <!-- ============================================================
+       LEGEND — bottom strip
+       ============================================================ -->
+  <line x1="32" y1="432" x2="928" y2="432" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+
+  <!-- Legend label -->
+  <text x="32" y="448" fill="#6c8188" font-size="8" font-family="'IBM Plex Mono', monospace"
+        letter-spacing="0.14em">LEGEND</text>
+
+  <!-- Item 1: 의사결정 -->
+  <polygon points="100,453 110,448 120,453 110,458"
+           fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="128" y="457" fill="#3f545c" font-size="10"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">의사결정</text>
+
+  <!-- Item 2: ThreadLocal (유지) -->
+  <rect x="204" y="443" width="14" height="14" rx="3" fill="#f5e8cc" stroke="#a96a08" stroke-width="1"/>
+  <text x="224" y="457" fill="#3f545c" font-size="10"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">ThreadLocal 유지</text>
+
+  <!-- Item 3: Scoped Values (권장) -->
+  <rect x="356" y="443" width="14" height="14" rx="3" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="376" y="457" fill="#3f545c" font-size="10"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">Scoped Values 권장</text>
+
+  <!-- Item 4: 권장 경로 (solid) -->
+  <line x1="528" y1="450" x2="548" y2="450" stroke="#0d5763" stroke-width="1" marker-end="url(#2026-09-23-742bf48b-07-sv-arrow-accent)"/>
+  <text x="556" y="457" fill="#3f545c" font-size="10"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">권장 경로</text>
+
+  <!-- Item 5: 대안 경로 (dashed) -->
+  <line x1="656" y1="450" x2="676" y2="450" stroke="#3f545c" stroke-width="1" stroke-dasharray="5,4" marker-end="url(#2026-09-23-742bf48b-07-sv-arrow)"/>
+  <text x="684" y="457" fill="#3f545c" font-size="10"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">대안 경로</text>
+
+</svg>
+</div>
+</body>
+</html>

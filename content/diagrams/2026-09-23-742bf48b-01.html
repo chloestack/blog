@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+  .diagram-wrap { width: 100%; max-width: 960px; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<div class="diagram-wrap">
+<svg viewBox="0 0 960 600" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="2026-09-23-742bf48b-01-tl-title 2026-09-23-742bf48b-01-tl-desc">
+  <title id="2026-09-23-742bf48b-01-tl-title">ThreadLocal 메모리 누수 구조</title>
+  <desc id="2026-09-23-742bf48b-01-tl-desc">플랫폼 스레드의 ThreadLocalMap이 강한 참조로 값을 저장하고, ThreadLocal 키는 GC 후 소멸되지만 값은 남아 메모리 누수와 데이터 오염을 일으키는 구조를 보여주는 도식.</desc>
+
+  <defs>
+    <!-- 기본 화살표 -->
+    <marker id="2026-09-23-742bf48b-01-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <!-- 경고 화살표 (점선용) -->
+    <marker id="2026-09-23-742bf48b-01-arrow-warn" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#a96a08"/>
+    </marker>
+    <!-- 위험 화살표 -->
+    <marker id="2026-09-23-742bf48b-01-arrow-stop" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#94382b"/>
+    </marker>
+  </defs>
+
+  <!-- 배경 -->
+  <rect width="960" height="600" fill="#f8fafb"/>
+
+  <!-- ─────────────────────────────────────────────
+       연결선 (노드보다 먼저 그림)
+  ───────────────────────────────────────────── -->
+
+  <!-- T → M : 플랫폼 스레드 → ThreadLocalMap (오른쪽으로) -->
+  <line x1="216" y1="120" x2="336" y2="120" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-23-742bf48b-01-arrow)"/>
+
+  <!-- M → V1 : ThreadLocalMap → 값 요청 A (아래 왼쪽 대각을 피하는 직교) -->
+  <!-- M 중심 x=480, y=120 → V1 중심 x=380, y=260 -->
+  <!-- 경로: M 하단(480,168) → (380,168) → V1 상단(380,232) -->
+  <path d="M 480 168 L 480 196 L 380 196 L 380 232" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-23-742bf48b-01-arrow)"/>
+
+  <!-- M → V2 : ThreadLocalMap → 값 요청 B 잔류 -->
+  <!-- M 하단(480,168) → (580,168) → V2 상단(580,232) -->
+  <path d="M 480 168 L 480 196 L 580 196 L 580 232" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-23-742bf48b-01-arrow)"/>
+
+  <!-- K -.-> M : ThreadLocal 키 → ThreadLocalMap (점선, GC 후 키 소멸 값은 남음) -->
+  <!-- K 중심 x=480, y=420 → M 중심 x=480, y=120 -->
+  <!-- 경로: K 상단(480,392) → 왼쪽 우회 (380,392) → (380,144) → M 왼쪽(408,144) -->
+  <path d="M 480 392 L 340 392 L 340 120 L 408 120" fill="none" stroke="#a96a08" stroke-width="1" stroke-dasharray="5,4" marker-end="url(#2026-09-23-742bf48b-01-arrow-warn)"/>
+
+  <!-- 점선 레이블 -->
+  <rect x="282" y="236" width="116" height="28" rx="2" fill="#f8fafb"/>
+  <text x="340" y="248" fill="#a96a08" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="500">GC 후 키 소멸</text>
+  <text x="340" y="260" fill="#a96a08" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="500">값은 남음</text>
+
+  <!-- V2 → L : 잔류값 → 메모리 누수 -->
+  <line x1="580" y1="308" x2="580" y2="360" stroke="#94382b" stroke-width="1" marker-end="url(#2026-09-23-742bf48b-01-arrow-stop)"/>
+
+  <!-- ─────────────────────────────────────────────
+       노드
+  ───────────────────────────────────────────── -->
+
+  <!-- T: 플랫폼 스레드 (input 스타일, 링크 계열 파랑) -->
+  <rect x="60" y="88" width="156" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="60" y="88" width="156" height="64" rx="6" fill="rgba(58,84,143,0.08)" stroke="#3a548f" stroke-width="1"/>
+  <rect x="68" y="96" width="36" height="12" rx="2" fill="transparent" stroke="rgba(58,84,143,0.40)" stroke-width="0.8"/>
+  <text x="86" y="105" fill="rgba(58,84,143,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">THREAD</text>
+  <text x="138" y="124" fill="#122127" font-size="14" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">플랫폼 스레드</text>
+
+  <!-- M: ThreadLocalMap (focal, accent) -->
+  <rect x="336" y="88" width="288" height="80" rx="6" fill="#f8fafb"/>
+  <rect x="336" y="88" width="288" height="80" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="344" y="96" width="44" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="366" y="105" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">STORE</text>
+  <text x="480" y="128" fill="#122127" font-size="14" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">ThreadLocalMap</text>
+  <text x="480" y="148" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">강한 참조로 값 저장</text>
+
+  <!-- V1: 값 요청 A 데이터 (ok — 정상 값) -->
+  <rect x="296" y="232" width="168" height="76" rx="6" fill="#f8fafb"/>
+  <rect x="296" y="232" width="168" height="76" rx="6" fill="rgba(40,109,80,0.08)" stroke="#286d50" stroke-width="1"/>
+  <rect x="304" y="240" width="20" height="12" rx="2" fill="transparent" stroke="rgba(40,109,80,0.40)" stroke-width="0.8"/>
+  <text x="314" y="249" fill="rgba(40,109,80,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">VAL</text>
+  <text x="380" y="276" fill="#122127" font-size="14" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">요청 A 데이터</text>
+  <text x="380" y="296" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">정상 참조</text>
+
+  <!-- V2: 요청 B 잔류값 (stop — 위험) -->
+  <rect x="496" y="232" width="168" height="76" rx="6" fill="#f8fafb"/>
+  <rect x="496" y="232" width="168" height="76" rx="6" fill="rgba(148,56,43,0.08)" stroke="#94382b" stroke-width="1"/>
+  <rect x="504" y="240" width="36" height="12" rx="2" fill="transparent" stroke="rgba(148,56,43,0.40)" stroke-width="0.8"/>
+  <text x="522" y="249" fill="rgba(148,56,43,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">LEAK</text>
+  <text x="580" y="272" fill="#122127" font-size="14" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">요청 B 잔류 값</text>
+  <text x="580" y="292" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">remove() 미호출</text>
+
+  <!-- L: 메모리 누수 (stop — 결과) -->
+  <rect x="496" y="360" width="168" height="76" rx="6" fill="#f8fafb"/>
+  <rect x="496" y="360" width="168" height="76" rx="6" fill="rgba(148,56,43,0.12)" stroke="#94382b" stroke-width="1.2"/>
+  <rect x="504" y="368" width="44" height="12" rx="2" fill="transparent" stroke="rgba(148,56,43,0.50)" stroke-width="0.8"/>
+  <text x="526" y="377" fill="rgba(148,56,43,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">RESULT</text>
+  <text x="580" y="400" fill="#122127" font-size="14" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">메모리 누수</text>
+  <text x="580" y="420" fill="#94382b" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">데이터 오염</text>
+
+  <!-- K: ThreadLocal 키 (warn — 경고) -->
+  <rect x="396" y="388" width="168" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="396" y="388" width="168" height="64" rx="6" fill="rgba(169,106,8,0.08)" stroke="#a96a08" stroke-width="1" stroke-dasharray="4,3"/>
+  <rect x="404" y="396" width="20" height="12" rx="2" fill="transparent" stroke="rgba(169,106,8,0.40)" stroke-width="0.8"/>
+  <text x="414" y="405" fill="rgba(169,106,8,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">KEY</text>
+  <text x="480" y="424" fill="#122127" font-size="14" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">ThreadLocal 키</text>
+  <text x="480" y="440" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">약한 참조 (WeakReference)</text>
+
+  <!-- ─────────────────────────────────────────────
+       범례 (하단 구분선 + 가로 나열)
+  ───────────────────────────────────────────── -->
+  <line x1="40" y1="532" x2="920" y2="532" stroke="rgba(18,33,39,0.10)" stroke-width="0.8"/>
+  <text x="40" y="546" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.14em">LEGEND</text>
+
+  <!-- 범례: 정상 값 -->
+  <rect x="116" y="534" width="12" height="12" rx="2" fill="rgba(40,109,80,0.08)" stroke="#286d50" stroke-width="1"/>
+  <text x="134" y="545" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">정상 값</text>
+
+  <!-- 범례: 잔류·누수 -->
+  <rect x="220" y="534" width="12" height="12" rx="2" fill="rgba(148,56,43,0.08)" stroke="#94382b" stroke-width="1"/>
+  <text x="238" y="545" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">잔류·누수</text>
+
+  <!-- 범례: 약한 참조 키 -->
+  <rect x="340" y="534" width="12" height="12" rx="2" fill="rgba(169,106,8,0.08)" stroke="#a96a08" stroke-width="1" stroke-dasharray="4,3"/>
+  <text x="358" y="545" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">약한 참조 키 (GC 대상)</text>
+
+  <!-- 범례: 강한 참조 맵 -->
+  <rect x="540" y="534" width="12" height="12" rx="2" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="558" y="545" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">강한 참조 맵 (누수 원인)</text>
+
+  <!-- 범례: 점선 화살표 -->
+  <line x1="740" y1="540" x2="764" y2="540" stroke="#a96a08" stroke-width="1" stroke-dasharray="4,3"/>
+  <polygon points="760 537, 768 540, 760 543" fill="#a96a08"/>
+  <text x="772" y="545" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">GC 참조 소멸</text>
+</svg>
+</div>
+</body>
+</html>

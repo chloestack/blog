@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; display: flex; justify-content: center; padding: 0; }
+  svg { display: block; width: 100%; height: auto; max-width: 960px; }
+</style>
+</head>
+<body>
+<svg viewBox="0 0 960 520" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="2026-09-23-bf87766d-01-scache-title 2026-09-23-bf87766d-01-scache-desc">
+  <title id="2026-09-23-bf87766d-01-scache-title">Semantic Cache 동작 원리</title>
+  <desc id="2026-09-23-bf87766d-01-scache-desc">두 유사 질문이 임베딩 변환을 거쳐 코사인 유사도 판단을 받고, 임계값 이상이면 캐시 히트로 응답을 재사용하고, 미만이면 LLM API를 호출하는 흐름. 우측에 정확 일치 캐시가 캐시 미스를 내는 대조 경로를 함께 표시.</desc>
+
+  <defs>
+    <!-- arrow markers -->
+    <marker id="2026-09-23-bf87766d-01-sc-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-09-23-bf87766d-01-sc-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <marker id="2026-09-23-bf87766d-01-sc-arrow-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3a548f"/>
+    </marker>
+    <marker id="2026-09-23-bf87766d-01-sc-arrow-muted" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#6c8188"/>
+    </marker>
+  </defs>
+
+  <!-- background -->
+  <rect width="960" height="520" fill="#f8fafb"/>
+
+  <!-- ===================== CONNECTORS (drawn before boxes) ===================== -->
+
+  <!-- Q1 → EM -->
+  <path d="M 212 148 L 320 148" stroke="#3f545c" stroke-width="1" fill="none" marker-end="url(#2026-09-23-bf87766d-01-sc-arrow)"/>
+  <!-- Q2 → EM (enter bottom of EM) -->
+  <path d="M 212 236 Q 212 280 268 280 Q 320 280 320 260" stroke="#3f545c" stroke-width="1" fill="none" marker-end="url(#2026-09-23-bf87766d-01-sc-arrow)"/>
+
+  <!-- EM → SIM -->
+  <path d="M 412 196 L 480 196" stroke="#0d5763" stroke-width="1.2" fill="none" marker-end="url(#2026-09-23-bf87766d-01-sc-arrow-accent)"/>
+
+  <!-- SIM → HIT (yes, right, upper) -->
+  <path d="M 596 168 Q 620 148 644 148" stroke="#0d5763" stroke-width="1.2" fill="none" marker-end="url(#2026-09-23-bf87766d-01-sc-arrow-accent)"/>
+
+  <!-- SIM → API (no, down then right) -->
+  <path d="M 548 224 L 548 296 L 644 296" stroke="#3f545c" stroke-width="1" fill="none" marker-end="url(#2026-09-23-bf87766d-01-sc-arrow)"/>
+
+  <!-- EX → MISS -->
+  <path d="M 760 392 Q 760 420 808 420 Q 840 420 840 404" stroke="#6c8188" stroke-width="1" stroke-dasharray="5,4" fill="none" marker-end="url(#2026-09-23-bf87766d-01-sc-arrow-muted)"/>
+
+  <!-- ===================== NODE BOXES ===================== -->
+
+  <!-- Q1: 비밀번호 재설정 방법 — input type -->
+  <rect x="60" y="120" width="152" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="60" y="120" width="152" height="56" rx="6" fill="rgba(58,84,143,0.07)" stroke="#3a548f" stroke-width="1"/>
+  <rect x="68" y="126" width="28" height="12" rx="2" fill="transparent" stroke="rgba(58,84,143,0.35)" stroke-width="0.8"/>
+  <text x="82" y="135" fill="rgba(58,84,143,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">Q1</text>
+  <text x="136" y="152" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">비밀번호 재설정</text>
+  <text x="136" y="168" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">방법</text>
+
+  <!-- Q2: 패스워드 변경하는 법 — input type -->
+  <rect x="60" y="208" width="152" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="60" y="208" width="152" height="56" rx="6" fill="rgba(58,84,143,0.07)" stroke="#3a548f" stroke-width="1"/>
+  <rect x="68" y="214" width="28" height="12" rx="2" fill="transparent" stroke="rgba(58,84,143,0.35)" stroke-width="0.8"/>
+  <text x="82" y="223" fill="rgba(58,84,143,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">Q2</text>
+  <text x="136" y="240" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">패스워드 변경하는</text>
+  <text x="136" y="256" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">법</text>
+
+  <!-- EM: 임베딩 변환 — focal -->
+  <rect x="320" y="164" width="92" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="320" y="164" width="92" height="64" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="328" y="170" width="44" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.4)" stroke-width="0.8"/>
+  <text x="350" y="179" fill="rgba(13,87,99,0.85)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">EMBED</text>
+  <text x="366" y="204" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">임베딩 변환</text>
+  <text x="366" y="220" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">벡터 생성</text>
+
+  <!-- SIM: 코사인 유사도 판단 — focal diamond -->
+  <!-- diamond center: 548, 196 -->
+  <polygon points="548,164 596,196 548,228 500,196" fill="#f8fafb"/>
+  <polygon points="548,164 596,196 548,228 500,196" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="548" y="191" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">코사인 유사도</text>
+  <text x="548" y="207" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">≥ 임계값?</text>
+
+  <!-- HIT: 캐시 히트 — result positive -->
+  <rect x="644" y="120" width="120" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="644" y="120" width="120" height="56" rx="6" fill="rgba(40,109,80,0.08)" stroke="#286d50" stroke-width="1"/>
+  <rect x="652" y="126" width="36" height="12" rx="2" fill="transparent" stroke="rgba(40,109,80,0.4)" stroke-width="0.8"/>
+  <text x="670" y="135" fill="rgba(40,109,80,0.85)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">HIT</text>
+  <text x="704" y="152" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">캐시 히트</text>
+  <text x="704" y="168" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">응답 재사용</text>
+
+  <!-- API: LLM API 호출 — backend -->
+  <rect x="644" y="268" width="120" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="644" y="268" width="120" height="56" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="652" y="274" width="28" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.4)" stroke-width="0.8"/>
+  <text x="666" y="283" fill="rgba(18,33,39,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">API</text>
+  <text x="704" y="300" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">LLM API</text>
+  <text x="704" y="316" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">호출</text>
+
+  <!-- EX: 정확 일치 캐시 — external/muted -->
+  <rect x="644" y="364" width="132" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="644" y="364" width="132" height="56" rx="6" fill="rgba(18,33,39,0.03)" stroke="rgba(18,33,39,0.30)" stroke-width="1"/>
+  <rect x="652" y="370" width="32" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.25)" stroke-width="0.8"/>
+  <text x="668" y="379" fill="rgba(18,33,39,0.6)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">EXACT</text>
+  <text x="710" y="396" fill="#3f545c" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">정확 일치 캐시</text>
+  <text x="710" y="412" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">기존 방식</text>
+
+  <!-- MISS: 캐시 미스 — result negative -->
+  <rect x="800" y="364" width="116" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="800" y="364" width="116" height="56" rx="6" fill="rgba(148,56,43,0.07)" stroke="#94382b" stroke-width="1"/>
+  <rect x="808" y="370" width="28" height="12" rx="2" fill="transparent" stroke="rgba(148,56,43,0.4)" stroke-width="0.8"/>
+  <text x="822" y="379" fill="rgba(148,56,43,0.85)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">MISS</text>
+  <text x="858" y="396" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">두 질문 모두</text>
+  <text x="858" y="412" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">캐시 미스</text>
+
+  <!-- ===================== ARROW LABELS ===================== -->
+
+  <!-- 예 · 0.94 label on SIM→HIT path (segment around x=620, y=148) -->
+  <rect x="600" y="128" width="44" height="14" rx="2" fill="#f8fafb"/>
+  <text x="622" y="139" fill="#0d5763" font-size="9" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.04em">예 · 0.94</text>
+
+  <!-- 아니오 label on SIM→API path (segment at x=548, y=260) -->
+  <rect x="528" y="240" width="40" height="14" rx="2" fill="#f8fafb"/>
+  <text x="548" y="251" fill="#3f545c" font-size="9" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.04em">아니오</text>
+
+  <!-- ===================== LEGEND ===================== -->
+  <line x1="40" y1="472" x2="920" y2="472" stroke="rgba(18,33,39,0.10)" stroke-width="0.8"/>
+
+  <text x="40" y="488" fill="#3f545c" font-size="9" font-family="'IBM Plex Mono', monospace" letter-spacing="0.14em">LEGEND</text>
+
+  <!-- focal -->
+  <rect x="104" y="479" width="10" height="10" rx="2" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="120" y="489" fill="#3f545c" font-size="9" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">Semantic 단계</text>
+
+  <!-- positive -->
+  <rect x="248" y="479" width="10" height="10" rx="2" fill="rgba(40,109,80,0.08)" stroke="#286d50" stroke-width="1"/>
+  <text x="264" y="489" fill="#3f545c" font-size="9" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">캐시 히트</text>
+
+  <!-- api -->
+  <rect x="360" y="479" width="10" height="10" rx="2" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <text x="376" y="489" fill="#3f545c" font-size="9" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">외부 API 호출</text>
+
+  <!-- miss -->
+  <rect x="480" y="479" width="10" height="10" rx="2" fill="rgba(148,56,43,0.07)" stroke="#94382b" stroke-width="1"/>
+  <text x="496" y="489" fill="#3f545c" font-size="9" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">캐시 미스</text>
+
+  <!-- external/dashed -->
+  <line x1="596" y1="484" x2="616" y2="484" stroke="#6c8188" stroke-width="1" stroke-dasharray="4,3"/>
+  <text x="624" y="489" fill="#3f545c" font-size="9" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">정확 일치 방식 (기존)</text>
+
+</svg>
+</body>
+</html>

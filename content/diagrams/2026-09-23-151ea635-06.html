@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: #f8fafb; }
+  body { display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 0; }
+  .diagram-wrap { width: 100%; max-width: 960px; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<div class="diagram-wrap">
+<svg viewBox="0 0 960 340" xmlns="http://www.w3.org/2000/svg"
+     role="img" aria-labelledby="2026-09-23-151ea635-06-ecst-title 2026-09-23-151ea635-06-ecst-desc">
+  <title id="2026-09-23-151ea635-06-ecst-title">신규 서비스 부트스트랩 흐름</title>
+  <desc id="2026-09-23-151ea635-06-ecst-desc">스냅샷 전체 적재와 Kafka 이벤트 증분 재생을 통해 신규 서비스가 동기화를 완료하고 운영 준비 상태에 이르는 흐름.</desc>
+
+  <defs>
+    <!-- arrow markers -->
+    <marker id="2026-09-23-151ea635-06-ecst-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-09-23-151ea635-06-ecst-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <marker id="2026-09-23-151ea635-06-ecst-arrow-ok" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3a548f"/>
+    </marker>
+  </defs>
+
+  <!-- background -->
+  <rect width="960" height="340" fill="#f8fafb"/>
+
+  <!-- ─── arrows (drawn before boxes) ─── -->
+
+  <!-- SN → NS: exits SN right edge (cx=184, cy=120), enters NS left edge (cx=560, cy=152) -->
+  <!-- route: right from SN (x=284,y=120) → elbow down → enter NS top-left area -->
+  <!-- SN right: x=284, y=120. NS left: x=460, y=152 -->
+  <!-- orthogonal: go right to x=372, then down to y=152, then right to NS left x=460 -->
+  <path d="M 284,120 L 372,120 Q 380,120 380,128 L 380,144 Q 380,152 388,152 L 460,152"
+        fill="none" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-23-151ea635-06-ecst-arrow-accent)"/>
+  <!-- label: midpoint roughly x=420, y=136 -->
+  <rect x="386" y="124" width="68" height="14" rx="2" fill="#f8fafb"/>
+  <text x="420" y="134" fill="#0d5763" font-size="10" font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.06em">전체 적재</text>
+
+  <!-- K → NS: exits K right edge (cx=184, cy=212), enters NS left edge bottom area -->
+  <!-- K right: x=284, y=212. NS left: x=460, y=172 -->
+  <!-- orthogonal: right to x=372, then up to y=172, then right to x=460 -->
+  <path d="M 284,212 L 372,212 Q 380,212 380,204 L 380,180 Q 380,172 388,172 L 460,172"
+        fill="none" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-23-151ea635-06-ecst-arrow-accent)"/>
+  <!-- label: midpoint roughly x=420, y=192 -->
+  <rect x="382" y="180" width="76" height="14" rx="2" fill="#f8fafb"/>
+  <text x="420" y="190" fill="#0d5763" font-size="10" font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.06em">증분 재생</text>
+
+  <!-- NS → RDY: exits NS right edge (x=660, y=162), enters RDY left (x=764, y=162) -->
+  <path d="M 660,162 L 764,162"
+        fill="none" stroke="#3a548f" stroke-width="1.2" marker-end="url(#2026-09-23-151ea635-06-ecst-arrow-ok)"/>
+  <!-- label: midpoint x=712, y=154 -->
+  <rect x="678" y="148" width="68" height="14" rx="2" fill="#f8fafb"/>
+  <text x="712" y="158" fill="#3a548f" font-size="10" font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.06em">동기화 완료</text>
+
+  <!-- ─── nodes ─── -->
+
+  <!-- SN: 스냅샷 / S3 · Object Storage — focal (store shape: cylinder-like with rounded top) -->
+  <!-- Using a tall rect with accent treatment, cx=184, cy=120, w=200, h=96 -->
+  <!-- paper mask -->
+  <rect x="84" y="72" width="200" height="96" rx="6" fill="#f8fafb"/>
+  <!-- styled box (focal: accent-tint fill, accent stroke) -->
+  <rect x="84" y="72" width="200" height="96" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <!-- type tag -->
+  <rect x="92" y="80" width="48" height="13" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="116" y="90" fill="rgba(13,87,99,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.10em">STORAGE</text>
+  <!-- node name -->
+  <text x="184" y="116" fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">스냅샷</text>
+  <!-- sublabel -->
+  <text x="184" y="133" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">S3 / Object Storage</text>
+
+  <!-- K: Kafka 스냅샷 이후 이벤트 — focal -->
+  <!-- cx=184, cy=212, w=200, h=96 -->
+  <rect x="84" y="164" width="200" height="96" rx="6" fill="#f8fafb"/>
+  <rect x="84" y="164" width="200" height="96" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="92" y="172" width="44" height="13" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="114" y="182" fill="rgba(13,87,99,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.10em">STREAM</text>
+  <text x="184" y="206" fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Kafka</text>
+  <text x="184" y="223" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">스냅샷 이후 이벤트</text>
+
+  <!-- NS: 신규 서비스 — backend/step node -->
+  <!-- cx=560, cy=162, w=200, h=80 -->
+  <rect x="460" y="122" width="200" height="80" rx="6" fill="#f8fafb"/>
+  <rect x="460" y="122" width="200" height="80" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="468" y="130" width="44" height="13" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="490" y="140" fill="rgba(18,33,39,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.10em">SERVICE</text>
+  <text x="560" y="170" fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">신규 서비스</text>
+  <text x="560" y="187" fill="#6c8188" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">부트스트랩 중</text>
+
+  <!-- RDY: 운영 준비 — no fill, muted border -->
+  <!-- cx=832, cy=162, w=148, h=60 -->
+  <rect x="764" y="132" width="148" height="60" rx="6" fill="#f8fafb"/>
+  <rect x="764" y="132" width="148" height="60" rx="6" fill="rgba(58,84,143,0.06)" stroke="#3a548f" stroke-width="1"/>
+  <rect x="772" y="140" width="36" height="13" rx="2" fill="transparent" stroke="rgba(58,84,143,0.40)" stroke-width="0.8"/>
+  <text x="790" y="150" fill="rgba(58,84,143,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.10em">STATE</text>
+  <text x="838" y="170" fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">운영 준비</text>
+
+  <!-- ─── legend strip ─── -->
+  <line x1="32" y1="296" x2="928" y2="296" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+
+  <!-- legend label -->
+  <text x="32" y="312" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace"
+        letter-spacing="0.14em">LEGEND</text>
+
+  <!-- focal swatch -->
+  <rect x="104" y="304" width="12" height="12" rx="2" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="122" y="314" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">데이터 소스</text>
+
+  <!-- backend swatch -->
+  <rect x="232" y="304" width="12" height="12" rx="2" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <text x="250" y="314" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">처리 서비스</text>
+
+  <!-- state swatch -->
+  <rect x="360" y="304" width="12" height="12" rx="2" fill="rgba(58,84,143,0.06)" stroke="#3a548f" stroke-width="1"/>
+  <text x="378" y="314" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">최종 상태</text>
+
+</svg>
+</div>
+</body>
+</html>

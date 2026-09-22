@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; font-family: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 400" role="img" aria-labelledby="2026-09-23-742bf48b-02-tl-scoped-title 2026-09-23-742bf48b-02-tl-scoped-desc">
+  <title id="2026-09-23-742bf48b-02-tl-scoped-title">InheritableThreadLocal 복사 비용 문제</title>
+  <desc id="2026-09-23-742bf48b-02-tl-scoped-desc">부모 Virtual Thread가 자식 VT 1·2·N 각각에 ThreadLocalMap 전체를 복사하고, 그 결과 메모리와 복사 비용이 N배로 누적되는 구조를 보여준다.</desc>
+
+  <defs>
+    <!-- 기본 화살표 -->
+    <marker id="2026-09-23-742bf48b-02-arr" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <!-- 경고 화살표 -->
+    <marker id="2026-09-23-742bf48b-02-arr-warn" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#a96a08"/>
+    </marker>
+    <!-- 위험 화살표 -->
+    <marker id="2026-09-23-742bf48b-02-arr-stop" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#94382b"/>
+    </marker>
+  </defs>
+
+  <!-- 배경 -->
+  <rect width="960" height="400" fill="#f8fafb"/>
+
+  <!-- ───── 화살표 (박스보다 먼저) ───── -->
+
+  <!-- P → C1 (위쪽 대각선 방지: 수평 + 수직 꺾기) -->
+  <!-- P 오른쪽 중심 (196, 148), 꺾어서 C1 왼쪽 중심 (456, 112) -->
+  <path d="M 196,148 H 326 V 112 H 456" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-23-742bf48b-02-arr)"/>
+  <!-- 라벨 -->
+  <rect x="224" y="88" width="72" height="16" rx="2" fill="#f8fafb"/>
+  <text x="260" y="100" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.04em">전체 복사</text>
+
+  <!-- P → C2 (직선 수평) -->
+  <!-- P 오른쪽 중심 (196, 200), C2 왼쪽 중심 (456, 200) -->
+  <path d="M 196,200 H 456" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-23-742bf48b-02-arr)"/>
+  <!-- 라벨 -->
+  <rect x="288" y="180" width="72" height="16" rx="2" fill="#f8fafb"/>
+  <text x="324" y="192" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.04em">전체 복사</text>
+
+  <!-- P → C3 (아래 꺾기) -->
+  <!-- P 오른쪽 중심 (196, 200), 꺾어서 C3 왼쪽 중심 (456, 288) -->
+  <path d="M 196,252 H 326 V 288 H 456" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-23-742bf48b-02-arr)"/>
+  <!-- 라벨 -->
+  <rect x="224" y="292" width="72" height="16" rx="2" fill="#f8fafb"/>
+  <text x="260" y="304" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.04em">전체 복사</text>
+
+  <!-- C1 → W (수평 + 수직 꺾기) -->
+  <!-- C1 오른쪽 (576, 112), W 왼쪽 (756, 200) -->
+  <path d="M 576,112 H 668 V 200 H 756" fill="none" stroke="#94382b" stroke-width="1" marker-end="url(#2026-09-23-742bf48b-02-arr-stop)"/>
+
+  <!-- C2 → W (직선 수평) -->
+  <!-- C2 오른쪽 (576, 200), W 왼쪽 (756, 200) -->
+  <path d="M 576,200 H 756" fill="none" stroke="#94382b" stroke-width="1" marker-end="url(#2026-09-23-742bf48b-02-arr-stop)"/>
+
+  <!-- C3 → W (수평 + 수직 꺾기) -->
+  <!-- C3 오른쪽 (576, 288), W 왼쪽 (756, 200) -->
+  <path d="M 576,288 H 668 V 200 H 756" fill="none" stroke="#94382b" stroke-width="1" marker-end="url(#2026-09-23-742bf48b-02-arr-stop)"/>
+
+  <!-- ───── 노드 박스 ───── -->
+
+  <!-- P: 부모 Virtual Thread (focal) -->
+  <!-- 중심 (96, 200), 크기 200×104 → x=0, y=148, w=196, h=104 -->
+  <rect x="0" y="148" width="196" height="104" rx="6" fill="#f8fafb"/>
+  <rect x="0" y="148" width="196" height="104" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <!-- 타입 태그 -->
+  <rect x="8" y="156" width="48" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="32" y="165" fill="rgba(13,87,99,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">THREAD</text>
+  <!-- 이름 -->
+  <text x="98" y="194" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">부모 Virtual Thread</text>
+  <!-- 서브라벨 -->
+  <text x="98" y="212" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">InheritableThreadLocal</text>
+
+  <!-- C1: 자식 VT 1 -->
+  <!-- 중심 (516, 112), 크기 120×64 → x=456, y=80 -->
+  <rect x="456" y="80" width="120" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="456" y="80" width="120" height="64" rx="6" fill="rgba(169,106,8,0.06)" stroke="#a96a08" stroke-width="1"/>
+  <rect x="464" y="88" width="28" height="12" rx="2" fill="transparent" stroke="rgba(169,106,8,0.40)" stroke-width="0.8"/>
+  <text x="478" y="97" fill="rgba(169,106,8,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">VT</text>
+  <text x="516" y="116" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">자식 VT 1</text>
+  <text x="516" y="132" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">독립 맵</text>
+
+  <!-- C2: 자식 VT 2 -->
+  <!-- 중심 (516, 200), x=456, y=168 -->
+  <rect x="456" y="168" width="120" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="456" y="168" width="120" height="64" rx="6" fill="rgba(169,106,8,0.06)" stroke="#a96a08" stroke-width="1"/>
+  <rect x="464" y="176" width="28" height="12" rx="2" fill="transparent" stroke="rgba(169,106,8,0.40)" stroke-width="0.8"/>
+  <text x="478" y="185" fill="rgba(169,106,8,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">VT</text>
+  <text x="516" y="204" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">자식 VT 2</text>
+  <text x="516" y="220" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">독립 맵</text>
+
+  <!-- C3: 자식 VT N -->
+  <!-- 중심 (516, 288), x=456, y=256 -->
+  <rect x="456" y="256" width="120" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="456" y="256" width="120" height="64" rx="6" fill="rgba(169,106,8,0.06)" stroke="#a96a08" stroke-width="1"/>
+  <rect x="464" y="264" width="28" height="12" rx="2" fill="transparent" stroke="rgba(169,106,8,0.40)" stroke-width="0.8"/>
+  <text x="478" y="273" fill="rgba(169,106,8,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">VT</text>
+  <text x="516" y="292" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">자식 VT N</text>
+  <text x="516" y="308" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">독립 맵</text>
+
+  <!-- W: 메모리 ×N 복사 비용 (경고 focal) -->
+  <!-- 중심 (856, 200), 크기 200×96 → x=756, y=152 -->
+  <rect x="756" y="152" width="196" height="96" rx="6" fill="#f8fafb"/>
+  <rect x="756" y="152" width="196" height="96" rx="6" fill="rgba(148,56,43,0.07)" stroke="#94382b" stroke-width="1.2"/>
+  <rect x="764" y="160" width="36" height="12" rx="2" fill="transparent" stroke="rgba(148,56,43,0.40)" stroke-width="0.8"/>
+  <text x="782" y="169" fill="rgba(148,56,43,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">COST</text>
+  <text x="854" y="196" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">메모리 ×N</text>
+  <text x="854" y="214" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">복사 비용 누적</text>
+
+  <!-- ───── 점선 구분 (중간 그룹 암시) ───── -->
+  <!-- 자식 VT 그룹을 감싸는 조용한 zone 테두리 -->
+  <rect x="440" y="64" width="152" height="244" rx="8" fill="none" stroke="rgba(18,33,39,0.10)" stroke-width="0.8" stroke-dasharray="4,3"/>
+  <text x="448" y="60" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.10em">자식 스레드</text>
+
+  <!-- ───── 범례 ───── -->
+  <line x1="30" y1="368" x2="930" y2="368" stroke="rgba(18,33,39,0.10)" stroke-width="0.8"/>
+  <text x="30" y="382" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.14em">범례</text>
+
+  <!-- focal -->
+  <rect x="80" y="374" width="12" height="12" rx="2" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="98" y="384" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif">부모 (focal)</text>
+
+  <!-- warn -->
+  <rect x="196" y="374" width="12" height="12" rx="2" fill="rgba(169,106,8,0.06)" stroke="#a96a08" stroke-width="1"/>
+  <text x="214" y="384" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif">자식 VT (복사됨)</text>
+
+  <!-- stop -->
+  <rect x="340" y="374" width="12" height="12" rx="2" fill="rgba(148,56,43,0.07)" stroke="#94382b" stroke-width="1"/>
+  <text x="358" y="384" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif">누적 비용</text>
+
+  <!-- arrow legend -->
+  <line x1="464" y1="380" x2="488" y2="380" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-23-742bf48b-02-arr)"/>
+  <text x="496" y="384" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif">ThreadLocalMap 전체 복사</text>
+</svg>
+</body>
+</html>

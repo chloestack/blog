@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<svg viewBox="0 0 960 320" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="2026-09-23-151ea635-04-ecst-title 2026-09-23-151ea635-04-ecst-desc">
+  <title id="2026-09-23-151ea635-04-ecst-title">Transactional Outbox 패턴 데이터 흐름</title>
+  <desc id="2026-09-23-151ea635-04-ecst-desc">상품 서비스가 단일 트랜잭션으로 DB(products + outbox_events)에 쓰고, Debezium이 CDC로 변경을 감지해 Kafka에 이벤트를 발행하면 구독자 서비스들이 소비하는 흐름을 보여준다.</desc>
+
+  <defs>
+    <!-- Arrow markers -->
+    <marker id="2026-09-23-151ea635-04-ecst-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-09-23-151ea635-04-ecst-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <marker id="2026-09-23-151ea635-04-ecst-arrow-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3a548f"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="960" height="320" fill="#f8fafb"/>
+
+  <!-- ── Connectors (drawn before boxes) ── -->
+
+  <!-- S → DB (단일 트랜잭션) -->
+  <line x1="212" y1="136" x2="288" y2="136" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-23-151ea635-04-ecst-arrow)"/>
+  <!-- label mask + text -->
+  <rect x="218" y="116" width="64" height="14" rx="2" fill="#f8fafb"/>
+  <text x="250" y="127" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="500">단일 트랜잭션</text>
+
+  <!-- DB → D (CDC 변경 감지) -->
+  <line x1="420" y1="136" x2="492" y2="136" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-23-151ea635-04-ecst-arrow)"/>
+  <rect x="424" y="116" width="64" height="14" rx="2" fill="#f8fafb"/>
+  <text x="456" y="127" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="500">CDC 변경 감지</text>
+
+  <!-- D → K (이벤트 발행) -->
+  <line x1="604" y1="136" x2="672" y2="136" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-23-151ea635-04-ecst-arrow-accent)"/>
+  <rect x="614" y="116" width="48" height="14" rx="2" fill="#f8fafb"/>
+  <text x="638" y="127" fill="#0d5763" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="500">이벤트 발행</text>
+
+  <!-- K → C (소비) -->
+  <line x1="788" y1="136" x2="840" y2="136" stroke="#3a548f" stroke-width="1" marker-end="url(#2026-09-23-151ea635-04-ecst-arrow-link)"/>
+  <rect x="800" y="116" width="28" height="14" rx="2" fill="#f8fafb"/>
+  <text x="814" y="127" fill="#3a548f" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">소비</text>
+
+  <!-- ── Node 1: 상품 서비스 (input treatment) ── -->
+  <rect x="56" y="100" width="156" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="56" y="100" width="156" height="72" rx="6" fill="rgba(63,84,92,0.10)" stroke="#6c8188" stroke-width="1"/>
+  <rect x="64" y="108" width="36" height="12" rx="2" fill="transparent" stroke="rgba(108,129,136,0.40)" stroke-width="0.8"/>
+  <text x="82" y="117" fill="rgba(108,129,136,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">SVC</text>
+  <text x="134" y="143" fill="#122127" font-size="14" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="600">상품 서비스</text>
+  <text x="134" y="161" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">Order Writer</text>
+
+  <!-- ── Node 2: products + outbox_events DB (store/focal) ── -->
+  <!-- cylinder-style store box -->
+  <rect x="288" y="96" width="132" height="80" rx="6" fill="#f8fafb"/>
+  <rect x="288" y="96" width="132" height="80" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <rect x="296" y="104" width="52" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="322" y="113" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">STORE</text>
+  <text x="354" y="140" fill="#122127" font-size="14" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="600">PostgreSQL</text>
+  <text x="354" y="158" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">products</text>
+  <text x="354" y="171" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">outbox_events</text>
+
+  <!-- ── Node 3: Debezium (backend/API) ── -->
+  <rect x="492" y="100" width="112" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="492" y="100" width="112" height="72" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="500" y="108" width="36" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="518" y="117" fill="rgba(18,33,39,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">CDC</text>
+  <text x="548" y="143" fill="#122127" font-size="14" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="600">Debezium</text>
+  <text x="548" y="161" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">connector</text>
+
+  <!-- ── Node 4: Kafka (store/focal – accent) ── -->
+  <rect x="672" y="96" width="116" height="80" rx="6" fill="#f8fafb"/>
+  <rect x="672" y="96" width="116" height="80" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="680" y="104" width="44" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="702" y="113" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">BROKER</text>
+  <text x="730" y="140" fill="#122127" font-size="14" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="600">Kafka</text>
+  <text x="730" y="158" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">topic: product.*</text>
+  <text x="730" y="171" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">at-least-once</text>
+
+  <!-- ── Node 5: 구독자 서비스들 (external) ── -->
+  <rect x="840" y="100" width="80" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="840" y="100" width="80" height="72" rx="6" fill="rgba(18,33,39,0.03)" stroke="rgba(18,33,39,0.30)" stroke-width="1"/>
+  <rect x="848" y="108" width="36" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.30)" stroke-width="0.8"/>
+  <text x="866" y="117" fill="rgba(18,33,39,0.5)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">SUB</text>
+  <text x="880" y="140" fill="#122127" font-size="13" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="600">구독자</text>
+  <text x="880" y="157" fill="#122127" font-size="13" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="600">서비스들</text>
+
+  <!-- ── Legend strip ── -->
+  <line x1="30" y1="248" x2="930" y2="248" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+  <text x="30" y="264" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.14em">LEGEND</text>
+
+  <!-- Focal (accent border) -->
+  <rect x="100" y="256" width="12" height="12" rx="2" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="118" y="266" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">핵심 컴포넌트</text>
+
+  <!-- Backend (white border) -->
+  <rect x="240" y="256" width="12" height="12" rx="2" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <text x="258" y="266" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">내부 서비스</text>
+
+  <!-- Input (muted border) -->
+  <rect x="360" y="256" width="12" height="12" rx="2" fill="rgba(63,84,92,0.10)" stroke="#6c8188" stroke-width="1"/>
+  <text x="378" y="266" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">진입점</text>
+
+  <!-- External (faint border) -->
+  <rect x="444" y="256" width="12" height="12" rx="2" fill="rgba(18,33,39,0.03)" stroke="rgba(18,33,39,0.30)" stroke-width="1"/>
+  <text x="462" y="266" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">외부 소비자</text>
+
+  <!-- Arrow: accent -->
+  <line x1="570" y1="262" x2="594" y2="262" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-23-151ea635-04-ecst-arrow-accent)"/>
+  <text x="600" y="266" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">이벤트 발행</text>
+
+  <!-- Arrow: default -->
+  <line x1="692" y1="262" x2="716" y2="262" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-23-151ea635-04-ecst-arrow)"/>
+  <text x="722" y="266" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">내부 흐름</text>
+
+  <!-- Arrow: link -->
+  <line x1="812" y1="262" x2="836" y2="262" stroke="#3a548f" stroke-width="1" marker-end="url(#2026-09-23-151ea635-04-ecst-arrow-link)"/>
+  <text x="842" y="266" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">구독 소비</text>
+</svg>
+</body>
+</html>

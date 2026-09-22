@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; font-family: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; }
+  .diagram-wrap { max-width: 960px; margin: 0 auto; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<div class="diagram-wrap">
+<svg viewBox="0 0 960 620" xmlns="http://www.w3.org/2000/svg"
+     role="img" aria-labelledby="2026-09-23-bf87766d-02-sc-title 2026-09-23-bf87766d-02-sc-desc">
+  <title id="2026-09-23-bf87766d-02-sc-title">Semantic Cache 처리 흐름</title>
+  <desc id="2026-09-23-bf87766d-02-sc-desc">사용자 질문이 임베딩 모델과 벡터 저장소를 거쳐 유사도 검색 후 캐시 응답 또는 LLM API 호출로 분기되는 흐름을 보여주는 순서도.</desc>
+
+  <defs>
+    <!-- 기본 화살표 (muted) -->
+    <marker id="2026-09-23-bf87766d-02-sc-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <!-- 액센트 화살표 -->
+    <marker id="2026-09-23-bf87766d-02-sc-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <!-- 분기 화살표 (캐시 히트) -->
+    <marker id="2026-09-23-bf87766d-02-sc-arrow-ok" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#286d50"/>
+    </marker>
+    <!-- 분기 화살표 (API) -->
+    <marker id="2026-09-23-bf87766d-02-sc-arrow-warn" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#a96a08"/>
+    </marker>
+  </defs>
+
+  <!-- 배경 -->
+  <rect width="960" height="620" fill="#f8fafb"/>
+
+  <!-- ─────────────────────────────────────────
+       ARROWS (drawn before boxes)
+  ───────────────────────────────────────── -->
+
+  <!-- Q → EM (수직) -->
+  <line x1="480" y1="108" x2="480" y2="152" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-23-bf87766d-02-sc-arrow)"/>
+
+  <!-- EM → V (수직) -->
+  <line x1="480" y1="212" x2="480" y2="256" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-23-bf87766d-02-sc-arrow)"/>
+
+  <!-- V → VS (수직) -->
+  <line x1="480" y1="312" x2="480" y2="356" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-23-bf87766d-02-sc-arrow)"/>
+
+  <!-- VS → KNN (수직) -->
+  <line x1="480" y1="416" x2="480" y2="456" stroke="#0d5763" stroke-width="1" marker-end="url(#2026-09-23-bf87766d-02-sc-arrow-accent)"/>
+
+  <!-- KNN → TH (수직) -->
+  <line x1="480" y1="508" x2="480" y2="540" stroke="#0d5763" stroke-width="1" marker-end="url(#2026-09-23-bf87766d-02-sc-arrow-accent)"/>
+
+  <!-- TH → CR (예: 오른쪽 수평 분기) -->
+  <!-- TH 다이아몬드 중심 (480, 560), 오른쪽 꼭짓점 x=538 -->
+  <!-- 수평으로 오른쪽 CR 박스 왼쪽 가장자리까지 -->
+  <path d="M538,560 H700 V560" fill="none" stroke="#286d50" stroke-width="1" marker-end="url(#2026-09-23-bf87766d-02-sc-arrow-ok)"/>
+  <!-- 화살표 레이블 "예" -->
+  <rect x="600" y="548" width="20" height="14" rx="2" fill="#f8fafb"/>
+  <text x="610" y="559" fill="#286d50" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500" text-anchor="middle">예</text>
+
+  <!-- TH → API (아니오: 아래 수직) -->
+  <!-- TH 다이아몬드 아래 꼭짓점 y=580, x=480 -->
+  <!-- API 박스는 TH 다이아몬드 아래에 배치 불가 (공간 부족) → 왼쪽으로 분기 -->
+  <!-- TH 왼쪽 꼭짓점 x=422 → 왼쪽으로 L자 라우팅 -->
+  <path d="M422,560 H240 V560" fill="none" stroke="#a96a08" stroke-width="1" marker-end="url(#2026-09-23-bf87766d-02-sc-arrow-warn)"/>
+  <!-- 화살표 레이블 "아니오" -->
+  <rect x="302" y="548" width="44" height="14" rx="2" fill="#f8fafb"/>
+  <text x="324" y="559" fill="#a96a08" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500" text-anchor="middle">아니오</text>
+
+  <!-- ─────────────────────────────────────────
+       NODES
+  ───────────────────────────────────────── -->
+
+  <!-- Q: 사용자 질문 (Input 처리) -->
+  <!-- 중앙 x=480, top y=52, w=200, h=56 -->
+  <rect x="380" y="52" width="200" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="380" y="52" width="200" height="56" rx="6" fill="rgba(58,84,143,0.07)" stroke="#3a548f" stroke-width="1"/>
+  <rect x="388" y="60" width="26" height="12" rx="2" fill="transparent" stroke="rgba(58,84,143,0.40)" stroke-width="0.8"/>
+  <text x="401" y="69" fill="rgba(58,84,143,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">IN</text>
+  <text x="480" y="84" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">사용자 질문</text>
+  <text x="480" y="100" fill="#6c8188" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">자연어 텍스트</text>
+
+  <!-- EM: 임베딩 모델 (focal) -->
+  <rect x="368" y="152" width="224" height="60" rx="6" fill="#f8fafb"/>
+  <rect x="368" y="152" width="224" height="60" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <rect x="376" y="160" width="44" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="398" y="169" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">MODEL</text>
+  <text x="480" y="188" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">임베딩 모델</text>
+  <text x="480" y="204" fill="#6c8188" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">원격 API · 로컬</text>
+
+  <!-- V: 벡터 (Store/State — muted) -->
+  <rect x="380" y="256" width="200" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="380" y="256" width="200" height="56" rx="6" fill="rgba(18,33,39,0.05)" stroke="#c3d0d4" stroke-width="1"/>
+  <rect x="388" y="264" width="44" height="12" rx="2" fill="transparent" stroke="rgba(195,208,212,0.60)" stroke-width="0.8"/>
+  <text x="410" y="273" fill="#6c8188" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">VECTOR</text>
+  <text x="480" y="292" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">벡터 변환</text>
+  <text x="480" y="308" fill="#6c8188" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">1536-dim · L2 정규화</text>
+
+  <!-- VS: 벡터 저장소 (focal) -->
+  <rect x="364" y="356" width="232" height="60" rx="6" fill="#f8fafb"/>
+  <rect x="364" y="356" width="232" height="60" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="372" y="364" width="44" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="394" y="373" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">STORE</text>
+  <text x="480" y="392" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">벡터 저장소</text>
+  <text x="480" y="408" fill="#6c8188" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">HNSW 인덱스</text>
+
+  <!-- KNN: ANN 검색 (Backend) -->
+  <rect x="380" y="456" width="200" height="52" rx="6" fill="#f8fafb"/>
+  <rect x="380" y="456" width="200" height="52" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="388" y="464" width="36" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="406" y="473" fill="rgba(18,33,39,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">ANN</text>
+  <text x="480" y="488" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">유사도 검색</text>
+  <text x="480" y="504" fill="#6c8188" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">상위 K개 후보</text>
+
+  <!-- TH: 유사도 임계값 판단 다이아몬드 -->
+  <!-- 중심 (480, 560), 너비 116, 높이 40 → 꼭짓점: top(480,540) right(538,560) bottom(480,580) left(422,560) -->
+  <rect x="422" y="540" width="116" height="40" rx="0" fill="#f8fafb"/>
+  <polygon points="480,540 538,560 480,580 422,560" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="480" y="557" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">유사도</text>
+  <text x="480" y="572" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">≥ 임계값?</text>
+
+  <!-- CR: 캐시 응답 반환 (오른쪽, y=560 중심) -->
+  <!-- w=180, h=52, 왼쪽 가장자리 x=700, 중심 x=790 -->
+  <rect x="700" y="534" width="180" height="52" rx="6" fill="#f8fafb"/>
+  <rect x="700" y="534" width="180" height="52" rx="6" fill="rgba(40,109,80,0.08)" stroke="#286d50" stroke-width="1"/>
+  <rect x="708" y="542" width="36" height="12" rx="2" fill="transparent" stroke="rgba(40,109,80,0.40)" stroke-width="0.8"/>
+  <text x="726" y="551" fill="rgba(40,109,80,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">HIT</text>
+  <text x="790" y="566" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">캐시 응답 반환</text>
+  <text x="790" y="580" fill="#6c8188" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">저장 없이 즉시 응답</text>
+
+  <!-- API: LLM API 호출 (왼쪽, y=560 중심) -->
+  <!-- w=196, h=52, 오른쪽 가장자리 x=240, 중심 x=142 -->
+  <rect x="44" y="534" width="196" height="52" rx="6" fill="#f8fafb"/>
+  <rect x="44" y="534" width="196" height="52" rx="6" fill="rgba(169,106,8,0.08)" stroke="#a96a08" stroke-width="1"/>
+  <rect x="52" y="542" width="44" height="12" rx="2" fill="transparent" stroke="rgba(169,106,8,0.40)" stroke-width="0.8"/>
+  <text x="74" y="551" fill="rgba(169,106,8,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">MISS</text>
+  <text x="142" y="566" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">LLM API 호출</text>
+  <text x="142" y="580" fill="#6c8188" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">응답 후 캐시 저장</text>
+
+  <!-- ─────────────────────────────────────────
+       LEGEND
+  ───────────────────────────────────────── -->
+  <line x1="32" y1="602" x2="928" y2="602" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+  <text x="32" y="614" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.14em">LEGEND</text>
+
+  <!-- 액센트 (캐시 경로) -->
+  <rect x="112" y="606" width="12" height="12" rx="2" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="130" y="616" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">핵심 단계</text>
+
+  <!-- 캐시 히트 -->
+  <rect x="232" y="606" width="12" height="12" rx="2" fill="rgba(40,109,80,0.08)" stroke="#286d50" stroke-width="1"/>
+  <text x="250" y="616" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">캐시 히트</text>
+
+  <!-- 캐시 미스 -->
+  <rect x="344" y="606" width="12" height="12" rx="2" fill="rgba(169,106,8,0.08)" stroke="#a96a08" stroke-width="1"/>
+  <text x="362" y="616" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">캐시 미스 (API 호출)</text>
+
+  <!-- 스토어 -->
+  <rect x="528" y="606" width="12" height="12" rx="2" fill="rgba(18,33,39,0.05)" stroke="#c3d0d4" stroke-width="1"/>
+  <text x="546" y="616" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">중간 데이터</text>
+
+</svg>
+</div>
+</body>
+</html>
