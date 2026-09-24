@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 24px; }
+  .diagram-wrap { width: 100%; max-width: 720px; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<div class="diagram-wrap">
+<svg viewBox="0 0 720 280" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="2026-09-24-932e209d-01-manual-loop-title 2026-09-24-932e209d-01-manual-loop-desc">
+  <title id="2026-09-24-932e209d-01-manual-loop-title">Manual Prompt Optimization Flow</title>
+  <desc id="2026-09-24-932e209d-01-manual-loop-desc">A flowchart showing a loop where a prompt is written, manually evaluated, rewritten if insufficient, and deployed if sufficient.</desc>
+
+  <defs>
+    <!-- 기본 (muted) 화살표 -->
+    <marker id="2026-09-24-932e209d-01-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <!-- 아니오 루프 화살표 (accent) -->
+    <marker id="2026-09-24-932e209d-01-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <!-- 예 화살표 (link) -->
+    <marker id="2026-09-24-932e209d-01-arrow-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3a548f"/>
+    </marker>
+  </defs>
+
+  <!-- 배경 -->
+  <rect width="720" height="280" fill="#f8fafb"/>
+
+  <!-- ─── 화살표 (노드보다 먼저 그리기) ─── -->
+
+  <!-- A → B -->
+  <line x1="128" y1="120" x2="196" y2="120" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-24-932e209d-01-arrow)"/>
+
+  <!-- B → C -->
+  <line x1="308" y1="120" x2="376" y2="120" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-24-932e209d-01-arrow)"/>
+
+  <!-- C → D -->
+  <line x1="488" y1="120" x2="540" y2="120" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-24-932e209d-01-arrow)"/>
+
+  <!-- D → E (예, 아래쪽 꺾음) -->
+  <!-- D 하단(572,148) → 아래 → 오른쪽 → E 왼쪽(624,200) -->
+  <path d="M572,148 L572,200 L624,200" fill="none" stroke="#3a548f" stroke-width="1" marker-end="url(#2026-09-24-932e209d-01-arrow-link)"/>
+
+  <!-- D → B (아니오, 위쪽 루프) -->
+  <!-- D 상단(572,92) → 위쪽 → 왼쪽 → B 상단(252,92) -->
+  <path d="M572,92 L572,56 L252,56 L252,92" fill="none" stroke="#0d5763" stroke-width="1.2" stroke-dasharray="5,3" marker-end="url(#2026-09-24-932e209d-01-arrow-accent)"/>
+
+  <!-- 화살표 레이블: 아니오 -->
+  <rect x="374" y="36" width="44" height="14" rx="2" fill="#f8fafb"/>
+  <text x="396" y="47" fill="#0d5763" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500" text-anchor="middle">No</text>
+
+  <!-- 화살표 레이블: 예 -->
+  <rect x="548" y="152" width="28" height="14" rx="2" fill="#f8fafb"/>
+  <text x="562" y="163" fill="#3a548f" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500" text-anchor="middle">Yes</text>
+
+  <!-- ─── 노드 ─── -->
+
+  <!-- A: 수동 접근법 — input 타입 -->
+  <rect x="28" y="92" width="100" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="28" y="92" width="100" height="56" rx="6" fill="rgba(63,84,92,0.10)" stroke="#6c8188" stroke-width="1"/>
+  <rect x="36" y="100" width="24" height="11" rx="2" fill="transparent" stroke="rgba(108,129,136,0.40)" stroke-width="0.8"/>
+  <text x="48" y="109" fill="rgba(108,129,136,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">START</text>
+  <text x="78" y="128" fill="#122127" font-size="12" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">Manual Approach</text>
+
+  <!-- B: 프롬프트 작성 — backend 타입 -->
+  <rect x="196" y="92" width="112" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="196" y="92" width="112" height="56" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="204" y="100" width="36" height="11" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="222" y="109" fill="rgba(18,33,39,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">STEP</text>
+  <text x="252" y="128" fill="#122127" font-size="12" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">Write Prompt</text>
+
+  <!-- C: 수동 평가 — backend 타입 -->
+  <rect x="376" y="92" width="112" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="376" y="92" width="112" height="56" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="384" y="100" width="36" height="11" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="402" y="109" fill="rgba(18,33,39,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">STEP</text>
+  <text x="432" y="128" fill="#122127" font-size="12" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">Manual Eval</text>
+
+  <!-- D: 충분한가? — 다이아몬드 결정 (focal) -->
+  <!-- 다이아몬드 중심: (572, 120), 너비 64, 높이 56 -->
+  <polygon points="572,92 604,120 572,148 540,120" fill="#f8fafb"/>
+  <polygon points="572,92 604,120 572,148 540,120" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="572" y="124" fill="#122127" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">Sufficient?</text>
+
+  <!-- E: 배포 — focal 타입 -->
+  <rect x="624" y="172" width="68" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="624" y="172" width="68" height="56" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="632" y="180" width="28" height="11" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="646" y="189" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">END</text>
+  <text x="658" y="212" fill="#122127" font-size="12" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">Deploy</text>
+
+  <!-- ─── 범례 ─── -->
+  <line x1="28" y1="248" x2="692" y2="248" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+  <text x="28" y="262" fill="#3f545c" font-size="8" font-family="'IBM Plex Mono', monospace" letter-spacing="0.14em">LEGEND</text>
+  <!-- 단계 -->
+  <rect x="90" y="254" width="12" height="12" rx="2" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <text x="108" y="264" fill="#3f545c" font-size="8" font-family="'IBM Plex Mono', monospace">Step</text>
+  <!-- 결정 -->
+  <polygon points="146,260 152,254 158,260 152,266" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="166" y="264" fill="#3f545c" font-size="8" font-family="'IBM Plex Mono', monospace">Decision</text>
+  <!-- 반복 루프 -->
+  <line x1="220" y1="260" x2="248" y2="260" stroke="#0d5763" stroke-width="1.2" stroke-dasharray="5,3"/>
+  <polygon points="244,257 252,260 244,263" fill="#0d5763"/>
+  <text x="256" y="264" fill="#3f545c" font-size="8" font-family="'IBM Plex Mono', monospace">Repeat Loop</text>
+</svg>
+</div>
+</body>
+</html>

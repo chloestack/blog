@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<svg viewBox="0 0 960 420" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="2026-09-24-932e209d-05-dspy-rag-title 2026-09-24-932e209d-05-dspy-rag-desc">
+  <title id="2026-09-24-932e209d-05-dspy-rag-title">DSPy RAG Pipeline</title>
+  <desc id="2026-09-24-932e209d-05-dspy-rag-desc">DSPy RAG flow from question input through query generation, vector retrieval, context assembly, answer generation, and quality evaluation to final answer. If quality fails, the flow returns to the query generation step.</desc>
+
+  <defs>
+    <!-- Arrow markers -->
+    <marker id="2026-09-24-932e209d-05-arr" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-09-24-932e209d-05-arr-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <marker id="2026-09-24-932e209d-05-arr-muted" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-09-24-932e209d-05-arr-retry" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#6c8188"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="960" height="420" fill="#f8fafb"/>
+
+  <!-- ── Connectors (drawn before boxes) ── -->
+
+  <!-- Q → GQ -->
+  <line x1="136" y1="180" x2="196" y2="180" stroke="#3f545c" stroke-width="1.2" marker-end="url(#2026-09-24-932e209d-05-arr)"/>
+
+  <!-- GQ → RET -->
+  <line x1="328" y1="180" x2="388" y2="180" stroke="#3f545c" stroke-width="1.2" marker-end="url(#2026-09-24-932e209d-05-arr)"/>
+
+  <!-- RET → CTX -->
+  <line x1="504" y1="180" x2="564" y2="180" stroke="#3f545c" stroke-width="1.2" marker-end="url(#2026-09-24-932e209d-05-arr)"/>
+
+  <!-- CTX → GEN -->
+  <line x1="680" y1="180" x2="740" y2="180" stroke="#3f545c" stroke-width="1.2" marker-end="url(#2026-09-24-932e209d-05-arr)"/>
+
+  <!-- GEN → EVAL (accent path) -->
+  <line x1="840" y1="180" x2="868" y2="180" stroke="#0d5763" stroke-width="1.4" marker-end="url(#2026-09-24-932e209d-05-arr-accent)"/>
+
+  <!-- EVAL → ANS (예) — elbow down then right -->
+  <!-- Exit EVAL bottom → go down to y=304 → go right to ANS center x=892 → up into ANS -->
+  <path d="M 892 220 L 892 308 L 892 308" stroke="#0d5763" stroke-width="1.4" fill="none" marker-end="url(#2026-09-24-932e209d-05-arr-accent)"/>
+
+  <!-- EVAL → ANS label mask -->
+  <rect x="860" y="256" width="24" height="14" rx="2" fill="#f8fafb"/>
+  <text x="872" y="267" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Yes</text>
+
+  <!-- EVAL retry → GQ (아니오): exit EVAL left side via top arc -->
+  <!-- From EVAL left (868,180), go left to x=196, routing above the diagram -->
+  <path d="M 868 160 L 868 96 L 264 96 L 264 156" stroke="#6c8188" stroke-width="1" stroke-dasharray="5,4" fill="none" marker-end="url(#2026-09-24-932e209d-05-arr-retry)"/>
+
+  <!-- retry label mask -->
+  <rect x="522" y="80" width="52" height="14" rx="2" fill="#f8fafb"/>
+  <text x="548" y="91" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">No</text>
+
+  <!-- ── Nodes ── -->
+
+  <!-- Q: 질문 입력 (input style) -->
+  <rect x="36" y="152" width="100" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="36" y="152" width="100" height="56" rx="6" fill="rgba(63,84,92,0.10)" stroke="#6c8188" stroke-width="1"/>
+  <rect x="44" y="158" width="36" height="12" rx="2" fill="transparent" stroke="rgba(108,129,136,0.40)" stroke-width="0.8"/>
+  <text x="62" y="167" fill="rgba(108,129,136,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">INPUT</text>
+  <text x="86" y="185" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Question</text>
+
+  <!-- GQ: 쿼리 생성 (focal/accent) -->
+  <rect x="196" y="148" width="132" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="196" y="148" width="132" height="64" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.4"/>
+  <rect x="204" y="154" width="60" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="234" y="163" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">DSPY MODULE</text>
+  <text x="262" y="184" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Query Gen</text>
+  <text x="262" y="200" fill="#3f545c" font-size="9" font-family="'IBM Plex Mono', monospace" text-anchor="middle">ChainOfThought</text>
+
+  <!-- RET: 검색 실행 (store style) -->
+  <rect x="388" y="152" width="116" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="388" y="152" width="116" height="56" rx="6" fill="rgba(18,33,39,0.05)" stroke="#3f545c" stroke-width="1"/>
+  <rect x="396" y="158" width="40" height="12" rx="2" fill="transparent" stroke="rgba(63,84,92,0.40)" stroke-width="0.8"/>
+  <text x="416" y="167" fill="rgba(63,84,92,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">RETRIEVAL</text>
+  <text x="446" y="183" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Retrieval</text>
+  <text x="446" y="199" fill="#3f545c" font-size="9" font-family="'IBM Plex Mono', monospace" text-anchor="middle">Vector DB</text>
+
+  <!-- CTX: 컨텍스트 구성 (backend style) -->
+  <rect x="564" y="152" width="116" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="564" y="152" width="116" height="56" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="572" y="158" width="40" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="592" y="167" fill="rgba(18,33,39,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">CONTEXT</text>
+  <text x="622" y="188" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Build Context</text>
+
+  <!-- GEN: 답변 생성 (focal/accent) -->
+  <rect x="740" y="148" width="100" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="740" y="148" width="100" height="64" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.4"/>
+  <rect x="748" y="154" width="60" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="778" y="163" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">DSPY MODULE</text>
+  <text x="790" y="184" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Answer Gen</text>
+  <text x="790" y="200" fill="#3f545c" font-size="9" font-family="'IBM Plex Mono', monospace" text-anchor="middle">ChainOfThought</text>
+
+  <!-- EVAL: 품질 통과 — diamond shape -->
+  <!-- Diamond centered at (892, 192), half-width=36, half-height=36 -->
+  <rect x="856" y="156" width="72" height="72" rx="0" fill="#f8fafb"/>
+  <polygon points="892,156 928,192 892,228 856,192" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.4"/>
+  <text x="892" y="188" fill="#122127" font-size="10" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Quality</text>
+  <text x="892" y="202" fill="#122127" font-size="10" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Pass?</text>
+
+  <!-- ANS: 최종 답변 (store style, positive) -->
+  <rect x="842" y="308" width="100" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="842" y="308" width="100" height="56" rx="6" fill="rgba(18,33,39,0.05)" stroke="#3f545c" stroke-width="1"/>
+  <rect x="850" y="314" width="40" height="12" rx="2" fill="transparent" stroke="rgba(63,84,92,0.40)" stroke-width="0.8"/>
+  <text x="870" y="323" fill="rgba(63,84,92,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">OUTPUT</text>
+  <text x="892" y="348" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Final Answer</text>
+
+  <!-- ── Legend strip ── -->
+  <line x1="32" y1="388" x2="928" y2="388" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+
+  <!-- Legend: focal node -->
+  <rect x="32" y="396" width="12" height="12" rx="2" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.4"/>
+  <text x="50" y="406" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">DSPy Module (optimizable)</text>
+
+  <!-- Legend: store -->
+  <rect x="244" y="396" width="12" height="12" rx="2" fill="rgba(18,33,39,0.05)" stroke="#3f545c" stroke-width="1"/>
+  <text x="262" y="406" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">Retrieve / Output</text>
+
+  <!-- Legend: backend -->
+  <rect x="376" y="396" width="12" height="12" rx="2" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <text x="394" y="406" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">Process Step</text>
+
+  <!-- Legend: retry dashed -->
+  <line x1="480" y1="402" x2="508" y2="402" stroke="#6c8188" stroke-width="1" stroke-dasharray="5,4"/>
+  <text x="514" y="406" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">Retry (quality fail)</text>
+</svg>
+</body>
+</html>

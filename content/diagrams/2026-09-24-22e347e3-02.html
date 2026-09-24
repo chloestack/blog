@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; font-family: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; }
+  .diagram-wrap { max-width: 960px; margin: 0 auto; padding: 0; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<div class="diagram-wrap">
+<svg viewBox="0 0 960 340" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="2026-09-24-22e347e3-02-moved-title 2026-09-24-22e347e3-02-moved-desc">
+  <title id="2026-09-24-22e347e3-02-moved-title">Redis MOVED 리다이렉션 흐름</title>
+  <desc id="2026-09-24-22e347e3-02-moved-desc">클라이언트가 잘못된 노드에 요청을 보내면 -MOVED 응답을 받고 슬롯 담당 노드로 재요청해 응답을 받는 흐름.</desc>
+
+  <defs>
+    <!-- arrow: muted -->
+    <marker id="2026-09-24-22e347e3-02-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <!-- arrow: accent -->
+    <marker id="2026-09-24-22e347e3-02-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <!-- arrow: warn (amber) -->
+    <marker id="2026-09-24-22e347e3-02-arrow-warn" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#a96a08"/>
+    </marker>
+  </defs>
+
+  <!-- background -->
+  <rect width="960" height="340" fill="#f8fafb"/>
+
+  <!-- ===================== ARROWS (drawn before boxes) ===================== -->
+
+  <!-- 1. 클라이언트 → 노드 A : 요청 (잘못된 노드) — top horizontal -->
+  <!-- Client right edge (284, 136) → Node A left edge (388, 136) -->
+  <path d="M284,136 L382,136" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-24-22e347e3-02-arrow)"/>
+  <!-- label mask -->
+  <rect x="284" y="108" width="96" height="20" rx="2" fill="#f8fafb"/>
+  <text x="332" y="122" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.04em">요청 (잘못된 노드)</text>
+
+  <!-- 2. 노드 A → 클라이언트 : -MOVED 응답 — bottom horizontal, offset down -->
+  <!-- Node A left edge (388, 156) → Client right edge (284, 156) -->
+  <path d="M388,156 L290,156" fill="none" stroke="#a96a08" stroke-width="1" marker-end="url(#2026-09-24-22e347e3-02-arrow-warn)"/>
+  <!-- label mask -->
+  <rect x="288" y="160" width="104" height="20" rx="2" fill="#f8fafb"/>
+  <text x="340" y="174" fill="#a96a08" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.04em">-MOVED 3 노드C</text>
+
+  <!-- 3. 클라이언트 → 노드 C : 재요청 — elbow: right from client bottom, down, right to node C -->
+  <!-- Client center-bottom (232, 168) → down to y=220 → right to Node C left edge (596, 220) -->
+  <path d="M232,168 L232,220 Q240,228 248,228 L590,228" fill="none" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-24-22e347e3-02-arrow-accent)"/>
+  <!-- label mask -->
+  <rect x="368" y="204" width="84" height="20" rx="2" fill="#f8fafb"/>
+  <text x="410" y="218" fill="#0d5763" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">재요청 → 노드C</text>
+
+  <!-- 4. 노드 C → 클라이언트 : 응답 — elbow: left from Node C bottom, down, left to client -->
+  <!-- Node C center-bottom (660, 268) → down to y=268 → elbow → left to client -->
+  <path d="M660,268 L660,284 Q652,292 644,292 L248,292 Q240,292 232,284 L232,272" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-24-22e347e3-02-arrow)"/>
+  <!-- label mask -->
+  <rect x="392" y="276" width="40" height="16" rx="2" fill="#f8fafb"/>
+  <text x="412" y="288" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">응답</text>
+
+  <!-- ===================== NODES ===================== -->
+
+  <!-- 클라이언트 (link/input treatment) -->
+  <rect x="128" y="112" width="108" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="128" y="112" width="108" height="56" rx="6" fill="rgba(58,84,143,0.08)" stroke="#3a548f" stroke-width="1"/>
+  <rect x="136" y="118" width="28" height="12" rx="2" fill="transparent" stroke="rgba(58,84,143,0.40)" stroke-width="0.8"/>
+  <text x="150" y="127" fill="rgba(58,84,143,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">CLIENT</text>
+  <text x="182" y="146" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">클라이언트</text>
+
+  <!-- 노드 A (backend/warn treatment) -->
+  <rect x="388" y="112" width="116" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="388" y="112" width="116" height="56" rx="6" fill="rgba(169,106,8,0.08)" stroke="#a96a08" stroke-width="1"/>
+  <rect x="396" y="118" width="28" height="12" rx="2" fill="transparent" stroke="rgba(169,106,8,0.40)" stroke-width="0.8"/>
+  <text x="410" y="127" fill="rgba(169,106,8,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">NODE</text>
+  <text x="446" y="142" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">노드 A</text>
+  <text x="446" y="158" fill="#6c8188" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">슬롯 미담당</text>
+
+  <!-- 노드 C (focal/accent treatment) -->
+  <rect x="596" y="200" width="128" height="68" rx="6" fill="#f8fafb"/>
+  <rect x="596" y="200" width="128" height="68" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="604" y="206" width="28" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="618" y="215" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">NODE</text>
+  <text x="660" y="238" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">노드 C</text>
+  <text x="660" y="256" fill="#0d5763" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">슬롯 3 담당</text>
+
+  <!-- ===================== LEGEND ===================== -->
+  <line x1="32" y1="312" x2="928" y2="312" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+
+  <!-- legend label -->
+  <text x="32" y="328" fill="#3f545c" font-size="8" font-family="'IBM Plex Mono', monospace" letter-spacing="0.14em">LEGEND</text>
+
+  <!-- item 1: 요청/응답 -->
+  <line x1="100" y1="324" x2="124" y2="324" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-24-22e347e3-02-arrow)"/>
+  <text x="130" y="328" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">일반 요청 / 응답</text>
+
+  <!-- item 2: MOVED -->
+  <line x1="284" y1="324" x2="308" y2="324" stroke="#a96a08" stroke-width="1" marker-end="url(#2026-09-24-22e347e3-02-arrow-warn)"/>
+  <text x="314" y="328" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">-MOVED 리다이렉션</text>
+
+  <!-- item 3: 재요청 -->
+  <line x1="476" y1="324" x2="500" y2="324" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-24-22e347e3-02-arrow-accent)"/>
+  <text x="506" y="328" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">슬롯 담당 노드 재요청</text>
+
+</svg>
+</div>
+</body>
+</html>

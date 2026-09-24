@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; display: flex; justify-content: center; align-items: flex-start; padding: 0; }
+  .diagram-wrap { width: 100%; max-width: 960px; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<div class="diagram-wrap">
+<svg viewBox="0 0 960 600" xmlns="http://www.w3.org/2000/svg"
+     role="img" aria-labelledby="2026-09-24-932e209d-04-dspy-title 2026-09-24-932e209d-04-dspy-desc">
+  <title id="2026-09-24-932e209d-04-dspy-title">DSPy MIPROv2 Optimization Pipeline</title>
+  <desc id="2026-09-24-932e209d-04-dspy-desc">DSPy automatic optimization flow starting from training examples, collecting Bootstrap execution traces, building a candidate few-shot pool, selecting examples, running prompt meta-optimization, and going through an evaluation loop to save the optimal parameters.</desc>
+
+  <defs>
+    <!-- Arrow markers -->
+    <marker id="2026-09-24-932e209d-04-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-09-24-932e209d-04-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <!-- Background -->
+  </defs>
+
+  <!-- Page background -->
+  <rect width="960" height="600" fill="#f8fafb"/>
+
+  <!-- ── Connectors (drawn before boxes) ── -->
+
+  <!-- TR → BS: straight vertical -->
+  <line x1="480" y1="112" x2="480" y2="156" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-24-932e209d-04-arrow)"/>
+
+  <!-- BS → FP: straight vertical -->
+  <line x1="480" y1="224" x2="480" y2="268" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-24-932e209d-04-arrow)"/>
+
+  <!-- FP → SEL: straight vertical -->
+  <line x1="480" y1="336" x2="480" y2="380" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-24-932e209d-04-arrow)"/>
+
+  <!-- SEL → PM: elbow right then down, avoiding center column -->
+  <!-- SEL right edge (620,416) → right → PM right, then into PM -->
+  <path d="M 620 416 Q 628 416 628 424 L 628 472 Q 628 480 620 480 L 596 480" fill="none" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-24-932e209d-04-arrow-accent)"/>
+
+  <!-- PM → EVAL: elbow: PM bottom (480,524) down to EVAL -->
+  <!-- Actually PM is in same column, let's do straight -->
+  <line x1="480" y1="496" x2="480" y2="156" stroke="none"/>
+
+  <!-- Re-plan layout: single column top-down with enough spacing -->
+  <!-- Layout plan:
+    TR:   cx=480, cy=80,   w=200, h=52  → top=54, bot=106
+    BS:   cx=480, cy=172,  w=200, h=52  → top=146, bot=198
+    FP:   cx=480, cy=264,  w=200, h=52  → top=238, bot=290
+    SEL:  cx=480, cy=356,  w=200, h=52  → top=330, bot=382
+    PM:   cx=480, cy=448,  w=200, h=52  → top=422, bot=474
+    EVAL: cx=480, cy=520,  w=200, h=52  → top=494, bot=546  ← too tight for legend
+    Need to reduce or use 2 columns for last two
+  -->
+  <!-- Use two-column layout for PM and EVAL to keep within 600px height
+       Left column (cx=300): TR, BS, FP
+       Center merge → SEL
+       Right fork: PM (cx=660), EVAL (cx=660) is linear
+       Actually: single column, but tighter spacing.
+       Recalculate with 72px center-to-center:
+       TR:   cy=68
+       BS:   cy=152  (84px gap)
+       FP:   cy=236
+       SEL:  cy=320
+       PM:   cy=404
+       EVAL: cy=488
+       BEST: cy=540 ← too far
+       Need to compress gaps to 72px:
+       TR:   cy=64
+       BS:   cy=140  gap=76
+       FP:   cy=216
+       SEL:  cy=292
+       PM:   cy=368
+       EVAL: cy=444
+       BEST: cy=520 ← legend at 560?  borderline but ok with 600px viewBox+40px legend
+       Box h=48, so:
+       TR:   top=40,  bot=88
+       BS:   top=116, bot=164
+       FP:   top=192, bot=240
+       SEL:  top=268, bot=316
+       PM:   top=344, bot=392
+       EVAL: top=420, bot=468
+       BEST: top=496, bot=544
+       Legend strip starts at ~556
+       That works. Let me redraw with these coords.
+  -->
+
+  <!-- CLEAR previous connector attempts — redrawing all below properly -->
+
+  <!-- TR → BS -->
+  <line x1="480" y1="88" x2="480" y2="116" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-24-932e209d-04-arrow)"/>
+
+  <!-- BS → FP -->
+  <line x1="480" y1="164" x2="480" y2="192" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-24-932e209d-04-arrow)"/>
+
+  <!-- FP → SEL -->
+  <line x1="480" y1="240" x2="480" y2="268" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-24-932e209d-04-arrow)"/>
+
+  <!-- SEL → PM: accent (focal path) -->
+  <line x1="480" y1="316" x2="480" y2="344" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-24-932e209d-04-arrow-accent)"/>
+
+  <!-- PM → EVAL: accent -->
+  <line x1="480" y1="392" x2="480" y2="420" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-24-932e209d-04-arrow-accent)"/>
+
+  <!-- EVAL → BEST: accent -->
+  <line x1="480" y1="468" x2="480" y2="496" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-24-932e209d-04-arrow-accent)"/>
+
+  <!-- ── NODE BOXES ── -->
+
+  <!-- TR: Training Examples (input type) -->
+  <!-- Opaque mask -->
+  <rect x="360" y="40" width="240" height="48" rx="6" fill="#f8fafb"/>
+  <!-- Box -->
+  <rect x="360" y="40" width="240" height="48" rx="6" fill="rgba(58,84,143,0.08)" stroke="#3a548f" stroke-width="1"/>
+  <!-- Tag -->
+  <rect x="368" y="46" width="32" height="12" rx="2" fill="transparent" stroke="rgba(58,84,143,0.4)" stroke-width="0.8"/>
+  <text x="384" y="55" fill="rgba(58,84,143,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">INPUT</text>
+  <!-- Name -->
+  <text x="480" y="68" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Training Examples</text>
+  <!-- Sublabel -->
+  <text x="480" y="82" fill="#6c8188" font-size="9" font-family="'IBM Plex Mono', monospace" text-anchor="middle">20~100 samples</text>
+
+  <!-- BS: Bootstrap Trace Collection -->
+  <rect x="360" y="116" width="240" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="360" y="116" width="240" height="48" rx="6" fill="rgba(13,87,99,0.06)" stroke="#0d5763" stroke-width="1"/>
+  <rect x="368" y="122" width="32" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.4)" stroke-width="0.8"/>
+  <text x="384" y="131" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">STEP</text>
+  <text x="480" y="144" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Bootstrap Trace Collection</text>
+  <text x="480" y="158" fill="#6c8188" font-size="9" font-family="'IBM Plex Mono', monospace" text-anchor="middle">few-shot candidates</text>
+
+  <!-- FP: Candidate Few-Shot Pool -->
+  <rect x="360" y="192" width="240" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="360" y="192" width="240" height="48" rx="6" fill="rgba(13,87,99,0.06)" stroke="#0d5763" stroke-width="1"/>
+  <rect x="368" y="198" width="32" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.4)" stroke-width="0.8"/>
+  <text x="384" y="207" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">POOL</text>
+  <text x="480" y="220" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Candidate Few-Shot Pool</text>
+  <text x="480" y="234" fill="#6c8188" font-size="9" font-family="'IBM Plex Mono', monospace" text-anchor="middle">successful traces only</text>
+
+  <!-- SEL: Example Selection -->
+  <rect x="360" y="268" width="240" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="360" y="268" width="240" height="48" rx="6" fill="rgba(18,33,39,0.04)" stroke="#3f545c" stroke-width="1"/>
+  <rect x="368" y="274" width="32" height="12" rx="2" fill="transparent" stroke="rgba(63,84,92,0.4)" stroke-width="0.8"/>
+  <text x="384" y="283" fill="rgba(63,84,92,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">SELECT</text>
+  <text x="480" y="296" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Example Selection</text>
+  <text x="480" y="310" fill="#6c8188" font-size="9" font-family="'IBM Plex Mono', monospace" text-anchor="middle">coverage maximization</text>
+
+  <!-- PM: Prompt Meta-Optimization (FOCAL) -->
+  <rect x="344" y="344" width="272" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="344" y="344" width="272" height="48" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.5"/>
+  <rect x="352" y="350" width="40" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.5)" stroke-width="0.8"/>
+  <text x="372" y="359" fill="rgba(13,87,99,0.9)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">OPTIMIZE</text>
+  <text x="480" y="372" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Prompt Meta-Optimization</text>
+  <text x="480" y="386" fill="#3f545c" font-size="9" font-family="'IBM Plex Mono', monospace" text-anchor="middle">MIPROv2 · instruction gen</text>
+
+  <!-- EVAL: Evaluation Loop -->
+  <rect x="360" y="420" width="240" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="360" y="420" width="240" height="48" rx="6" fill="rgba(18,33,39,0.04)" stroke="#3f545c" stroke-width="1"/>
+  <rect x="368" y="426" width="28" height="12" rx="2" fill="transparent" stroke="rgba(63,84,92,0.4)" stroke-width="0.8"/>
+  <text x="382" y="435" fill="rgba(63,84,92,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">EVAL</text>
+  <text x="480" y="448" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Evaluation Loop</text>
+  <text x="480" y="462" fill="#6c8188" font-size="9" font-family="'IBM Plex Mono', monospace" text-anchor="middle">metric measure · iterate</text>
+
+  <!-- BEST: Save Optimal Parameters (FOCAL) -->
+  <rect x="360" y="496" width="240" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="360" y="496" width="240" height="48" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.5"/>
+  <rect x="368" y="502" width="32" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.5)" stroke-width="0.8"/>
+  <text x="384" y="511" fill="rgba(13,87,99,0.9)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">OUTPUT</text>
+  <text x="480" y="524" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Save Optimal Parameters</text>
+  <text x="480" y="538" fill="#3f545c" font-size="9" font-family="'IBM Plex Mono', monospace" text-anchor="middle">best program · .json</text>
+
+  <!-- ── LEGEND ── -->
+  <line x1="32" y1="566" x2="928" y2="566" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+
+  <!-- Legend: INPUT -->
+  <rect x="32" y="574" width="12" height="12" rx="2" fill="rgba(58,84,143,0.08)" stroke="#3a548f" stroke-width="1"/>
+  <text x="50" y="584" fill="#3f545c" font-size="8" font-family="'IBM Plex Mono', monospace" letter-spacing="0.10em">Input Data</text>
+
+  <!-- Legend: STEP/POOL -->
+  <rect x="164" y="574" width="12" height="12" rx="2" fill="rgba(13,87,99,0.06)" stroke="#0d5763" stroke-width="1"/>
+  <text x="182" y="584" fill="#3f545c" font-size="8" font-family="'IBM Plex Mono', monospace" letter-spacing="0.10em">Process Step</text>
+
+  <!-- Legend: neutral -->
+  <rect x="296" y="574" width="12" height="12" rx="2" fill="rgba(18,33,39,0.04)" stroke="#3f545c" stroke-width="1"/>
+  <text x="314" y="584" fill="#3f545c" font-size="8" font-family="'IBM Plex Mono', monospace" letter-spacing="0.10em">Select / Eval</text>
+
+  <!-- Legend: focal -->
+  <rect x="428" y="574" width="12" height="12" rx="2" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.5"/>
+  <text x="446" y="584" fill="#3f545c" font-size="8" font-family="'IBM Plex Mono', monospace" letter-spacing="0.10em">Key Step</text>
+
+  <!-- Legend: arrow default -->
+  <line x1="560" y1="580" x2="584" y2="580" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-24-932e209d-04-arrow)"/>
+  <text x="590" y="584" fill="#3f545c" font-size="8" font-family="'IBM Plex Mono', monospace" letter-spacing="0.10em">Flow</text>
+
+  <!-- Legend: arrow accent -->
+  <line x1="648" y1="580" x2="672" y2="580" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-24-932e209d-04-arrow-accent)"/>
+  <text x="678" y="584" fill="#3f545c" font-size="8" font-family="'IBM Plex Mono', monospace" letter-spacing="0.10em">Optimize Path</text>
+
+</svg>
+</div>
+</body>
+</html>

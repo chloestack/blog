@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<svg viewBox="0 0 960 200" xmlns="http://www.w3.org/2000/svg"
+     role="img" aria-labelledby="2026-09-24-932e209d-08-dspy-flow-title 2026-09-24-932e209d-08-dspy-flow-desc">
+  <title id="2026-09-24-932e209d-08-dspy-flow-title">DSPy 워크플로 — 개발에서 프로덕션까지</title>
+  <desc id="2026-09-24-932e209d-08-dspy-flow-desc">DSPy 파이프라인의 다섯 단계: 캐시를 활성화한 개발 단계에서 최적화 실행, 캐시를 비활성화한 최종 평가, 파라미터 저장, 프로덕션 로딩 순서로 이어지는 흐름.</desc>
+
+  <defs>
+    <!-- 화살표 마커 3종 -->
+    <marker id="2026-09-24-932e209d-08-dspy-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-09-24-932e209d-08-dspy-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <marker id="2026-09-24-932e209d-08-dspy-arrow-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3a548f"/>
+    </marker>
+  </defs>
+
+  <!-- 배경 -->
+  <rect width="960" height="200" fill="#f8fafb"/>
+
+  <!-- ─────── 화살표 (노드보다 먼저) ─────── -->
+  <!-- DEV → OPT -->
+  <line x1="216" y1="100" x2="244" y2="100" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-24-932e209d-08-dspy-arrow)"/>
+  <!-- OPT → EVAL -->
+  <line x1="380" y1="100" x2="408" y2="100" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-24-932e209d-08-dspy-arrow)"/>
+  <!-- EVAL → SAVE -->
+  <line x1="544" y1="100" x2="572" y2="100" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-24-932e209d-08-dspy-arrow-accent)"/>
+  <!-- SAVE → PROD -->
+  <line x1="708" y1="100" x2="736" y2="100" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-24-932e209d-08-dspy-arrow)"/>
+
+  <!-- ─────── 노드 (화살표 위에) ─────── -->
+
+  <!-- DEV — new (파란 계열) -->
+  <!-- 종이 마스크 -->
+  <rect x="28" y="60" width="188" height="80" rx="6" fill="#f8fafb"/>
+  <!-- 박스 -->
+  <rect x="28" y="60" width="188" height="80" rx="6" fill="#dbe2f2" stroke="#3a548f" stroke-width="1"/>
+  <!-- 태그 -->
+  <rect x="36" y="68" width="28" height="12" rx="2" fill="transparent" stroke="rgba(58,84,143,0.4)" stroke-width="0.8"/>
+  <text x="50" y="77" fill="rgba(58,84,143,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">DEV</text>
+  <!-- 노드명 -->
+  <text x="122" y="97" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">개발 단계</text>
+  <!-- 서브라벨 -->
+  <text x="122" y="116" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">캐시 활성화</text>
+
+  <!-- OPT — warn (노란 계열) -->
+  <rect x="244" y="60" width="136" height="80" rx="6" fill="#f8fafb"/>
+  <rect x="244" y="60" width="136" height="80" rx="6" fill="#f5e8cc" stroke="#a96a08" stroke-width="1"/>
+  <rect x="252" y="68" width="28" height="12" rx="2" fill="transparent" stroke="rgba(169,106,8,0.4)" stroke-width="0.8"/>
+  <text x="266" y="77" fill="rgba(169,106,8,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">OPT</text>
+  <text x="312" y="104" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">최적화 실행</text>
+
+  <!-- EVAL — acc (focal, 청록 계열) -->
+  <rect x="408" y="60" width="136" height="80" rx="6" fill="#f8fafb"/>
+  <rect x="408" y="60" width="136" height="80" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="416" y="68" width="32" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.4)" stroke-width="0.8"/>
+  <text x="432" y="77" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">EVAL</text>
+  <text x="476" y="97" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">최종 평가</text>
+  <text x="476" y="116" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">캐시 비활성화</text>
+
+  <!-- SAVE — mute (회색 계열) -->
+  <rect x="572" y="60" width="136" height="80" rx="6" fill="#f8fafb"/>
+  <rect x="572" y="60" width="136" height="80" rx="6" fill="#eef2f4" stroke="#c3d0d4" stroke-width="1"/>
+  <rect x="580" y="68" width="32" height="12" rx="2" fill="transparent" stroke="rgba(195,208,212,0.6)" stroke-width="0.8"/>
+  <text x="596" y="77" fill="rgba(63,84,92,0.7)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">SAVE</text>
+  <text x="640" y="104" fill="#3f545c" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">파라미터 저장</text>
+
+  <!-- PROD — ok (초록 계열) -->
+  <rect x="736" y="60" width="196" height="80" rx="6" fill="#f8fafb"/>
+  <rect x="736" y="60" width="196" height="80" rx="6" fill="#d6e9de" stroke="#286d50" stroke-width="1"/>
+  <rect x="744" y="68" width="32" height="12" rx="2" fill="transparent" stroke="rgba(40,109,80,0.4)" stroke-width="0.8"/>
+  <text x="760" y="77" fill="rgba(40,109,80,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">PROD</text>
+  <text x="834" y="97" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">프로덕션</text>
+  <text x="834" y="116" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">파라미터 로딩만</text>
+
+  <!-- ─────── 범례 ─────── -->
+  <line x1="28" y1="164" x2="932" y2="164" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+  <text x="28" y="177" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.14em">LEGEND</text>
+
+  <!-- 범례 아이템 1: 개발/준비 -->
+  <rect x="100" y="169" width="10" height="10" rx="2" fill="#dbe2f2" stroke="#3a548f" stroke-width="0.8"/>
+  <text x="116" y="178" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">개발/준비</text>
+
+  <!-- 범례 아이템 2: 최적화/진행 -->
+  <rect x="220" y="169" width="10" height="10" rx="2" fill="#f5e8cc" stroke="#a96a08" stroke-width="0.8"/>
+  <text x="236" y="178" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">최적화/진행</text>
+
+  <!-- 범례 아이템 3: 주요 단계 -->
+  <rect x="348" y="169" width="10" height="10" rx="2" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="0.8"/>
+  <text x="364" y="178" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">주요 단계</text>
+
+  <!-- 범례 아이템 4: 저장/보관 -->
+  <rect x="460" y="169" width="10" height="10" rx="2" fill="#eef2f4" stroke="#c3d0d4" stroke-width="0.8"/>
+  <text x="476" y="178" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">저장/보관</text>
+
+  <!-- 범례 아이템 5: 프로덕션 -->
+  <rect x="568" y="169" width="10" height="10" rx="2" fill="#d6e9de" stroke="#286d50" stroke-width="0.8"/>
+  <text x="584" y="178" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">프로덕션</text>
+
+</svg>
+</body>
+</html>

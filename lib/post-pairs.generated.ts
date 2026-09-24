@@ -21,5 +21,7 @@ export const POST_PAIRS: Record<string, string> = {
   "2026-09-19-Spring-WebClient-타임아웃·재시도·커넥션-풀-튜닝": "2026-09-19-spring-webclient-timeout-retry-connection-pool",
   "2026-09-21-GraphRAG로-지식-그래프-기반-RAG-구현하기": "2026-09-21-implementing-knowledge-graph-rag-graphrag",
   "2026-09-21-Java-ClassLoader-계층과-클래스-격리-구현": "2026-09-21-java-classloader-hierarchy-class-isolation",
-  "2026-09-23-Event-Carried-State-Transfer로-마이크로서비스-동기-호출-끊기": "2026-09-23-event-carried-state-transfer-microservices"
+  "2026-09-23-Event-Carried-State-Transfer로-마이크로서비스-동기-호출-끊기": "2026-09-23-event-carried-state-transfer-microservices",
+  "2026-09-24-DSPy로-LLM-프롬프트-자동-최적화하기": "2026-09-24-automatic-llm-prompt-optimization-dspy",
+  "2026-09-24-Redis-Cluster-샤딩-전략과-핫-슬롯-병목-해결": "2026-09-24-redis-cluster-sharding-hot-slot-bottleneck"
 };

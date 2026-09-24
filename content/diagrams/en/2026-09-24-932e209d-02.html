@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<svg viewBox="0 0 960 600" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="2026-09-24-932e209d-02-dspy-title 2026-09-24-932e209d-02-dspy-desc">
+  <title id="2026-09-24-932e209d-02-dspy-title">DSPy Core Concept Structure</title>
+  <desc id="2026-09-24-932e209d-02-dspy-desc">A flowchart showing the process from Signature declaration through Module processing logic, Program module composition, and Optimizer execution to produce a Compiled Program with optimized parameters.</desc>
+
+  <defs>
+    <!-- Arrow markers -->
+    <marker id="2026-09-24-932e209d-02-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-09-24-932e209d-02-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="960" height="600" fill="#f8fafb"/>
+
+  <!-- ─── Connectors (drawn before boxes) ─── -->
+
+  <!-- S → M  (vertical, x=480) -->
+  <line x1="480" y1="152" x2="480" y2="220" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-24-932e209d-02-arrow)"/>
+
+  <!-- M → P  (vertical) -->
+  <line x1="480" y1="296" x2="480" y2="364" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-24-932e209d-02-arrow)"/>
+
+  <!-- P → O  (vertical) -->
+  <line x1="480" y1="440" x2="480" y2="504" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-24-932e209d-02-arrow-accent)"/>
+
+  <!-- Arrow label mask & text: P → O -->
+  <rect x="458" y="458" width="44" height="14" rx="2" fill="#f8fafb"/>
+  <text x="480" y="469" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.06em">optimize</text>
+
+  <!-- ─── Node boxes ─── -->
+
+  <!-- S: Signature 선언 (link-blue tint — 입력 타입) -->
+  <!-- paper mask -->
+  <rect x="360" y="72" width="240" height="80" rx="6" fill="#f8fafb"/>
+  <!-- styled box -->
+  <rect x="360" y="72" width="240" height="80" rx="6" fill="rgba(58,84,143,0.07)" stroke="#3a548f" stroke-width="1"/>
+  <!-- type tag -->
+  <rect x="368" y="80" width="36" height="12" rx="2" fill="transparent" stroke="rgba(58,84,143,0.40)" stroke-width="0.8"/>
+  <text x="386" y="89" fill="rgba(58,84,143,0.80)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.10em">INPUT</text>
+  <!-- node name -->
+  <text x="480" y="124" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Signature Declaration</text>
+  <!-- sublabel -->
+  <text x="480" y="142" fill="#6c8188" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">I/O specification</text>
+
+  <!-- M: Module (accent-tint — focal 1) -->
+  <rect x="360" y="220" width="240" height="76" rx="6" fill="#f8fafb"/>
+  <rect x="360" y="220" width="240" height="76" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="368" y="228" width="44" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="390" y="237" fill="rgba(13,87,99,0.80)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.10em">MODULE</text>
+  <text x="480" y="268" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Module</text>
+  <text x="480" y="286" fill="#6c8188" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">processing logic</text>
+
+  <!-- P: Program (accent-tint — focal 2) -->
+  <rect x="360" y="364" width="240" height="76" rx="6" fill="#f8fafb"/>
+  <rect x="360" y="364" width="240" height="76" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="368" y="372" width="52" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="394" y="381" fill="rgba(13,87,99,0.80)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.10em">PROGRAM</text>
+  <text x="480" y="412" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Program</text>
+  <text x="480" y="430" fill="#6c8188" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">module composition</text>
+
+  <!-- O: Optimizer (store treatment — default) -->
+  <rect x="360" y="504" width="240" height="52" rx="6" fill="#f8fafb"/>
+  <rect x="360" y="504" width="240" height="52" rx="6" fill="rgba(18,33,39,0.04)" stroke="#3f545c" stroke-width="1"/>
+  <rect x="368" y="512" width="56" height="12" rx="2" fill="transparent" stroke="rgba(63,84,92,0.40)" stroke-width="0.8"/>
+  <text x="396" y="521" fill="rgba(63,84,92,0.80)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.10em">OPTIMIZE</text>
+  <text x="480" y="539" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Optimizer</text>
+
+  <!-- Optimizer → Compiled Program: elbow right -->
+  <!-- path: from bottom of O (480,556) → down to y=572 → right to x=720 → up to y=340 → left to x=660 (right edge of CP box) -->
+  <!-- CP box sits at x=680 y=296, so right edge isn't ideal; let's route right side -->
+  <!-- CP: Compiled Program — right side of canvas, vertically centered on M+P midpoint (y=330) -->
+
+  <!-- Draw O → CP connector before CP box -->
+  <!-- Elbow: bottom-center of O (480,556) down to y=572, right to x=724, up to y=336, left attach at (724,336) → CP right edge -->
+  <path d="M480,556 L480,572 L724,572 L724,336" stroke="#3f545c" stroke-width="1" fill="none" marker-end="url(#2026-09-24-932e209d-02-arrow)"/>
+
+  <!-- arrow label on vertical segment -->
+  <rect x="728" y="440" width="56" height="14" rx="2" fill="#f8fafb"/>
+  <text x="756" y="451" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.06em">compile</text>
+
+  <!-- CP: Compiled Program (backend treatment, output) -->
+  <rect x="724" y="256" width="192" height="80" rx="6" fill="#f8fafb"/>
+  <rect x="724" y="256" width="192" height="80" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="732" y="264" width="60" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="762" y="273" fill="rgba(18,33,39,0.80)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.10em">OUTPUT</text>
+  <text x="820" y="304" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Compiled Program</text>
+  <text x="820" y="322" fill="#6c8188" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">optimized parameters</text>
+
+  <!-- ─── Legend strip ─── -->
+  <line x1="32" y1="580" x2="928" y2="580" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+
+  <!-- Legend item 1: Input -->
+  <rect x="32" y="588" width="10" height="10" rx="2" fill="rgba(58,84,143,0.07)" stroke="#3a548f" stroke-width="0.8"/>
+  <text x="48" y="597" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.08em">Input spec</text>
+
+  <!-- Legend item 2: Focal (accent) -->
+  <rect x="152" y="588" width="10" height="10" rx="2" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="168" y="597" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.08em">Core component</text>
+
+  <!-- Legend item 3: Step -->
+  <rect x="296" y="588" width="10" height="10" rx="2" fill="rgba(18,33,39,0.04)" stroke="#3f545c" stroke-width="0.8"/>
+  <text x="312" y="597" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.08em">Process step</text>
+
+  <!-- Legend item 4: Output -->
+  <rect x="416" y="588" width="10" height="10" rx="2" fill="#ffffff" stroke="#122127" stroke-width="0.8"/>
+  <text x="432" y="597" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.08em">Output result</text>
+
+</svg>
+</body>
+</html>

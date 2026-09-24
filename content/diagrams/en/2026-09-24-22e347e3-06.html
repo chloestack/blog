@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; font-family: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; }
+  .diagram-wrap { width: 100%; max-width: 960px; margin: 0 auto; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<div class="diagram-wrap">
+<svg viewBox="0 0 960 260" xmlns="http://www.w3.org/2000/svg"
+     role="img" aria-labelledby="2026-09-24-22e347e3-06-mig-title 2026-09-24-22e347e3-06-mig-desc">
+  <title id="2026-09-24-22e347e3-06-mig-title">Redis Slot Migration Procedure</title>
+  <desc id="2026-09-24-22e347e3-06-mig-desc">Flowchart showing 6 sequential steps from slot migration start through SETSLOT MIGRATING, MIGRATE key transfer, SETSLOT IMPORTING, SETSLOT NODE completion declaration, and cluster map propagation.</desc>
+
+  <defs>
+    <marker id="2026-09-24-22e347e3-06-arr" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0,8 3,0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-09-24-22e347e3-06-arr-acc" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0,8 3,0 6" fill="#0d5763"/>
+    </marker>
+  </defs>
+
+  <!-- background -->
+  <rect width="960" height="260" fill="#f8fafb"/>
+
+  <!-- ── 화살표 (노드보다 먼저) ── -->
+  <!-- MS → ST -->
+  <line x1="136" y1="108" x2="196" y2="108" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-24-22e347e3-06-arr)"/>
+  <!-- ST → MV -->
+  <line x1="336" y1="108" x2="396" y2="108" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-24-22e347e3-06-arr)"/>
+  <!-- MV → IM -->
+  <line x1="536" y1="108" x2="596" y2="108" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-24-22e347e3-06-arr-acc)"/>
+  <!-- IM → DN -->
+  <line x1="696" y1="108" x2="756" y2="108" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-24-22e347e3-06-arr-acc)"/>
+  <!-- DN → UPD -->
+  <line x1="836" y1="108" x2="872" y2="108" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-24-22e347e3-06-arr)"/>
+
+  <!-- ── 노드 ── -->
+
+  <!-- 1. 슬롯 마이그레이션 시작 (link / blue-tinted) -->
+  <rect x="16" y="76" width="120" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="16" y="76" width="120" height="64" rx="6" fill="rgba(58,84,143,0.07)" stroke="#3a548f" stroke-width="1"/>
+  <rect x="24" y="84" width="24" height="12" rx="2" fill="transparent" stroke="rgba(58,84,143,0.40)" stroke-width="0.8"/>
+  <text x="36" y="93" fill="rgba(58,84,143,0.80)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">START</text>
+  <text x="76" y="114" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Slot Migration</text>
+  <text x="76" y="130" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Start</text>
+
+  <!-- 2. SETSLOT MIGRATING / 소스 노드 (muted/warn) -->
+  <rect x="196" y="76" width="140" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="196" y="76" width="140" height="64" rx="6" fill="rgba(169,106,8,0.06)" stroke="rgba(169,106,8,0.55)" stroke-width="1"/>
+  <rect x="204" y="84" width="28" height="12" rx="2" fill="transparent" stroke="rgba(169,106,8,0.40)" stroke-width="0.8"/>
+  <text x="218" y="93" fill="rgba(169,106,8,0.80)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">CMD</text>
+  <text x="266" y="112" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Mono', monospace" text-anchor="middle">SETSLOT MIGRATING</text>
+  <text x="266" y="128" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Source Node</text>
+
+  <!-- 3. MIGRATE 키 이동 배치 단위 (focal / accent) -->
+  <rect x="396" y="76" width="140" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="396" y="76" width="140" height="64" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="404" y="84" width="28" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="418" y="93" fill="rgba(13,87,99,0.80)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">CMD</text>
+  <text x="466" y="112" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Mono', monospace" text-anchor="middle">MIGRATE Key Move</text>
+  <text x="466" y="128" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Batch Unit</text>
+
+  <!-- 4. SETSLOT IMPORTING / 대상 노드 (focal / accent) -->
+  <rect x="596" y="76" width="140" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="596" y="76" width="140" height="64" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="604" y="84" width="28" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="618" y="93" fill="rgba(13,87,99,0.80)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">CMD</text>
+  <text x="666" y="112" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Mono', monospace" text-anchor="middle">SETSLOT IMPORTING</text>
+  <text x="666" y="128" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Target Node</text>
+
+  <!-- 5. SETSLOT NODE / 완료 선언 (ok / green) -->
+  <rect x="756" y="76" width="80" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="756" y="76" width="80" height="64" rx="6" fill="rgba(40,109,80,0.06)" stroke="rgba(40,109,80,0.55)" stroke-width="1"/>
+  <rect x="764" y="84" width="24" height="12" rx="2" fill="transparent" stroke="rgba(40,109,80,0.40)" stroke-width="0.8"/>
+  <text x="776" y="93" fill="rgba(40,109,80,0.80)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">CMD</text>
+  <text x="796" y="112" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Mono', monospace" text-anchor="middle">SETSLOT NODE</text>
+  <text x="796" y="128" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Done Decl.</text>
+
+  <!-- 6. 클러스터 맵 전파 (ok / green) — 엘보 경로 없이 직선 (같은 y축) -->
+  <!-- 화살표 5→6는 위의 line x1=836 y1=108 x2=872 y2=108 -->
+  <rect x="872" y="76" width="72" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="872" y="76" width="72" height="64" rx="6" fill="rgba(40,109,80,0.06)" stroke="rgba(40,109,80,0.55)" stroke-width="1"/>
+  <rect x="880" y="84" width="24" height="12" rx="2" fill="transparent" stroke="rgba(40,109,80,0.40)" stroke-width="0.8"/>
+  <text x="892" y="93" fill="rgba(40,109,80,0.80)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">END</text>
+  <text x="908" y="112" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Cluster Map</text>
+  <text x="908" y="128" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Propagate</text>
+
+  <!-- ── 범례 ── -->
+  <line x1="20" y1="192" x2="940" y2="192" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+  <text x="20" y="206" fill="#3f545c" font-size="8" font-family="'IBM Plex Mono', monospace" letter-spacing="0.14em">LEGEND</text>
+
+  <!-- 범례 항목 1: 시작/종료 -->
+  <rect x="88" y="196" width="12" height="12" rx="2" fill="rgba(58,84,143,0.07)" stroke="#3a548f" stroke-width="0.8"/>
+  <text x="106" y="206" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">Start / End</text>
+
+  <!-- 범례 항목 2: 명령 단계 -->
+  <rect x="220" y="196" width="12" height="12" rx="2" fill="rgba(169,106,8,0.06)" stroke="rgba(169,106,8,0.55)" stroke-width="0.8"/>
+  <text x="238" y="206" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">Cmd Step</text>
+
+  <!-- 범례 항목 3: 핵심 이동 단계 (accent) -->
+  <rect x="348" y="196" width="12" height="12" rx="2" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="366" y="206" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">Key Transfer Step</text>
+
+  <!-- 범례 항목 4: 완료 -->
+  <rect x="500" y="196" width="12" height="12" rx="2" fill="rgba(40,109,80,0.06)" stroke="rgba(40,109,80,0.55)" stroke-width="0.8"/>
+  <text x="518" y="206" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">Done</text>
+
+</svg>
+</div>
+</body>
+</html>

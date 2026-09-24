@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  body { margin: 0; padding: 0; background: #f8fafb; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<svg viewBox="0 0 960 360" xmlns="http://www.w3.org/2000/svg"
+     role="img" aria-labelledby="2026-09-24-932e209d-03-dspy-modules-title 2026-09-24-932e209d-03-dspy-modules-desc">
+  <title id="2026-09-24-932e209d-03-dspy-modules-title">DSPy Module Hierarchy</title>
+  <desc id="2026-09-24-932e209d-03-dspy-modules-desc">Diagram showing how DSPy's four Predict modules expand from simple transformation to code execution, tool calling, and parallel reasoning comparison.</desc>
+
+  <defs>
+    <!-- 기본 화살표 -->
+    <marker id="2026-09-24-932e209d-03-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <!-- accent 화살표 -->
+    <marker id="2026-09-24-932e209d-03-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+  </defs>
+
+  <!-- 배경 -->
+  <rect width="960" height="360" fill="#f8fafb"/>
+
+  <!-- ───────── 화살표 (박스보다 먼저) ───────── -->
+
+  <!-- Predict → ChainOfThought -->
+  <path d="M 284,148 L 356,148" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-24-932e209d-03-arrow)"/>
+
+  <!-- ChainOfThought → ProgramOfThought -->
+  <path d="M 528,120 L 528,100 Q 528,88 540,88 L 612,88" fill="none" stroke="#0d5763" stroke-width="1" marker-end="url(#2026-09-24-932e209d-03-arrow-accent)"/>
+
+  <!-- ChainOfThought → ReAct -->
+  <path d="M 528,176 L 528,196 Q 528,208 540,208 L 612,208" fill="none" stroke="#0d5763" stroke-width="1" marker-end="url(#2026-09-24-932e209d-03-arrow-accent)"/>
+
+  <!-- MultiChain → 최종 선택 -->
+  <path d="M 716,244 L 788,244" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-24-932e209d-03-arrow)"/>
+
+  <!-- ───────── 노드 박스 ───────── -->
+
+  <!-- Predict (muted) -->
+  <rect x="104" y="116" width="180" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="104" y="116" width="180" height="64" rx="6" fill="#eef2f4" stroke="#c3d0d4" stroke-width="1"/>
+  <rect x="112" y="122" width="36" height="12" rx="2" fill="transparent" stroke="rgba(99,129,136,0.40)" stroke-width="0.8"/>
+  <text x="130" y="131" fill="rgba(63,84,92,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">MODULE</text>
+  <text x="194" y="150" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Predict</text>
+  <text x="194" y="167" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">Simple transform</text>
+
+  <!-- ChainOfThought (focal / accent) -->
+  <rect x="356" y="108" width="172" height="80" rx="6" fill="#f8fafb"/>
+  <rect x="356" y="108" width="172" height="80" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <rect x="364" y="114" width="36" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="382" y="123" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">MODULE</text>
+  <text x="442" y="142" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">ChainOfThought</text>
+  <text x="442" y="159" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">With reasoning</text>
+  <text x="442" y="176" fill="#0d5763" font-size="10" font-weight="500" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Core module</text>
+
+  <!-- ProgramOfThought -->
+  <rect x="612" y="60" width="172" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="612" y="60" width="172" height="64" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="620" y="66" width="36" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="638" y="75" fill="rgba(18,33,39,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">MODULE</text>
+  <text x="698" y="94" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">ProgramOfThought</text>
+  <text x="698" y="111" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">With code exec</text>
+
+  <!-- ReAct -->
+  <rect x="612" y="176" width="172" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="612" y="176" width="172" height="64" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="620" y="182" width="36" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="638" y="191" fill="rgba(18,33,39,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">MODULE</text>
+  <text x="698" y="210" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">ReAct</text>
+  <text x="698" y="227" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">Iterative tool call</text>
+
+  <!-- MultiChain -->
+  <rect x="540" y="212" width="176" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="540" y="212" width="176" height="64" rx="6" fill="rgba(13,87,99,0.04)" stroke="rgba(18,33,39,0.30)" stroke-width="1" stroke-dasharray="4,3"/>
+  <rect x="548" y="218" width="36" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.30)" stroke-width="0.8"/>
+  <text x="566" y="227" fill="rgba(18,33,39,0.6)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">OPTIONAL</text>
+  <text x="628" y="250" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">MultiChain</text>
+  <text x="628" y="267" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">Parallel reasoning</text>
+
+  <!-- 최종 선택 -->
+  <rect x="788" y="216" width="140" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="788" y="216" width="140" height="56" rx="6" fill="rgba(13,87,99,0.03)" stroke="rgba(18,33,39,0.30)" stroke-width="1"/>
+  <text x="858" y="247" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Final pick</text>
+  <text x="858" y="263" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">MultiChain output</text>
+
+  <!-- ───────── 화살표 라벨 ───────── -->
+
+  <!-- Predict → ChainOfThought 라벨 -->
+  <rect x="302" y="136" width="36" height="12" rx="2" fill="#f8fafb"/>
+  <text x="320" y="145" fill="#6c8188" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.06em">extend</text>
+
+  <!-- ChainOfThought → ProgramOfThought 라벨 -->
+  <rect x="530" y="76" width="44" height="12" rx="2" fill="#f8fafb"/>
+  <text x="552" y="85" fill="#6c8188" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.06em">code exec</text>
+
+  <!-- ChainOfThought → ReAct 라벨 -->
+  <rect x="528" y="192" width="44" height="12" rx="2" fill="#f8fafb"/>
+  <text x="550" y="201" fill="#6c8188" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.06em">tool use</text>
+
+  <!-- MultiChain → 최종 선택 라벨 -->
+  <rect x="726" y="232" width="44" height="12" rx="2" fill="#f8fafb"/>
+  <text x="748" y="241" fill="#6c8188" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.06em">select</text>
+
+  <!-- ───────── 레전드 ───────── -->
+  <line x1="40" y1="312" x2="920" y2="312" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+  <text x="40" y="326" fill="#6c8188" font-size="8" font-family="'IBM Plex Mono', monospace" letter-spacing="0.14em">LEGEND</text>
+
+  <!-- 범례 아이템: 핵심 모듈 -->
+  <rect x="108" y="318" width="12" height="12" rx="2" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="126" y="328" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">Core module</text>
+
+  <!-- 범례 아이템: 확장 모듈 -->
+  <rect x="236" y="318" width="12" height="12" rx="2" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <text x="254" y="328" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">Extended module</text>
+
+  <!-- 범례 아이템: 기본 모듈 -->
+  <rect x="364" y="318" width="12" height="12" rx="2" fill="#eef2f4" stroke="#c3d0d4" stroke-width="1"/>
+  <text x="382" y="328" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">Base module</text>
+
+  <!-- 범례 아이템: 선택적 모듈 -->
+  <rect x="492" y="318" width="12" height="12" rx="2" fill="rgba(13,87,99,0.04)" stroke="rgba(18,33,39,0.30)" stroke-width="1" stroke-dasharray="4,3"/>
+  <text x="510" y="328" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">Optional module</text>
+
+</svg>
+</body>
+</html>

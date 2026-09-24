@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; font-family: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<svg viewBox="0 0 960 600" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="2026-09-24-932e209d-09-dspy-recompile-title 2026-09-24-932e209d-09-dspy-recompile-desc">
+  <title id="2026-09-24-932e209d-09-dspy-recompile-title">DSPy Recompile Decision Flow</title>
+  <desc id="2026-09-24-932e209d-09-dspy-recompile-desc">A flowchart starting from performance monitoring, determining whether performance degradation exceeds a threshold, then branching into full recompile, partial recompile, or training data augmentation paths before deploying parameters.</desc>
+
+  <defs>
+    <!-- 화살표 마커 -->
+    <marker id="2026-09-24-932e209d-09-arr" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-09-24-932e209d-09-arr-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <marker id="2026-09-24-932e209d-09-arr-back" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#6c8188"/>
+    </marker>
+  </defs>
+
+  <!-- 배경 -->
+  <rect width="960" height="600" fill="#f8fafb"/>
+
+  <!-- ═══════════════════════════════════════════════
+       화살표를 먼저 그립니다 (z-order: 노드 아래)
+  ═══════════════════════════════════════════════ -->
+
+  <!-- MON → Q1 (아래로) -->
+  <path d="M 480 120 L 480 172" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-24-932e209d-09-arr)"/>
+
+  <!-- Q1 →|예| Q2 (아래로) -->
+  <path d="M 480 236 L 480 288" fill="none" stroke="#0d5763" stroke-width="1" marker-end="url(#2026-09-24-932e209d-09-arr-accent)"/>
+  <!-- "예" 레이블 -->
+  <rect x="462" y="249" width="20" height="12" rx="2" fill="#f8fafb"/>
+  <text x="472" y="258" fill="#0d5763" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="500">Yes</text>
+
+  <!-- Q1 →|아니오| MON (왼쪽으로 돌아오는 루프) -->
+  <!-- Q1 왼쪽 → 왼쪽 우회 → MON 왼쪽 -->
+  <path d="M 384 204 L 320 204 L 320 96 L 384 96" fill="none" stroke="#6c8188" stroke-width="1" stroke-dasharray="5,4" marker-end="url(#2026-09-24-932e209d-09-arr-back)"/>
+  <!-- "아니오" 레이블 -->
+  <rect x="289" y="141" width="44" height="12" rx="2" fill="#f8fafb"/>
+  <text x="311" y="150" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">No</text>
+
+  <!-- Q2 →|모델 변경| RC (왼쪽 아래로) -->
+  <path d="M 424 340 L 424 368 L 220 368 L 220 400" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-24-932e209d-09-arr)"/>
+  <!-- "모델 변경" 레이블 -->
+  <rect x="298" y="356" width="60" height="12" rx="2" fill="#f8fafb"/>
+  <text x="328" y="365" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Model Change</text>
+
+  <!-- Q2 →|데이터 분포 변화| PC (오른쪽 아래로, 아래로 내려서 오른쪽 방향) -->
+  <path d="M 536 340 L 536 368 L 700 368 L 700 400" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-24-932e209d-09-arr)"/>
+  <!-- "데이터 분포 변화" 레이블 -->
+  <rect x="581" y="356" width="88" height="12" rx="2" fill="#f8fafb"/>
+  <text x="625" y="365" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Data Drift</text>
+
+  <!-- Q2 →|예제 부족| DA (맨 오른쪽) -->
+  <path d="M 556 316 L 860 316 L 860 400" fill="none" stroke="#3a548f" stroke-width="1" marker-end="url(#2026-09-24-932e209d-09-arr)"/>
+  <!-- "예제 부족" 레이블 -->
+  <rect x="683" y="304" width="52" height="12" rx="2" fill="#f8fafb"/>
+  <text x="709" y="313" fill="#3a548f" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Few Examples</text>
+
+  <!-- DA → PC (왼쪽으로) -->
+  <path d="M 780 448 L 700 448" fill="none" stroke="#3a548f" stroke-width="1" marker-end="url(#2026-09-24-932e209d-09-arr)"/>
+
+  <!-- RC → SAVE (아래로) -->
+  <path d="M 220 464 L 220 492 L 440 492" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-24-932e209d-09-arr)"/>
+
+  <!-- PC → SAVE (아래로) -->
+  <path d="M 700 464 L 700 492 L 560 492" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-24-932e209d-09-arr)"/>
+
+  <!-- ═══════════════════════════════════════════════
+       노드
+  ═══════════════════════════════════════════════ -->
+
+  <!-- MON: 성능 모니터링 (oval, start) -->
+  <rect x="372" y="72" width="216" height="48" rx="2" fill="#f8fafb"/>
+  <rect x="372" y="72" width="216" height="48" rx="24" fill="#eef2f4" stroke="#c3d0d4" stroke-width="1"/>
+  <text x="480" y="101" fill="#3f545c" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Performance Monitoring</text>
+
+  <!-- Q1: 성능 저하 임계치 초과? (diamond) -->
+  <!-- 다이아몬드: cx=480 cy=208, half-w=96, half-h=36 -->
+  <rect x="384" y="172" width="192" height="72" rx="2" fill="#f8fafb"/>
+  <polygon points="480,172 576,208 480,244 384,208" fill="#d4e7ea" stroke="#0d5763" stroke-width="1"/>
+  <text x="480" y="204" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Degradation</text>
+  <text x="480" y="220" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Threshold Exceeded?</text>
+
+  <!-- Q2: 원인 진단 (diamond) -->
+  <!-- cx=480 cy=316, half-w=96, half-h=28 -->
+  <rect x="384" y="288" width="192" height="56" rx="2" fill="#f8fafb"/>
+  <polygon points="480,288 576,316 480,344 384,316" fill="#d4e7ea" stroke="#0d5763" stroke-width="1"/>
+  <text x="480" y="322" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Root Cause</text>
+
+  <!-- RC: 전체 재컴파일 -->
+  <rect x="128" y="400" width="184" height="64" rx="2" fill="#f8fafb"/>
+  <rect x="128" y="400" width="184" height="64" rx="6" fill="#f5e8cc" stroke="#a96a08" stroke-width="1"/>
+  <!-- 태그 -->
+  <rect x="140" y="408" width="52" height="12" rx="2" fill="transparent" stroke="rgba(169,106,8,0.4)" stroke-width="0.8"/>
+  <text x="166" y="417" fill="rgba(169,106,8,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">RECOMPILE</text>
+  <text x="220" y="440" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Full Recompile</text>
+
+  <!-- PC: 부분 재컴파일 -->
+  <rect x="608" y="400" width="184" height="64" rx="2" fill="#f8fafb"/>
+  <rect x="608" y="400" width="184" height="64" rx="6" fill="#d6e9de" stroke="#286d50" stroke-width="1"/>
+  <!-- 태그 -->
+  <rect x="620" y="408" width="44" height="12" rx="2" fill="transparent" stroke="rgba(40,109,80,0.4)" stroke-width="0.8"/>
+  <text x="642" y="417" fill="rgba(40,109,80,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">PARTIAL</text>
+  <text x="700" y="436" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Partial Recompile</text>
+  <text x="700" y="453" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Affected modules only</text>
+
+  <!-- DA: 학습 데이터 보강 -->
+  <rect x="788" y="400" width="144" height="64" rx="2" fill="#f8fafb"/>
+  <rect x="788" y="400" width="144" height="64" rx="6" fill="#dbe2f2" stroke="#3a548f" stroke-width="1"/>
+  <!-- 태그 -->
+  <rect x="800" y="408" width="32" height="12" rx="2" fill="transparent" stroke="rgba(58,84,143,0.4)" stroke-width="0.8"/>
+  <text x="816" y="417" fill="rgba(58,84,143,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">DATA</text>
+  <text x="860" y="436" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Training Data</text>
+  <text x="860" y="453" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Augment</text>
+
+  <!-- SAVE: 파라미터 배포 (focal) -->
+  <rect x="440" y="468" width="180" height="64" rx="2" fill="#f8fafb"/>
+  <rect x="440" y="468" width="180" height="64" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <!-- 태그 -->
+  <rect x="452" y="476" width="36" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.4)" stroke-width="0.8"/>
+  <text x="470" y="485" fill="rgba(13,87,99,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">DEPLOY</text>
+  <text x="530" y="508" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Deploy Parameters</text>
+
+  <!-- ═══════════════════════════════════════════════
+       범례
+  ═══════════════════════════════════════════════ -->
+  <line x1="32" y1="553" x2="928" y2="553" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+  <text x="32" y="565" fill="#6c8188" font-size="8" font-family="'IBM Plex Mono', monospace" letter-spacing="0.14em">LEGEND</text>
+
+  <!-- 전체 재컴파일 -->
+  <rect x="100" y="557" width="10" height="10" rx="2" fill="#f5e8cc" stroke="#a96a08" stroke-width="0.8"/>
+  <text x="115" y="566" fill="#3f545c" font-size="9" font-family="'IBM Plex Sans KR', sans-serif">Full Recompile</text>
+
+  <!-- 부분 재컴파일 -->
+  <rect x="240" y="557" width="10" height="10" rx="2" fill="#d6e9de" stroke="#286d50" stroke-width="0.8"/>
+  <text x="255" y="566" fill="#3f545c" font-size="9" font-family="'IBM Plex Sans KR', sans-serif">Partial Recompile</text>
+
+  <!-- 데이터 보강 -->
+  <rect x="380" y="557" width="10" height="10" rx="2" fill="#dbe2f2" stroke="#3a548f" stroke-width="0.8"/>
+  <text x="395" y="566" fill="#3f545c" font-size="9" font-family="'IBM Plex Sans KR', sans-serif">Data Augment</text>
+
+  <!-- 파라미터 배포 -->
+  <rect x="500" y="557" width="10" height="10" rx="2" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="0.8"/>
+  <text x="515" y="566" fill="#3f545c" font-size="9" font-family="'IBM Plex Sans KR', sans-serif">Deploy Parameters (focal)</text>
+
+  <!-- 피드백 루프 -->
+  <line x1="680" y1="562" x2="700" y2="562" stroke="#6c8188" stroke-width="1" stroke-dasharray="5,4"/>
+  <text x="706" y="566" fill="#3f545c" font-size="9" font-family="'IBM Plex Sans KR', sans-serif">Feedback Loop</text>
+
+</svg>
+</body>
+</html>

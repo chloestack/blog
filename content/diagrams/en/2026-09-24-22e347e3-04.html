@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; padding: 0; }
+  .diagram-wrap { width: 100%; max-width: 960px; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<div class="diagram-wrap">
+<svg viewBox="0 0 960 360" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="2026-09-24-22e347e3-04-redis-hotslot-title 2026-09-24-22e347e3-04-redis-hotslot-desc">
+  <title id="2026-09-24-22e347e3-04-redis-hotslot-title">Redis Cluster Hot Slot Bottleneck Diagnosis Flow</title>
+  <desc id="2026-09-24-22e347e3-04-redis-hotslot-desc">Flow starting from monitoring, comparing commands_processed per node, judging 3x deviation, ending normally or running redis-cli --hotkeys, identifying the slot, and forming a strategy for hot slot bottleneck diagnosis.</desc>
+
+  <defs>
+    <!-- Arrow markers -->
+    <marker id="2026-09-24-22e347e3-04-arr-muted" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-09-24-22e347e3-04-arr-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <marker id="2026-09-24-22e347e3-04-arr-ok" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="960" height="360" fill="#f8fafb"/>
+
+  <!-- ─────────────────────────────────────────
+       ARROWS (drawn before boxes)
+  ───────────────────────────────────────── -->
+
+  <!-- 모니터링 → commands_processed (M→C1) horizontal -->
+  <path d="M 164 148 L 228 148" stroke="#3f545c" stroke-width="1" fill="none" marker-end="url(#2026-09-24-22e347e3-04-arr-muted)"/>
+
+  <!-- commands_processed → 노드 편차? (C1→Q1) horizontal -->
+  <path d="M 388 148 L 452 148" stroke="#3f545c" stroke-width="1" fill="none" marker-end="url(#2026-09-24-22e347e3-04-arr-muted)"/>
+
+  <!-- 노드 편차? → 정상 (Q1→OK) — 아니오 — goes RIGHT-DOWN -->
+  <!-- Q1 right tip at (572,148), OK center at (716,228), attach top (716,200) -->
+  <path d="M 572 148 Q 580 148 580 156 L 580 220 Q 580 228 588 228 L 672 228" stroke="#3f545c" stroke-width="1" fill="none" marker-end="url(#2026-09-24-22e347e3-04-arr-ok)" stroke-dasharray="5,4"/>
+  <!-- No label -->
+  <rect x="570" y="172" width="36" height="12" rx="2" fill="#f8fafb"/>
+  <text x="588" y="181" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">No</text>
+
+  <!-- 노드 편차? → redis-cli --hotkeys (Q1→HK) — 예 — goes DOWN -->
+  <!-- Q1 bottom tip at (512,184), HK center at (512,296), attach top (512,268) -->
+  <path d="M 512 184 L 512 268" stroke="#0d5763" stroke-width="1.2" fill="none" marker-end="url(#2026-09-24-22e347e3-04-arr-accent)"/>
+  <!-- Yes label -->
+  <rect x="494" y="216" width="20" height="12" rx="2" fill="#f8fafb"/>
+  <text x="504" y="225" fill="#0d5763" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Yes</text>
+
+  <!-- redis-cli → CLUSTER KEYSLOT (HK→SL) horizontal -->
+  <path d="M 628 296 L 688 296" stroke="#0d5763" stroke-width="1.2" fill="none" marker-end="url(#2026-09-24-22e347e3-04-arr-accent)"/>
+
+  <!-- CLUSTER KEYSLOT → 슬롯 · 키 분석 (SL→AN) horizontal -->
+  <path d="M 828 296 L 876 296" stroke="#0d5763" stroke-width="1.2" fill="none" marker-end="url(#2026-09-24-22e347e3-04-arr-accent)"/>
+
+  <!-- ─────────────────────────────────────────
+       NODES
+  ───────────────────────────────────────── -->
+
+  <!-- [1] 모니터링 — input treatment (muted@0.10 fill, soft stroke) -->
+  <!-- center (100, 148), w=128, h=48 -->
+  <rect x="36" y="124" width="128" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="36" y="124" width="128" height="48" rx="6" fill="rgba(63,84,92,0.10)" stroke="#6c8188" stroke-width="1"/>
+  <rect x="44" y="130" width="40" height="12" rx="2" fill="transparent" stroke="rgba(108,129,136,0.40)" stroke-width="0.8"/>
+  <text x="64" y="139" fill="rgba(108,129,136,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">INPUT</text>
+  <text x="100" y="154" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Monitoring</text>
+
+  <!-- [2] commands_processed 노드별 비교 — backend (white fill, ink stroke) -->
+  <!-- center (308, 148), w=160, h=48 -->
+  <rect x="228" y="124" width="160" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="228" y="124" width="160" height="48" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="236" y="130" width="40" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="256" y="139" fill="rgba(18,33,39,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">METRIC</text>
+  <text x="308" y="152" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">commands_processed</text>
+  <text x="308" y="166" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Compare per Node</text>
+
+  <!-- [3] 노드 편차 3배 이상? — diamond decision -->
+  <!-- center (512, 148), diamond half-w=60, half-h=36 -->
+  <!-- diamond points: top(512,112) right(572,148) bottom(512,184) left(452,148) -->
+  <polygon points="512,112 572,148 512,184 452,148" fill="#f8fafb"/>
+  <polygon points="512,112 572,148 512,184 452,148" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="512" y="144" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Node Deviation</text>
+  <text x="512" y="158" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">≥ 3×?</text>
+
+  <!-- [4] 정상 — store treatment (ok: green tint) -->
+  <!-- center (716, 228), w=96, h=48 -->
+  <rect x="668" y="204" width="96" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="668" y="204" width="96" height="48" rx="6" fill="rgba(40,109,80,0.08)" stroke="#286d50" stroke-width="1"/>
+  <text x="716" y="234" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Normal</text>
+
+  <!-- [5] redis-cli --hotkeys — backend (accent treatment) -->
+  <!-- center (512, 296), w=232, h=48 -->
+  <rect x="396" y="272" width="232" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="396" y="272" width="232" height="48" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="404" y="278" width="40" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="424" y="287" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">CLI</text>
+  <text x="512" y="298" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Mono', monospace" text-anchor="middle">redis-cli --hotkeys</text>
+  <text x="512" y="312" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">List Hot Keys</text>
+
+  <!-- [6] CLUSTER KEYSLOT — backend (white, ink stroke) -->
+  <!-- center (756, 296), w=136, h=48 -->
+  <rect x="688" y="272" width="140" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="688" y="272" width="140" height="48" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="696" y="278" width="40" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="716" y="287" fill="rgba(18,33,39,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">CMD</text>
+  <text x="758" y="298" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Mono', monospace" text-anchor="middle">CLUSTER KEYSLOT</text>
+  <text x="758" y="312" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Identify Slot No.</text>
+
+  <!-- [7] 슬롯 · 키 분석 — focal (accent-tint, accent stroke) -->
+  <!-- center (916, 296), w=80 -> need wider: w=80 but we arrow from 828+48=876, so center at 916 w=80 -->
+  <!-- attach left at 876, right edge at 956 -->
+  <rect x="876" y="272" width="68" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="876" y="272" width="68" height="48" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.5"/>
+  <text x="910" y="293" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Slot · Key</text>
+  <text x="910" y="307" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Analysis</text>
+
+  <!-- ─────────────────────────────────────────
+       LEGEND strip
+  ───────────────────────────────────────── -->
+  <line x1="32" y1="340" x2="928" y2="340" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+
+  <!-- Legend items -->
+  <!-- Decision -->
+  <polygon points="48,354 56,350 64,354 56,358" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="70" y="357" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">Decision</text>
+
+  <!-- Normal path -->
+  <rect x="148" y="350" width="16" height="10" rx="3" fill="rgba(40,109,80,0.08)" stroke="#286d50" stroke-width="1"/>
+  <text x="170" y="357" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">Normal Path</text>
+
+  <!-- Hotkey path -->
+  <rect x="248" y="350" width="16" height="10" rx="3" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="270" y="357" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">Hot Slot Diagnosis Path</text>
+
+  <!-- Dashed = optional -->
+  <line x1="388" y1="355" x2="412" y2="355" stroke="#3f545c" stroke-width="1" stroke-dasharray="4,3"/>
+  <polygon points="410,352 418,355 410,358" fill="#3f545c"/>
+  <text x="424" y="357" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">No Branch</text>
+
+</svg>
+</div>
+</body>
+</html>

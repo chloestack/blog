@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  body { margin: 0; padding: 0; background: #f8fafb; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<svg viewBox="0 0 960 360" xmlns="http://www.w3.org/2000/svg"
+     role="img" aria-labelledby="2026-09-24-932e209d-07-dspy-perf-title 2026-09-24-932e209d-07-dspy-perf-desc">
+  <title id="2026-09-24-932e209d-07-dspy-perf-title">DSPy Performance Improvement Range by Task Type</title>
+  <desc id="2026-09-24-932e209d-07-dspy-perf-desc">A flowchart showing how the performance improvement from DSPy optimization varies by task type (simple classification/extraction / RAG-based QA / multi-hop reasoning), with all three cases being more pronounced in smaller models.</desc>
+
+  <defs>
+    <!-- Arrow markers -->
+    <marker id="2026-09-24-932e209d-07-arrow-muted" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-09-24-932e209d-07-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <marker id="2026-09-24-932e209d-07-arrow-soft" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#6c8188"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="960" height="360" fill="#f8fafb"/>
+
+  <!-- ===================== ARROWS (drawn before boxes) ===================== -->
+
+  <!-- Q → LOW (top branch) -->
+  <!-- Q right edge: x=304, y=100 (center of Q box 240–304, y=72–128) → elbow right then down to LOW left -->
+  <!-- LOW box: x=400, y=64, w=164, h=48. Center y=88. Attach left at x=400, y=88 -->
+  <path d="M304,100 L400,100 L400,88" fill="none" stroke="#6c8188" stroke-width="1" marker-end="url(#2026-09-24-932e209d-07-arrow-soft)"/>
+
+  <!-- Q → MID (straight horizontal) -->
+  <!-- Q center: y=100. MID box: x=400, y=152, h=48, center y=176. -->
+  <!-- Route: Q right x=304 → elbow to MID -->
+  <path d="M304,100 L352,100 L352,176 L400,176" fill="none" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-24-932e209d-07-arrow-accent)"/>
+
+  <!-- Q → HIGH (bottom branch) -->
+  <!-- HIGH box: x=400, y=240, h=48, center y=264 -->
+  <path d="M304,100 L328,100 L328,264 L400,264" fill="none" stroke="#6c8188" stroke-width="1" marker-end="url(#2026-09-24-932e209d-07-arrow-soft)"/>
+
+  <!-- LOW → SM -->
+  <!-- LOW right edge: x=564, y=88. SM box: x=672, y=152, h=72, center y=188. Attach left x=672, y=172 -->
+  <path d="M564,88 L616,88 L616,172 L672,172" fill="none" stroke="#6c8188" stroke-width="1" marker-end="url(#2026-09-24-932e209d-07-arrow-soft)"/>
+
+  <!-- MID → SM -->
+  <!-- MID right edge: x=564, y=176. SM attach left x=672, y=188 -->
+  <path d="M564,176 L672,176" fill="none" stroke="#6c8188" stroke-width="1" marker-end="url(#2026-09-24-932e209d-07-arrow-soft)"/>
+
+  <!-- HIGH → SM -->
+  <!-- HIGH right edge: x=564, y=264. SM attach left x=672, y=204 -->
+  <path d="M564,264 L616,264 L616,204 L672,204" fill="none" stroke="#6c8188" stroke-width="1" marker-end="url(#2026-09-24-932e209d-07-arrow-soft)"/>
+
+  <!-- ===================== NODES ===================== -->
+
+  <!-- Q: 태스크 유형 — Decision diamond, focal (accent) -->
+  <!-- Center: 212, 100. Diamond half-w=64, half-h=44 -->
+  <!-- Paper mask -->
+  <polygon points="148,100 212,56 276,100 212,144" fill="#f8fafb"/>
+  <!-- Accent fill -->
+  <polygon points="148,100 212,56 276,100 212,144" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="212" y="95" fill="#122127" font-size="13" font-weight="600"
+        font-family="'IBM Plex Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif"
+        text-anchor="middle">Task</text>
+  <text x="212" y="112" fill="#122127" font-size="13" font-weight="600"
+        font-family="'IBM Plex Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif"
+        text-anchor="middle">Type</text>
+
+  <!-- LOW: 단순 분류·추출 -->
+  <!-- Box: x=400, y=64, w=164, h=48 -->
+  <rect x="400" y="64" width="164" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="400" y="64" width="164" height="48" rx="6" fill="rgba(18,33,39,0.04)" stroke="rgba(18,33,39,0.25)" stroke-width="1"/>
+  <text x="482" y="84" fill="#122127" font-size="12" font-weight="600"
+        font-family="'IBM Plex Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif"
+        text-anchor="middle">Simple Classify·Extract</text>
+  <text x="482" y="101" fill="#3f545c" font-size="11"
+        font-family="'IBM Plex Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif"
+        text-anchor="middle">+5–15% improvement</text>
+
+  <!-- MID: RAG 기반 QA — focal accent -->
+  <!-- Box: x=400, y=152, w=164, h=48 -->
+  <rect x="400" y="152" width="164" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="400" y="152" width="164" height="48" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="482" y="172" fill="#122127" font-size="12" font-weight="600"
+        font-family="'IBM Plex Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif"
+        text-anchor="middle">RAG-based QA</text>
+  <text x="482" y="189" fill="#3f545c" font-size="11"
+        font-family="'IBM Plex Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif"
+        text-anchor="middle">+15–25% improvement</text>
+
+  <!-- HIGH: 멀티홉 추론 -->
+  <!-- Box: x=400, y=240, w=164, h=48 -->
+  <rect x="400" y="240" width="164" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="400" y="240" width="164" height="48" rx="6" fill="rgba(18,33,39,0.03)" stroke="rgba(18,33,39,0.30)" stroke-width="1"/>
+  <text x="482" y="260" fill="#122127" font-size="12" font-weight="600"
+        font-family="'IBM Plex Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif"
+        text-anchor="middle">Multi-hop Reasoning</text>
+  <text x="482" y="277" fill="#3f545c" font-size="11"
+        font-family="'IBM Plex Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif"
+        text-anchor="middle">+25–40% improvement</text>
+
+  <!-- SM: 소규모 모델에서 더 두드러짐-->
+  <!-- Box: x=672, y=152, w=196, h=72 -->
+  <rect x="672" y="152" width="196" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="672" y="152" width="196" height="72" rx="6" fill="rgba(18,33,39,0.03)" stroke="#c3d0d4" stroke-width="1"/>
+  <text x="770" y="179" fill="#3f545c" font-size="12" font-weight="500"
+        font-family="'IBM Plex Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif"
+        text-anchor="middle">More pronounced</text>
+  <text x="770" y="196" fill="#3f545c" font-size="12" font-weight="500"
+        font-family="'IBM Plex Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif"
+        text-anchor="middle">in smaller models</text>
+  <!-- sublabel tag -->
+  <rect x="720" y="208" width="100" height="12" rx="2" fill="transparent" stroke="rgba(108,129,136,0.40)" stroke-width="0.8"/>
+  <text x="770" y="217" fill="#6c8188" font-size="8"
+        font-family="'IBM Plex Mono',ui-monospace,monospace"
+        text-anchor="middle" letter-spacing="0.08em">SMALL MODEL</text>
+
+  <!-- Arrow labels -->
+  <!-- Q→LOW label "단순" -->
+  <rect x="286" y="64" width="48" height="14" rx="2" fill="#f8fafb"/>
+  <text x="310" y="74" fill="#6c8188" font-size="9"
+        font-family="'IBM Plex Mono',ui-monospace,monospace"
+        text-anchor="middle" letter-spacing="0.06em">SIMPLE</text>
+
+  <!-- Q→MID label (on vertical segment x=352) -->
+  <rect x="330" y="130" width="44" height="14" rx="2" fill="#f8fafb"/>
+  <text x="352" y="140" fill="#0d5763" font-size="9"
+        font-family="'IBM Plex Mono',ui-monospace,monospace"
+        text-anchor="middle" letter-spacing="0.06em">RAG</text>
+
+  <!-- Q→HIGH label (on vertical segment x=328) -->
+  <rect x="306" y="188" width="44" height="14" rx="2" fill="#f8fafb"/>
+  <text x="328" y="198" fill="#6c8188" font-size="9"
+        font-family="'IBM Plex Mono',ui-monospace,monospace"
+        text-anchor="middle" letter-spacing="0.06em">MULTI-HOP</text>
+
+  <!-- ===================== LEGEND ===================== -->
+  <line x1="32" y1="320" x2="928" y2="320" stroke="rgba(18,33,39,0.10)" stroke-width="0.8"/>
+  <text x="32" y="336" fill="#3f545c" font-size="8"
+        font-family="'IBM Plex Mono',ui-monospace,monospace"
+        letter-spacing="0.14em">LEGEND</text>
+
+  <!-- Legend: focal -->
+  <rect x="96" y="326" width="12" height="12" rx="2" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="113" y="336" fill="#3f545c" font-size="9"
+        font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif">Key step</text>
+
+  <!-- Legend: step -->
+  <rect x="196" y="326" width="12" height="12" rx="2" fill="rgba(18,33,39,0.04)" stroke="rgba(18,33,39,0.25)" stroke-width="1"/>
+  <text x="213" y="336" fill="#3f545c" font-size="9"
+        font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif">Task type</text>
+
+  <!-- Legend: muted -->
+  <rect x="304" y="326" width="12" height="12" rx="2" fill="rgba(18,33,39,0.03)" stroke="#c3d0d4" stroke-width="1"/>
+  <text x="321" y="336" fill="#3f545c" font-size="9"
+        font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif">Result / Ref.</text>
+
+</svg>
+</body>
+</html>

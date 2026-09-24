@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: #f8fafb; }
+  body { display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; }
+  .diagram-wrap { width: 100%; max-width: 960px; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<div class="diagram-wrap">
+<svg viewBox="0 0 960 600" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="2026-09-24-22e347e3-03-hotslot-title 2026-09-24-22e347e3-03-hotslot-desc">
+  <title id="2026-09-24-22e347e3-03-hotslot-title">Hot Slot Bottleneck Structure</title>
+  <desc id="2026-09-24-22e347e3-03-hotslot-desc">Flow diagram showing a traffic burst concentrating on a specific slot, causing CPU load to pile onto Node A while remaining nodes stay idle, resulting in queue buildup and P99 latency above 500ms.</desc>
+
+  <defs>
+    <!-- Arrow markers -->
+    <marker id="2026-09-24-22e347e3-03-hs-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-09-24-22e347e3-03-hs-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <marker id="2026-09-24-22e347e3-03-hs-arrow-warn" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#94382b"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="960" height="600" fill="#f8fafb"/>
+
+  <!-- ============================================================
+       ARROWS — drawn before boxes so z-order places them behind
+       ============================================================ -->
+
+  <!-- 요청 폭발 → 핫 슬롯 발생 (vertical, center x=480) -->
+  <line x1="480" y1="148" x2="480" y2="188" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-24-22e347e3-03-hs-arrow-accent)"/>
+
+  <!-- 핫 슬롯 → 노드A (elbow: down then left) -->
+  <!-- from bottom-center of 핫슬롯 (480,268) → fan left to 노드A (280,300) -->
+  <!-- attach point on 핫슬롯 bottom: x=440 (fanned left), y=268 -->
+  <!-- attach point on 노드A top: x=280, y=296 -->
+  <path d="M 440,268 Q 440,284 440,284 L 280,284 Q 280,284 280,296"
+        fill="none" stroke="#94382b" stroke-width="1.2" marker-end="url(#2026-09-24-22e347e3-03-hs-arrow-warn)"/>
+
+  <!-- 핫 슬롯 → 노드B (vertical down, center) -->
+  <!-- attach bottom center 핫슬롯: x=480, y=268 -->
+  <!-- attach top center 노드B: x=480, y=296 -->
+  <line x1="480" y1="268" x2="480" y2="296" stroke="#3f545c" stroke-width="1.2" marker-end="url(#2026-09-24-22e347e3-03-hs-arrow)"/>
+
+  <!-- 핫 슬롯 → 노드C (elbow: down then right) -->
+  <!-- attach point on 핫슬롯 bottom: x=520, y=268 -->
+  <!-- attach point on 노드C top: x=680, y=296 -->
+  <path d="M 520,268 Q 520,284 520,284 L 680,284 Q 680,284 680,296"
+        fill="none" stroke="#3f545c" stroke-width="1.2" marker-end="url(#2026-09-24-22e347e3-03-hs-arrow)"/>
+
+  <!-- 노드A → 큐 적체 (vertical down) -->
+  <!-- attach bottom center 노드A: x=280, y=376 -->
+  <!-- attach top center 큐적체: x=480, y=436 -->
+  <path d="M 280,376 L 280,408 Q 280,416 288,416 L 472,416 Q 480,416 480,436"
+        fill="none" stroke="#94382b" stroke-width="1.2" stroke-dasharray="5,3" marker-end="url(#2026-09-24-22e347e3-03-hs-arrow-warn)"/>
+
+  <!-- ============================================================
+       NODE: 요청 폭발 — Input type (top center)
+       ============================================================ -->
+  <!-- paper mask -->
+  <rect x="380" y="72" width="200" height="76" rx="6" fill="#f8fafb"/>
+  <!-- node box -->
+  <rect x="380" y="72" width="200" height="76" rx="6" fill="rgba(63,84,92,0.10)" stroke="#6c8188" stroke-width="1"/>
+  <!-- type tag -->
+  <rect x="388" y="80" width="40" height="12" rx="2" fill="transparent" stroke="rgba(108,129,136,0.40)" stroke-width="0.8"/>
+  <text x="408" y="89" fill="rgba(108,129,136,0.80)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">INPUT</text>
+  <!-- node name -->
+  <text x="480" y="118" fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Traffic Burst</text>
+  <!-- sublabel -->
+  <text x="480" y="136" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">traffic burst</text>
+
+  <!-- ============================================================
+       NODE: 핫 슬롯 발생 — Focal (accent)
+       ============================================================ -->
+  <rect x="340" y="188" width="280" height="80" rx="6" fill="#f8fafb"/>
+  <rect x="340" y="188" width="280" height="80" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <!-- type tag -->
+  <rect x="348" y="196" width="52" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="374" y="205" fill="rgba(13,87,99,0.80)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">BOTTLENECK</text>
+  <!-- node name -->
+  <text x="480" y="248" fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Hot Slot Formed</text>
+  <!-- sublabel -->
+  <text x="480" y="264" fill="#0d5763" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">hash slot skew</text>
+
+  <!-- ============================================================
+       NODE: 노드A (CPU 92%) — Backend / over-loaded
+       x=200..360, y=296..376
+       ============================================================ -->
+  <rect x="200" y="296" width="160" height="80" rx="6" fill="#f8fafb"/>
+  <rect x="200" y="296" width="160" height="80" rx="6" fill="#ffffff" stroke="#94382b" stroke-width="1.2"/>
+  <!-- type tag -->
+  <rect x="208" y="304" width="40" height="12" rx="2" fill="transparent" stroke="rgba(148,56,43,0.40)" stroke-width="0.8"/>
+  <text x="228" y="313" fill="rgba(148,56,43,0.80)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">NODE</text>
+  <!-- node name -->
+  <text x="280" y="348" fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Node A</text>
+  <!-- sublabel: CPU 92% — warning in red-ish muted -->
+  <text x="280" y="364" fill="#94382b" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">CPU 92 %</text>
+
+  <!-- ============================================================
+       NODE: 노드B (CPU 14%) — Muted / idle
+       x=400..560, y=296..376
+       ============================================================ -->
+  <rect x="400" y="296" width="160" height="80" rx="6" fill="#f8fafb"/>
+  <rect x="400" y="296" width="160" height="80" rx="6" fill="rgba(18,33,39,0.03)" stroke="rgba(18,33,39,0.30)" stroke-width="1"/>
+  <!-- type tag -->
+  <rect x="408" y="304" width="40" height="12" rx="2" fill="transparent" stroke="rgba(108,129,136,0.40)" stroke-width="0.8"/>
+  <text x="428" y="313" fill="rgba(108,129,136,0.80)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">NODE</text>
+  <!-- node name -->
+  <text x="480" y="348" fill="#3f545c" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Node B</text>
+  <text x="480" y="364" fill="#6c8188" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">CPU 14 %</text>
+
+  <!-- ============================================================
+       NODE: 노드C (CPU 11%) — Muted / idle
+       x=600..760, y=296..376
+       ============================================================ -->
+  <rect x="600" y="296" width="160" height="80" rx="6" fill="#f8fafb"/>
+  <rect x="600" y="296" width="160" height="80" rx="6" fill="rgba(18,33,39,0.03)" stroke="rgba(18,33,39,0.30)" stroke-width="1"/>
+  <!-- type tag -->
+  <rect x="608" y="304" width="40" height="12" rx="2" fill="transparent" stroke="rgba(108,129,136,0.40)" stroke-width="0.8"/>
+  <text x="628" y="313" fill="rgba(108,129,136,0.80)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">NODE</text>
+  <!-- node name -->
+  <text x="680" y="348" fill="#3f545c" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Node C</text>
+  <text x="680" y="364" fill="#6c8188" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">CPU 11 %</text>
+
+  <!-- ============================================================
+       NODE: 큐 적체 / P99 500ms+ — Warning
+       x=380..580, y=436..516
+       ============================================================ -->
+  <rect x="380" y="436" width="200" height="80" rx="6" fill="#f8fafb"/>
+  <rect x="380" y="436" width="200" height="80" rx="6" fill="#ffffff" stroke="#a96a08" stroke-width="1.2"/>
+  <!-- type tag -->
+  <rect x="388" y="444" width="40" height="12" rx="2" fill="transparent" stroke="rgba(169,106,8,0.40)" stroke-width="0.8"/>
+  <text x="408" y="453" fill="rgba(169,106,8,0.80)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">LATENCY</text>
+  <!-- node name -->
+  <text x="480" y="492" fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Queue Buildup</text>
+  <!-- sublabel -->
+  <text x="480" y="508" fill="#a96a08" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">P99 ≥ 500 ms</text>
+
+  <!-- ============================================================
+       LEGEND — horizontal strip at the bottom
+       ============================================================ -->
+  <line x1="30" y1="552" x2="930" y2="552" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+
+  <!-- focal -->
+  <rect x="40" y="560" width="10" height="10" rx="2" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="56" y="569" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.06em">bottleneck (focal)</text>
+
+  <!-- overloaded -->
+  <rect x="180" y="560" width="10" height="10" rx="2" fill="#ffffff" stroke="#94382b" stroke-width="1"/>
+  <text x="196" y="569" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.06em">overloaded node</text>
+
+  <!-- warning -->
+  <rect x="320" y="560" width="10" height="10" rx="2" fill="#ffffff" stroke="#a96a08" stroke-width="1"/>
+  <text x="336" y="569" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.06em">latency alert</text>
+
+  <!-- idle -->
+  <rect x="456" y="560" width="10" height="10" rx="2" fill="rgba(18,33,39,0.03)" stroke="rgba(18,33,39,0.30)" stroke-width="1"/>
+  <text x="472" y="569" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.06em">idle node</text>
+
+  <!-- input -->
+  <rect x="580" y="560" width="10" height="10" rx="2" fill="rgba(63,84,92,0.10)" stroke="#6c8188" stroke-width="1"/>
+  <text x="596" y="569" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.06em">traffic input</text>
+</svg>
+</div>
+</body>
+</html>

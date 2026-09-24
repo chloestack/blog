@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; font-family: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; }
+  .diagram-wrap { width: 100%; max-width: 960px; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<div class="diagram-wrap">
+<svg viewBox="0 0 960 600" xmlns="http://www.w3.org/2000/svg"
+     role="img" aria-labelledby="2026-09-24-22e347e3-07-hotslot-title 2026-09-24-22e347e3-07-hotslot-desc">
+  <title id="2026-09-24-22e347e3-07-hotslot-title">Hot Slot Resolution Strategy Selection Flowchart</title>
+  <desc id="2026-09-24-22e347e3-07-hotslot-desc">A flowchart showing the decision flow for resolving Redis Cluster hot slot bottlenecks, selecting different strategies based on four scenarios: read-heavy, write-heavy, slot imbalance, and hash tag overuse, all converging on latency improvement.</desc>
+
+  <defs>
+    <!-- Default arrow: muted -->
+    <marker id="2026-09-24-22e347e3-07-arr" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <!-- Accent arrow: for ok node -->
+    <marker id="2026-09-24-22e347e3-07-arr-ok" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="960" height="600" fill="#f8fafb"/>
+
+  <!-- ─── ARROWS (drawn before boxes) ─── -->
+
+  <!-- Q → RP  (right branch, then down) -->
+  <!-- Q center: 480,148  RP center: 164,312 -->
+  <!-- Route: 480,168 → 480,192 → 164,192 → 164,292 -->
+  <path d="M480,168 L480,192 L164,192 L164,292"
+        fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-24-22e347e3-07-arr)"/>
+
+  <!-- Q → KS  (left-center branch) -->
+  <!-- KS center: 344,312 -->
+  <!-- Route: 480,168 → 480,220 → 344,220 → 344,292 -->
+  <path d="M480,168 L480,220 L344,220 L344,292"
+        fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-24-22e347e3-07-arr)"/>
+
+  <!-- Q → SR  (right-center branch) -->
+  <!-- SR center: 616,312 -->
+  <!-- Route: 480,168 → 480,220 → 616,220 → 616,292 -->
+  <path d="M480,168 L480,220 L616,220 L616,292"
+        fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-24-22e347e3-07-arr)"/>
+
+  <!-- Q → HT  (far right branch) -->
+  <!-- HT center: 796,312 -->
+  <!-- Route: 480,168 → 480,192 → 796,192 → 796,292 -->
+  <path d="M480,168 L480,192 L796,192 L796,292"
+        fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-24-22e347e3-07-arr)"/>
+
+  <!-- RP → OK -->
+  <!-- OK center: 480,464  RP bottom: 164,352 -->
+  <!-- Route: 164,352 → 164,428 → 480,428 → 480,444 -->
+  <path d="M164,352 L164,428 L480,428 L480,444"
+        fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-24-22e347e3-07-arr)"/>
+
+  <!-- KS → OK -->
+  <!-- Route: 344,352 → 344,428 (share the horizontal) → already covered, but use own path -->
+  <path d="M344,352 L344,428 L480,428"
+        fill="none" stroke="#3f545c" stroke-width="1"/>
+
+  <!-- SR → OK -->
+  <path d="M616,352 L616,428 L480,428"
+        fill="none" stroke="#3f545c" stroke-width="1"/>
+
+  <!-- HT → OK -->
+  <path d="M796,352 L796,428 L480,428"
+        fill="none" stroke="#3f545c" stroke-width="1"/>
+
+  <!-- Vertical from horizontal merge to OK top (one arrow tip only) -->
+  <!-- Already drawn above via RP→OK path ending at 480,444. The shared horizontal at y=428
+       collects all four. We draw the single vertical drop separately to avoid double marker. -->
+
+  <!-- ─── ARROW LABELS ─── -->
+
+  <!-- "Read-heavy" label on left segment Q→RP -->
+  <rect x="172" y="181" width="64" height="16" rx="2" fill="#f8fafb"/>
+  <text x="204" y="192" fill="#6c8188" font-size="11" font-family="'IBM Plex Sans KR', sans-serif"
+        font-weight="500" text-anchor="middle">Read-heavy</text>
+
+  <!-- "Write-heavy" label on Q→KS segment -->
+  <rect x="352" y="221" width="64" height="16" rx="2" fill="#f8fafb"/>
+  <text x="384" y="232" fill="#6c8188" font-size="11" font-family="'IBM Plex Sans KR', sans-serif"
+        font-weight="500" text-anchor="middle">Write-heavy</text>
+
+  <!-- "Slot imbalance" label on Q→SR segment -->
+  <rect x="528" y="221" width="72" height="16" rx="2" fill="#f8fafb"/>
+  <text x="564" y="232" fill="#6c8188" font-size="11" font-family="'IBM Plex Sans KR', sans-serif"
+        font-weight="500" text-anchor="middle">Slot imbalance</text>
+
+  <!-- "Hash tag overuse" label on Q→HT segment -->
+  <rect x="720" y="181" width="88" height="16" rx="2" fill="#f8fafb"/>
+  <text x="764" y="192" fill="#6c8188" font-size="11" font-family="'IBM Plex Sans KR', sans-serif"
+        font-weight="500" text-anchor="middle">Hash tag overuse</text>
+
+  <!-- ─── NODES ─── -->
+
+  <!-- Q: Decision diamond (focal) — center 480,128 -->
+  <!-- Diamond as polygon, 96px wide 56px tall -->
+  <!-- Focal: fill=accent-tint rgba(13,87,99,0.08), stroke=accent #0d5763 -->
+  <!-- Paper mask first -->
+  <polygon points="480,84 552,128 480,172 408,128" fill="#f8fafb"/>
+  <polygon points="480,84 552,128 480,172 408,128"
+           fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.5"/>
+  <text x="480" y="122" fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Hot Slot</text>
+  <text x="480" y="140" fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Strategy Select</text>
+
+  <!-- RP: 레플리카 읽기 분산 — center 164,312, 144×60 -->
+  <rect x="92" y="292" width="144" height="60" rx="6" fill="#f8fafb"/>
+  <rect x="92" y="292" width="144" height="60" rx="6"
+        fill="rgba(18,33,39,0.04)" stroke="#3f545c" stroke-width="1"/>
+  <text x="164" y="318" fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Replica Read</text>
+  <text x="164" y="336" fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Distribution</text>
+
+  <!-- KS: 키 접미사 샤딩 — center 344,312, 144×60 -->
+  <rect x="272" y="292" width="144" height="60" rx="6" fill="#f8fafb"/>
+  <rect x="272" y="292" width="144" height="60" rx="6"
+        fill="rgba(18,33,39,0.04)" stroke="#3f545c" stroke-width="1"/>
+  <text x="344" y="318" fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Key Suffix</text>
+  <text x="344" y="336" fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Sharding</text>
+
+  <!-- SR: 슬롯 리밸런싱 — center 616,312, 144×60 -->
+  <rect x="544" y="292" width="144" height="60" rx="6" fill="#f8fafb"/>
+  <rect x="544" y="292" width="144" height="60" rx="6"
+        fill="rgba(18,33,39,0.04)" stroke="#3f545c" stroke-width="1"/>
+  <text x="616" y="318" fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Slot</text>
+  <text x="616" y="336" fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Rebalancing</text>
+
+  <!-- HT: 태그 범위 축소 — center 796,312, 144×60 -->
+  <rect x="724" y="292" width="144" height="60" rx="6" fill="#f8fafb"/>
+  <rect x="724" y="292" width="144" height="60" rx="6"
+        fill="rgba(18,33,39,0.04)" stroke="#3f545c" stroke-width="1"/>
+  <text x="796" y="318" fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Narrow Tag</text>
+  <text x="796" y="336" fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Scope</text>
+
+  <!-- OK: 레이턴시 개선 (terminal, accent) — center 480,476, 180×56 -->
+  <rect x="390" y="444" width="180" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="390" y="444" width="180" height="56" rx="6"
+        fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.5"/>
+  <!-- small type tag -->
+  <rect x="398" y="450" width="40" height="12" rx="2" fill="transparent"
+        stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="418" y="459" fill="rgba(13,87,99,0.80)" font-size="8"
+        font-family="'IBM Plex Mono', monospace" text-anchor="middle"
+        letter-spacing="0.08em">result</text>
+  <text x="480" y="479" fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Latency Improved</text>
+
+  <!-- ─── LEGEND ─── -->
+  <line x1="32" y1="548" x2="928" y2="548" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+
+  <!-- Legend: focal -->
+  <polygon points="56,560 64,556 72,560 64,564"
+           fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="80" y="564" fill="#3f545c" font-size="10"
+        font-family="'IBM Plex Mono', monospace" letter-spacing="0.10em">decision</text>
+
+  <!-- Legend: strategy box -->
+  <rect x="168" y="554" width="16" height="12" rx="2"
+        fill="rgba(18,33,39,0.04)" stroke="#3f545c" stroke-width="1"/>
+  <text x="192" y="564" fill="#3f545c" font-size="10"
+        font-family="'IBM Plex Mono', monospace" letter-spacing="0.10em">strategy</text>
+
+  <!-- Legend: result box -->
+  <rect x="296" y="554" width="16" height="12" rx="2"
+        fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="320" y="564" fill="#3f545c" font-size="10"
+        font-family="'IBM Plex Mono', monospace" letter-spacing="0.10em">goal state</text>
+
+</svg>
+</div>
+</body>
+</html>
