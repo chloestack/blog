@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OpenAI Prompt Caching Flow</title>
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; padding: 0; }
+  .diagram-wrap { width: 100%; max-width: 960px; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<div class="diagram-wrap">
+<svg viewBox="0 0 960 380" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="2026-09-29-67f67d8d-04-oai-cache-title 2026-09-29-67f67d8d-04-oai-cache-desc">
+  <title id="2026-09-29-67f67d8d-04-oai-cache-title">OpenAI Prompt Caching Flow Diagram</title>
+  <desc id="2026-09-29-67f67d8d-04-oai-cache-desc">After a request reaches the OpenAI infrastructure, it branches into a cache hit (50% charge) or cache miss (100% charge) depending on whether the Prefix 1024+ token match is found, then returns a response.</desc>
+
+  <defs>
+    <!-- Arrow markers -->
+    <marker id="2026-09-29-67f67d8d-04-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-09-29-67f67d8d-04-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <marker id="2026-09-29-67f67d8d-04-arrow-ok" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#286d50"/>
+    </marker>
+    <marker id="2026-09-29-67f67d8d-04-arrow-warn" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#a96a08"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="960" height="380" fill="#f8fafb"/>
+
+  <!-- ===================== ARROWS (drawn before boxes) ===================== -->
+
+  <!-- R → O (요청 전송 → OpenAI 인프라) -->
+  <line x1="196" y1="190" x2="264" y2="190" stroke="#3f545c" stroke-width="1.2" marker-end="url(#2026-09-29-67f67d8d-04-arrow)"/>
+
+  <!-- O → Q (OpenAI 인프라 → 분기 다이아몬드) -->
+  <line x1="404" y1="190" x2="468" y2="190" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-29-67f67d8d-04-arrow-accent)"/>
+
+  <!-- Q → H (예 — 위쪽: 캐시 히트) -->
+  <!-- 다이아몬드 꼭짓점 상단 (540, 152) → 위로 올라가서 히트 박스 좌측으로 -->
+  <path d="M540,152 L540,100 L668,100" fill="none" stroke="#286d50" stroke-width="1.2" marker-end="url(#2026-09-29-67f67d8d-04-arrow-ok)"/>
+
+  <!-- Q → M (아니오 — 아래쪽: 캐시 미스) -->
+  <!-- 다이아몬드 꼭짓점 하단 (540, 228) → 아래로 내려가서 미스 박스 좌측으로 -->
+  <path d="M540,228 L540,280 L668,280" fill="none" stroke="#a96a08" stroke-width="1.2" marker-end="url(#2026-09-29-67f67d8d-04-arrow-warn)"/>
+
+  <!-- H → G (캐시 히트 → 응답 반환): 히트 박스 우측 → G 박스 좌측 위쪽 -->
+  <path d="M808,100 L848,100 L848,172" fill="none" stroke="#3f545c" stroke-width="1.2" marker-end="url(#2026-09-29-67f67d8d-04-arrow)"/>
+
+  <!-- M → G (캐시 미스 → 응답 반환): 미스 박스 우측 → G 박스 좌측 아래쪽 -->
+  <path d="M808,280 L848,280 L848,208" fill="none" stroke="#3f545c" stroke-width="1.2" marker-end="url(#2026-09-29-67f67d8d-04-arrow)"/>
+
+  <!-- ===================== ARROW LABELS ===================== -->
+
+  <!-- "예" label on Q→H path: 수평 segment (540,100)→(668,100), midpoint x=604 -->
+  <rect x="586" y="84" width="24" height="12" rx="2" fill="#f8fafb"/>
+  <text x="598" y="93" fill="#286d50" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500" text-anchor="middle">Yes</text>
+
+  <!-- "아니오" label on Q→M path: 수평 segment (540,280)→(668,280), midpoint x=604 -->
+  <rect x="574" y="264" width="48" height="12" rx="2" fill="#f8fafb"/>
+  <text x="598" y="273" fill="#a96a08" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500" text-anchor="middle">No</text>
+
+  <!-- ===================== NODE BOXES ===================== -->
+
+  <!-- R: 요청 전송 (input type, blue-tinted) x=36, y=158, w=160, h=64 -->
+  <rect x="36" y="158" width="160" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="36" y="158" width="160" height="64" rx="6" fill="rgba(58,84,143,0.08)" stroke="#3a548f" stroke-width="1"/>
+  <!-- tag -->
+  <rect x="44" y="164" width="28" height="12" rx="2" fill="transparent" stroke="rgba(58,84,143,0.4)" stroke-width="0.8"/>
+  <text x="58" y="173" fill="rgba(58,84,143,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">INPUT</text>
+  <!-- name -->
+  <text x="116" y="185" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Send Request</text>
+  <!-- sublabel -->
+  <text x="116" y="201" fill="#3f545c" font-size="9" font-family="'IBM Plex Mono', monospace" text-anchor="middle">No config needed</text>
+
+  <!-- O: OpenAI 인프라 (focal/accent) x=264, y=158, w=140, h=64 -->
+  <rect x="264" y="158" width="140" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="264" y="158" width="140" height="64" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <!-- tag -->
+  <rect x="272" y="164" width="28" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.4)" stroke-width="0.8"/>
+  <text x="286" y="173" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">API</text>
+  <!-- name -->
+  <text x="334" y="185" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">OpenAI Infra</text>
+  <!-- sublabel -->
+  <text x="334" y="201" fill="#3f545c" font-size="9" font-family="'IBM Plex Mono', monospace" text-anchor="middle">Auto detection</text>
+
+  <!-- Q: 다이아몬드 (focal/accent) — center 540,190, half-w=72, half-h=38 -->
+  <!-- 다이아몬드: top(540,152), right(612,190), bottom(540,228), left(468,190) -->
+  <polygon points="540,152 612,190 540,228 468,190" fill="#f8fafb"/>
+  <polygon points="540,152 612,190 540,228 468,190" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="540" y="185" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Prefix 1024+</text>
+  <text x="540" y="199" fill="#3f545c" font-size="9" font-family="'IBM Plex Mono', monospace" text-anchor="middle">token match?</text>
+
+  <!-- H: 캐시 히트 (ok — green-tinted) x=668, y=68, w=140, h=64 -->
+  <rect x="668" y="68" width="140" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="668" y="68" width="140" height="64" rx="6" fill="rgba(40,109,80,0.08)" stroke="#286d50" stroke-width="1"/>
+  <!-- tag -->
+  <rect x="676" y="74" width="28" height="12" rx="2" fill="transparent" stroke="rgba(40,109,80,0.4)" stroke-width="0.8"/>
+  <text x="690" y="83" fill="rgba(40,109,80,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">HIT</text>
+  <!-- name -->
+  <text x="738" y="95" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Cache Hit</text>
+  <!-- sublabel -->
+  <text x="738" y="111" fill="#3f545c" font-size="9" font-family="'IBM Plex Mono', monospace" text-anchor="middle">50% charge</text>
+
+  <!-- M: 캐시 미스 (warn — amber-tinted) x=668, y=248, w=140, h=64 -->
+  <rect x="668" y="248" width="140" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="668" y="248" width="140" height="64" rx="6" fill="rgba(169,106,8,0.08)" stroke="#a96a08" stroke-width="1"/>
+  <!-- tag -->
+  <rect x="676" y="254" width="28" height="12" rx="2" fill="transparent" stroke="rgba(169,106,8,0.4)" stroke-width="0.8"/>
+  <text x="690" y="263" fill="rgba(169,106,8,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">MISS</text>
+  <!-- name -->
+  <text x="738" y="275" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Cache Miss</text>
+  <!-- sublabel -->
+  <text x="738" y="291" fill="#3f545c" font-size="9" font-family="'IBM Plex Mono', monospace" text-anchor="middle">100% charge</text>
+
+  <!-- G: 응답 반환 (muted) x=828, y=156, w=100, h=68 -->
+  <rect x="828" y="156" width="100" height="68" rx="6" fill="#f8fafb"/>
+  <rect x="828" y="156" width="100" height="68" rx="6" fill="#eef2f4" stroke="#c3d0d4" stroke-width="1"/>
+  <!-- tag -->
+  <rect x="836" y="162" width="28" height="12" rx="2" fill="transparent" stroke="rgba(195,208,212,0.6)" stroke-width="0.8"/>
+  <text x="850" y="171" fill="#6c8188" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">OUT</text>
+  <!-- name -->
+  <text x="878" y="188" fill="#3f545c" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Return Response</text>
+
+  <!-- ===================== LEGEND ===================== -->
+  <line x1="36" y1="334" x2="924" y2="334" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+
+  <!-- Legend label -->
+  <text x="36" y="350" fill="#6c8188" font-size="8" font-family="'IBM Plex Mono', monospace" letter-spacing="0.14em">LEGEND</text>
+
+  <!-- HIT swatch -->
+  <rect x="108" y="341" width="10" height="10" rx="2" fill="rgba(40,109,80,0.08)" stroke="#286d50" stroke-width="1"/>
+  <text x="122" y="350" fill="#3f545c" font-size="9" font-family="'IBM Plex Sans KR', sans-serif">Cache Hit (50%)</text>
+
+  <!-- MISS swatch -->
+  <rect x="248" y="341" width="10" height="10" rx="2" fill="rgba(169,106,8,0.08)" stroke="#a96a08" stroke-width="1"/>
+  <text x="262" y="350" fill="#3f545c" font-size="9" font-family="'IBM Plex Sans KR', sans-serif">Cache Miss (100%)</text>
+
+  <!-- INPUT swatch -->
+  <rect x="400" y="341" width="10" height="10" rx="2" fill="rgba(58,84,143,0.08)" stroke="#3a548f" stroke-width="1"/>
+  <text x="414" y="350" fill="#3f545c" font-size="9" font-family="'IBM Plex Sans KR', sans-serif">Input Stage</text>
+
+  <!-- API swatch -->
+  <rect x="504" y="341" width="10" height="10" rx="2" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="518" y="350" fill="#3f545c" font-size="9" font-family="'IBM Plex Sans KR', sans-serif">Processing Stage (Focal)</text>
+
+</svg>
+</div>
+</body>
+</html>

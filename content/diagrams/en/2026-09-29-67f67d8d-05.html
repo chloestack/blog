@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prompt Caching Cost Comparison</title>
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; font-family: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; }
+  .diagram-wrap { display: block; width: 100%; max-width: 960px; margin: 0 auto; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<div class="diagram-wrap">
+<svg viewBox="0 0 960 600" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="2026-09-29-67f67d8d-05-caching-title 2026-09-29-67f67d8d-05-caching-desc">
+  <title id="2026-09-29-67f67d8d-05-caching-title">Prompt Caching Cost Comparison — Anthropic vs OpenAI</title>
+  <desc id="2026-09-29-67f67d8d-05-caching-desc">Flow diagram comparing cost structure and cumulative savings of Anthropic explicit caching vs OpenAI automatic caching for 100 requests with the same prefix. Anthropic saves ~87%, OpenAI ~50%.</desc>
+
+  <defs>
+    <!-- Arrow markers -->
+    <marker id="2026-09-29-67f67d8d-05-arrow-muted" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-09-29-67f67d8d-05-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <marker id="2026-09-29-67f67d8d-05-arrow-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3a548f"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="960" height="600" fill="#f8fafb"/>
+
+  <!-- ─── CONNECTORS (drawn before boxes) ─── -->
+
+  <!-- T → A (left branch) -->
+  <!-- T bottom-center (480,148) → elbow left → A top-center (288,208) -->
+  <path d="M 480,148 L 480,172 L 288,172 L 288,208"
+        fill="none" stroke="#3f545c" stroke-width="1.2"
+        marker-end="url(#2026-09-29-67f67d8d-05-arrow-muted)"/>
+
+  <!-- T → O (right branch) -->
+  <!-- T bottom-center (480,148) → elbow right → O top-center (672,208) -->
+  <path d="M 480,148 L 480,172 L 672,172 L 672,208"
+        fill="none" stroke="#3f545c" stroke-width="1.2"
+        marker-end="url(#2026-09-29-67f67d8d-05-arrow-muted)"/>
+
+  <!-- A → AC -->
+  <!-- A bottom-center (288,268) → AC top-center (288,344) -->
+  <line x1="288" y1="268" x2="288" y2="344"
+        stroke="#0d5763" stroke-width="1.2"
+        marker-end="url(#2026-09-29-67f67d8d-05-arrow-accent)"/>
+
+  <!-- O → OC -->
+  <!-- O bottom-center (672,268) → OC top-center (672,344) -->
+  <line x1="672" y1="268" x2="672" y2="344"
+        stroke="#3a548f" stroke-width="1.2"
+        marker-end="url(#2026-09-29-67f67d8d-05-arrow-link)"/>
+
+  <!-- AC → AR -->
+  <!-- AC bottom-center (288,420) → AR top-center (288,472) -->
+  <line x1="288" y1="420" x2="288" y2="472"
+        stroke="#0d5763" stroke-width="1.2"
+        marker-end="url(#2026-09-29-67f67d8d-05-arrow-accent)"/>
+
+  <!-- OC → OR -->
+  <!-- OC bottom-center (672,420) → OR top-center (672,472) -->
+  <line x1="672" y1="420" x2="672" y2="472"
+        stroke="#3a548f" stroke-width="1.2"
+        marker-end="url(#2026-09-29-67f67d8d-05-arrow-link)"/>
+
+  <!-- ─── NODES ─── -->
+
+  <!-- T: Same Prefix 100 Requests — focal (top, centered) -->
+  <!-- x=360, y=80, w=240, h=68 → cx=480 -->
+  <rect x="360" y="80" width="240" height="68" rx="6" fill="#f8fafb"/>
+  <rect x="360" y="80" width="240" height="68" rx="6"
+        fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.5"/>
+  <!-- type tag -->
+  <rect x="368" y="88" width="32" height="12" rx="2"
+        fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="384" y="97"
+        fill="rgba(13,87,99,0.8)" font-size="7"
+        font-family="'IBM Plex Mono', ui-monospace, monospace"
+        text-anchor="middle" letter-spacing="0.08em">input</text>
+  <!-- label -->
+  <text x="480" y="116"
+        fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Same Prefix</text>
+  <text x="480" y="136"
+        fill="#3f545c" font-size="11"
+        font-family="'IBM Plex Mono', ui-monospace, monospace"
+        text-anchor="middle">100 Requests</text>
+
+  <!-- A: Anthropic Explicit Caching — accent -->
+  <!-- x=168, y=208, w=240, h=60 → cx=288 -->
+  <rect x="168" y="208" width="240" height="60" rx="6" fill="#f8fafb"/>
+  <rect x="168" y="208" width="240" height="60" rx="6"
+        fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="176" y="216" width="48" height="12" rx="2"
+        fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="200" y="225"
+        fill="rgba(13,87,99,0.8)" font-size="7"
+        font-family="'IBM Plex Mono', ui-monospace, monospace"
+        text-anchor="middle" letter-spacing="0.08em">Anthropic</text>
+  <text x="288" y="244"
+        fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Explicit Caching</text>
+  <text x="288" y="260"
+        fill="#3f545c" font-size="11"
+        font-family="'IBM Plex Mono', ui-monospace, monospace"
+        text-anchor="middle">cache_control marking</text>
+
+  <!-- O: OpenAI Automatic Caching -->
+  <!-- x=552, y=208, w=240, h=60 → cx=672 -->
+  <rect x="552" y="208" width="240" height="60" rx="6" fill="#f8fafb"/>
+  <rect x="552" y="208" width="240" height="60" rx="6"
+        fill="rgba(58,84,143,0.06)" stroke="#3a548f" stroke-width="1.2"/>
+  <rect x="560" y="216" width="40" height="12" rx="2"
+        fill="transparent" stroke="rgba(58,84,143,0.40)" stroke-width="0.8"/>
+  <text x="580" y="225"
+        fill="rgba(58,84,143,0.8)" font-size="7"
+        font-family="'IBM Plex Mono', ui-monospace, monospace"
+        text-anchor="middle" letter-spacing="0.08em">OpenAI</text>
+  <text x="672" y="244"
+        fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Auto Caching</text>
+  <text x="672" y="260"
+        fill="#3f545c" font-size="11"
+        font-family="'IBM Plex Mono', ui-monospace, monospace"
+        text-anchor="middle">no config · applied auto</text>
+
+  <!-- AC: Cost Structure (Anthropic) — warn-toned -->
+  <!-- x=148, y=344, w=280, h=76 → cx=288 -->
+  <rect x="148" y="344" width="280" height="76" rx="6" fill="#f8fafb"/>
+  <rect x="148" y="344" width="280" height="76" rx="6"
+        fill="#fdf6e8" stroke="#a96a08" stroke-width="1"/>
+  <rect x="156" y="352" width="36" height="12" rx="2"
+        fill="transparent" stroke="rgba(169,106,8,0.40)" stroke-width="0.8"/>
+  <text x="174" y="361"
+        fill="rgba(169,106,8,0.8)" font-size="7"
+        font-family="'IBM Plex Mono', ui-monospace, monospace"
+        text-anchor="middle" letter-spacing="0.08em">cost</text>
+  <text x="288" y="382"
+        fill="#122127" font-size="13" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">1st +25% / 99× −90%</text>
+  <text x="288" y="400"
+        fill="#6c8188" font-size="11"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">cache write cost on first request</text>
+
+  <!-- OC: Cost Structure (OpenAI) — ok-toned -->
+  <!-- x=532, y=344, w=280, h=76 → cx=672 -->
+  <rect x="532" y="344" width="280" height="76" rx="6" fill="#f8fafb"/>
+  <rect x="532" y="344" width="280" height="76" rx="6"
+        fill="#edf5ef" stroke="#286d50" stroke-width="1"/>
+  <rect x="540" y="352" width="36" height="12" rx="2"
+        fill="transparent" stroke="rgba(40,109,80,0.40)" stroke-width="0.8"/>
+  <text x="558" y="361"
+        fill="rgba(40,109,80,0.8)" font-size="7"
+        font-family="'IBM Plex Mono', ui-monospace, monospace"
+        text-anchor="middle" letter-spacing="0.08em">cost</text>
+  <text x="672" y="382"
+        fill="#122127" font-size="13" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">All 100× −50%</text>
+  <text x="672" y="400"
+        fill="#6c8188" font-size="11"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">uniform discount · no extra cost</text>
+
+  <!-- AR: Cumulative Savings Anthropic — focal result -->
+  <!-- x=168, y=472, w=240, h=64 → cx=288 -->
+  <rect x="168" y="472" width="240" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="168" y="472" width="240" height="64" rx="6"
+        fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.5"/>
+  <text x="288" y="502"
+        fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Cumulative Savings ~87%</text>
+  <text x="288" y="522"
+        fill="#0d5763" font-size="11"
+        font-family="'IBM Plex Mono', ui-monospace, monospace"
+        text-anchor="middle">better with more repeats</text>
+
+  <!-- OR: Cumulative Savings OpenAI — muted result -->
+  <!-- x=552, y=472, w=240, h=64 → cx=672 -->
+  <rect x="552" y="472" width="240" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="552" y="472" width="240" height="64" rx="6"
+        fill="#eef2f4" stroke="#c3d0d4" stroke-width="1"/>
+  <text x="672" y="502"
+        fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Cumulative Savings ~50%</text>
+  <text x="672" y="522"
+        fill="#3f545c" font-size="11"
+        font-family="'IBM Plex Mono', ui-monospace, monospace"
+        text-anchor="middle">predictable · no config needed</text>
+
+  <!-- ─── LEGEND ─── -->
+  <line x1="40" y1="560" x2="920" y2="560"
+        stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+
+  <!-- legend items -->
+  <rect x="40" y="572" width="10" height="10" rx="2"
+        fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="56" y="581"
+        fill="#3f545c" font-size="10"
+        font-family="'IBM Plex Mono', ui-monospace, monospace"
+        letter-spacing="0.10em">Explicit Caching (Anthropic)</text>
+
+  <rect x="220" y="572" width="10" height="10" rx="2"
+        fill="rgba(58,84,143,0.06)" stroke="#3a548f" stroke-width="1.2"/>
+  <text x="236" y="581"
+        fill="#3f545c" font-size="10"
+        font-family="'IBM Plex Mono', ui-monospace, monospace"
+        letter-spacing="0.10em">Auto Caching (OpenAI)</text>
+
+  <rect x="400" y="572" width="10" height="10" rx="2"
+        fill="#fdf6e8" stroke="#a96a08" stroke-width="1"/>
+  <text x="416" y="581"
+        fill="#3f545c" font-size="10"
+        font-family="'IBM Plex Mono', ui-monospace, monospace"
+        letter-spacing="0.10em">Cost Structure (caution)</text>
+
+  <rect x="560" y="572" width="10" height="10" rx="2"
+        fill="#edf5ef" stroke="#286d50" stroke-width="1"/>
+  <text x="576" y="581"
+        fill="#3f545c" font-size="10"
+        font-family="'IBM Plex Mono', ui-monospace, monospace"
+        letter-spacing="0.10em">Cost Structure (good)</text>
+
+  <rect x="720" y="572" width="10" height="10" rx="2"
+        fill="#eef2f4" stroke="#c3d0d4" stroke-width="1"/>
+  <text x="736" y="581"
+        fill="#3f545c" font-size="10"
+        font-family="'IBM Plex Mono', ui-monospace, monospace"
+        letter-spacing="0.10em">Savings Result</text>
+
+</svg>
+</div>
+</body>
+</html>

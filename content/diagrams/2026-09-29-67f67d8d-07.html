@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>프롬프트 캐싱 구조</title>
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; font-family: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; }
+  .diagram-wrap { max-width: 960px; margin: 0 auto; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<div class="diagram-wrap">
+<svg viewBox="0 0 960 600" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="2026-09-29-67f67d8d-07-prompt-cache-title 2026-09-29-67f67d8d-07-prompt-cache-desc">
+  <title id="2026-09-29-67f67d8d-07-prompt-cache-title">프롬프트 캐싱 구조</title>
+  <desc id="2026-09-29-67f67d8d-07-prompt-cache-desc">프롬프트 설계에서 고정·반고정·동적 구성 요소로 이어지는 흐름과, 고정·반고정 구성 요소에 각각 연결된 캐시 포인트 1·2를 보여주는 순서도.</desc>
+
+  <defs>
+    <!-- 화살표 마커 -->
+    <marker id="2026-09-29-67f67d8d-07-pc-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-09-29-67f67d8d-07-pc-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <marker id="2026-09-29-67f67d8d-07-pc-arrow-mute" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#c3d0d4"/>
+    </marker>
+  </defs>
+
+  <!-- 배경 -->
+  <rect width="960" height="600" fill="#f8fafb"/>
+
+  <!-- ─── 커넥터 (노드보다 먼저) ─── -->
+
+  <!-- P → A (수직) -->
+  <path d="M 480 108 L 480 152" stroke="#3f545c" stroke-width="1" fill="none" marker-end="url(#2026-09-29-67f67d8d-07-pc-arrow)"/>
+
+  <!-- A → B (수직) -->
+  <path d="M 480 228 L 480 272" stroke="#3f545c" stroke-width="1" fill="none" marker-end="url(#2026-09-29-67f67d8d-07-pc-arrow)"/>
+
+  <!-- B → C (수직) -->
+  <path d="M 480 348 L 480 392" stroke="#0d5763" stroke-width="1" fill="none" marker-end="url(#2026-09-29-67f67d8d-07-pc-arrow-accent)"/>
+
+  <!-- A → CA (오른쪽으로 꺾기: A 오른쪽 엣지 → CA 왼쪽) -->
+  <!-- A: x=360 y=152 w=240 h=76 → 오른쪽 중앙 (600, 190) -->
+  <!-- CA: x=668 y=168 w=188 h=44 → 왼쪽 중앙 (668, 190) -->
+  <path d="M 600 190 L 668 190" stroke="#c3d0d4" stroke-width="1" fill="none" stroke-dasharray="4,3" marker-end="url(#2026-09-29-67f67d8d-07-pc-arrow-mute)"/>
+
+  <!-- B → CB (오른쪽으로 꺾기: B 오른쪽 엣지 → CB 왼쪽) -->
+  <!-- B: x=360 y=272 w=240 h=76 → 오른쪽 중앙 (600, 310) -->
+  <!-- CB: x=668 y=288 w=188 h=44 → 왼쪽 중앙 (668, 310) -->
+  <path d="M 600 310 L 668 310" stroke="#c3d0d4" stroke-width="1" fill="none" stroke-dasharray="4,3" marker-end="url(#2026-09-29-67f67d8d-07-pc-arrow-mute)"/>
+
+  <!-- ─── 노드 ─── -->
+
+  <!-- P: 프롬프트 설계 — 상단 focal -->
+  <!-- x=360 y=52 w=240 h=56 -->
+  <rect x="360" y="52" width="240" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="360" y="52" width="240" height="56" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="368" y="60" width="44" height="14" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="390" y="70" fill="rgba(13,87,99,0.80)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.10em">START</text>
+  <text x="480" y="86" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">프롬프트 설계</text>
+
+  <!-- A: 고정 구성 요소 -->
+  <!-- x=360 y=152 w=240 h=76 -->
+  <rect x="360" y="152" width="240" height="76" rx="6" fill="#f8fafb"/>
+  <rect x="360" y="152" width="240" height="76" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="368" y="160" width="40" height="14" rx="2" fill="transparent" stroke="rgba(18,33,39,0.30)" stroke-width="0.8"/>
+  <text x="388" y="170" fill="rgba(18,33,39,0.70)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.10em">FIXED</text>
+  <text x="480" y="188" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">고정 구성 요소</text>
+  <text x="480" y="208" fill="#6c8188" font-size="11" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">시스템 역할 · 규칙</text>
+
+  <!-- B: 반고정 구성 요소 -->
+  <!-- x=360 y=272 w=240 h=76 -->
+  <rect x="360" y="272" width="240" height="76" rx="6" fill="#f8fafb"/>
+  <rect x="360" y="272" width="240" height="76" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="368" y="280" width="56" height="14" rx="2" fill="transparent" stroke="rgba(18,33,39,0.30)" stroke-width="0.8"/>
+  <text x="396" y="290" fill="rgba(18,33,39,0.70)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.10em">SEMI</text>
+  <text x="480" y="308" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">반고정 구성 요소</text>
+  <text x="480" y="328" fill="#6c8188" font-size="11" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Few-shot · 검색 문서</text>
+
+  <!-- C: 동적 구성 요소 — focal accent -->
+  <!-- x=360 y=392 w=240 h=76 -->
+  <rect x="360" y="392" width="240" height="76" rx="6" fill="#f8fafb"/>
+  <rect x="360" y="392" width="240" height="76" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="368" y="400" width="52" height="14" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="394" y="410" fill="rgba(13,87,99,0.80)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.10em">DYNAMIC</text>
+  <text x="480" y="428" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">동적 구성 요소</text>
+  <text x="480" y="448" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">유저 메시지</text>
+
+  <!-- CA: 캐시 포인트 1 -->
+  <!-- x=668 y=168 w=188 h=44 -->
+  <rect x="668" y="168" width="188" height="44" rx="6" fill="#f8fafb"/>
+  <rect x="668" y="168" width="188" height="44" rx="6" fill="#eef2f4" stroke="#c3d0d4" stroke-width="1"/>
+  <text x="762" y="186" fill="#3f545c" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">캐시 포인트 1</text>
+  <text x="762" y="204" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.06em">cache checkpoint</text>
+
+  <!-- CB: 캐시 포인트 2 -->
+  <!-- x=668 y=288 w=188 h=44 -->
+  <rect x="668" y="288" width="188" height="44" rx="6" fill="#f8fafb"/>
+  <rect x="668" y="288" width="188" height="44" rx="6" fill="#eef2f4" stroke="#c3d0d4" stroke-width="1"/>
+  <text x="762" y="306" fill="#3f545c" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">캐시 포인트 2</text>
+  <text x="762" y="324" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.06em">cache checkpoint</text>
+
+  <!-- ─── 범례 ─── -->
+  <line x1="32" y1="532" x2="928" y2="532" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+  <text x="32" y="548" fill="#6c8188" font-size="8" font-family="'IBM Plex Mono', monospace" letter-spacing="0.14em">LEGEND</text>
+
+  <!-- 범례: 고정/반고정 -->
+  <rect x="100" y="538" width="16" height="16" rx="4" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <text x="122" y="550" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">고정/반고정 구성</text>
+
+  <!-- 범례: 동적 (focal) -->
+  <rect x="264" y="538" width="16" height="16" rx="4" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="286" y="550" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">핵심 노드</text>
+
+  <!-- 범례: 캐시 포인트 -->
+  <rect x="396" y="538" width="16" height="16" rx="4" fill="#eef2f4" stroke="#c3d0d4" stroke-width="1"/>
+  <text x="418" y="550" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">캐시 포인트</text>
+
+  <!-- 범례: 캐시 화살표 (점선) -->
+  <line x1="540" y1="546" x2="568" y2="546" stroke="#c3d0d4" stroke-width="1" stroke-dasharray="4,3"/>
+  <polygon points="568,543 574,546 568,549" fill="#c3d0d4"/>
+  <text x="580" y="550" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">캐시 연결</text>
+
+</svg>
+</div>
+</body>
+</html>

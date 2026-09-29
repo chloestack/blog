@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 960 600"
+  role="img"
+  aria-labelledby="2026-09-29-67f67d8d-03-cache-flow-title 2026-09-29-67f67d8d-03-cache-flow-desc"
+>
+  <title id="2026-09-29-67f67d8d-03-cache-flow-title">Prompt Caching Flow Diagram</title>
+  <desc id="2026-09-29-67f67d8d-03-cache-flow-desc">Decision flow showing how an API request branches into cache creation, cache hit (-90% cost), cache expiry, or no caching (standard billing) based on cache_control settings and minimum token condition (1024 tokens).</desc>
+
+  <defs>
+    <!-- Arrow markers -->
+    <marker id="2026-09-29-67f67d8d-03-cf-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-09-29-67f67d8d-03-cf-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <marker id="2026-09-29-67f67d8d-03-cf-arrow-muted" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#6c8188"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="960" height="600" fill="#f8fafb"/>
+
+  <!-- ============================================================
+       CONNECTORS — drawn before boxes
+       ============================================================ -->
+
+  <!-- A (cx=480, bottom y=148) → B (cx=480, top y=196) -->
+  <line x1="480" y1="148" x2="480" y2="190" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-29-67f67d8d-03-cf-arrow)"/>
+
+  <!-- B (cx=480, bottom y=268) → D (cx=480, top y=316): YES branch, down -->
+  <path d="M480,268 L480,310" fill="none" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-29-67f67d8d-03-cf-arrow-accent)"/>
+  <!-- YES label -->
+  <rect x="460" y="276" width="40" height="14" rx="2" fill="#f8fafb"/>
+  <text x="480" y="286" fill="#0d5763" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500" text-anchor="middle">Yes</text>
+
+  <!-- B (cx=480, left y=232) → C (cx=236, right): NO branch, left then down -->
+  <path d="M408,232 Q380,232 380,232 L248,232" fill="none" stroke="#6c8188" stroke-width="1" stroke-dasharray="5,4" marker-end="url(#2026-09-29-67f67d8d-03-cf-arrow-muted)"/>
+  <!-- No label -->
+  <rect x="286" y="222" width="56" height="14" rx="2" fill="#f8fafb"/>
+  <text x="314" y="232" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500" text-anchor="middle">No</text>
+
+  <!-- D (cx=480, bottom y=388) → E (cx=480, top y=420) -->
+  <line x1="480" y1="388" x2="480" y2="414" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-29-67f67d8d-03-cf-arrow)"/>
+
+  <!-- E (cx=480, right y=456) → F (cx=716, left): YES branch, right -->
+  <path d="M552,456 L710,456" fill="none" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-29-67f67d8d-03-cf-arrow-accent)"/>
+  <!-- Yes label -->
+  <rect x="604" y="446" width="40" height="14" rx="2" fill="#f8fafb"/>
+  <text x="624" y="456" fill="#0d5763" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500" text-anchor="middle">Yes</text>
+
+  <!-- E (cx=480, bottom y=498) → G (cx=480, top y=532) -->
+  <path d="M480,498 L480,526" fill="none" stroke="#6c8188" stroke-width="1" stroke-dasharray="5,4" marker-end="url(#2026-09-29-67f67d8d-03-cf-arrow-muted)"/>
+  <!-- No label -->
+  <rect x="444" y="506" width="72" height="14" rx="2" fill="#f8fafb"/>
+  <text x="480" y="516" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500" text-anchor="middle">No</text>
+
+  <!-- ============================================================
+       NODES
+       ============================================================ -->
+
+  <!-- A: API Request — focal (start oval) -->
+  <!-- cx=480, cy=116, w=200, h=48, rx=24 -->
+  <rect x="380" y="92" width="200" height="48" rx="24" fill="#f8fafb"/>
+  <rect x="380" y="92" width="200" height="48" rx="24" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="480" y="111" fill="#122127" font-size="14" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">API Request</text>
+  <text x="480" y="129" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">cache_control set</text>
+
+  <!-- B: Min length? — decision diamond -->
+  <!-- cx=480, cy=232, diamond half-w=72, half-h=36 -->
+  <rect x="408" y="196" width="144" height="72" rx="0" fill="#f8fafb"/>
+  <polygon points="480,196 552,232 480,268 408,232" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="480" y="227" fill="#122127" font-size="12" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">Min length</text>
+  <text x="480" y="244" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">≥ 1024 tokens?</text>
+
+  <!-- C: No caching — optional/stop node -->
+  <!-- cx=152, cy=232, w=160, h=56, rx=6 -->
+  <rect x="72" y="204" width="160" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="72" y="204" width="160" height="56" rx="6" fill="rgba(18,33,39,0.02)" stroke="rgba(18,33,39,0.20)" stroke-width="1" stroke-dasharray="4,3"/>
+  <!-- tag -->
+  <rect x="80" y="210" width="36" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.30)" stroke-width="0.8"/>
+  <text x="98" y="219" fill="rgba(18,33,39,0.6)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.06em">SKIP</text>
+  <text x="152" y="236" fill="#122127" font-size="13" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">No Caching</text>
+  <text x="152" y="252" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Standard billing</text>
+
+  <!-- D: Cache created — backend/warn -->
+  <!-- cx=480, cy=352, w=200, h=56, rx=6 -->
+  <rect x="380" y="316" width="200" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="380" y="316" width="200" height="56" rx="6" fill="rgba(18,33,39,0.03)" stroke="#3f545c" stroke-width="1"/>
+  <!-- tag -->
+  <rect x="388" y="322" width="44" height="12" rx="2" fill="transparent" stroke="rgba(63,84,92,0.40)" stroke-width="0.8"/>
+  <text x="410" y="331" fill="rgba(63,84,92,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.06em">CACHE</text>
+  <text x="480" y="350" fill="#122127" font-size="13" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">Cache Created</text>
+  <text x="480" y="366" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">+25% cost</text>
+
+  <!-- E: Re-request within TTL? — decision diamond -->
+  <!-- cx=480, cy=456, diamond half-w=72, half-h=42 -->
+  <rect x="408" y="414" width="144" height="84" rx="0" fill="#f8fafb"/>
+  <polygon points="480,414 552,456 480,498 408,456" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="480" y="449" fill="#122127" font-size="12" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">Within TTL</text>
+  <text x="480" y="465" fill="#122127" font-size="12" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">re-request?</text>
+
+  <!-- F: Cache hit — focal/ok -->
+  <!-- cx=796, cy=456, w=176, h=56, rx=6 -->
+  <rect x="708" y="428" width="176" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="708" y="428" width="176" height="56" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <!-- tag -->
+  <rect x="716" y="434" width="36" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="734" y="443" fill="rgba(13,87,99,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.06em">HIT</text>
+  <text x="796" y="462" fill="#122127" font-size="13" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">Cache Hit</text>
+  <text x="796" y="478" fill="#0d5763" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle" font-weight="600">-90% cost</text>
+
+  <!-- G: Cache expired — muted/store -->
+  <!-- cx=480, cy=556, w=200, h=48, rx=6 -->
+  <rect x="380" y="528" width="200" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="380" y="528" width="200" height="48" rx="6" fill="rgba(18,33,39,0.05)" stroke="#6c8188" stroke-width="1"/>
+  <!-- tag -->
+  <rect x="388" y="534" width="44" height="12" rx="2" fill="transparent" stroke="rgba(108,129,136,0.40)" stroke-width="0.8"/>
+  <text x="410" y="543" fill="rgba(108,129,136,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.06em">MISS</text>
+  <text x="480" y="558" fill="#122127" font-size="13" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">Cache Expired</text>
+  <text x="480" y="572" fill="#6c8188" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Rebuild required</text>
+
+  <!-- ============================================================
+       LEGEND — horizontal bottom strip
+       ============================================================ -->
+  <line x1="40" y1="590" x2="920" y2="590" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+  <!-- Focal -->
+  <rect x="40" y="594" width="10" height="10" rx="2" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="56" y="603" fill="#3f545c" font-size="9" font-family="'IBM Plex Mono', monospace">Main path</text>
+  <!-- Muted/dashed -->
+  <rect x="160" y="594" width="10" height="10" rx="2" fill="rgba(18,33,39,0.02)" stroke="rgba(18,33,39,0.20)" stroke-width="1" stroke-dasharray="3,2"/>
+  <text x="176" y="603" fill="#3f545c" font-size="9" font-family="'IBM Plex Mono', monospace">Condition unmet</text>
+  <!-- Store -->
+  <rect x="296" y="594" width="10" height="10" rx="2" fill="rgba(18,33,39,0.05)" stroke="#6c8188" stroke-width="1"/>
+  <text x="312" y="603" fill="#3f545c" font-size="9" font-family="'IBM Plex Mono', monospace">Expired/pending</text>
+</svg>
+</body>
+</html>

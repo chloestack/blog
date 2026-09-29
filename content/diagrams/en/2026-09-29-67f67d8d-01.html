@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prompt Caching Cost Structure</title>
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; font-family: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; }
+  svg { display: block; max-width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 600" role="img" aria-labelledby="2026-09-29-67f67d8d-01-pc-title 2026-09-29-67f67d8d-01-pc-desc">
+  <title id="2026-09-29-67f67d8d-01-pc-title">Prompt Caching Cost Structure</title>
+  <desc id="2026-09-29-67f67d8d-01-pc-desc">A flowchart showing how an API request branches into three flows — system prompt, RAG documents, and user message — where repeated fixed segments lead to full-token billing cost issues</desc>
+
+  <defs>
+    <!-- arrow markers -->
+    <marker id="2026-09-29-67f67d8d-01-arr-muted" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0,8 3,0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-09-29-67f67d8d-01-arr-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0,8 3,0 6" fill="#0d5763"/>
+    </marker>
+    <marker id="2026-09-29-67f67d8d-01-arr-warn" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0,8 3,0 6" fill="#a96a08"/>
+    </marker>
+    <marker id="2026-09-29-67f67d8d-01-arr-stop" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0,8 3,0 6" fill="#94382b"/>
+    </marker>
+    <marker id="2026-09-29-67f67d8d-01-arr-ok" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0,8 3,0 6" fill="#286d50"/>
+    </marker>
+  </defs>
+
+  <!-- background -->
+  <rect width="960" height="600" fill="#f8fafb"/>
+
+  <!-- ===== ARROWS (drawn before boxes) ===== -->
+
+  <!-- REQ → SYS: exits right of REQ (x=232), enters left of SYS (x=348) -->
+  <!-- Route: right from REQ center-top area, elbow up then right to SYS -->
+  <!-- REQ center: (156,220), SYS center: (436,148) -->
+  <!-- exit: (232,212), go right to (320,212), bend up to (320,148), right to (348,148) -->
+  <path d="M232,212 L320,212 Q328,212 328,204 L328,156 Q328,148 336,148 L348,148"
+        fill="none" stroke="#3f545c" stroke-width="1.2" marker-end="url(#2026-09-29-67f67d8d-01-arr-muted)"/>
+
+  <!-- REQ → DOC: exits right of REQ, straight right to DOC -->
+  <!-- REQ right: (232,224), DOC left: (348,224) -->
+  <path d="M232,224 L348,224"
+        fill="none" stroke="#3f545c" stroke-width="1.2" marker-end="url(#2026-09-29-67f67d8d-01-arr-muted)"/>
+
+  <!-- REQ → USR: exits right of REQ (x=232), routes down then right to USR -->
+  <!-- USR center: (436,300), left edge x=348 -->
+  <!-- exit: (232,236), right to (320,236), bend down to (320,300), right to (348,300) -->
+  <path d="M232,236 L320,236 Q328,236 328,244 L328,292 Q328,300 336,300 L348,300"
+        fill="none" stroke="#3f545c" stroke-width="1.2" marker-end="url(#2026-09-29-67f67d8d-01-arr-muted)"/>
+
+  <!-- SYS → COST: exits right of SYS (x=524), routes to COST left -->
+  <!-- SYS right: (524,148), COST center: (736,188), COST left: (640,188) -->
+  <!-- route: right to (600,148), bend down to (600,188), right to (640,188) -->
+  <path d="M524,148 L600,148 Q608,148 608,156 L608,180 Q608,188 616,188 L640,188"
+        fill="none" stroke="#94382b" stroke-width="1.4" marker-end="url(#2026-09-29-67f67d8d-01-arr-stop)"/>
+
+  <!-- DOC → COST: exits right of DOC (x=524), routes to COST left -->
+  <!-- DOC right: (524,224), COST left: (640,188) -->
+  <!-- route: right to (580,224), bend up to (580,188), right to (640,188) -->
+  <path d="M524,224 L572,224 Q580,224 580,216 L580,196 Q580,188 588,188 L640,188"
+        fill="none" stroke="#a96a08" stroke-width="1.4" marker-end="url(#2026-09-29-67f67d8d-01-arr-warn)"/>
+
+  <!-- USR → COST2: exits right of USR (x=524), straight right to COST2 left -->
+  <!-- USR right: (524,300), COST2 left: (640,300) -->
+  <path d="M524,300 L640,300"
+        fill="none" stroke="#286d50" stroke-width="1.2" marker-end="url(#2026-09-29-67f67d8d-01-arr-ok)"/>
+
+  <!-- ===== NODES ===== -->
+
+  <!-- REQ: API Request — input/new treatment (blue tint) -->
+  <rect x="76" y="188" width="156" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="76" y="188" width="156" height="72" rx="6" fill="rgba(58,84,143,0.08)" stroke="#3a548f" stroke-width="1"/>
+  <rect x="84" y="194" width="36" height="12" rx="2" fill="transparent" stroke="rgba(58,84,143,0.40)" stroke-width="0.8"/>
+  <text x="102" y="203" fill="rgba(58,84,143,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">INPUT</text>
+  <text x="154" y="228" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">API Request</text>
+  <text x="154" y="248" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">every call</text>
+
+  <!-- SYS: System Prompt — stop/problem (red tint) -->
+  <rect x="348" y="112" width="176" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="348" y="112" width="176" height="72" rx="6" fill="rgba(148,56,43,0.07)" stroke="#94382b" stroke-width="1"/>
+  <rect x="356" y="118" width="36" height="12" rx="2" fill="transparent" stroke="rgba(148,56,43,0.40)" stroke-width="0.8"/>
+  <text x="374" y="127" fill="rgba(148,56,43,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">FIXED</text>
+  <text x="436" y="152" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">System Prompt</text>
+  <text x="436" y="172" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">fixed · repeated</text>
+
+  <!-- DOC: RAG Documents — warn (amber tint) -->
+  <rect x="348" y="188" width="176" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="348" y="188" width="176" height="72" rx="6" fill="rgba(169,106,8,0.08)" stroke="#a96a08" stroke-width="1"/>
+  <rect x="356" y="194" width="36" height="12" rx="2" fill="transparent" stroke="rgba(169,106,8,0.40)" stroke-width="0.8"/>
+  <text x="374" y="203" fill="rgba(169,106,8,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">PART</text>
+  <text x="436" y="228" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">RAG Documents</text>
+  <text x="436" y="248" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">partial repeat</text>
+
+  <!-- USR: User Message — accent (focal teal) -->
+  <rect x="348" y="264" width="176" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="348" y="264" width="176" height="72" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="356" y="270" width="36" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="374" y="279" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">USER</text>
+  <text x="436" y="304" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">User Message</text>
+  <text x="436" y="324" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">changes each time</text>
+
+  <!-- COST: Excess Cost — stop/problem (red, accent focal) -->
+  <rect x="640" y="152" width="192" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="640" y="152" width="192" height="72" rx="6" fill="rgba(148,56,43,0.10)" stroke="#94382b" stroke-width="1.4"/>
+  <rect x="648" y="158" width="36" height="12" rx="2" fill="transparent" stroke="rgba(148,56,43,0.40)" stroke-width="0.8"/>
+  <text x="666" y="167" fill="rgba(148,56,43,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">COST</text>
+  <text x="736" y="192" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Excess Cost</text>
+  <text x="736" y="212" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">full token billing</text>
+
+  <!-- COST2: Normal Range — ok (green tint) -->
+  <rect x="640" y="264" width="192" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="640" y="264" width="192" height="72" rx="6" fill="rgba(40,109,80,0.08)" stroke="#286d50" stroke-width="1"/>
+  <rect x="648" y="270" width="36" height="12" rx="2" fill="transparent" stroke="rgba(40,109,80,0.40)" stroke-width="0.8"/>
+  <text x="666" y="279" fill="rgba(40,109,80,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">OK</text>
+  <text x="736" y="304" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Normal Range</text>
+  <text x="736" y="324" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">no caching needed</text>
+
+  <!-- ===== LEGEND STRIP ===== -->
+  <line x1="32" y1="524" x2="928" y2="524" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+  <text x="32" y="538" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.14em">LEGEND</text>
+
+  <!-- legend items -->
+  <!-- Fixed/repeated -->
+  <rect x="108" y="528" width="14" height="14" rx="3" fill="rgba(148,56,43,0.07)" stroke="#94382b" stroke-width="1"/>
+  <text x="128" y="540" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif">Fixed · Repeated (cache target)</text>
+
+  <!-- Partial repeat -->
+  <rect x="312" y="528" width="14" height="14" rx="3" fill="rgba(169,106,8,0.08)" stroke="#a96a08" stroke-width="1"/>
+  <text x="332" y="540" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif">Partial Repeat</text>
+
+  <!-- User/changes -->
+  <rect x="436" y="528" width="14" height="14" rx="3" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="456" y="540" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif">Changes Each Time</text>
+
+  <!-- OK -->
+  <rect x="560" y="528" width="14" height="14" rx="3" fill="rgba(40,109,80,0.08)" stroke="#286d50" stroke-width="1"/>
+  <text x="580" y="540" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif">Normal Range</text>
+
+  <!-- Cost -->
+  <rect x="672" y="528" width="14" height="14" rx="3" fill="rgba(148,56,43,0.10)" stroke="#94382b" stroke-width="1.4"/>
+  <text x="692" y="540" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif">Excess Cost</text>
+
+</svg>
+</body>
+</html>

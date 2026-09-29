@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 360" role="img" aria-labelledby="2026-09-29-67f67d8d-02-pc-title 2026-09-29-67f67d8d-02-pc-desc">
+  <title id="2026-09-29-67f67d8d-02-pc-title">Prompt Caching Processing Flow</title>
+  <desc id="2026-09-29-67f67d8d-02-pc-desc">LLM API caching flow: after a request arrives, a KV cache hit loads the cache (skipping prefill), while a miss runs full prefill then saves the KV cache, before proceeding to decoding (token generation).</desc>
+
+  <defs>
+    <!-- Arrow markers -->
+    <marker id="2026-09-29-67f67d8d-02-pc-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-09-29-67f67d8d-02-pc-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <marker id="2026-09-29-67f67d8d-02-pc-arrow-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3a548f"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="960" height="360" fill="#f8fafb"/>
+
+  <!-- ═══════════════════════════════════════════════
+       CONNECTORS (drawn before boxes)
+  ════════════════════════════════════════════════ -->
+
+  <!-- Request Arrival → Cache Hit? (straight horizontal) -->
+  <line x1="172" y1="180" x2="232" y2="180" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-29-67f67d8d-02-pc-arrow)"/>
+
+  <!-- Cache Hit? → KV Cache Load (Yes, upper-right elbow) -->
+  <!-- from diamond top (304,132) up then right to box -->
+  <path d="M304,148 L304,116 Q304,108 312,108 L404,108" fill="none" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-29-67f67d8d-02-pc-arrow-accent)"/>
+  <!-- Yes label -->
+  <rect x="326" y="96" width="20" height="12" rx="2" fill="#f8fafb"/>
+  <text x="336" y="105" fill="#0d5763" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">Yes</text>
+
+  <!-- Cache Hit? → Full Prefill (No, lower-right elbow) -->
+  <path d="M304,212 L304,252 Q304,260 312,260 L404,260" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-29-67f67d8d-02-pc-arrow)"/>
+  <!-- No label -->
+  <rect x="312" y="248" width="40" height="12" rx="2" fill="#f8fafb"/>
+  <text x="332" y="257" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500" text-anchor="middle">No</text>
+
+  <!-- KV Cache Load → Decoding (straight horizontal, top path) -->
+  <line x1="556" y1="108" x2="716" y2="108" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-29-67f67d8d-02-pc-arrow-accent)"/>
+
+  <!-- Full Prefill → KV Cache Save (straight horizontal) -->
+  <line x1="556" y1="260" x2="636" y2="260" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-29-67f67d8d-02-pc-arrow)"/>
+
+  <!-- KV Cache Save → Decoding (elbow up then right) -->
+  <path d="M756,232 L756,136 Q756,128 764,128 L716,128" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-29-67f67d8d-02-pc-arrow)"/>
+  <!-- Reroute: KV Cache Save right edge → elbow up → diag box left edge -->
+  <!-- KV Cache Save box: x=636,y=232,w=120,h=56 → right edge at x=756,cy=260 -->
+  <!-- Decoding box: x=716,y=80,w=140,h=56 → left edge at x=716,cy=108 -->
+  <!-- path: from (756,260) go right to (780,260), up to (780,108), left to (716+140=856... wait, need to enter from right? -->
+  <!-- Let me re-route: from KV Save right (756,260) → right bend → up → enter Decoding from bottom -->
+
+  <!-- KV Cache Save → Decoding: exit right of Save(756,260), go to (800,260), up to (800,144), left-enter Decoding bottom (786,136) -->
+  <!-- Actually let me use simpler routing: exit top of Save, go up, enter bottom of Decoding -->
+
+  <!-- ═══════════════════════════════════════════════
+       BOXES (drawn after connectors)
+  ════════════════════════════════════════════════ -->
+
+  <!-- ① Request Arrival (input oval) x=52,y=156,w=120,h=48 cx=112,cy=180 -->
+  <rect x="52" y="156" width="120" height="48" rx="20" fill="rgba(58,84,143,0.08)" stroke="#3a548f" stroke-width="1"/>
+  <text x="112" y="176" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Request</text>
+  <text x="112" y="194" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Arrival</text>
+
+  <!-- ② Cache Hit? (decision diamond) cx=304,cy=180, half=48 -->
+  <!-- Diamond points: top(304,132) right(352,180) bottom(304,228) left(256,180) -->
+  <rect x="256" y="132" width="96" height="96" rx="0" fill="rgba(13,87,99,0.06)" stroke="#0d5763" stroke-width="1.2"
+        transform="rotate(45,304,180)"/>
+  <!-- Mask for diamond label area -->
+  <rect x="264" y="164" width="80" height="32" rx="2" fill="rgba(13,87,99,0.06)"/>
+  <text x="304" y="178" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Cache</text>
+  <text x="304" y="194" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Hit?</text>
+
+  <!-- ③ KV Cache Load (focal / accent) x=404,y=80,w=152,h=56 cx=480,cy=108 -->
+  <rect x="404" y="80" width="152" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="404" y="80" width="152" height="56" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <!-- tag -->
+  <rect x="412" y="87" width="28" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="426" y="96" fill="rgba(13,87,99,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">HIT</text>
+  <text x="480" y="112" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">KV Cache Load</text>
+  <text x="480" y="128" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">Skip Prefill</text>
+
+  <!-- ④ Full Prefill (backend) x=404,y=232,w=152,h=56 cx=480,cy=260 -->
+  <rect x="404" y="232" width="152" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="404" y="232" width="152" height="56" rx="6" fill="white" stroke="#122127" stroke-width="1"/>
+  <!-- tag -->
+  <rect x="412" y="239" width="28" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.30)" stroke-width="0.8"/>
+  <text x="426" y="248" fill="rgba(18,33,39,0.7)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">MISS</text>
+  <text x="480" y="264" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Full Prefill</text>
+  <text x="480" y="280" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Run</text>
+
+  <!-- ⑤ KV Cache Save (store) x=636,y=232,w=120,h=56 cx=696,cy=260 -->
+  <rect x="636" y="232" width="120" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="636" y="232" width="120" height="56" rx="6" fill="rgba(18,33,39,0.05)" stroke="#3f545c" stroke-width="1"/>
+  <!-- tag -->
+  <rect x="644" y="239" width="28" height="12" rx="2" fill="transparent" stroke="rgba(63,84,92,0.35)" stroke-width="0.8"/>
+  <text x="658" y="248" fill="rgba(63,84,92,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">KV</text>
+  <text x="696" y="264" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">KV Cache</text>
+  <text x="696" y="280" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Save</text>
+
+  <!-- ⑥ Decoding Token Gen (muted / store) x=716,y=152,w=148,h=56 cx=790,cy=180 -->
+  <rect x="716" y="152" width="148" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="716" y="152" width="148" height="56" rx="6" fill="rgba(18,33,39,0.03)" stroke="rgba(18,33,39,0.25)" stroke-width="1"/>
+  <!-- tag -->
+  <rect x="724" y="159" width="36" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.20)" stroke-width="0.8"/>
+  <text x="742" y="168" fill="rgba(18,33,39,0.55)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">DECODE</text>
+  <text x="790" y="184" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Decoding</text>
+  <text x="790" y="200" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">Token Gen</text>
+
+  <!-- ═══════════════════════════════════════════════
+       RE-DRAW CONNECTORS that need to clear boxes
+       (KV Save → Decoding: top exit of Save → elbow right → enter Decoding right side)
+  ════════════════════════════════════════════════ -->
+
+  <!-- KV Cache Save top(696,232) → up to (696,144) → right to (864,144) → down to Decoding right(864,180) 
+       But Decoding box is x=716..864, so right edge=864. Enter from right.
+       Wait: Decoding right edge = 716+148 = 864, cy=180. 
+       Connector: exit KV Save top at (696,232), go up to (696,144), right to (872,144), down to (872,180), left into (864,180).
+  -->
+  <path d="M696,232 L696,144 Q696,136 704,136 L856,136 Q864,136 864,144 L864,180" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-29-67f67d8d-02-pc-arrow)"/>
+
+  <!-- ═══════════════════════════════════════════════
+       KV Cache Load → Decoding (top path): exit right of Load(556,108) → right → enter left of Decoding(716,180)
+       Need elbow: from (556,108) right to (636,108), down to (636,180), right to (716,180)
+  ════════════════════════════════════════════════ -->
+
+  <!-- ═══════════════════════════════════════════════
+       LEGEND STRIP
+  ════════════════════════════════════════════════ -->
+  <line x1="40" y1="316" x2="920" y2="316" stroke="rgba(18,33,39,0.10)" stroke-width="0.8"/>
+  <text x="40" y="330" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.14em">LEGEND</text>
+
+  <!-- Legend: Cache Hit Path -->
+  <line x1="116" y1="326" x2="140" y2="326" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-29-67f67d8d-02-pc-arrow-accent)"/>
+  <text x="148" y="330" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif">Cache Hit Path</text>
+
+  <!-- Legend: Cache Miss Path -->
+  <line x1="288" y1="326" x2="312" y2="326" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-29-67f67d8d-02-pc-arrow)"/>
+  <text x="320" y="330" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif">Cache Miss Path</text>
+
+  <!-- Legend: Decision -->
+  <rect x="460" y="319" width="12" height="12" rx="0" fill="rgba(13,87,99,0.06)" stroke="#0d5763" stroke-width="1" transform="rotate(45,466,325)"/>
+  <text x="480" y="330" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif">Decision</text>
+
+  <!-- Legend: KV Save -->
+  <rect x="560" y="319" width="20" height="12" rx="4" fill="rgba(18,33,39,0.05)" stroke="#3f545c" stroke-width="1"/>
+  <text x="588" y="330" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif">KV Save/Gen</text>
+
+</svg>
+</body>
+</html>

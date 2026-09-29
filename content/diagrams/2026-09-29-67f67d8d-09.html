@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; font-family: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; }
+  .diagram-wrap { width: 100%; max-width: 960px; margin: 0 auto; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<div class="diagram-wrap">
+<svg viewBox="0 0 960 400" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="2026-09-29-67f67d8d-09-caching-flow-title 2026-09-29-67f67d8d-09-caching-flow-desc">
+  <title id="2026-09-29-67f67d8d-09-caching-flow-title">Prompt Caching 전략 선택 플로우차트</title>
+  <desc id="2026-09-29-67f67d8d-09-caching-flow-desc">일 호출 횟수, Prefix 길이, 히트율 예상치를 순서대로 확인해 OpenAI 자동 캐싱 또는 Anthropic 명시적 캐싱 중 적합한 전략을 안내하는 의사결정 흐름도.</desc>
+
+  <defs>
+    <!-- Arrow markers -->
+    <marker id="2026-09-29-67f67d8d-09-arrow-muted" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-09-29-67f67d8d-09-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <marker id="2026-09-29-67f67d8d-09-arrow-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3a548f"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="960" height="400" fill="#f8fafb"/>
+
+  <!-- ═══════════════════════════════════════════════
+       ARROWS (drawn before boxes)
+  ═══════════════════════════════════════════════ -->
+
+  <!-- ST → Q1 (straight horizontal) -->
+  <line x1="168" y1="200" x2="228" y2="200" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-29-67f67d8d-09-arrow-muted)"/>
+
+  <!-- Q1 No → OAP (down then right) -->
+  <!-- Exit bottom of Q1 diamond (cx=272, cy=200, half-h=32) → bottom at y=232 → route down to y=296 → right to OAP left edge x=560 -->
+  <path d="M272,232 L272,296 L556,296" fill="none" stroke="#3a548f" stroke-width="1" marker-end="url(#2026-09-29-67f67d8d-09-arrow-link)"/>
+  <!-- label: 아니오 -->
+  <rect x="240" y="248" width="36" height="16" rx="2" fill="#f8fafb"/>
+  <text x="258" y="260" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">아니오</text>
+
+  <!-- Q1 Yes → Q2 (straight horizontal) -->
+  <line x1="316" y1="200" x2="376" y2="200" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-29-67f67d8d-09-arrow-muted)"/>
+  <!-- label: 예 -->
+  <rect x="330" y="184" width="24" height="14" rx="2" fill="#f8fafb"/>
+  <text x="342" y="195" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">예</text>
+
+  <!-- Q2 No → OAP (down then right) -->
+  <!-- Exit bottom of Q2 (cx=420, cy=200) → y=280 → right to x=556 (OAP left) at y=280, then down to y=296 -->
+  <path d="M420,232 L420,312 L556,312" fill="none" stroke="#3a548f" stroke-width="1" marker-end="url(#2026-09-29-67f67d8d-09-arrow-link)"/>
+  <!-- label: 아니오 -->
+  <rect x="388" y="252" width="36" height="16" rx="2" fill="#f8fafb"/>
+  <text x="406" y="264" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">아니오</text>
+
+  <!-- Q2 Yes → Q3 (straight horizontal) -->
+  <line x1="464" y1="200" x2="524" y2="200" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-29-67f67d8d-09-arrow-muted)"/>
+  <!-- label: 예 -->
+  <rect x="478" y="184" width="24" height="14" rx="2" fill="#f8fafb"/>
+  <text x="490" y="195" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">예</text>
+
+  <!-- Q3 No → OAP (down then right) -->
+  <!-- Exit bottom of Q3 (cx=568, cy=200) → down to y=328 → route left up to OAP right edge -->
+  <!-- OAP box: x=556, y=272, w=144, h=56. Right edge x=700. We approach from left. -->
+  <!-- Q3 bottom at x=568, y=232. Down to y=344. Left to x=488 (midpoint). Up... this is complex. -->
+  <!-- Simpler: exit right of Q3 (x=612, y=200), arc right then down → route around to OAP from top? -->
+  <!-- Better: exit bottom Q3 at y=232, go to y=340, go left to x=628 (right of OAP), then up to OAP right center -->
+  <path d="M568,232 L568,340 L700,340 L700,300" fill="none" stroke="#3a548f" stroke-width="1" marker-end="url(#2026-09-29-67f67d8d-09-arrow-link)"/>
+  <!-- label: 아니오 -->
+  <rect x="536" y="252" width="36" height="16" rx="2" fill="#f8fafb"/>
+  <text x="554" y="264" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">아니오</text>
+
+  <!-- Q3 Yes → ANC (straight horizontal) -->
+  <line x1="612" y1="200" x2="668" y2="200" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-29-67f67d8d-09-arrow-accent)"/>
+  <!-- label: 예 -->
+  <rect x="626" y="184" width="24" height="14" rx="2" fill="#f8fafb"/>
+  <text x="638" y="195" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">예</text>
+
+  <!-- ═══════════════════════════════════════════════
+       NODES (drawn after arrows)
+  ═══════════════════════════════════════════════ -->
+
+  <!-- ST: 캐싱 도입 결정 — Start oval (link/blue treatment) -->
+  <rect x="36" y="172" width="132" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="36" y="172" width="132" height="56" rx="6" fill="rgba(58,84,143,0.07)" stroke="#3a548f" stroke-width="1"/>
+  <!-- type tag -->
+  <rect x="44" y="178" width="32" height="12" rx="2" fill="transparent" stroke="rgba(58,84,143,0.35)" stroke-width="0.8"/>
+  <text x="60" y="187" fill="rgba(58,84,143,0.75)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">START</text>
+  <text x="102" y="198" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">캐싱 도입</text>
+  <text x="102" y="214" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">결정</text>
+
+  <!-- Q1: 일 호출 100회 이상? — Decision diamond -->
+  <!-- cx=272, cy=200, half-w=44, half-h=32 -->
+  <polygon points="272,168 316,200 272,232 228,200" fill="#f8fafb"/>
+  <polygon points="272,168 316,200 272,232 228,200" fill="rgba(13,87,99,0.06)" stroke="#0d5763" stroke-width="1"/>
+  <text x="272" y="196" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">일 호출</text>
+  <text x="272" y="210" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">100회 이상?</text>
+
+  <!-- Q2: Prefix 1024+ 토큰? — Decision diamond -->
+  <!-- cx=420, cy=200, half-w=44, half-h=32 -->
+  <polygon points="420,168 464,200 420,232 376,200" fill="#f8fafb"/>
+  <polygon points="420,168 464,200 420,232 376,200" fill="rgba(13,87,99,0.06)" stroke="#0d5763" stroke-width="1"/>
+  <text x="420" y="196" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Mono', monospace" text-anchor="middle">Prefix</text>
+  <text x="420" y="210" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Mono', monospace" text-anchor="middle">1024+ 토큰?</text>
+
+  <!-- Q3: 히트율 70%+ 예상? — Decision diamond (accent/focal) -->
+  <!-- cx=568, cy=200, half-w=44, half-h=32 -->
+  <polygon points="568,168 612,200 568,232 524,200" fill="#f8fafb"/>
+  <polygon points="568,168 612,200 568,232 524,200" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="568" y="196" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">히트율</text>
+  <text x="568" y="210" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">70%+ 예상?</text>
+
+  <!-- ANC: Anthropic 명시적 캐싱 — Focal node (accent) -->
+  <!-- x=668, y=172, w=168, h=56 -->
+  <rect x="668" y="172" width="168" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="668" y="172" width="168" height="56" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <!-- type tag -->
+  <rect x="676" y="178" width="52" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.35)" stroke-width="0.8"/>
+  <text x="702" y="187" fill="rgba(13,87,99,0.80)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">ANTHROPIC</text>
+  <text x="752" y="200" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">명시적 캐싱</text>
+  <text x="752" y="216" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">cache_control</text>
+
+  <!-- OAP: OpenAI 자동 캐싱 — Default node -->
+  <!-- x=556, y=268, w=188, h=60 -->
+  <rect x="556" y="268" width="188" height="60" rx="6" fill="#f8fafb"/>
+  <rect x="556" y="268" width="188" height="60" rx="6" fill="rgba(58,84,143,0.06)" stroke="#3a548f" stroke-width="1"/>
+  <!-- type tag -->
+  <rect x="564" y="274" width="40" height="12" rx="2" fill="transparent" stroke="rgba(58,84,143,0.35)" stroke-width="0.8"/>
+  <text x="584" y="283" fill="rgba(58,84,143,0.75)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">OPENAI</text>
+  <text x="650" y="302" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">자동 캐싱</text>
+  <text x="650" y="318" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">자동 적용 (설정 불필요)</text>
+
+  <!-- ═══════════════════════════════════════════════
+       LEGEND STRIP
+  ═══════════════════════════════════════════════ -->
+  <line x1="36" y1="370" x2="924" y2="370" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+
+  <!-- Legend: Decision -->
+  <polygon points="56,384 68,376 80,384 68,392" fill="rgba(13,87,99,0.06)" stroke="#0d5763" stroke-width="1"/>
+  <text x="88" y="388" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">의사결정</text>
+
+  <!-- Legend: Anthropic 명시적 캐싱 -->
+  <rect x="168" y="376" width="12" height="12" rx="2" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="186" y="388" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">Anthropic 명시적 캐싱</text>
+
+  <!-- Legend: OpenAI 자동 캐싱 -->
+  <rect x="352" y="376" width="12" height="12" rx="2" fill="rgba(58,84,143,0.06)" stroke="#3a548f" stroke-width="1"/>
+  <text x="370" y="388" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">OpenAI 자동 캐싱</text>
+
+</svg>
+</div>
+</body>
+</html>
