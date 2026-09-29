@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agentic RAG 파이프라인</title>
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; font-family: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; }
+  .diagram-wrap { max-width: 960px; margin: 0 auto; padding: 0; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<div class="diagram-wrap">
+<svg viewBox="0 0 960 260" xmlns="http://www.w3.org/2000/svg"
+     role="img" aria-labelledby="2026-09-30-f3c7b279-01-rag-title 2026-09-30-f3c7b279-01-rag-desc">
+  <title id="2026-09-30-f3c7b279-01-rag-title">Agentic RAG 파이프라인</title>
+  <desc id="2026-09-30-f3c7b279-01-rag-desc">사용자 질문이 임베딩 변환, 벡터 검색, 컨텍스트 주입 단계를 거쳐 응답 생성으로 이어지는 RAG 아키텍처 흐름도.</desc>
+
+  <defs>
+    <!-- 기본 화살표 -->
+    <marker id="2026-09-30-f3c7b279-01-rag-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <!-- 액센트 화살표 -->
+    <marker id="2026-09-30-f3c7b279-01-rag-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+  </defs>
+
+  <!-- 배경 -->
+  <rect width="960" height="260" fill="#f8fafb"/>
+
+  <!-- ───────── 화살표 (박스보다 먼저) ───────── -->
+
+  <!-- Q → E -->
+  <line x1="200" y1="112" x2="272" y2="112"
+        stroke="#3f545c" stroke-width="1.2"
+        marker-end="url(#2026-09-30-f3c7b279-01-rag-arrow)"/>
+  <!-- 라벨 -->
+  <rect x="214" y="96" width="44" height="14" rx="2" fill="#f8fafb"/>
+  <text x="236" y="107" fill="#6c8188" font-size="10" font-weight="500"
+        font-family="'IBM Plex Mono', monospace" text-anchor="middle"
+        letter-spacing="0.06em">질의</text>
+
+  <!-- E → V -->
+  <line x1="392" y1="112" x2="464" y2="112"
+        stroke="#0d5763" stroke-width="1.2"
+        marker-end="url(#2026-09-30-f3c7b279-01-rag-arrow-accent)"/>
+  <rect x="406" y="96" width="44" height="14" rx="2" fill="#f8fafb"/>
+  <text x="428" y="107" fill="#0d5763" font-size="10" font-weight="500"
+        font-family="'IBM Plex Mono', monospace" text-anchor="middle"
+        letter-spacing="0.06em">embed</text>
+
+  <!-- V → C -->
+  <line x1="584" y1="112" x2="656" y2="112"
+        stroke="#0d5763" stroke-width="1.2"
+        marker-end="url(#2026-09-30-f3c7b279-01-rag-arrow-accent)"/>
+  <rect x="598" y="96" width="44" height="14" rx="2" fill="#f8fafb"/>
+  <text x="620" y="107" fill="#0d5763" font-size="10" font-weight="500"
+        font-family="'IBM Plex Mono', monospace" text-anchor="middle"
+        letter-spacing="0.06em">top-k</text>
+
+  <!-- C → G -->
+  <line x1="776" y1="112" x2="848" y2="112"
+        stroke="#3f545c" stroke-width="1.2"
+        marker-end="url(#2026-09-30-f3c7b279-01-rag-arrow)"/>
+  <rect x="790" y="96" width="44" height="14" rx="2" fill="#f8fafb"/>
+  <text x="812" y="107" fill="#6c8188" font-size="10" font-weight="500"
+        font-family="'IBM Plex Mono', monospace" text-anchor="middle"
+        letter-spacing="0.06em">inject</text>
+
+  <!-- ───────── 노드 박스 ───────── -->
+
+  <!-- Q: 사용자 질문 — input 처리 -->
+  <rect x="80" y="76" width="120" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="80" y="76" width="120" height="72" rx="6"
+        fill="rgba(58,84,143,0.08)" stroke="#3a548f" stroke-width="1"/>
+  <rect x="88" y="83" width="32" height="12" rx="2"
+        fill="transparent" stroke="rgba(58,84,143,0.40)" stroke-width="0.8"/>
+  <text x="104" y="92" fill="rgba(58,84,143,0.80)" font-size="7"
+        font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.10em">INPUT</text>
+  <text x="140" y="118" fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">사용자 질문</text>
+
+  <!-- E: 임베딩 변환 — focal -->
+  <rect x="272" y="76" width="120" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="272" y="76" width="120" height="72" rx="6"
+        fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="280" y="83" width="32" height="12" rx="2"
+        fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="296" y="92" fill="rgba(13,87,99,0.80)" font-size="7"
+        font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.10em">EMBED</text>
+  <text x="332" y="112" fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">임베딩 변환</text>
+  <text x="332" y="130" fill="#3f545c" font-size="11"
+        font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle">dense vector</text>
+
+  <!-- V: 벡터 검색 — focal -->
+  <rect x="464" y="76" width="120" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="464" y="76" width="120" height="72" rx="6"
+        fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="472" y="83" width="32" height="12" rx="2"
+        fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="488" y="92" fill="rgba(13,87,99,0.80)" font-size="7"
+        font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.10em">STORE</text>
+  <text x="524" y="112" fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">벡터 검색</text>
+  <text x="524" y="130" fill="#3f545c" font-size="11"
+        font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle">cosine similarity</text>
+
+  <!-- C: 컨텍스트 주입 — backend -->
+  <rect x="656" y="76" width="120" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="656" y="76" width="120" height="72" rx="6"
+        fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="664" y="83" width="36" height="12" rx="2"
+        fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="682" y="92" fill="rgba(18,33,39,0.80)" font-size="7"
+        font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.10em">CONTEXT</text>
+  <text x="716" y="112" fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">컨텍스트 주입</text>
+  <text x="716" y="130" fill="#3f545c" font-size="11"
+        font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle">prompt augment</text>
+
+  <!-- G: 응답 생성 — backend -->
+  <rect x="848" y="76" width="76" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="848" y="76" width="76" height="72" rx="6"
+        fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="856" y="83" width="24" height="12" rx="2"
+        fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="868" y="92" fill="rgba(18,33,39,0.80)" font-size="7"
+        font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.10em">LLM</text>
+  <text x="886" y="112" fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">응답 생성</text>
+
+  <!-- ───────── 범례 ───────── -->
+  <line x1="32" y1="193" x2="928" y2="193"
+        stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+
+  <!-- 범례 레이블 -->
+  <text x="32" y="210" fill="#6c8188" font-size="10"
+        font-family="'IBM Plex Mono', monospace"
+        letter-spacing="0.14em">LEGEND</text>
+
+  <!-- focal -->
+  <rect x="104" y="200" width="12" height="12" rx="2"
+        fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="122" y="210" fill="#3f545c" font-size="10"
+        font-family="'IBM Plex Sans KR', sans-serif">핵심 단계</text>
+
+  <!-- input -->
+  <rect x="224" y="200" width="12" height="12" rx="2"
+        fill="rgba(58,84,143,0.08)" stroke="#3a548f" stroke-width="1"/>
+  <text x="242" y="210" fill="#3f545c" font-size="10"
+        font-family="'IBM Plex Sans KR', sans-serif">입력</text>
+
+  <!-- backend -->
+  <rect x="316" y="200" width="12" height="12" rx="2"
+        fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <text x="334" y="210" fill="#3f545c" font-size="10"
+        font-family="'IBM Plex Sans KR', sans-serif">처리 단계</text>
+
+  <!-- 화살표 범례 -->
+  <line x1="428" y1="206" x2="456" y2="206"
+        stroke="#3f545c" stroke-width="1.2"
+        marker-end="url(#2026-09-30-f3c7b279-01-rag-arrow)"/>
+  <text x="464" y="210" fill="#3f545c" font-size="10"
+        font-family="'IBM Plex Sans KR', sans-serif">데이터 흐름</text>
+
+  <line x1="572" y1="206" x2="600" y2="206"
+        stroke="#0d5763" stroke-width="1.2"
+        marker-end="url(#2026-09-30-f3c7b279-01-rag-arrow-accent)"/>
+  <text x="608" y="210" fill="#3f545c" font-size="10"
+        font-family="'IBM Plex Sans KR', sans-serif">RAG 핵심 경로</text>
+
+</svg>
+</div>
+</body>
+</html>

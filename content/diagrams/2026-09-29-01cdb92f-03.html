@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>drizzle-kit 컬럼 변경 흐름</title>
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; font-family: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; }
+  .diagram-wrap { display: block; width: 100%; max-width: 960px; margin: 0 auto; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<div class="diagram-wrap">
+<svg viewBox="0 0 960 600" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="2026-09-29-01cdb92f-03-drizzle-col-title 2026-09-29-01cdb92f-03-drizzle-col-desc">
+  <title id="2026-09-29-01cdb92f-03-drizzle-col-title">drizzle-kit 컬럼 변경 흐름</title>
+  <desc id="2026-09-29-01cdb92f-03-drizzle-col-desc">스키마에서 body 컬럼이 사라지고 content가 생겼을 때 drizzle-kit이 두 가지 선택지를 제시하는 흐름: 기본값 Enter 선택 시 데이터 소실, 화살표로 rename 선택 시 데이터 보존.</desc>
+
+  <defs>
+    <!-- 기본 화살표 -->
+    <marker id="2026-09-29-01cdb92f-03-arr" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <!-- accent 화살표 -->
+    <marker id="2026-09-29-01cdb92f-03-arr-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <!-- 위험 화살표 (link색) -->
+    <marker id="2026-09-29-01cdb92f-03-arr-danger" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3a548f"/>
+    </marker>
+  </defs>
+
+  <!-- 배경 -->
+  <rect width="960" height="600" fill="#f8fafb"/>
+
+  <!-- ─────────────────────────────────────────
+       커넥터 (노드보다 먼저)
+  ───────────────────────────────────────── -->
+
+  <!-- A → B (수직) -->
+  <line x1="480" y1="120" x2="480" y2="192" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-29-01cdb92f-03-arr)"/>
+
+  <!-- B → C (왼쪽 대각 → 수직 엘보우) 오른쪽 아래 꼭지점에서 출발, C 상단 도착 -->
+  <!-- B 다이아몬드 바닥=288, C 상단=332 / B 중심x=480, C 중심x=260 -->
+  <!-- 경로: B 좌측 꼭지(344,240) → 좌회전 → C 상단(260,332) -->
+  <path d="M344,240 H260 Q252,240 252,248 V332" fill="none" stroke="#3a548f" stroke-width="1" marker-end="url(#2026-09-29-01cdb92f-03-arr-danger)"/>
+  <!-- 레이블 마스크 (커넥터 위, 노드 밖) -->
+  <rect x="210" y="218" width="84" height="28" rx="2" fill="#f8fafb"/>
+  <text x="252" y="230" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle" font-weight="500">기본값 Enter</text>
+  <text x="252" y="242" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono',monospace" text-anchor="middle">create column</text>
+
+  <!-- B → E (오른쪽 엘보우) B 우측 꼭지(616,240) → E 상단(700,332) -->
+  <path d="M616,240 H700 Q708,240 708,248 V332" fill="none" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-29-01cdb92f-03-arr-accent)"/>
+  <!-- 레이블 마스크 -->
+  <rect x="658" y="218" width="84" height="28" rx="2" fill="#f8fafb"/>
+  <text x="700" y="230" fill="#0d5763" font-size="10" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle" font-weight="600">화살표로 선택</text>
+  <text x="700" y="242" fill="#0d5763" font-size="10" font-family="'IBM Plex Mono',monospace" text-anchor="middle">rename column</text>
+
+  <!-- C → D (수직) -->
+  <line x1="260" y1="404" x2="260" y2="456" stroke="#3a548f" stroke-width="1" marker-end="url(#2026-09-29-01cdb92f-03-arr-danger)"/>
+
+  <!-- E → F (수직) -->
+  <line x1="700" y1="404" x2="700" y2="456" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-29-01cdb92f-03-arr-accent)"/>
+
+  <!-- ─────────────────────────────────────────
+       노드
+  ───────────────────────────────────────── -->
+
+  <!-- A: 트리거 (타원형 시작) -->
+  <rect x="300" y="44" width="360" height="76" rx="6" fill="#f8fafb"/>
+  <rect x="300" y="44" width="360" height="76" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <!-- 태그 -->
+  <rect x="308" y="52" width="52" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.4)" stroke-width="0.8"/>
+  <text x="334" y="61" fill="rgba(13,87,99,0.8)" font-size="8" font-family="'IBM Plex Mono',monospace" text-anchor="middle" letter-spacing="0.08em">TRIGGER</text>
+  <!-- 내용 -->
+  <text x="480" y="88" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">스키마에서 body가 사라지고</text>
+  <text x="480" y="106" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">content가 생김</text>
+
+  <!-- B: 결정 다이아몬드 -->
+  <!-- 중심 (480, 240), 가로폭 272, 세로폭 96 -->
+  <!-- 꼭지: 상단(480,192) 우측(616,240) 하단(480,288) 좌측(344,240) -->
+  <polygon points="480,192 616,240 480,288 344,240" fill="#f8fafb"/>
+  <polygon points="480,192 616,240 480,288 344,240" fill="rgba(18,33,39,0.04)" stroke="#3f545c" stroke-width="1"/>
+  <text x="480" y="236" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">drizzle-kit이</text>
+  <text x="480" y="252" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">변경을 물어봄</text>
+
+  <!-- C: ADD / DROP (위험 경로) -->
+  <rect x="156" y="332" width="208" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="156" y="332" width="208" height="72" rx="6" fill="rgba(58,84,143,0.05)" stroke="rgba(58,84,143,0.5)" stroke-width="1"/>
+  <!-- 태그 -->
+  <rect x="164" y="340" width="36" height="12" rx="2" fill="transparent" stroke="rgba(58,84,143,0.4)" stroke-width="0.8"/>
+  <text x="182" y="349" fill="rgba(58,84,143,0.8)" font-size="8" font-family="'IBM Plex Mono',monospace" text-anchor="middle" letter-spacing="0.08em">SQL</text>
+  <!-- 내용 -->
+  <text x="260" y="368" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Mono',monospace" text-anchor="middle">ADD content</text>
+  <text x="260" y="388" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Mono',monospace" text-anchor="middle">DROP COLUMN body</text>
+
+  <!-- E: RENAME (안전 경로, focal) -->
+  <rect x="596" y="332" width="208" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="596" y="332" width="208" height="72" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <!-- 태그 -->
+  <rect x="604" y="340" width="36" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.4)" stroke-width="0.8"/>
+  <text x="622" y="349" fill="rgba(13,87,99,0.8)" font-size="8" font-family="'IBM Plex Mono',monospace" text-anchor="middle" letter-spacing="0.08em">SQL</text>
+  <!-- 내용 -->
+  <text x="700" y="368" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Mono',monospace" text-anchor="middle">RENAME COLUMN</text>
+  <text x="700" y="388" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Mono',monospace" text-anchor="middle">body TO content</text>
+
+  <!-- D: 데이터 소실 (결과 — 위험) -->
+  <rect x="148" y="456" width="224" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="148" y="456" width="224" height="64" rx="6" fill="rgba(58,84,143,0.06)" stroke="rgba(58,84,143,0.45)" stroke-width="1" stroke-dasharray="4,3"/>
+  <!-- 태그 -->
+  <rect x="156" y="464" width="52" height="12" rx="2" fill="transparent" stroke="rgba(58,84,143,0.35)" stroke-width="0.8"/>
+  <text x="182" y="473" fill="rgba(58,84,143,0.75)" font-size="8" font-family="'IBM Plex Mono',monospace" text-anchor="middle" letter-spacing="0.08em">OUTCOME</text>
+  <!-- 내용 -->
+  <text x="260" y="492" fill="#3a548f" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">본문 데이터 소실</text>
+  <text x="260" y="508" fill="#3a548f" font-size="12" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">또는 NOT NULL 실패</text>
+
+  <!-- F: 데이터 보존 (결과 — 안전, focal) -->
+  <rect x="588" y="456" width="224" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="588" y="456" width="224" height="64" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <!-- 태그 -->
+  <rect x="596" y="464" width="52" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.4)" stroke-width="0.8"/>
+  <text x="622" y="473" fill="rgba(13,87,99,0.8)" font-size="8" font-family="'IBM Plex Mono',monospace" text-anchor="middle" letter-spacing="0.08em">OUTCOME</text>
+  <!-- 내용 -->
+  <text x="700" y="496" fill="#0d5763" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">데이터 보존</text>
+
+  <!-- ─────────────────────────────────────────
+       범례 (하단 수평 스트립)
+  ───────────────────────────────────────── -->
+  <line x1="32" y1="556" x2="928" y2="556" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+  <text x="32" y="570" fill="#6c8188" font-size="8" font-family="'IBM Plex Mono',monospace" letter-spacing="0.14em">LEGEND</text>
+
+  <!-- 항목 1: 결정 -->
+  <polygon points="108,577 120,571 132,577 120,583" fill="rgba(18,33,39,0.04)" stroke="#3f545c" stroke-width="1"/>
+  <text x="140" y="580" fill="#3f545c" font-size="9" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif">결정 분기</text>
+
+  <!-- 항목 2: 위험 경로 -->
+  <line x1="248" y1="577" x2="288" y2="577" stroke="#3a548f" stroke-width="1" marker-end="url(#2026-09-29-01cdb92f-03-arr-danger)"/>
+  <text x="296" y="580" fill="#3f545c" font-size="9" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif">데이터 손실 경로</text>
+
+  <!-- 항목 3: 안전 경로 -->
+  <line x1="444" y1="577" x2="484" y2="577" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-29-01cdb92f-03-arr-accent)"/>
+  <text x="492" y="580" fill="#3f545c" font-size="9" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif">데이터 보존 경로 (권장)</text>
+
+</svg>
+</div>
+</body>
+</html>

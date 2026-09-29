@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 540" role="img" aria-labelledby="2026-09-30-f3c7b279-05-agentic-rag-selector-title 2026-09-30-f3c7b279-05-agentic-rag-selector-desc">
+  <title id="2026-09-30-f3c7b279-05-agentic-rag-selector-title">Agentic RAG Type Selection Flow</title>
+  <desc id="2026-09-30-f3c7b279-05-agentic-rag-selector-desc">A decision flow that evaluates fine-tunability, real-time requirement, and reasoning complexity in order based on question type, then recommends one of Self-RAG, CRAG, Agentic RAG, or Basic RAG.</desc>
+
+  <defs>
+    <!-- 배경 -->
+    <marker id="2026-09-30-f3c7b279-05-arr-muted" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-09-30-f3c7b279-05-arr-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+  </defs>
+
+  <!-- 배경 -->
+  <rect width="960" height="540" fill="#f8fafb"/>
+
+  <!-- ─────────────── ARROWS (before boxes) ─────────────── -->
+
+  <!-- Q → Q1 (오른쪽으로) -->
+  <line x1="176" y1="200" x2="240" y2="200" stroke="#3f545c" stroke-width="1.2" marker-end="url(#2026-09-30-f3c7b279-05-arr-muted)"/>
+
+  <!-- Q1 → SR (위쪽 — 예) -->
+  <path d="M308 168 L308 112 L440 112" fill="none" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-30-f3c7b279-05-arr-accent)"/>
+  <!-- 예 label -->
+  <rect x="294" y="124" width="20" height="12" rx="2" fill="#f8fafb"/>
+  <text x="304" y="133" fill="#0d5763" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="500">Yes</text>
+
+  <!-- Q1 → Q2 (아니오 — 오른쪽) -->
+  <line x1="376" y1="200" x2="436" y2="200" stroke="#3f545c" stroke-width="1.2" marker-end="url(#2026-09-30-f3c7b279-05-arr-muted)"/>
+  <!-- 아니오 label -->
+  <rect x="386" y="186" width="40" height="12" rx="2" fill="#f8fafb"/>
+  <text x="406" y="195" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="500">No</text>
+
+  <!-- Q2 → CR (위쪽 — 예) -->
+  <path d="M504 168 L504 112 L636 112" fill="none" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-30-f3c7b279-05-arr-accent)"/>
+  <!-- 예 label -->
+  <rect x="490" y="124" width="20" height="12" rx="2" fill="#f8fafb"/>
+  <text x="500" y="133" fill="#0d5763" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="500">Yes</text>
+
+  <!-- Q2 → Q3 (아니오 — 오른쪽) -->
+  <line x1="572" y1="200" x2="632" y2="200" stroke="#3f545c" stroke-width="1.2" marker-end="url(#2026-09-30-f3c7b279-05-arr-muted)"/>
+  <!-- 아니오 label -->
+  <rect x="582" y="186" width="40" height="12" rx="2" fill="#f8fafb"/>
+  <text x="602" y="195" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="500">No</text>
+
+  <!-- Q3 → AR (위쪽 — 예) -->
+  <path d="M700 168 L700 112 L796 112" fill="none" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-30-f3c7b279-05-arr-accent)"/>
+  <!-- 예 label -->
+  <rect x="686" y="124" width="20" height="12" rx="2" fill="#f8fafb"/>
+  <text x="696" y="133" fill="#0d5763" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="500">Yes</text>
+
+  <!-- Q3 → RR (아니오 — 아래) -->
+  <path d="M700 232 L700 288 L796 288" fill="none" stroke="#3f545c" stroke-width="1.2" marker-end="url(#2026-09-30-f3c7b279-05-arr-muted)"/>
+  <!-- 아니오 label -->
+  <rect x="686" y="252" width="40" height="12" rx="2" fill="#f8fafb"/>
+  <text x="706" y="261" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="500">No</text>
+
+  <!-- ─────────────── NODES ─────────────── -->
+
+  <!-- Q: 질문 유형 (입력 — 둥근 박스) -->
+  <rect x="56" y="172" width="120" height="56" rx="20" fill="#f8fafb" stroke="#f8fafb"/>
+  <rect x="56" y="172" width="120" height="56" rx="20" fill="rgba(63,84,92,0.10)" stroke="#6c8188" stroke-width="1"/>
+  <text x="116" y="199" fill="#122127" font-size="14" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">Question Type</text>
+  <text x="116" y="217" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">Start</text>
+
+  <!-- Q1: 파인튜닝 가능한가? (다이아몬드) -->
+  <rect x="240" y="172" width="136" height="56" rx="6" fill="#f8fafb" stroke="#f8fafb"/>
+  <polygon points="308,172 376,200 308,228 240,200" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="308" y="196" fill="#122127" font-size="12" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">Fine-tuning</text>
+  <text x="308" y="212" fill="#122127" font-size="12" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">possible?</text>
+
+  <!-- Q2: 실시간성 필요한가? (다이아몬드) -->
+  <rect x="436" y="172" width="136" height="56" rx="6" fill="#f8fafb" stroke="#f8fafb"/>
+  <polygon points="504,172 572,200 504,228 436,200" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="504" y="196" fill="#122127" font-size="12" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">Real-time</text>
+  <text x="504" y="212" fill="#122127" font-size="12" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">required?</text>
+
+  <!-- Q3: 추론 복잡도 높은가? (다이아몬드) -->
+  <rect x="632" y="172" width="136" height="56" rx="6" fill="#f8fafb" stroke="#f8fafb"/>
+  <polygon points="700,172 768,200 700,228 632,200" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="700" y="196" fill="#122127" font-size="12" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">High reasoning</text>
+  <text x="700" y="212" fill="#122127" font-size="12" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">complexity?</text>
+
+  <!-- SR: Self-RAG -->
+  <rect x="440" y="80" width="140" height="64" rx="6" fill="#f8fafb" stroke="#f8fafb"/>
+  <rect x="440" y="80" width="140" height="64" rx="6" fill="white" stroke="#122127" stroke-width="1"/>
+  <rect x="448" y="88" width="48" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="472" y="97" fill="rgba(18,33,39,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">RAG TYPE</text>
+  <text x="510" y="116" fill="#122127" font-size="14" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">Self-RAG</text>
+  <text x="510" y="132" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Best token efficiency</text>
+
+  <!-- CR: CRAG -->
+  <rect x="636" y="80" width="140" height="64" rx="6" fill="#f8fafb" stroke="#f8fafb"/>
+  <rect x="636" y="80" width="140" height="64" rx="6" fill="white" stroke="#122127" stroke-width="1"/>
+  <rect x="644" y="88" width="48" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="668" y="97" fill="rgba(18,33,39,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">RAG TYPE</text>
+  <text x="706" y="116" fill="#122127" font-size="14" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">CRAG</text>
+  <text x="706" y="132" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Web search fallback</text>
+
+  <!-- AR: Agentic RAG (focal) -->
+  <rect x="796" y="80" width="140" height="64" rx="6" fill="#f8fafb" stroke="#f8fafb"/>
+  <rect x="796" y="80" width="140" height="64" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <rect x="804" y="88" width="48" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.50)" stroke-width="0.8"/>
+  <text x="828" y="97" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">RAG TYPE</text>
+  <text x="866" y="116" fill="#122127" font-size="14" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">Agentic RAG</text>
+  <text x="866" y="132" fill="#0d5763" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500" text-anchor="middle">Multi-hop strength</text>
+
+  <!-- RR: 기본 RAG -->
+  <rect x="796" y="256" width="140" height="64" rx="6" fill="#f8fafb" stroke="#f8fafb"/>
+  <rect x="796" y="256" width="140" height="64" rx="6" fill="white" stroke="#122127" stroke-width="1"/>
+  <rect x="804" y="264" width="48" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="828" y="273" fill="rgba(18,33,39,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">RAG TYPE</text>
+  <text x="866" y="292" fill="#122127" font-size="14" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">Basic RAG</text>
+  <text x="866" y="308" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Cost-optimized</text>
+
+  <!-- ─────────────── LEGEND ─────────────── -->
+  <line x1="40" y1="452" x2="920" y2="452" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+  <text x="40" y="468" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.14em">LEGEND</text>
+
+  <!-- 입력 -->
+  <rect x="100" y="458" width="12" height="12" rx="6" fill="rgba(63,84,92,0.10)" stroke="#6c8188" stroke-width="1"/>
+  <text x="118" y="469" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif">Input node</text>
+
+  <!-- 판단 -->
+  <polygon points="168,469 176,463 184,469 176,475" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="192" y="469" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif">Decision</text>
+
+  <!-- 일반 결과 -->
+  <rect x="292" y="458" width="12" height="12" rx="2" fill="white" stroke="#122127" stroke-width="1"/>
+  <text x="310" y="469" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif">RAG type (standard)</text>
+
+  <!-- 포커스 결과 -->
+  <rect x="440" y="458" width="12" height="12" rx="2" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="458" y="469" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif">Agentic RAG (recommended)</text>
+
+</svg>
+</body>
+</html>

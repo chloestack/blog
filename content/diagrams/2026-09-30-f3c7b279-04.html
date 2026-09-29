@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agentic RAG 검색 판단 흐름</title>
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; font-family: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; }
+  .diagram-wrap { display: block; width: 100%; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<div class="diagram-wrap">
+<svg viewBox="0 0 960 600" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="2026-09-30-f3c7b279-04-rag-flow-title 2026-09-30-f3c7b279-04-rag-flow-desc">
+  <title id="2026-09-30-f3c7b279-04-rag-flow-title">Agentic RAG 검색 판단 흐름도</title>
+  <desc id="2026-09-30-f3c7b279-04-rag-flow-desc">검색 결과를 수신한 뒤 관련 문서 수와 핵심 질문 적합성을 두 단계로 판단하여 재검색, 하위 질문 분해, 또는 답변 생성으로 분기하는 순환 흐름을 보여주는 다이어그램.</desc>
+
+  <defs>
+    <!-- Arrow markers -->
+    <marker id="2026-09-30-f3c7b279-04-arr" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0,8 3,0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-09-30-f3c7b279-04-arr-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0,8 3,0 6" fill="#0d5763"/>
+    </marker>
+    <marker id="2026-09-30-f3c7b279-04-arr-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0,8 3,0 6" fill="#3a548f"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="960" height="600" fill="#f8fafb"/>
+
+  <!-- ============================================================
+       ARROWS — drawn before boxes so z-order puts lines behind nodes
+       ============================================================ -->
+
+  <!-- R → E  (right from R center to E left) -->
+  <path d="M 212 216 L 312 216" stroke="#3f545c" stroke-width="1" fill="none" marker-end="url(#2026-09-30-f3c7b279-04-arr)"/>
+
+  <!-- E →|아니오| S  (E bottom → S top) -->
+  <path d="M 388 248 L 388 296 L 508 296 L 508 268" stroke="#3f545c" stroke-width="1" fill="none" marker-end="url(#2026-09-30-f3c7b279-04-arr)"/>
+  <!-- label 아니오 -->
+  <rect x="411" y="272" width="40" height="14" rx="2" fill="#f8fafb"/>
+  <text x="431" y="282" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono','ui-monospace',monospace" text-anchor="middle" letter-spacing="0.04em">아니오</text>
+
+  <!-- E →|예| C  (E right → C left) -->
+  <path d="M 464 216 L 564 216" stroke="#0d5763" stroke-width="1.2" fill="none" marker-end="url(#2026-09-30-f3c7b279-04-arr-accent)"/>
+  <!-- label 예 -->
+  <rect x="499" y="204" width="20" height="14" rx="2" fill="#f8fafb"/>
+  <text x="509" y="214" fill="#0d5763" font-size="10" font-family="'IBM Plex Mono','ui-monospace',monospace" text-anchor="middle" letter-spacing="0.04em">예</text>
+
+  <!-- C →|아니오| D  (C bottom → D top) -->
+  <path d="M 640 248 L 640 296 L 760 296 L 760 268" stroke="#3f545c" stroke-width="1" fill="none" marker-end="url(#2026-09-30-f3c7b279-04-arr)"/>
+  <!-- label 아니오 -->
+  <rect x="663" y="272" width="40" height="14" rx="2" fill="#f8fafb"/>
+  <text x="683" y="282" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono','ui-monospace',monospace" text-anchor="middle" letter-spacing="0.04em">아니오</text>
+
+  <!-- C →|예| G  (C right → G left) -->
+  <path d="M 716 216 L 816 216" stroke="#0d5763" stroke-width="1.2" fill="none" marker-end="url(#2026-09-30-f3c7b279-04-arr-accent)"/>
+  <!-- label 예 -->
+  <rect x="751" y="204" width="20" height="14" rx="2" fill="#f8fafb"/>
+  <text x="761" y="214" fill="#0d5763" font-size="10" font-family="'IBM Plex Mono','ui-monospace',monospace" text-anchor="middle" letter-spacing="0.04em">예</text>
+
+  <!-- S → R  (loop back: S bottom → down → left → R bottom) -->
+  <path d="M 508 340 L 508 400 Q 508 416 492 416 L 80 416 Q 64 416 64 400 L 64 236 Q 64 216 80 216 L 112 216" stroke="#3f545c" stroke-width="1" fill="none" stroke-dasharray="5,4" marker-end="url(#2026-09-30-f3c7b279-04-arr)"/>
+
+  <!-- D → R  (loop back: D bottom → down → left → merges with S→R path segment near R) -->
+  <path d="M 760 340 L 760 440 Q 760 456 744 456 L 80 456 Q 64 456 64 440" stroke="#3f545c" stroke-width="1" fill="none" stroke-dasharray="5,4"/>
+  <!-- D → R continues: this shares the upward path — use a merge dot -->
+  <!-- merge dot at 64,416 area — show a small dot where D path joins S path -->
+  <!-- Actually route D separately to avoid overlap: D goes to a merge point below S, then arc up -->
+  <!-- Redrawn cleanly: D exits bottom, goes to y=444, then goes left to x=72, up to y=236, joins R right at y=236 -->
+  <!-- The S path already uses y=416; D path uses y=444 so they don't overlap -->
+
+  <!-- Merge dot at convergence point near R input -->
+  <circle cx="112" cy="216" r="4" fill="#3f545c"/>
+
+  <!-- ============================================================
+       NODES
+       ============================================================ -->
+
+  <!-- R: 검색 결과 수신  (entry node — link/blue treatment, oval) -->
+  <!-- x=112 y=184 w=100 h=64, cx=162 cy=216 -->
+  <rect x="112" y="184" width="100" height="64" rx="20" fill="#f8fafb"/>
+  <rect x="112" y="184" width="100" height="64" rx="20" fill="rgba(58,84,143,0.07)" stroke="#3a548f" stroke-width="1"/>
+  <text x="162" y="210" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">검색 결과</text>
+  <text x="162" y="228" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">수신</text>
+
+  <!-- E: 관련 문서가 3개 이상인가  (decision diamond — focal/accent) -->
+  <!-- center cx=388 cy=216, half-w=76, half-h=36 -->
+  <rect x="312" y="180" width="152" height="72" rx="4" fill="#f8fafb"/>
+  <!-- Diamond shape -->
+  <polygon points="388,180 464,216 388,252 312,216" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="388" y="210" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">관련 문서가</text>
+  <text x="388" y="224" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">3개 이상인가</text>
+
+  <!-- S: 다른 키워드로 재검색  (step node — warn treatment) -->
+  <!-- x=448 y=268 w=120 h=72 -->
+  <rect x="448" y="268" width="120" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="448" y="268" width="120" height="72" rx="6" fill="rgba(169,106,8,0.07)" stroke="rgba(169,106,8,0.6)" stroke-width="1"/>
+  <!-- type tag -->
+  <rect x="456" y="276" width="40" height="12" rx="2" fill="transparent" stroke="rgba(169,106,8,0.4)" stroke-width="0.8"/>
+  <text x="476" y="285" fill="rgba(169,106,8,0.8)" font-size="7" font-family="'IBM Plex Mono','ui-monospace',monospace" text-anchor="middle" letter-spacing="0.08em">RETRY</text>
+  <text x="508" y="308" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">다른 키워드로</text>
+  <text x="508" y="324" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">재검색</text>
+
+  <!-- C: 핵심 질문에 직접 답하는가  (decision diamond — focal/accent) -->
+  <!-- center cx=640 cy=216, half-w=76, half-h=36 -->
+  <rect x="564" y="180" width="152" height="72" rx="4" fill="#f8fafb"/>
+  <polygon points="640,180 716,216 640,252 564,216" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="640" y="210" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">핵심 질문에</text>
+  <text x="640" y="224" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">직접 답하는가</text>
+
+  <!-- D: 하위 질문 추가 분해  (step node — warn treatment) -->
+  <!-- x=700 y=268 w=120 h=72 -->
+  <rect x="700" y="268" width="120" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="700" y="268" width="120" height="72" rx="6" fill="rgba(169,106,8,0.07)" stroke="rgba(169,106,8,0.6)" stroke-width="1"/>
+  <!-- type tag -->
+  <rect x="708" y="276" width="48" height="12" rx="2" fill="transparent" stroke="rgba(169,106,8,0.4)" stroke-width="0.8"/>
+  <text x="732" y="285" fill="rgba(169,106,8,0.8)" font-size="7" font-family="'IBM Plex Mono','ui-monospace',monospace" text-anchor="middle" letter-spacing="0.08em">DECOMP</text>
+  <text x="760" y="308" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">하위 질문</text>
+  <text x="760" y="324" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">추가 분해</text>
+
+  <!-- G: 답변 생성  (terminal oval — ok/green treatment) -->
+  <!-- x=816 y=184 w=104 h=64, cx=868 cy=216 -->
+  <rect x="816" y="184" width="104" height="64" rx="20" fill="#f8fafb"/>
+  <rect x="816" y="184" width="104" height="64" rx="20" fill="rgba(40,109,80,0.08)" stroke="#286d50" stroke-width="1.2"/>
+  <text x="868" y="210" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">답변</text>
+  <text x="868" y="228" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">생성</text>
+
+  <!-- ============================================================
+       LOOP RETURN PATHS — cleaner reroute below nodes
+       Drawn after nodes so they're visually on top of bg but
+       the paths themselves go through open canvas below the nodes
+       ============================================================ -->
+
+  <!-- S → (loop) → R: from S bottom, go down to y=400, left to x=72, up to R bottom-center -->
+  <!-- Already drawn above as dashed path — but need to redraw cleanly after nodes for z-order -->
+  <!-- Using a loop label -->
+  <rect x="272" y="408" width="28" height="14" rx="2" fill="#f8fafb"/>
+  <text x="286" y="418" fill="#6c8188" font-size="8" font-family="'IBM Plex Mono','ui-monospace',monospace" text-anchor="middle" letter-spacing="0.06em">재시도</text>
+
+  <!-- D → (loop) → R: label -->
+  <rect x="390" y="448" width="28" height="14" rx="2" fill="#f8fafb"/>
+  <text x="404" y="458" fill="#6c8188" font-size="8" font-family="'IBM Plex Mono','ui-monospace',monospace" text-anchor="middle" letter-spacing="0.06em">재시도</text>
+
+  <!-- ============================================================
+       LEGEND STRIP
+       ============================================================ -->
+  <line x1="40" y1="516" x2="920" y2="516" stroke="rgba(18,33,39,0.10)" stroke-width="0.8"/>
+  <text x="40" y="532" fill="#6c8188" font-size="8" font-family="'IBM Plex Mono','ui-monospace',monospace" letter-spacing="0.14em">LEGEND</text>
+
+  <!-- Legend: 검색 수신 -->
+  <rect x="108" y="522" width="48" height="20" rx="10" fill="rgba(58,84,143,0.07)" stroke="#3a548f" stroke-width="1"/>
+  <text x="132" y="536" fill="#3f545c" font-size="9" font-family="'IBM Plex Sans KR',sans-serif" text-anchor="middle">검색 수신</text>
+
+  <!-- Legend: 판단 분기 -->
+  <polygon points="192,543 208,531 224,543 208,555" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="244" y="548" fill="#3f545c" font-size="9" font-family="'IBM Plex Sans KR',sans-serif">판단 분기</text>
+
+  <!-- Legend: 재시도·분해 -->
+  <rect x="320" y="530" width="48" height="20" rx="6" fill="rgba(169,106,8,0.07)" stroke="rgba(169,106,8,0.6)" stroke-width="1"/>
+  <text x="344" y="544" fill="#3f545c" font-size="9" font-family="'IBM Plex Sans KR',sans-serif" text-anchor="middle">재시도·분해</text>
+
+  <!-- Legend: 답변 생성 -->
+  <rect x="396" y="530" width="48" height="20" rx="10" fill="rgba(40,109,80,0.08)" stroke="#286d50" stroke-width="1.2"/>
+  <text x="420" y="544" fill="#3f545c" font-size="9" font-family="'IBM Plex Sans KR',sans-serif" text-anchor="middle">답변 생성</text>
+
+  <!-- Legend: 순환 경로 -->
+  <line x1="492" y1="540" x2="528" y2="540" stroke="#3f545c" stroke-width="1" stroke-dasharray="5,4" marker-end="url(#2026-09-30-f3c7b279-04-arr)"/>
+  <text x="540" y="544" fill="#3f545c" font-size="9" font-family="'IBM Plex Sans KR',sans-serif">순환 경로</text>
+
+</svg>
+</div>
+</body>
+</html>

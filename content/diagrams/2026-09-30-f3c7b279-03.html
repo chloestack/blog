@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 960 600"
+  role="img"
+  aria-labelledby="2026-09-30-f3c7b279-03-agentic-rag-title 2026-09-30-f3c7b279-03-agentic-rag-desc"
+>
+  <title id="2026-09-30-f3c7b279-03-agentic-rag-title">Agentic RAG 아키텍처</title>
+  <desc id="2026-09-30-f3c7b279-03-agentic-rag-desc">사용자 질문을 오케스트레이션 LLM 에이전트가 받아 벡터 검색·키워드 검색·외부 API 도구를 선택적으로 호출하고, 각 도구가 벡터 DB·검색 엔진·외부 서비스에 접근한 뒤 결과를 합산해 응답을 반환하는 Agentic RAG 흐름.</desc>
+
+  <defs>
+    <!-- Arrow markers -->
+    <marker id="2026-09-30-f3c7b279-03-rag-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-09-30-f3c7b279-03-rag-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <marker id="2026-09-30-f3c7b279-03-rag-arrow-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3a548f"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="960" height="600" fill="#f8fafb"/>
+
+  <!-- ─── Arrows (drawn before nodes) ─── -->
+
+  <!-- 사용자 → 에이전트 (질문) -->
+  <!-- User center-right (268,120) to Agent left (332,220) — elbow via (308,120)→(308,220) -->
+  <path d="M 268,120 L 308,120 Q 316,120 316,128 L 316,212 Q 316,220 324,220 L 332,220"
+        fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-30-f3c7b279-03-rag-arrow)"/>
+  <!-- label: 질문 -->
+  <rect x="292" y="156" width="32" height="14" rx="2" fill="#f8fafb"/>
+  <text x="308" y="166" fill="#6c8188" font-size="11" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle" font-weight="500">질문</text>
+
+  <!-- 에이전트 → 벡터 검색 (도구 호출) -->
+  <!-- Agent bottom-left area (380,248) to T1 top (240,316) — elbow -->
+  <path d="M 380,248 L 380,276 Q 380,284 372,284 L 248,284 Q 240,284 240,292 L 240,316"
+        fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-30-f3c7b279-03-rag-arrow)"/>
+  <!-- label: 도구 호출 -->
+  <rect x="284" y="270" width="60" height="14" rx="2" fill="#f8fafb"/>
+  <text x="314" y="280" fill="#6c8188" font-size="11" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle" font-weight="500">도구 호출</text>
+
+  <!-- 에이전트 → 키워드 검색 (도구 호출) -->
+  <!-- Agent bottom-center (480,248) to T2 top (480,316) — straight vertical -->
+  <path d="M 480,248 L 480,316"
+        fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-30-f3c7b279-03-rag-arrow)"/>
+  <!-- label: 도구 호출 -->
+  <rect x="450" y="270" width="60" height="14" rx="2" fill="#f8fafb"/>
+  <text x="480" y="280" fill="#6c8188" font-size="11" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle" font-weight="500">도구 호출</text>
+
+  <!-- 에이전트 → 외부 API (도구 호출) -->
+  <!-- Agent bottom-right (580,248) to T3 top (720,316) — elbow -->
+  <path d="M 580,248 L 580,276 Q 580,284 588,284 L 712,284 Q 720,284 720,292 L 720,316"
+        fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-30-f3c7b279-03-rag-arrow)"/>
+  <!-- label: 도구 호출 -->
+  <rect x="614" y="270" width="60" height="14" rx="2" fill="#f8fafb"/>
+  <text x="644" y="280" fill="#6c8188" font-size="11" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle" font-weight="500">도구 호출</text>
+
+  <!-- 벡터 검색 → 벡터 DB -->
+  <path d="M 240,364 L 240,412"
+        fill="none" stroke="#3f545c" stroke-width="1" stroke-dasharray="5,4" marker-end="url(#2026-09-30-f3c7b279-03-rag-arrow)"/>
+
+  <!-- 키워드 검색 → 검색 엔진 -->
+  <path d="M 480,364 L 480,412"
+        fill="none" stroke="#3f545c" stroke-width="1" stroke-dasharray="5,4" marker-end="url(#2026-09-30-f3c7b279-03-rag-arrow)"/>
+
+  <!-- 외부 API → 외부 서비스 -->
+  <path d="M 720,364 L 720,412"
+        fill="none" stroke="#3f545c" stroke-width="1" stroke-dasharray="5,4" marker-end="url(#2026-09-30-f3c7b279-03-rag-arrow)"/>
+
+  <!-- 에이전트 → 사용자 (응답) — right side elbow -->
+  <!-- Agent right (628,220) to User right area (268,120): go right, then up, then left -->
+  <path d="M 628,220 L 668,220 Q 676,220 676,212 L 676,100 Q 676,92 668,92 L 276,92 Q 268,92 268,100 L 268,108"
+        fill="none" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-30-f3c7b279-03-rag-arrow-accent)"/>
+  <!-- label: 응답 -->
+  <rect x="456" y="78" width="32" height="14" rx="2" fill="#f8fafb"/>
+  <text x="472" y="88" fill="#0d5763" font-size="11" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle" font-weight="500">응답</text>
+
+  <!-- ─── Nodes ─── -->
+
+  <!-- 사용자 (Input type) — center x=200, y=88 → box 160×64, cx=200 -->
+  <!-- cx=200, cy=120, box: x=120, y=88, w=160, h=64 -->
+  <rect x="120" y="88" width="160" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="120" y="88" width="160" height="64" rx="6" fill="rgba(63,84,92,0.10)" stroke="#6c8188" stroke-width="1"/>
+  <rect x="128" y="96" width="36" height="12" rx="2" fill="transparent" stroke="rgba(108,129,136,0.40)" stroke-width="0.8"/>
+  <text x="146" y="105" fill="rgba(108,129,136,0.8)" font-size="8" font-family="'IBM Plex Mono',monospace" text-anchor="middle" letter-spacing="0.08em">USER</text>
+  <text x="200" y="128" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">사용자</text>
+
+  <!-- 오케스트레이션 LLM 에이전트 (Focal) — cx=480, cy=220, box: x=332, y=192, w=296, h=56 -->
+  <rect x="332" y="192" width="296" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="332" y="192" width="296" height="56" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="340" y="200" width="48" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="364" y="209" fill="rgba(13,87,99,0.8)" font-size="8" font-family="'IBM Plex Mono',monospace" text-anchor="middle" letter-spacing="0.08em">AGENT</text>
+  <text x="480" y="228" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">오케스트레이션 LLM 에이전트</text>
+
+  <!-- 벡터 검색 (Backend/Tool) — cx=240, cy=340, box: x=160, y=316, w=160, h=48 -->
+  <rect x="160" y="316" width="160" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="160" y="316" width="160" height="48" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="168" y="324" width="60" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="198" y="333" fill="rgba(18,33,39,0.8)" font-size="8" font-family="'IBM Plex Mono',monospace" text-anchor="middle" letter-spacing="0.08em">TOOL</text>
+  <text x="240" y="346" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">벡터 검색</text>
+
+  <!-- 키워드 검색 (Backend/Tool) — cx=480, cy=340, box: x=400, y=316, w=160, h=48 -->
+  <rect x="400" y="316" width="160" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="400" y="316" width="160" height="48" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="408" y="324" width="60" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="438" y="333" fill="rgba(18,33,39,0.8)" font-size="8" font-family="'IBM Plex Mono',monospace" text-anchor="middle" letter-spacing="0.08em">TOOL</text>
+  <text x="480" y="346" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">키워드 검색</text>
+
+  <!-- 외부 API (Backend/Tool) — cx=720, cy=340, box: x=640, y=316, w=160, h=48 -->
+  <rect x="640" y="316" width="160" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="640" y="316" width="160" height="48" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="648" y="324" width="60" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="678" y="333" fill="rgba(18,33,39,0.8)" font-size="8" font-family="'IBM Plex Mono',monospace" text-anchor="middle" letter-spacing="0.08em">TOOL</text>
+  <text x="720" y="346" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">외부 API</text>
+
+  <!-- 벡터 DB (Store) — cx=240, cy=440, box: x=152, y=412, w=176, h=48 -->
+  <rect x="152" y="412" width="176" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="152" y="412" width="176" height="48" rx="6" fill="rgba(18,33,39,0.05)" stroke="#3f545c" stroke-width="1"/>
+  <rect x="160" y="420" width="44" height="12" rx="2" fill="transparent" stroke="rgba(63,84,92,0.40)" stroke-width="0.8"/>
+  <text x="182" y="429" fill="rgba(63,84,92,0.8)" font-size="8" font-family="'IBM Plex Mono',monospace" text-anchor="middle" letter-spacing="0.08em">STORE</text>
+  <text x="240" y="446" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">벡터 DB</text>
+
+  <!-- 검색 엔진 (Store) — cx=480, cy=440, box: x=392, y=412, w=176, h=48 -->
+  <rect x="392" y="412" width="176" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="392" y="412" width="176" height="48" rx="6" fill="rgba(18,33,39,0.05)" stroke="#3f545c" stroke-width="1"/>
+  <rect x="400" y="420" width="44" height="12" rx="2" fill="transparent" stroke="rgba(63,84,92,0.40)" stroke-width="0.8"/>
+  <text x="422" y="429" fill="rgba(63,84,92,0.8)" font-size="8" font-family="'IBM Plex Mono',monospace" text-anchor="middle" letter-spacing="0.08em">STORE</text>
+  <text x="480" y="446" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">검색 엔진</text>
+
+  <!-- 외부 서비스 (External) — cx=720, cy=440, box: x=632, y=412, w=176, h=48 -->
+  <rect x="632" y="412" width="176" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="632" y="412" width="176" height="48" rx="6" fill="rgba(18,33,39,0.03)" stroke="rgba(18,33,39,0.30)" stroke-width="1"/>
+  <rect x="640" y="420" width="52" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.30)" stroke-width="0.8"/>
+  <text x="666" y="429" fill="rgba(18,33,39,0.6)" font-size="8" font-family="'IBM Plex Mono',monospace" text-anchor="middle" letter-spacing="0.08em">EXTERNAL</text>
+  <text x="720" y="446" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">외부 서비스</text>
+
+  <!-- ─── Legend strip ─── -->
+  <line x1="40" y1="524" x2="920" y2="524" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+
+  <!-- Legend label -->
+  <text x="40" y="540" fill="#6c8188" font-size="9" font-family="'IBM Plex Mono',monospace" letter-spacing="0.14em">LEGEND</text>
+
+  <!-- Focal -->
+  <rect x="112" y="530" width="40" height="16" rx="4" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="132" y="542" fill="#122127" font-size="10" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle" font-weight="500">에이전트</text>
+
+  <!-- Tool -->
+  <rect x="272" y="530" width="40" height="16" rx="4" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <text x="292" y="542" fill="#122127" font-size="10" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle" font-weight="500">도구</text>
+
+  <!-- Store -->
+  <rect x="432" y="530" width="40" height="16" rx="4" fill="rgba(18,33,39,0.05)" stroke="#3f545c" stroke-width="1"/>
+  <text x="452" y="542" fill="#122127" font-size="10" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle" font-weight="500">저장소</text>
+
+  <!-- External -->
+  <rect x="592" y="530" width="40" height="16" rx="4" fill="rgba(18,33,39,0.03)" stroke="rgba(18,33,39,0.30)" stroke-width="1"/>
+  <text x="612" y="542" fill="#122127" font-size="10" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle" font-weight="500">외부</text>
+
+  <!-- Dashed = 접근 -->
+  <line x1="752" y1="538" x2="796" y2="538" stroke="#3f545c" stroke-width="1" stroke-dasharray="5,4" marker-end="url(#2026-09-30-f3c7b279-03-rag-arrow)"/>
+  <text x="808" y="542" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" font-weight="500">접근</text>
+
+  <!-- Legend items subtitles -->
+  <text x="132" y="556" fill="#6c8188" font-size="8" font-family="'IBM Plex Mono',monospace" text-anchor="middle" letter-spacing="0.06em">FOCAL</text>
+  <text x="292" y="556" fill="#6c8188" font-size="8" font-family="'IBM Plex Mono',monospace" text-anchor="middle" letter-spacing="0.06em">TOOL</text>
+  <text x="452" y="556" fill="#6c8188" font-size="8" font-family="'IBM Plex Mono',monospace" text-anchor="middle" letter-spacing="0.06em">STORE</text>
+  <text x="612" y="556" fill="#6c8188" font-size="8" font-family="'IBM Plex Mono',monospace" text-anchor="middle" letter-spacing="0.06em">EXTERNAL</text>
+
+</svg>
+</body>
+</html>

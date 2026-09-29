@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Drizzle ORM 마이그레이션 흐름</title>
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 960 640"
+  role="img"
+  aria-labelledby="2026-09-29-01cdb92f-08-mig-title 2026-09-29-01cdb92f-08-mig-desc"
+>
+<title id="2026-09-29-01cdb92f-08-mig-title">Drizzle ORM 마이그레이션 흐름</title>
+<desc id="2026-09-29-01cdb92f-08-mig-desc">schema.ts 수정부터 로컬 D1 apply, PR CI 검사, 스테이징·운영 배포까지의 단계별 마이그레이션 흐름. __new_ 테이블 재생성 여부에 따라 SQL 보정 분기가 존재한다.</desc>
+
+<defs>
+  <!-- 화살표 마커 -->
+  <marker id="2026-09-29-01cdb92f-08-mig-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+    <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+  </marker>
+  <marker id="2026-09-29-01cdb92f-08-mig-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+    <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+  </marker>
+</defs>
+
+<!-- 배경 -->
+<rect width="960" height="640" fill="#f8fafb"/>
+
+
+<!-- ═══════════════════════════════════
+     화살표 먼저 (z-order: 선 아래, 박스 위)
+     ═══════════════════════════════════ -->
+
+<!-- A → B (수직) -->
+<path d="M 480,76 L 480,100" stroke="#3f545c" stroke-width="1" fill="none" marker-end="url(#2026-09-29-01cdb92f-08-mig-arrow)"/>
+
+<!-- B → C (수직) -->
+<path d="M 480,148 L 480,164" stroke="#3f545c" stroke-width="1" fill="none" marker-end="url(#2026-09-29-01cdb92f-08-mig-arrow)"/>
+
+<!-- C 있음 분기 → D (왼쪽 하단) -->
+<!-- 다이아몬드 왼쪽 꼭짓점 x=432, cy=196 → 왼쪽으로 꺾어 D 위로 -->
+<path d="M 432,196 L 320,196 L 320,244" stroke="#3f545c" stroke-width="1" fill="none" marker-end="url(#2026-09-29-01cdb92f-08-mig-arrow)"/>
+
+<!-- C 없음 분기 → E (오른쪽 → 아래로) -->
+<!-- 다이아몬드 오른쪽 꼭짓점 x=528, cy=196 → 오른쪽으로 꺾어 E 오른쪽 위로 -->
+<path d="M 528,196 L 640,196 L 640,328 L 584,328" stroke="#3f545c" stroke-width="1" fill="none" marker-end="url(#2026-09-29-01cdb92f-08-mig-arrow)"/>
+
+<!-- D → E (수직) -->
+<path d="M 320,292 L 320,320 Q 320,328 328,328 L 376,328" stroke="#0d5763" stroke-width="1" fill="none" marker-end="url(#2026-09-29-01cdb92f-08-mig-arrow-accent)"/>
+
+<!-- E → F (수직) -->
+<path d="M 480,352 L 480,400" stroke="#3f545c" stroke-width="1" fill="none" marker-end="url(#2026-09-29-01cdb92f-08-mig-arrow)"/>
+
+<!-- F → G (수직) -->
+<path d="M 480,452 L 480,472" stroke="#3f545c" stroke-width="1" fill="none" marker-end="url(#2026-09-29-01cdb92f-08-mig-arrow)"/>
+
+<!-- G → H 스테이징 (왼쪽 하단) -->
+<path d="M 480,520 L 480,532 Q 480,540 472,540 L 356,540 Q 348,540 348,548 L 348,552" stroke="#3f545c" stroke-width="1" fill="none" marker-end="url(#2026-09-29-01cdb92f-08-mig-arrow)"/>
+
+<!-- H 스테이징 → I 운영 (오른쪽으로) -->
+<path d="M 448,580 L 508,580" stroke="#3f545c" stroke-width="1" fill="none" marker-end="url(#2026-09-29-01cdb92f-08-mig-arrow)"/>
+
+<!-- ═══════════════════════════════════
+     노드 박스
+     ═══════════════════════════════════ -->
+
+<!-- A: 로컬 schema.ts 수정 (시작 — oval) -->
+<rect x="380" y="28" width="200" height="48" rx="24" fill="#f8fafb"/>
+<rect x="380" y="28" width="200" height="48" rx="24" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+<text x="480" y="48" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">로컬</text>
+<text x="480" y="64" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">schema.ts 수정</text>
+
+<!-- B: generate --name -->
+<rect x="380" y="100" width="200" height="48" rx="6" fill="#f8fafb"/>
+<rect x="380" y="100" width="200" height="48" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+<!-- 태그 -->
+<rect x="388" y="106" width="28" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.4)" stroke-width="0.8"/>
+<text x="402" y="115" fill="rgba(18,33,39,0.7)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">CMD</text>
+<text x="480" y="130" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">마이그레이션 생성</text>
+<text x="480" y="144" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">generate --name</text>
+
+<!-- C: 결정 다이아몬드 -->
+<!-- 다이아몬드: 중심 (480,196), 가로반 48, 세로반 32 -->
+<rect x="432" y="164" width="96" height="64" rx="0" fill="#f8fafb"/>
+<polygon points="480,164 528,196 480,228 432,196" fill="rgba(18,33,39,0.03)" stroke="#3f545c" stroke-width="1"/>
+<text x="480" y="191" fill="#122127" font-size="10" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">__new_</text>
+<text x="480" y="204" fill="#122127" font-size="10" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">재생성?</text>
+
+<!-- 분기 라벨 있음 (왼쪽) -->
+<rect x="352" y="184" width="28" height="12" rx="2" fill="#f8fafb"/>
+<text x="366" y="193" fill="#6c8188" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.06em">있음</text>
+
+<!-- 분기 라벨 없음 (오른쪽) -->
+<rect x="536" y="184" width="28" height="12" rx="2" fill="#f8fafb"/>
+<text x="550" y="193" fill="#6c8188" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.06em">없음</text>
+
+<!-- D: SQL 보정 (좌측 분기, 강조) -->
+<rect x="220" y="244" width="200" height="48" rx="6" fill="#f8fafb"/>
+<rect x="220" y="244" width="200" height="48" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+<rect x="228" y="250" width="32" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.4)" stroke-width="0.8"/>
+<text x="244" y="259" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">FIX</text>
+<text x="320" y="272" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">SQL 보정</text>
+<text x="320" y="286" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">NULL·자식 FK 확인</text>
+
+<!-- E: 로컬 D1 apply (합류) -->
+<rect x="380" y="304" width="200" height="48" rx="6" fill="#f8fafb"/>
+<rect x="380" y="304" width="200" height="48" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+<rect x="388" y="310" width="28" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.4)" stroke-width="0.8"/>
+<text x="402" y="319" fill="rgba(18,33,39,0.7)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">CMD</text>
+<text x="480" y="332" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">로컬 D1 적용</text>
+<text x="480" y="346" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">apply --local</text>
+
+<!-- F: PR 제출 -->
+<rect x="380" y="404" width="200" height="48" rx="6" fill="#f8fafb"/>
+<rect x="380" y="404" width="200" height="48" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+<rect x="388" y="410" width="20" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.4)" stroke-width="0.8"/>
+<text x="398" y="419" fill="rgba(18,33,39,0.7)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">PR</text>
+<text x="480" y="432" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">PR 제출</text>
+<text x="480" y="446" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">CI check · generate diff</text>
+
+<!-- G: main 병합 -->
+<rect x="380" y="472" width="200" height="48" rx="6" fill="#f8fafb"/>
+<rect x="380" y="472" width="200" height="48" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+<rect x="388" y="478" width="28" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.4)" stroke-width="0.8"/>
+<text x="402" y="487" fill="rgba(18,33,39,0.7)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">GIT</text>
+<text x="480" y="500" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">main 병합</text>
+<text x="480" y="514" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">merge to main</text>
+
+<!-- H: 스테이징 apply -->
+<rect x="248" y="556" width="200" height="48" rx="6" fill="#f8fafb"/>
+<rect x="248" y="556" width="200" height="48" rx="6" fill="rgba(58,84,143,0.04)" stroke="rgba(58,84,143,0.5)" stroke-width="1"/>
+<rect x="256" y="562" width="44" height="12" rx="2" fill="transparent" stroke="rgba(58,84,143,0.4)" stroke-width="0.8"/>
+<text x="278" y="571" fill="rgba(58,84,143,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">STAGE</text>
+<text x="348" y="584" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">스테이징 적용</text>
+<text x="348" y="598" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">apply --remote</text>
+
+<!-- I: 운영 apply -->
+<rect x="512" y="556" width="200" height="48" rx="6" fill="#f8fafb"/>
+<rect x="512" y="556" width="200" height="48" rx="6" fill="rgba(58,84,143,0.07)" stroke="rgba(58,84,143,0.7)" stroke-width="1"/>
+<rect x="520" y="562" width="32" height="12" rx="2" fill="transparent" stroke="rgba(58,84,143,0.5)" stroke-width="0.8"/>
+<text x="536" y="571" fill="rgba(58,84,143,0.9)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">PROD</text>
+<text x="612" y="584" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">운영 적용</text>
+<text x="612" y="598" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">apply --remote</text>
+
+<!-- ═══════════════════════════════════
+     레전드 (하단 수평 스트립)
+     ═══════════════════════════════════ -->
+<!-- 구분선 생략 (레전드 공간 부족) — 레전드는 SVG 하단에 인라인 -->
+
+<!-- 스테이징→운영 화살표 라벨 -->
+<rect x="460" y="566" width="36" height="12" rx="2" fill="#f8fafb"/>
+<text x="478" y="575" fill="#6c8188" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.06em">순차</text>
+
+</svg>
+</body>
+</html>

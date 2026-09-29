@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; font-family: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 400" role="img" aria-labelledby="2026-09-30-f3c7b279-07-arag-title 2026-09-30-f3c7b279-07-arag-desc">
+  <title id="2026-09-30-f3c7b279-07-arag-title">Agentic RAG 라우팅 구조</title>
+  <desc id="2026-09-30-f3c7b279-07-arag-desc">요청이 질문 복잡도 분류 노드를 거쳐 단순·복합·리서치 세 경로로 나뉘고, 각각 기존 RAG, Agentic RAG, 심층 Agentic으로 처리된 뒤 단일 응답 노드로 합류하는 분기 흐름도.</desc>
+
+  <defs>
+    <!-- 기본 화살표 (muted) -->
+    <marker id="2026-09-30-f3c7b279-07-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <!-- 액센트 화살표 -->
+    <marker id="2026-09-30-f3c7b279-07-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+  </defs>
+
+  <!-- 배경 -->
+  <rect width="960" height="400" fill="#f8fafb"/>
+
+  <!-- ============================================================
+       ARROWS — drawn before boxes
+  ============================================================ -->
+
+  <!-- 요청 → 분류 -->
+  <path d="M 164 200 H 248" fill="none" stroke="#3f545c" stroke-width="1.2" marker-end="url(#2026-09-30-f3c7b279-07-arrow)"/>
+
+  <!-- 분류 → 기존 RAG (단순, 위쪽) : 위로 꺾어 오른쪽 -->
+  <path d="M 340 176 L 340 128 H 500" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-30-f3c7b279-07-arrow)" stroke-dasharray="none"/>
+
+  <!-- 분류 → Agentic RAG (복합, 중간) : 직선 -->
+  <path d="M 340 200 H 500" fill="none" stroke="#0d5763" stroke-width="1.4" marker-end="url(#2026-09-30-f3c7b279-07-arrow-accent)"/>
+
+  <!-- 분류 → 심층 Agentic (리서치, 아래쪽) : 아래로 꺾어 오른쪽 -->
+  <path d="M 340 224 L 340 272 H 500" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-30-f3c7b279-07-arrow)"/>
+
+  <!-- 기존 RAG → 응답 (위에서 내려와 오른쪽) -->
+  <path d="M 660 128 H 720 L 720 188" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-30-f3c7b279-07-arrow)"/>
+
+  <!-- Agentic RAG → 응답 (직선) -->
+  <path d="M 660 200 H 748" fill="none" stroke="#0d5763" stroke-width="1.4" marker-end="url(#2026-09-30-f3c7b279-07-arrow-accent)"/>
+
+  <!-- 심층 Agentic → 응답 (아래에서 올라와 오른쪽) -->
+  <path d="M 660 272 H 720 L 720 212" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-30-f3c7b279-07-arrow)"/>
+
+  <!-- ============================================================
+       ARROW LABELS
+  ============================================================ -->
+
+  <!-- "단순" 라벨 (분류→기존 RAG 경로, 위 꺾임 위) -->
+  <rect x="337" y="102" width="36" height="16" rx="2" fill="#f8fafb"/>
+  <text x="355" y="114" fill="#6c8188" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500" text-anchor="middle">단순</text>
+
+  <!-- "복합" 라벨 (분류→Agentic RAG 수평 구간 위) -->
+  <rect x="393" y="184" width="36" height="16" rx="2" fill="#f8fafb"/>
+  <text x="411" y="196" fill="#0d5763" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500" text-anchor="middle">복합</text>
+
+  <!-- "리서치" 라벨 (분류→심층 꺾임 아래) -->
+  <rect x="325" y="278" width="52" height="16" rx="2" fill="#f8fafb"/>
+  <text x="351" y="290" fill="#6c8188" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500" text-anchor="middle">리서치</text>
+
+  <!-- ============================================================
+       NODE: 요청 (input)
+  ============================================================ -->
+  <!-- mask -->
+  <rect x="60" y="172" width="104" height="56" rx="6" fill="#f8fafb"/>
+  <!-- box -->
+  <rect x="60" y="172" width="104" height="56" rx="6" fill="rgba(58,84,143,0.08)" stroke="#3a548f" stroke-width="1"/>
+  <!-- tag -->
+  <rect x="68" y="178" width="32" height="12" rx="2" fill="transparent" stroke="rgba(58,84,143,0.40)" stroke-width="0.8"/>
+  <text x="84" y="187" fill="rgba(58,84,143,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">INPUT</text>
+  <!-- name -->
+  <text x="112" y="206" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">요청</text>
+
+  <!-- ============================================================
+       NODE: 질문 복잡도 분류 (focal — diamond)
+  ============================================================ -->
+  <!-- diamond mask -->
+  <polygon points="294,164 340,148 386,164 340,216 294,164" fill="#f8fafb"/>
+  <!-- diamond fill (accent) -->
+  <polygon points="294,164 340,148 386,164 340,216 294,164" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.4"/>
+  <!-- tag -->
+  <rect x="316" y="153" width="48" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="340" y="162" fill="rgba(13,87,99,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.06em">ROUTER</text>
+  <!-- name — 두 줄 -->
+  <text x="340" y="186" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">복잡도</text>
+  <text x="340" y="202" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">분류</text>
+
+  <!-- ============================================================
+       NODE: 기존 RAG (backend)
+  ============================================================ -->
+  <!-- mask -->
+  <rect x="500" y="100" width="160" height="56" rx="6" fill="#f8fafb"/>
+  <!-- box -->
+  <rect x="500" y="100" width="160" height="56" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <!-- tag -->
+  <rect x="508" y="106" width="28" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.35)" stroke-width="0.8"/>
+  <text x="522" y="115" fill="rgba(18,33,39,0.7)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.06em">RAG</text>
+  <!-- name -->
+  <text x="580" y="130" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">기존 RAG</text>
+  <!-- sublabel -->
+  <text x="580" y="148" fill="#6c8188" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" font-weight="400" text-anchor="middle">빠름 · 저비용</text>
+
+  <!-- ============================================================
+       NODE: Agentic RAG (focal)
+  ============================================================ -->
+  <!-- mask -->
+  <rect x="500" y="172" width="160" height="56" rx="6" fill="#f8fafb"/>
+  <!-- box -->
+  <rect x="500" y="172" width="160" height="56" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.4"/>
+  <!-- tag -->
+  <rect x="508" y="178" width="52" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="534" y="187" fill="rgba(13,87,99,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.06em">AGENTIC</text>
+  <!-- name -->
+  <text x="580" y="204" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Agentic RAG</text>
+  <!-- sublabel -->
+  <text x="580" y="220" fill="#6c8188" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" font-weight="400" text-anchor="middle">멀티홉 검색</text>
+
+  <!-- ============================================================
+       NODE: 심층 Agentic (store/optional feel)
+  ============================================================ -->
+  <!-- mask -->
+  <rect x="500" y="244" width="160" height="56" rx="6" fill="#f8fafb"/>
+  <!-- box -->
+  <rect x="500" y="244" width="160" height="56" rx="6" fill="rgba(18,33,39,0.04)" stroke="rgba(18,33,39,0.30)" stroke-width="1"/>
+  <!-- tag -->
+  <rect x="508" y="250" width="48" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.25)" stroke-width="0.8"/>
+  <text x="532" y="259" fill="rgba(18,33,39,0.55)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.06em">DEEP</text>
+  <!-- name -->
+  <text x="580" y="276" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">심층 Agentic</text>
+  <!-- sublabel -->
+  <text x="580" y="292" fill="#6c8188" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" font-weight="400" text-anchor="middle">반복 검색 무제한</text>
+
+  <!-- ============================================================
+       NODE: 응답 (input/output)
+  ============================================================ -->
+  <!-- mask -->
+  <rect x="748" y="172" width="104" height="56" rx="6" fill="#f8fafb"/>
+  <!-- box -->
+  <rect x="748" y="172" width="104" height="56" rx="6" fill="rgba(18,33,39,0.04)" stroke="#3f545c" stroke-width="1"/>
+  <!-- tag -->
+  <rect x="756" y="178" width="40" height="12" rx="2" fill="transparent" stroke="rgba(63,84,92,0.40)" stroke-width="0.8"/>
+  <text x="776" y="187" fill="rgba(63,84,92,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">OUTPUT</text>
+  <!-- name -->
+  <text x="800" y="206" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">응답</text>
+
+  <!-- ============================================================
+       LEGEND STRIP
+  ============================================================ -->
+  <line x1="60" y1="344" x2="900" y2="344" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+
+  <!-- 범례 항목들 -->
+  <!-- 라우터 -->
+  <polygon points="72,360 80,354 88,360 80,366" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="96" y="364" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.10em">라우터</text>
+
+  <!-- 기존 RAG -->
+  <rect x="184" y="354" width="12" height="12" rx="2" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <text x="202" y="364" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.10em">기존 RAG</text>
+
+  <!-- Agentic RAG (focal) -->
+  <rect x="300" y="354" width="12" height="12" rx="2" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.4"/>
+  <text x="318" y="364" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.10em">Agentic (focal)</text>
+
+  <!-- 심층 -->
+  <rect x="456" y="354" width="12" height="12" rx="2" fill="rgba(18,33,39,0.04)" stroke="rgba(18,33,39,0.30)" stroke-width="1"/>
+  <text x="474" y="364" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.10em">심층 Agentic</text>
+
+  <!-- 응답 -->
+  <rect x="600" y="354" width="12" height="12" rx="2" fill="rgba(18,33,39,0.04)" stroke="#3f545c" stroke-width="1"/>
+  <text x="618" y="364" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.10em">응답</text>
+
+</svg>
+</body>
+</html>

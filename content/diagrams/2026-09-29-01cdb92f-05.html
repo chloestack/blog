@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; display: flex; justify-content: center; padding: 0; }
+  .diagram-wrap { width: 100%; max-width: 960px; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<div class="diagram-wrap">
+<svg viewBox="0 0 960 600" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="2026-09-29-01cdb92f-05-d1-trap-title 2026-09-29-01cdb92f-05-d1-trap-desc">
+  <title id="2026-09-29-01cdb92f-05-d1-trap-title">D1 마이그레이션 트랜잭션 함정</title>
+  <desc id="2026-09-29-01cdb92f-05-d1-trap-desc">D1이 마이그레이션을 트랜잭션으로 실행하면 PRAGMA foreign_keys=OFF가 무시되어, DROP TABLE users가 모든 행을 삭제하고 ON DELETE CASCADE 설정에 따라 posts 데이터까지 사라지지만 마이그레이션은 성공으로 표시되는 흐름을 보여준다.</desc>
+
+  <defs>
+    <marker id="2026-09-29-01cdb92f-05-d1-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-09-29-01cdb92f-05-d1-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="960" height="600" fill="#f8fafb"/>
+
+  <!-- ═══════════════════ CONNECTORS (drawn before boxes) ═══════════════════ -->
+
+  <!-- A → B (straight down) -->
+  <line x1="480" y1="92" x2="480" y2="156" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-29-01cdb92f-05-d1-arrow)"/>
+
+  <!-- B → C (straight down) -->
+  <line x1="480" y1="220" x2="480" y2="284" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-29-01cdb92f-05-d1-arrow)"/>
+
+  <!-- C → D (straight down) -->
+  <line x1="480" y1="348" x2="480" y2="392" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-29-01cdb92f-05-d1-arrow)"/>
+
+  <!-- D → E (있음, right branch, orthogonal) -->
+  <!-- from D right vertex (480+52, 412+0=412 center y=412) to E -->
+  <!-- D diamond center: (480, 412), right vertex x=532 -->
+  <!-- E center: (700, 452) -->
+  <path d="M532,412 L652,412 L652,452 L668,452" fill="none" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-29-01cdb92f-05-d1-arrow-accent)"/>
+  <!-- Label: 있음 -->
+  <rect x="566" y="400" width="36" height="14" rx="2" fill="#f8fafb"/>
+  <text x="584" y="411" fill="#0d5763" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">있음</text>
+
+  <!-- D → F (없음, left branch, orthogonal) -->
+  <!-- D left vertex: x=428, y=412 -->
+  <!-- F center: (260, 452) -->
+  <path d="M428,412 L308,412 L308,452 L292,452" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-29-01cdb92f-05-d1-arrow)"/>
+  <!-- Label: 없음 -->
+  <rect x="338" y="400" width="36" height="14" rx="2" fill="#f8fafb"/>
+  <text x="356" y="411" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500" text-anchor="middle">없음</text>
+
+  <!-- E → G (orthogonal down then left) -->
+  <!-- E center: (732, 452), G center: (480, 536) -->
+  <path d="M732,484 L732,520 L548,520 L548,524" fill="none" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-29-01cdb92f-05-d1-arrow-accent)"/>
+
+  <!-- F → G (orthogonal down then right) -->
+  <!-- F center: (228, 452), G center: (480, 536) -->
+  <path d="M228,484 L228,520 L412,520 L412,524" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-29-01cdb92f-05-d1-arrow)"/>
+
+  <!-- ═══════════════════ NODES ═══════════════════ -->
+
+  <!-- A: D1이 마이그레이션을 트랜잭션으로 실행 -->
+  <!-- Oval start: rx=20 -->
+  <rect x="324" y="44" width="312" height="48" rx="20" fill="#f8fafb"/>
+  <rect x="324" y="44" width="312" height="48" rx="20" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="480" y="64" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">D1이 마이그레이션을</text>
+  <text x="480" y="82" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">트랜잭션으로 실행</text>
+
+  <!-- B: PRAGMA foreign_keys=OFF -->
+  <rect x="288" y="156" width="384" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="288" y="156" width="384" height="64" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <!-- type tag -->
+  <rect x="296" y="162" width="36" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.35)" stroke-width="0.8"/>
+  <text x="314" y="171" fill="rgba(18,33,39,0.7)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">PRAGMA</text>
+  <text x="480" y="192" fill="#122127" font-size="11" font-weight="500" font-family="'IBM Plex Mono', monospace" text-anchor="middle">PRAGMA foreign_keys=OFF</text>
+  <text x="480" y="210" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">트랜잭션 안이라 무시됨</text>
+
+  <!-- C: DROP TABLE users -->
+  <rect x="316" y="284" width="328" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="316" y="284" width="328" height="64" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <!-- type tag -->
+  <rect x="324" y="290" width="28" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.35)" stroke-width="0.8"/>
+  <text x="338" y="299" fill="rgba(18,33,39,0.7)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">DDL</text>
+  <text x="480" y="320" fill="#122127" font-size="11" font-weight="500" font-family="'IBM Plex Mono', monospace" text-anchor="middle">DROP TABLE users</text>
+  <text x="480" y="338" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">= 모든 행 삭제</text>
+
+  <!-- D: Decision diamond — posts에 ON DELETE CASCADE -->
+  <!-- Diamond center: (480, 412), half-width=52, half-height=28 -->
+  <polygon points="480,384 532,412 480,440 428,412" fill="#f8fafb"/>
+  <polygon points="480,384 532,412 480,440 428,412" fill="rgba(18,33,39,0.04)" stroke="#3f545c" stroke-width="1"/>
+  <text x="480" y="408" fill="#122127" font-size="10" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">posts에</text>
+  <text x="480" y="422" fill="#122127" font-size="10" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">ON DELETE CASCADE?</text>
+
+  <!-- E: posts 행 전부 삭제 (accent — focal) -->
+  <rect x="668" y="424" width="188" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="668" y="424" width="188" height="56" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="762" y="448" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">posts 행 전부 삭제</text>
+  <text x="762" y="468" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">CASCADE 연쇄 삭제</text>
+
+  <!-- F: FK 검사 실패 또는 defer로 통과 -->
+  <rect x="104" y="424" width="188" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="104" y="424" width="188" height="56" rx="6" fill="rgba(18,33,39,0.02)" stroke="rgba(18,33,39,0.25)" stroke-width="1" stroke-dasharray="4,3"/>
+  <text x="198" y="448" fill="#122127" font-size="11" font-weight="500" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">FK 검사 실패 또는</text>
+  <text x="198" y="464" fill="#122127" font-size="11" font-weight="500" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">defer로 통과</text>
+
+  <!-- G: 마이그레이션은 성공으로 표시 (end oval) -->
+  <rect x="324" y="524" width="312" height="48" rx="20" fill="#f8fafb"/>
+  <rect x="324" y="524" width="312" height="48" rx="20" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <text x="480" y="544" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">마이그레이션은 성공으로 표시</text>
+  <text x="480" y="562" fill="#c0392b" font-size="10" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">데이터만 사라짐</text>
+
+  <!-- ═══════════════════ LEGEND ═══════════════════ -->
+  <line x1="32" y1="592" x2="928" y2="592" stroke="rgba(18,33,39,0.10)" stroke-width="0.8"/>
+
+</svg>
+</div>
+</body>
+</html>

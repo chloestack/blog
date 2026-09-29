@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; font-family: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; }
+  .diagram-wrap { width: 100%; max-width: 960px; margin: 0 auto; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<div class="diagram-wrap">
+<svg viewBox="0 0 960 260" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="2026-09-29-01cdb92f-04-drizzle-migrate-title 2026-09-29-01cdb92f-04-drizzle-migrate-desc">
+  <title id="2026-09-29-01cdb92f-04-drizzle-migrate-title">SQLite 컬럼 변경 마이그레이션 절차</title>
+  <desc id="2026-09-29-01cdb92f-04-drizzle-migrate-desc">SQLite의 ALTER TABLE 제약을 우회하는 6단계 마이그레이션 흐름: 외래키 비활성화부터 인덱스 재생성까지.</desc>
+
+  <defs>
+    <marker id="2026-09-29-01cdb92f-04-dm-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-09-29-01cdb92f-04-dm-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+  </defs>
+
+  <!-- background -->
+  <rect width="960" height="260" fill="#f8fafb"/>
+
+  <!-- connector lines (drawn before boxes) -->
+  <!-- A → B -->
+  <line x1="148" y1="96" x2="184" y2="96" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-29-01cdb92f-04-dm-arrow)"/>
+  <!-- B → C -->
+  <line x1="300" y1="96" x2="336" y2="96" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-29-01cdb92f-04-dm-arrow)"/>
+  <!-- C → D -->
+  <line x1="452" y1="96" x2="488" y2="96" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-29-01cdb92f-04-dm-arrow)"/>
+  <!-- D → E -->
+  <line x1="572" y1="96" x2="608" y2="96" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-29-01cdb92f-04-dm-arrow-accent)"/>
+  <!-- E → F -->
+  <line x1="724" y1="96" x2="760" y2="96" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-29-01cdb92f-04-dm-arrow)"/>
+
+  <!-- Node A: PRAGMA foreign_keys=OFF -->
+  <!-- paper mask -->
+  <rect x="20" y="64" width="128" height="64" rx="6" fill="#f8fafb"/>
+  <!-- box -->
+  <rect x="20" y="64" width="128" height="64" rx="6" fill="rgba(18,33,39,0.04)" stroke="rgba(18,33,39,0.30)" stroke-width="1"/>
+  <!-- tag -->
+  <rect x="28" y="70" width="24" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.25)" stroke-width="0.8"/>
+  <text x="40" y="79" fill="rgba(18,33,39,0.55)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">SQL</text>
+  <!-- label line 1 -->
+  <text x="84" y="102" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Mono', monospace" text-anchor="middle">PRAGMA</text>
+  <!-- label line 2 -->
+  <text x="84" y="116" fill="#122127" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">foreign_keys=OFF</text>
+
+  <!-- Node B: CREATE TABLE __new_users -->
+  <!-- paper mask -->
+  <rect x="184" y="64" width="116" height="64" rx="6" fill="#f8fafb"/>
+  <!-- box -->
+  <rect x="184" y="64" width="116" height="64" rx="6" fill="white" stroke="#122127" stroke-width="1"/>
+  <!-- tag -->
+  <rect x="192" y="70" width="24" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.30)" stroke-width="0.8"/>
+  <text x="204" y="79" fill="rgba(18,33,39,0.65)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">DDL</text>
+  <!-- label line 1 -->
+  <text x="242" y="99" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Mono', monospace" text-anchor="middle">CREATE TABLE</text>
+  <!-- label line 2 -->
+  <text x="242" y="113" fill="#3f545c" font-size="9" font-family="'IBM Plex Mono', monospace" text-anchor="middle">__new_users</text>
+
+  <!-- Node C: INSERT … SELECT -->
+  <!-- paper mask -->
+  <rect x="336" y="64" width="116" height="64" rx="6" fill="#f8fafb"/>
+  <!-- box -->
+  <rect x="336" y="64" width="116" height="64" rx="6" fill="white" stroke="#122127" stroke-width="1"/>
+  <!-- tag -->
+  <rect x="344" y="70" width="24" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.30)" stroke-width="0.8"/>
+  <text x="356" y="79" fill="rgba(18,33,39,0.65)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">DML</text>
+  <!-- label line 1 -->
+  <text x="394" y="99" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Mono', monospace" text-anchor="middle">INSERT … SELECT</text>
+  <!-- label line 2 -->
+  <text x="394" y="113" fill="#3f545c" font-size="9" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">기존 행 복사</text>
+
+  <!-- Node D: DROP TABLE users -->
+  <!-- paper mask -->
+  <rect x="488" y="64" width="84" height="64" rx="6" fill="#f8fafb"/>
+  <!-- box -->
+  <rect x="488" y="64" width="84" height="64" rx="6" fill="white" stroke="#122127" stroke-width="1"/>
+  <!-- tag -->
+  <rect x="496" y="70" width="24" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.30)" stroke-width="0.8"/>
+  <text x="508" y="79" fill="rgba(18,33,39,0.65)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">DDL</text>
+  <!-- label line 1 -->
+  <text x="530" y="99" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Mono', monospace" text-anchor="middle">DROP TABLE</text>
+  <!-- label line 2 -->
+  <text x="530" y="113" fill="#3f545c" font-size="9" font-family="'IBM Plex Mono', monospace" text-anchor="middle">users</text>
+
+  <!-- Node E: RENAME (focal) -->
+  <!-- paper mask -->
+  <rect x="608" y="56" width="116" height="80" rx="6" fill="#f8fafb"/>
+  <!-- box -->
+  <rect x="608" y="56" width="116" height="80" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <!-- tag -->
+  <rect x="616" y="62" width="24" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.45)" stroke-width="0.8"/>
+  <text x="628" y="71" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">DDL</text>
+  <!-- label line 1 -->
+  <text x="666" y="95" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Mono', monospace" text-anchor="middle">RENAME TABLE</text>
+  <!-- label line 2 -->
+  <text x="666" y="109" fill="#0d5763" font-size="9" font-family="'IBM Plex Mono', monospace" text-anchor="middle">__new_users</text>
+  <!-- label line 3 -->
+  <text x="666" y="123" fill="#0d5763" font-size="9" font-family="'IBM Plex Mono', monospace" text-anchor="middle">→ users</text>
+
+  <!-- Node F: 인덱스 다시 생성 -->
+  <!-- paper mask -->
+  <rect x="760" y="64" width="116" height="64" rx="6" fill="#f8fafb"/>
+  <!-- box -->
+  <rect x="760" y="64" width="116" height="64" rx="6" fill="rgba(18,33,39,0.04)" stroke="rgba(18,33,39,0.30)" stroke-width="1"/>
+  <!-- tag -->
+  <rect x="768" y="70" width="24" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.25)" stroke-width="0.8"/>
+  <text x="780" y="79" fill="rgba(18,33,39,0.55)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">DDL</text>
+  <!-- label line 1 -->
+  <text x="818" y="99" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">인덱스 다시 생성</text>
+  <!-- label line 2 -->
+  <text x="818" y="116" fill="#3f545c" font-size="9" font-family="'IBM Plex Mono', monospace" text-anchor="middle">CREATE INDEX</text>
+
+  <!-- legend separator -->
+  <line x1="32" y1="192" x2="928" y2="192" stroke="rgba(18,33,39,0.10)" stroke-width="0.8"/>
+
+  <!-- legend label -->
+  <text x="32" y="208" fill="#3f545c" font-size="8" font-family="'IBM Plex Mono', monospace" letter-spacing="0.14em">LEGEND</text>
+
+  <!-- legend item: 일반 단계 -->
+  <rect x="96" y="198" width="16" height="12" rx="3" fill="white" stroke="#122127" stroke-width="1"/>
+  <text x="118" y="208" fill="#3f545c" font-size="9" font-family="'IBM Plex Sans KR', sans-serif">일반 단계</text>
+
+  <!-- legend item: 핵심 단계 (focal) -->
+  <rect x="200" y="198" width="16" height="12" rx="3" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="222" y="208" fill="#3f545c" font-size="9" font-family="'IBM Plex Sans KR', sans-serif">핵심 단계</text>
+
+  <!-- legend item: 진입/종료 -->
+  <rect x="312" y="198" width="16" height="12" rx="3" fill="rgba(18,33,39,0.04)" stroke="rgba(18,33,39,0.30)" stroke-width="1"/>
+  <text x="334" y="208" fill="#3f545c" font-size="9" font-family="'IBM Plex Sans KR', sans-serif">진입 / 종료</text>
+
+</svg>
+</div>
+</body>
+</html>

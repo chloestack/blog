@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Drizzle ORM 마이그레이션 플로우</title>
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; font-family: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 960 300"
+  role="img"
+  aria-labelledby="2026-09-29-01cdb92f-01-flow-title 2026-09-29-01cdb92f-01-flow-desc"
+>
+  <title id="2026-09-29-01cdb92f-01-flow-title">Drizzle ORM 마이그레이션 플로우</title>
+  <desc id="2026-09-29-01cdb92f-01-flow-desc">schema.ts 수정부터 drizzle-kit generate, SQL 파일 생성, git 커밋, 스테이징 DB 적용, 운영 DB 적용, 적용 기록 테이블 저장까지 7단계 마이그레이션 흐름.</desc>
+
+  <defs>
+    <marker id="2026-09-29-01cdb92f-01-arrow-muted" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-09-29-01cdb92f-01-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="960" height="300" fill="#f8fafb"/>
+
+  <!-- ─── Step labels (eyebrow row) ─── -->
+  <!-- 1 -->
+  <text x="72" y="52" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.10em">STEP 1</text>
+  <!-- 2 -->
+  <text x="216" y="52" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.10em">STEP 2</text>
+  <!-- 3 -->
+  <text x="380" y="52" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.10em">STEP 3</text>
+  <!-- 4 -->
+  <text x="528" y="52" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.10em">STEP 4</text>
+  <!-- 5 -->
+  <text x="672" y="52" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.10em">STEP 5</text>
+  <!-- 6 -->
+  <text x="816" y="52" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.10em">STEP 6</text>
+  <!-- 7 (store) -->
+  <text x="904" y="52" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.10em">결과</text>
+
+  <!-- ─── Arrows (drawn before boxes) ─── -->
+  <!-- A → B -->
+  <line x1="136" y1="152" x2="168" y2="152" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-29-01cdb92f-01-arrow-muted)"/>
+  <!-- B → C -->
+  <line x1="264" y1="152" x2="296" y2="152" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-29-01cdb92f-01-arrow-muted)"/>
+  <!-- C → D -->
+  <line x1="464" y1="152" x2="476" y2="152" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-29-01cdb92f-01-arrow-muted)"/>
+  <!-- D → E -->
+  <line x1="580" y1="152" x2="612" y2="152" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-29-01cdb92f-01-arrow-muted)"/>
+  <!-- E → F (accent — focal path: deploy to prod) -->
+  <line x1="732" y1="152" x2="764" y2="152" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-29-01cdb92f-01-arrow-accent)"/>
+  <!-- F → G -->
+  <line x1="868" y1="152" x2="876" y2="152" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-29-01cdb92f-01-arrow-muted)"/>
+
+  <!-- ─── Node A: schema.ts 수정 ─── -->
+  <rect x="8" y="120" width="128" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="8" y="120" width="128" height="64" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <rect x="16" y="128" width="32" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="32" y="137" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">수정</text>
+  <text x="72" y="158" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">schema.ts</text>
+  <text x="72" y="175" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">스키마 변경</text>
+
+  <!-- ─── Node B: drizzle-kit generate ─── -->
+  <rect x="168" y="120" width="96" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="168" y="120" width="96" height="64" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="176" y="128" width="28" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="190" y="137" fill="rgba(18,33,39,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">CLI</text>
+  <text x="216" y="155" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Mono', monospace" text-anchor="middle">drizzle-kit</text>
+  <text x="216" y="171" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Mono', monospace" text-anchor="middle">generate</text>
+
+  <!-- ─── Node C: SQL 파일·스냅샷 ─── -->
+  <rect x="296" y="104" width="168" height="96" rx="6" fill="#f8fafb"/>
+  <rect x="296" y="104" width="168" height="96" rx="6" fill="rgba(18,33,39,0.05)" stroke="#3f545c" stroke-width="1"/>
+  <rect x="304" y="112" width="24" height="12" rx="2" fill="transparent" stroke="rgba(63,84,92,0.40)" stroke-width="0.8"/>
+  <text x="316" y="121" fill="rgba(63,84,92,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">파일</text>
+  <text x="380" y="148" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Mono', monospace" text-anchor="middle">0003_xxx.sql</text>
+  <text x="380" y="165" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">메타 스냅샷·저널</text>
+  <text x="380" y="183" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">drizzle/ 디렉터리</text>
+
+  <!-- ─── Node D: git 커밋·리뷰 ─── -->
+  <rect x="476" y="120" width="104" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="476" y="120" width="104" height="64" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="484" y="128" width="24" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="496" y="137" fill="rgba(18,33,39,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">VCS</text>
+  <text x="528" y="155" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">git 커밋</text>
+  <text x="528" y="172" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">코드 리뷰</text>
+
+  <!-- ─── Node E: 스테이징 DB 적용 ─── -->
+  <rect x="612" y="120" width="120" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="612" y="120" width="120" height="64" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="620" y="128" width="36" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="638" y="137" fill="rgba(18,33,39,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">STAGING</text>
+  <text x="672" y="158" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">스테이징 DB</text>
+  <text x="672" y="174" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">migrate 적용</text>
+
+  <!-- ─── Node F: 운영 DB 적용 (focal) ─── -->
+  <rect x="764" y="116" width="104" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="764" y="116" width="104" height="72" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="772" y="124" width="36" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="790" y="133" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">PROD</text>
+  <text x="816" y="155" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">운영 DB</text>
+  <text x="816" y="172" fill="#0d5763" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">migrate 적용</text>
+
+  <!-- ─── Node G: 적용 기록 테이블 (store) ─── -->
+  <!-- Cylinder-like store shape using rounded rect -->
+  <rect x="876" y="124" width="72" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="876" y="124" width="72" height="56" rx="6" fill="rgba(18,33,39,0.05)" stroke="#3f545c" stroke-width="1"/>
+  <!-- Cylinder top ellipse indicator -->
+  <ellipse cx="912" cy="132" rx="28" ry="6" fill="rgba(18,33,39,0.05)" stroke="#3f545c" stroke-width="0.8"/>
+  <text x="912" y="156" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">적용 기록</text>
+  <text x="912" y="170" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">테이블</text>
+
+  <!-- ─── Legend strip ─── -->
+  <line x1="8" y1="228" x2="952" y2="228" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+  <text x="8" y="244" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.14em">LEGEND</text>
+
+  <!-- Legend: 수정/생성 (focal) -->
+  <rect x="76" y="234" width="12" height="12" rx="3" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="92" y="244" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif">핵심 단계</text>
+
+  <!-- Legend: 일반 단계 -->
+  <rect x="188" y="234" width="12" height="12" rx="3" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <text x="204" y="244" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif">일반 단계</text>
+
+  <!-- Legend: 파일/상태 -->
+  <rect x="300" y="234" width="12" height="12" rx="3" fill="rgba(18,33,39,0.05)" stroke="#3f545c" stroke-width="1"/>
+  <text x="316" y="244" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif">파일 / 저장소</text>
+
+  <!-- Legend: 핵심 경로 화살표 -->
+  <line x1="428" y1="240" x2="448" y2="240" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-29-01cdb92f-01-arrow-accent)"/>
+  <text x="452" y="244" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif">핵심 경로</text>
+
+  <!-- Legend: 일반 경로 화살표 -->
+  <line x1="556" y1="240" x2="576" y2="240" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-29-01cdb92f-01-arrow-muted)"/>
+  <text x="580" y="244" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif">일반 경로</text>
+
+</svg>
+</body>
+</html>

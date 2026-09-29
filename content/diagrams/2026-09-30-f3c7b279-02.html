@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agentic RAG 플로우차트</title>
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: #f8fafb; }
+  body { display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 720 680"
+  role="img"
+  aria-labelledby="2026-09-30-f3c7b279-02-arag-title 2026-09-30-f3c7b279-02-arag-desc"
+>
+  <title id="2026-09-30-f3c7b279-02-arag-title">Agentic RAG 플로우차트</title>
+  <desc id="2026-09-30-f3c7b279-02-arag-desc">사용자 질문이 에이전트의 판단·계획을 거쳐 검색 필요 여부를 결정하고, 검색 결과의 충분성을 평가한 뒤 직접 응답을 생성하는 Agentic RAG 흐름을 보여주는 플로우차트.</desc>
+
+  <defs>
+    <!-- 기본 화살표 (muted) -->
+    <marker id="2026-09-30-f3c7b279-02-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <!-- 강조 화살표 (accent) -->
+    <marker id="2026-09-30-f3c7b279-02-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <!-- 점선 화살표 (되돌아감) -->
+    <marker id="2026-09-30-f3c7b279-02-arrow-dash" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#6c8188"/>
+    </marker>
+  </defs>
+
+  <!-- 배경 -->
+  <rect width="720" height="680" fill="#f8fafb"/>
+
+  <!-- ────────────────────────────────────────────
+       ARROWS (drawn before boxes, z-order)
+  ──────────────────────────────────────────── -->
+
+  <!-- Q → A : 사용자 질문 → 에이전트 (아래로) -->
+  <line x1="360" y1="96" x2="360" y2="152" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-30-f3c7b279-02-arrow)"/>
+
+  <!-- A → D : 에이전트 → 검색 필요한가 (아래로) -->
+  <line x1="360" y1="212" x2="360" y2="268" stroke="#0d5763" stroke-width="1" marker-end="url(#2026-09-30-f3c7b279-02-arrow-accent)"/>
+
+  <!-- D →|예| R : 오른쪽으로 꺾어 검색 도구 호출 -->
+  <!-- 다이아몬드 오른쪽 꼭짓점(468,296) → 오른쪽 → 아래 → R 위쪽 -->
+  <path d="M 468,296 L 540,296 L 540,352" stroke="#3f545c" stroke-width="1" fill="none" marker-end="url(#2026-09-30-f3c7b279-02-arrow)"/>
+
+  <!-- D →|아니오| G : 왼쪽으로 꺾어 직접 응답 -->
+  <!-- 다이아몬드 왼쪽 꼭짓점(252,296) → 왼쪽 → 아래 → G 위쪽 -->
+  <path d="M 252,296 L 180,296 L 180,468" stroke="#3f545c" stroke-width="1" fill="none" marker-end="url(#2026-09-30-f3c7b279-02-arrow)"/>
+
+  <!-- R → E : 검색 도구 호출 → 결과 평가 (아래로) -->
+  <line x1="540" y1="408" x2="540" y2="456" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-30-f3c7b279-02-arrow)"/>
+
+  <!-- E → F : 결과 평가 → 충분한가 (아래로) -->
+  <line x1="540" y1="516" x2="540" y2="560" stroke="#0d5763" stroke-width="1" marker-end="url(#2026-09-30-f3c7b279-02-arrow-accent)"/>
+
+  <!-- F →|예| G : 오른쪽 꼭짓점(620,588) → G 오른쪽 끝(268,492)
+       왼쪽 꼭짓점(460,588) → 왼쪽 → 아래 → G 오른쪽 -->
+  <path d="M 460,588 L 268,588 L 268,508" stroke="#3f545c" stroke-width="1" fill="none" marker-end="url(#2026-09-30-f3c7b279-02-arrow)"/>
+
+  <!-- F →|아니오| 되돌아감: A로
+       F 오른쪽 꼭짓점(620,588) → 오른쪽 → 위로 → A 오른쪽 끝(448,182) -->
+  <path d="M 620,588 L 648,588 L 648,182 L 448,182" stroke="#6c8188" stroke-width="1" stroke-dasharray="5,4" fill="none" marker-end="url(#2026-09-30-f3c7b279-02-arrow-dash)"/>
+
+  <!-- ────────────────────────────────────────────
+       ARROW LABELS
+  ──────────────────────────────────────────── -->
+
+  <!-- D → R 예 라벨 -->
+  <rect x="491" y="280" width="22" height="14" rx="2" fill="#f8fafb"/>
+  <text x="502" y="291" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="500">예</text>
+
+  <!-- D → G 아니오 라벨 -->
+  <rect x="136" y="280" width="40" height="14" rx="2" fill="#f8fafb"/>
+  <text x="156" y="291" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="500">아니오</text>
+
+  <!-- F → G 예 라벨 -->
+  <rect x="342" y="572" width="22" height="14" rx="2" fill="#f8fafb"/>
+  <text x="353" y="583" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="500">예</text>
+
+  <!-- F → A 아니오 라벨 -->
+  <rect x="615" y="376" width="40" height="14" rx="2" fill="#f8fafb"/>
+  <text x="635" y="387" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="500">아니오</text>
+
+  <!-- ────────────────────────────────────────────
+       NODES
+  ──────────────────────────────────────────── -->
+
+  <!-- Q: 사용자 질문 — 타원형 시작 노드 (link 색상) -->
+  <rect x="268" y="52" width="184" height="44" rx="22" fill="rgba(58,84,143,0.08)" stroke-width="1"/>
+  <rect x="268" y="52" width="184" height="44" rx="22" fill="rgba(58,84,143,0.08)" stroke="#3a548f" stroke-width="1"/>
+  <text x="360" y="79" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">사용자 질문</text>
+
+  <!-- A: 에이전트 판단·계획 — focal 박스 -->
+  <rect x="264" y="152" width="192" height="60" rx="6" fill="#f8fafb"/>
+  <rect x="264" y="152" width="192" height="60" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <!-- 태그 -->
+  <rect x="272" y="160" width="36" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="290" y="169" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">AGENT</text>
+  <text x="360" y="191" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">에이전트</text>
+  <text x="360" y="207" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">판단 · 계획</text>
+
+  <!-- D: 검색이 필요한가 — 다이아몬드 -->
+  <!-- 다이아몬드: 중심(360, 296), 가로반폭=108, 세로반폭=28 -->
+  <polygon points="360,268 468,296 360,324 252,296" fill="#f8fafb"/>
+  <polygon points="360,268 468,296 360,324 252,296" fill="rgba(13,87,99,0.06)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="360" y="292" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">검색이</text>
+  <text x="360" y="308" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">필요한가?</text>
+
+  <!-- R: 검색 도구 호출 — step 박스 -->
+  <rect x="456" y="352" width="168" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="456" y="352" width="168" height="56" rx="6" fill="rgba(169,106,8,0.06)" stroke="#a96a08" stroke-width="1"/>
+  <!-- 태그 -->
+  <rect x="464" y="360" width="32" height="12" rx="2" fill="transparent" stroke="rgba(169,106,8,0.40)" stroke-width="0.8"/>
+  <text x="480" y="369" fill="rgba(169,106,8,0.85)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">TOOL</text>
+  <text x="540" y="388" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">검색 도구 호출</text>
+
+  <!-- E: 결과 평가 — step 박스 -->
+  <rect x="456" y="456" width="168" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="456" y="456" width="168" height="56" rx="6" fill="rgba(13,87,99,0.06)" stroke="#0d5763" stroke-width="1"/>
+  <!-- 태그 -->
+  <rect x="464" y="464" width="32" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="480" y="473" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">EVAL</text>
+  <text x="540" y="492" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">결과 평가</text>
+
+  <!-- F: 충분한가 — 다이아몬드 -->
+  <!-- 다이아몬드: 중심(540, 588), 가로반폭=80, 세로반폭=24 -->
+  <polygon points="540,560 620,588 540,616 460,588" fill="#f8fafb"/>
+  <polygon points="540,560 620,588 540,616 460,588" fill="rgba(13,87,99,0.06)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="540" y="593" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">충분한가?</text>
+
+  <!-- G: 직접 응답 생성 — end 타원형 박스 -->
+  <rect x="96" y="468" width="172" height="44" rx="22" fill="#f8fafb"/>
+  <rect x="96" y="468" width="172" height="44" rx="22" fill="rgba(40,109,80,0.08)" stroke="#286d50" stroke-width="1"/>
+  <text x="182" y="495" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">직접 응답 생성</text>
+
+  <!-- ────────────────────────────────────────────
+       LEGEND
+  ──────────────────────────────────────────── -->
+  <line x1="32" y1="644" x2="688" y2="644" stroke="rgba(18,33,39,0.10)" stroke-width="0.8"/>
+
+  <!-- 범례 항목들 -->
+  <!-- 시작/종료 -->
+  <rect x="32" y="656" width="28" height="14" rx="7" fill="rgba(58,84,143,0.08)" stroke="#3a548f" stroke-width="1"/>
+  <text x="68" y="667" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">시작 / 종료</text>
+
+  <!-- 에이전트 -->
+  <rect x="160" y="656" width="16" height="14" rx="4" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="184" y="667" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">에이전트 단계</text>
+
+  <!-- 도구 호출 -->
+  <rect x="296" y="656" width="16" height="14" rx="4" fill="rgba(169,106,8,0.06)" stroke="#a96a08" stroke-width="1"/>
+  <text x="320" y="667" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">도구 호출</text>
+
+  <!-- 판단 -->
+  <polygon points="416,663 428,656 440,663 428,670" fill="rgba(13,87,99,0.06)" stroke="#0d5763" stroke-width="1"/>
+  <text x="448" y="667" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">판단 분기</text>
+
+  <!-- 재시도 -->
+  <line x1="544" y1="663" x2="572" y2="663" stroke="#6c8188" stroke-width="1" stroke-dasharray="5,4" marker-end="url(#2026-09-30-f3c7b279-02-arrow-dash)"/>
+  <text x="580" y="667" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">재시도</text>
+
+</svg>
+</body>
+</html>

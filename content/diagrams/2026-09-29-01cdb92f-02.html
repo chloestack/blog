@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<svg
+  viewBox="0 0 960 320"
+  xmlns="http://www.w3.org/2000/svg"
+  role="img"
+  aria-labelledby="2026-09-29-01cdb92f-02-drizzle-migration-title 2026-09-29-01cdb92f-02-drizzle-migration-desc"
+>
+  <title id="2026-09-29-01cdb92f-02-drizzle-migration-title">Drizzle ORM 마이그레이션 스냅샷 체인</title>
+  <desc id="2026-09-29-01cdb92f-02-drizzle-migration-desc">스냅샷 파일 0000부터 0003까지 prevId로 연결된 체인을 보여주며, _journal.json이 체인의 시작과 끝을 참조하고, 마지막 스냅샷이 다음 generate의 비교 기준이 됨을 나타낸다.</desc>
+
+  <defs>
+    <!-- 기본 화살표 (muted) -->
+    <marker id="2026-09-29-01cdb92f-02-dmig-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <!-- 액센트 화살표 -->
+    <marker id="2026-09-29-01cdb92f-02-dmig-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <!-- 점선 화살표 (soft) -->
+    <marker id="2026-09-29-01cdb92f-02-dmig-arrow-dashed" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#6c8188"/>
+    </marker>
+  </defs>
+
+  <!-- 배경 -->
+  <rect width="960" height="320" fill="#f8fafb"/>
+
+  <!-- ─────────────────────────────────────────
+       화살표 (노드보다 먼저 그림)
+  ───────────────────────────────────────── -->
+
+  <!-- S0 → S1 -->
+  <line x1="220" y1="132" x2="288" y2="132" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-29-01cdb92f-02-dmig-arrow)"/>
+
+  <!-- S1 → S2 -->
+  <line x1="404" y1="132" x2="472" y2="132" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-29-01cdb92f-02-dmig-arrow)"/>
+
+  <!-- S2 → S3 -->
+  <line x1="588" y1="132" x2="656" y2="132" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-29-01cdb92f-02-dmig-arrow)"/>
+
+  <!-- S3 → N (accent) -->
+  <line x1="772" y1="132" x2="836" y2="132" stroke="#0d5763" stroke-width="1" marker-end="url(#2026-09-29-01cdb92f-02-dmig-arrow-accent)"/>
+
+  <!-- J -.-> S0 : journal에서 S0 위쪽으로 꺾어 연결 -->
+  <!-- J 박스: x=48, y=220, w=140, h=56 → 우측 중심 (188, 248) -->
+  <!-- S0 박스: x=64, y=108, w=156, h=48 → 하단 중심 (142, 156) -->
+  <!-- 경로: J 우측 → 오른쪽으로 → 위로 → S0 하단 -->
+  <path d="M 188 248 L 142 248 L 142 156" fill="none" stroke="#6c8188" stroke-width="1" stroke-dasharray="5,4" marker-end="url(#2026-09-29-01cdb92f-02-dmig-arrow-dashed)"/>
+
+  <!-- J -.-> S3 : journal 우측 → S3 하단 -->
+  <!-- J 우측: (188, 248), S3 박스: x=656, y=108, w=116, h=48 → 하단 중심 (714, 156) -->
+  <path d="M 188 248 L 714 248 L 714 156" fill="none" stroke="#6c8188" stroke-width="1" stroke-dasharray="5,4" marker-end="url(#2026-09-29-01cdb92f-02-dmig-arrow-dashed)"/>
+
+  <!-- ─────────────────────────────────────────
+       노드 박스
+  ───────────────────────────────────────── -->
+
+  <!-- S0: 0000_snapshot -->
+  <rect x="64" y="108" width="156" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="64" y="108" width="156" height="48" rx="6" fill="white" stroke="#122127" stroke-width="1"/>
+  <rect x="72" y="114" width="44" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="94" y="123" fill="rgba(18,33,39,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">FILE</text>
+  <text x="142" y="136" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">0000_snapshot</text>
+  <text x="142" y="150" fill="#3f545c" font-size="9" font-family="'IBM Plex Mono', monospace" text-anchor="middle">prevId: 0000…</text>
+
+  <!-- S1: 0001_snapshot -->
+  <rect x="288" y="108" width="116" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="288" y="108" width="116" height="48" rx="6" fill="white" stroke="#122127" stroke-width="1"/>
+  <rect x="296" y="114" width="44" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="318" y="123" fill="rgba(18,33,39,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">FILE</text>
+  <text x="346" y="136" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">0001_snapshot</text>
+  <text x="346" y="150" fill="#3f545c" font-size="9" font-family="'IBM Plex Mono', monospace" text-anchor="middle">prevId = 0000.id</text>
+
+  <!-- S2: 0002_snapshot -->
+  <rect x="472" y="108" width="116" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="472" y="108" width="116" height="48" rx="6" fill="white" stroke="#122127" stroke-width="1"/>
+  <rect x="480" y="114" width="44" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="502" y="123" fill="rgba(18,33,39,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">FILE</text>
+  <text x="530" y="136" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">0002_snapshot</text>
+  <text x="530" y="150" fill="#3f545c" font-size="9" font-family="'IBM Plex Mono', monospace" text-anchor="middle">prevId = 0001.id</text>
+
+  <!-- S3: 0003_snapshot (focal) -->
+  <rect x="656" y="108" width="116" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="656" y="108" width="116" height="48" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <rect x="664" y="114" width="44" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.50)" stroke-width="0.8"/>
+  <text x="686" y="123" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">FILE</text>
+  <text x="714" y="136" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">0003_snapshot</text>
+  <text x="714" y="150" fill="#0d5763" font-size="9" font-family="'IBM Plex Mono', monospace" text-anchor="middle">prevId = 0002.id</text>
+
+  <!-- N: 다음 generate의 비교 기준 -->
+  <rect x="836" y="100" width="88" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="836" y="100" width="88" height="64" rx="6" fill="rgba(13,87,99,0.05)" stroke="rgba(13,87,99,0.50)" stroke-width="1" stroke-dasharray="4,4"/>
+  <text x="880" y="128" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">다음 generate</text>
+  <text x="880" y="144" fill="#3f545c" font-size="11" font-weight="400" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">비교 기준</text>
+
+  <!-- J: _journal.json -->
+  <rect x="48" y="220" width="140" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="48" y="220" width="140" height="56" rx="6" fill="rgba(18,33,39,0.05)" stroke="#6c8188" stroke-width="1"/>
+  <rect x="56" y="228" width="52" height="12" rx="2" fill="transparent" stroke="rgba(108,129,136,0.50)" stroke-width="0.8"/>
+  <text x="82" y="237" fill="rgba(108,129,136,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">CONFIG</text>
+  <text x="118" y="252" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Mono', monospace" text-anchor="middle">_journal.json</text>
+  <text x="118" y="266" fill="#6c8188" font-size="9" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">순서·이름 목록</text>
+
+  <!-- ─────────────────────────────────────────
+       화살표 라벨
+  ───────────────────────────────────────── -->
+
+  <!-- "참조" 라벨 (J → S0 수직 세그먼트 옆) -->
+  <rect x="148" y="188" width="32" height="14" rx="2" fill="#f8fafb"/>
+  <text x="164" y="198" fill="#6c8188" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.06em">참조</text>
+
+  <!-- ─────────────────────────────────────────
+       범례
+  ───────────────────────────────────────── -->
+  <line x1="32" y1="296" x2="928" y2="296" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+
+  <!-- 범례 항목 1: 스냅샷 체인 -->
+  <line x1="40" y1="308" x2="60" y2="308" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-29-01cdb92f-02-dmig-arrow)"/>
+  <text x="68" y="312" fill="#3f545c" font-size="8" font-family="'IBM Plex Mono', monospace" letter-spacing="0.06em">스냅샷 체인</text>
+
+  <!-- 범례 항목 2: journal 참조 -->
+  <line x1="176" y1="308" x2="196" y2="308" stroke="#6c8188" stroke-width="1" stroke-dasharray="5,4" marker-end="url(#2026-09-29-01cdb92f-02-dmig-arrow-dashed)"/>
+  <text x="204" y="312" fill="#6c8188" font-size="8" font-family="'IBM Plex Mono', monospace" letter-spacing="0.06em">journal 참조</text>
+
+  <!-- 범례 항목 3: 현재 기준점 -->
+  <rect x="316" y="301" width="12" height="12" rx="2" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="336" y="312" fill="#3f545c" font-size="8" font-family="'IBM Plex Mono', monospace" letter-spacing="0.06em">최신 스냅샷 (기준점)</text>
+
+  <!-- 범례 항목 4: 다음 단계 -->
+  <rect x="500" y="301" width="12" height="12" rx="2" fill="rgba(13,87,99,0.05)" stroke="rgba(13,87,99,0.50)" stroke-width="1" stroke-dasharray="4,4"/>
+  <text x="520" y="312" fill="#3f545c" font-size="8" font-family="'IBM Plex Mono', monospace" letter-spacing="0.06em">다음 단계 (생성될 항목)</text>
+
+</svg>
+</body>
+</html>
