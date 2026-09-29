@@ -46,37 +46,37 @@
 
   <!-- Q1 →|아니오| MON (왼쪽으로 돌아오는 루프) -->
   <!-- Q1 왼쪽 → 왼쪽 우회 → MON 왼쪽 -->
-  <path d="M 384 204 L 320 204 L 320 96 L 384 96" fill="none" stroke="#6c8188" stroke-width="1" stroke-dasharray="5,4" marker-end="url(#2026-09-24-932e209d-09-arr-back)"/>
+  <path d="M 384 208 L 328 208 Q 320 208 320 200 L 320 104 Q 320 96 328 96 L 368 96" fill="none" stroke="#6c8188" stroke-width="1" stroke-dasharray="5,4" marker-end="url(#2026-09-24-932e209d-09-arr-back)"/>
   <!-- "아니오" 레이블 -->
   <rect x="289" y="141" width="44" height="12" rx="2" fill="#f8fafb"/>
   <text x="311" y="150" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">아니오</text>
 
   <!-- Q2 →|모델 변경| RC (왼쪽 아래로) -->
-  <path d="M 424 340 L 424 368 L 220 368 L 220 400" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-24-932e209d-09-arr)"/>
+  <path d="M 424 328 L 424 368 L 220 368 L 220 396" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-24-932e209d-09-arr)"/>
   <!-- "모델 변경" 레이블 -->
   <rect x="298" y="356" width="60" height="12" rx="2" fill="#f8fafb"/>
   <text x="328" y="365" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">모델 변경</text>
 
   <!-- Q2 →|데이터 분포 변화| PC (오른쪽 아래로, 아래로 내려서 오른쪽 방향) -->
-  <path d="M 536 340 L 536 368 L 700 368 L 700 400" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-24-932e209d-09-arr)"/>
+  <path d="M 536 328 L 536 368 L 684 368 L 684 396" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-24-932e209d-09-arr)"/>
   <!-- "데이터 분포 변화" 레이블 -->
   <rect x="581" y="356" width="88" height="12" rx="2" fill="#f8fafb"/>
   <text x="625" y="365" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">데이터 분포 변화</text>
 
   <!-- Q2 →|예제 부족| DA (맨 오른쪽) -->
-  <path d="M 556 316 L 860 316 L 860 400" fill="none" stroke="#3a548f" stroke-width="1" marker-end="url(#2026-09-24-932e209d-09-arr)"/>
+  <path d="M 576 316 L 860 316 L 860 396" fill="none" stroke="#3a548f" stroke-width="1" marker-end="url(#2026-09-24-932e209d-09-arr)"/>
   <!-- "예제 부족" 레이블 -->
   <rect x="683" y="304" width="52" height="12" rx="2" fill="#f8fafb"/>
   <text x="709" y="313" fill="#3a548f" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">예제 부족</text>
 
   <!-- DA → PC (왼쪽으로) -->
-  <path d="M 780 448 L 700 448" fill="none" stroke="#3a548f" stroke-width="1" marker-end="url(#2026-09-24-932e209d-09-arr)"/>
+  <path d="M 788 432 L 772 432" fill="none" stroke="#3a548f" stroke-width="1" marker-end="url(#2026-09-24-932e209d-09-arr)"/>
 
   <!-- RC → SAVE (아래로) -->
   <path d="M 220 464 L 220 492 L 440 492" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-24-932e209d-09-arr)"/>
 
   <!-- PC → SAVE (아래로) -->
-  <path d="M 700 464 L 700 492 L 560 492" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-24-932e209d-09-arr)"/>
+  <path d="M 684 464 L 684 492 L 624 492" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-24-932e209d-09-arr)"/>
 
   <!-- ═══════════════════════════════════════════════
        노드
@@ -109,13 +109,13 @@
   <text x="220" y="440" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">전체 재컴파일</text>
 
   <!-- PC: 부분 재컴파일 -->
-  <rect x="608" y="400" width="184" height="64" rx="2" fill="#f8fafb"/>
-  <rect x="608" y="400" width="184" height="64" rx="6" fill="#d6e9de" stroke="#286d50" stroke-width="1"/>
+  <rect x="600" y="400" width="168" height="64" rx="2" fill="#f8fafb"/>
+  <rect x="600" y="400" width="168" height="64" rx="6" fill="#d6e9de" stroke="#286d50" stroke-width="1"/>
   <!-- 태그 -->
-  <rect x="620" y="408" width="44" height="12" rx="2" fill="transparent" stroke="rgba(40,109,80,0.4)" stroke-width="0.8"/>
-  <text x="642" y="417" fill="rgba(40,109,80,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">PARTIAL</text>
-  <text x="700" y="436" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">부분 재컴파일</text>
-  <text x="700" y="453" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">해당 모듈만</text>
+  <rect x="612" y="408" width="44" height="12" rx="2" fill="transparent" stroke="rgba(40,109,80,0.4)" stroke-width="0.8"/>
+  <text x="634" y="417" fill="rgba(40,109,80,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">PARTIAL</text>
+  <text x="684" y="436" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">부분 재컴파일</text>
+  <text x="684" y="453" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">해당 모듈만</text>
 
   <!-- DA: 학습 데이터 보강 -->
   <rect x="788" y="400" width="144" height="64" rx="2" fill="#f8fafb"/>

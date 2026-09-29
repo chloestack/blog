@@ -45,19 +45,19 @@
   <path d="M 196 200 H 268" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-29-67f67d8d-06-cf-arrow)"/>
 
   <!-- Q1 → OA (No / downward then right) -->
-  <path d="M 320 228 V 340 H 700 H 760" fill="none" stroke="#3f545c" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#2026-09-29-67f67d8d-06-cf-arrow)"/>
+  <path d="M 320 232 V 392 H 860 V 364" fill="none" stroke="#3f545c" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#2026-09-29-67f67d8d-06-cf-arrow)"/>
   <!-- Label: No -->
   <rect x="302" y="310" width="44" height="16" rx="2" fill="#f8fafb"/>
   <text x="324" y="321" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">No</text>
 
   <!-- Q1 → Q2 (Yes / horizontal) -->
-  <path d="M 372 200 H 436" fill="none" stroke="#0d5763" stroke-width="1" marker-end="url(#2026-09-29-67f67d8d-06-cf-arrow-accent)"/>
+  <path d="M 372 200 H 484" fill="none" stroke="#0d5763" stroke-width="1" marker-end="url(#2026-09-29-67f67d8d-06-cf-arrow-accent)"/>
   <!-- Label: Yes -->
   <rect x="390" y="184" width="24" height="14" rx="2" fill="#f8fafb"/>
   <text x="402" y="194" fill="#0d5763" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Yes</text>
 
   <!-- Q2 → OA (No / downward then right) -->
-  <path d="M 540 228 V 356 H 760" fill="none" stroke="#3f545c" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#2026-09-29-67f67d8d-06-cf-arrow)"/>
+  <path d="M 540 232 V 392" fill="none" stroke="#3f545c" stroke-width="1" stroke-dasharray="4,3"/>
   <!-- Label: No -->
   <rect x="522" y="310" width="44" height="16" rx="2" fill="#f8fafb"/>
   <text x="544" y="321" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">No</text>
@@ -75,7 +75,7 @@
   <text x="702" y="258" fill="#0d5763" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Yes</text>
 
   <!-- Q3 → OA (No / right then down) -->
-  <path d="M 760 200 H 820 V 364 H 812" fill="none" stroke="#3f545c" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#2026-09-29-67f67d8d-06-cf-arrow)"/>
+  <path d="M 760 200 H 852 Q 860 200 860 208 V 292" fill="none" stroke="#3f545c" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#2026-09-29-67f67d8d-06-cf-arrow)"/>
   <!-- Label: No -->
   <rect x="768" y="184" width="44" height="14" rx="2" fill="#f8fafb"/>
   <text x="790" y="194" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">No</text>
@@ -101,8 +101,8 @@
   <polygon points="320,168 372,200 320,232 268,200" fill="#f8fafb"/>
   <!-- styled diamond — accent tint -->
   <polygon points="320,168 372,200 320,232 268,200" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
-  <text x="320" y="196" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Traffic</text>
-  <text x="320" y="210" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Stable?</text>
+  <text x="320" y="196" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Stable</text>
+  <text x="320" y="210" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Traffic?</text>
 
   <!-- Q2: Prefix 1024+ tokens? (diamond) -->
   <!-- paper mask -->
@@ -130,19 +130,19 @@
   <text x="672" y="311" fill="rgba(13,87,99,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">PICK</text>
   <!-- label -->
   <text x="708" y="334" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Mono', monospace" text-anchor="middle">Anthropic</text>
-  <text x="708" y="350" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Explicit Caching</text>
+  <text x="708" y="350" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Explicit Cache</text>
 
   <!-- OA: OpenAI Auto Caching (result box) -->
   <!-- paper mask -->
-  <rect x="760" y="340" width="120" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="800" y="296" width="120" height="64" rx="6" fill="#f8fafb"/>
   <!-- styled box -->
-  <rect x="760" y="340" width="120" height="64" rx="6" fill="rgba(58,84,143,0.06)" stroke="#3a548f" stroke-width="1"/>
+  <rect x="800" y="296" width="120" height="64" rx="6" fill="rgba(58,84,143,0.06)" stroke="#3a548f" stroke-width="1"/>
   <!-- type tag -->
-  <rect x="768" y="346" width="32" height="12" rx="2" fill="transparent" stroke="rgba(58,84,143,0.4)" stroke-width="0.8"/>
-  <text x="784" y="355" fill="rgba(58,84,143,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">PICK</text>
+  <rect x="808" y="302" width="32" height="12" rx="2" fill="transparent" stroke="rgba(58,84,143,0.4)" stroke-width="0.8"/>
+  <text x="824" y="311" fill="rgba(58,84,143,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">PICK</text>
   <!-- label -->
-  <text x="820" y="378" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Mono', monospace" text-anchor="middle">OpenAI</text>
-  <text x="820" y="394" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Auto Caching</text>
+  <text x="860" y="334" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Mono', monospace" text-anchor="middle">OpenAI</text>
+  <text x="860" y="350" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Auto Cache</text>
 
   <!-- ═══════════════════════════════════════════════
        LEGEND — horizontal bottom strip
@@ -156,11 +156,11 @@
 
   <!-- Legend: Anthropic rect -->
   <rect x="176" y="444" width="16" height="14" rx="3" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
-  <text x="200" y="456" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">Recommend Anthropic Explicit Caching</text>
+  <text x="200" y="456" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">Anthropic Explicit Caching Recommended</text>
 
   <!-- Legend: OpenAI rect -->
   <rect x="384" y="444" width="16" height="14" rx="3" fill="rgba(58,84,143,0.06)" stroke="#3a548f" stroke-width="1"/>
-  <text x="408" y="456" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">Recommend OpenAI Auto Caching</text>
+  <text x="408" y="456" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">OpenAI Auto Caching Recommended</text>
 
   <!-- Legend: dashed line -->
   <line x1="560" y1="451" x2="584" y2="451" stroke="#3f545c" stroke-width="1" stroke-dasharray="4,3"/>

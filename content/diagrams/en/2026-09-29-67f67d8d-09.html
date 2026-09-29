@@ -15,7 +15,7 @@
 <div class="diagram-wrap">
 <svg viewBox="0 0 960 400" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="2026-09-29-67f67d8d-09-caching-flow-title 2026-09-29-67f67d8d-09-caching-flow-desc">
   <title id="2026-09-29-67f67d8d-09-caching-flow-title">Prompt Caching Strategy Selection Flowchart</title>
-  <desc id="2026-09-29-67f67d8d-09-caching-flow-desc">A decision flowchart that checks daily call count, prefix length, and estimated hit rate in order to guide the selection of either OpenAI automatic caching or Anthropic explicit caching.</desc>
+  <desc id="2026-09-29-67f67d8d-09-caching-flow-desc">A decision flowchart that checks daily call count, prefix length, and estimated hit rate in order to recommend either OpenAI automatic caching or Anthropic explicit caching.</desc>
 
   <defs>
     <!-- Arrow markers -->
@@ -72,10 +72,10 @@
   <!-- Q3 bottom at x=568, y=232. Down to y=344. Left to x=488 (midpoint). Up... this is complex. -->
   <!-- Simpler: exit right of Q3 (x=612, y=200), arc right then down → route around to OAP from top? -->
   <!-- Better: exit bottom Q3 at y=232, go to y=340, go left to x=628 (right of OAP), then up to OAP right center -->
-  <path d="M568,232 L568,340 L700,340 L700,300" fill="none" stroke="#3a548f" stroke-width="1" marker-end="url(#2026-09-29-67f67d8d-09-arrow-link)"/>
+  <path d="M568,232 L568,264" fill="none" stroke="#3a548f" stroke-width="1" marker-end="url(#2026-09-29-67f67d8d-09-arrow-link)"/>
   <!-- label: No -->
-  <rect x="536" y="252" width="36" height="16" rx="2" fill="#f8fafb"/>
-  <text x="554" y="264" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">No</text>
+  <rect x="526" y="240" width="36" height="16" rx="2" fill="#f8fafb"/>
+  <text x="544" y="252" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">No</text>
 
   <!-- Q3 Yes → ANC (straight horizontal) -->
   <line x1="612" y1="200" x2="668" y2="200" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-29-67f67d8d-09-arrow-accent)"/>
@@ -87,21 +87,21 @@
        NODES (drawn after arrows)
   ═══════════════════════════════════════════════ -->
 
-  <!-- ST: Enable Caching — Start oval (link/blue treatment) -->
+  <!-- ST: Caching Decision — Start oval (link/blue treatment) -->
   <rect x="36" y="172" width="132" height="56" rx="6" fill="#f8fafb"/>
   <rect x="36" y="172" width="132" height="56" rx="6" fill="rgba(58,84,143,0.07)" stroke="#3a548f" stroke-width="1"/>
   <!-- type tag -->
   <rect x="44" y="178" width="32" height="12" rx="2" fill="transparent" stroke="rgba(58,84,143,0.35)" stroke-width="0.8"/>
   <text x="60" y="187" fill="rgba(58,84,143,0.75)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">START</text>
-  <text x="102" y="198" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Enable</text>
+  <text x="102" y="198" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Adopt</text>
   <text x="102" y="214" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Caching?</text>
 
-  <!-- Q1: 100+ calls/day? — Decision diamond -->
+  <!-- Q1: Daily calls 100+? — Decision diamond -->
   <!-- cx=272, cy=200, half-w=44, half-h=32 -->
   <polygon points="272,168 316,200 272,232 228,200" fill="#f8fafb"/>
   <polygon points="272,168 316,200 272,232 228,200" fill="rgba(13,87,99,0.06)" stroke="#0d5763" stroke-width="1"/>
-  <text x="272" y="196" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">100+ calls</text>
-  <text x="272" y="210" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">per day?</text>
+  <text x="272" y="196" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Daily calls</text>
+  <text x="272" y="210" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">100+?</text>
 
   <!-- Q2: Prefix 1024+ tokens? — Decision diamond -->
   <!-- cx=420, cy=200, half-w=44, half-h=32 -->
@@ -110,12 +110,12 @@
   <text x="420" y="196" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Mono', monospace" text-anchor="middle">Prefix</text>
   <text x="420" y="210" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Mono', monospace" text-anchor="middle">1024+ tokens?</text>
 
-  <!-- Q3: 70%+ hit rate expected? — Decision diamond (accent/focal) -->
+  <!-- Q3: Hit rate 70%+ expected? — Decision diamond (accent/focal) -->
   <!-- cx=568, cy=200, half-w=44, half-h=32 -->
   <polygon points="568,168 612,200 568,232 524,200" fill="#f8fafb"/>
   <polygon points="568,168 612,200 568,232 524,200" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
   <text x="568" y="196" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Hit rate</text>
-  <text x="568" y="210" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">70%+ est.?</text>
+  <text x="568" y="210" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">70%+ expected?</text>
 
   <!-- ANC: Anthropic Explicit Caching — Focal node (accent) -->
   <!-- x=668, y=172, w=168, h=56 -->
@@ -127,7 +127,7 @@
   <text x="752" y="200" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Explicit Caching</text>
   <text x="752" y="216" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">cache_control</text>
 
-  <!-- OAP: OpenAI Automatic Caching — Default node -->
+  <!-- OAP: OpenAI Auto Caching — Default node -->
   <!-- x=556, y=268, w=188, h=60 -->
   <rect x="556" y="268" width="188" height="60" rx="6" fill="#f8fafb"/>
   <rect x="556" y="268" width="188" height="60" rx="6" fill="rgba(58,84,143,0.06)" stroke="#3a548f" stroke-width="1"/>

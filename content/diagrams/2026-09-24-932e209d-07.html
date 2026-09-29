@@ -36,16 +36,16 @@
   <!-- Q → LOW (top branch) -->
   <!-- Q right edge: x=304, y=100 (center of Q box 240–304, y=72–128) → elbow right then down to LOW left -->
   <!-- LOW box: x=400, y=64, w=164, h=48. Center y=88. Attach left at x=400, y=88 -->
-  <path d="M304,100 L400,100 L400,88" fill="none" stroke="#6c8188" stroke-width="1" marker-end="url(#2026-09-24-932e209d-07-arrow-soft)"/>
+  <path d="M276,88 L396,88" fill="none" stroke="#6c8188" stroke-width="1" marker-end="url(#2026-09-24-932e209d-07-arrow-soft)"/>
 
   <!-- Q → MID (straight horizontal) -->
   <!-- Q center: y=100. MID box: x=400, y=152, h=48, center y=176. -->
   <!-- Route: Q right x=304 → elbow to MID -->
-  <path d="M304,100 L352,100 L352,176 L400,176" fill="none" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-24-932e209d-07-arrow-accent)"/>
+  <path d="M276,88 L344,88 L344,168 Q344,176 352,176 L396,176" fill="none" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-24-932e209d-07-arrow-accent)"/>
 
   <!-- Q → HIGH (bottom branch) -->
   <!-- HIGH box: x=400, y=240, h=48, center y=264 -->
-  <path d="M304,100 L328,100 L328,264 L400,264" fill="none" stroke="#6c8188" stroke-width="1" marker-end="url(#2026-09-24-932e209d-07-arrow-soft)"/>
+  <path d="M276,88 L320,88 L320,256 Q320,264 328,264 L396,264" fill="none" stroke="#6c8188" stroke-width="1" marker-end="url(#2026-09-24-932e209d-07-arrow-soft)"/>
 
   <!-- LOW → SM -->
   <!-- LOW right edge: x=564, y=88. SM box: x=672, y=152, h=72, center y=188. Attach left x=672, y=172 -->
@@ -62,15 +62,15 @@
   <!-- ===================== NODES ===================== -->
 
   <!-- Q: 태스크 유형 — Decision diamond, focal (accent) -->
-  <!-- Center: 212, 100. Diamond half-w=64, half-h=44 -->
+  <!-- Center: 212, 88. Diamond half-w=64, half-h=44 -->
   <!-- Paper mask -->
-  <polygon points="148,100 212,56 276,100 212,144" fill="#f8fafb"/>
+  <polygon points="148,88 212,44 276,88 212,132" fill="#f8fafb"/>
   <!-- Accent fill -->
-  <polygon points="148,100 212,56 276,100 212,144" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
-  <text x="212" y="95" fill="#122127" font-size="13" font-weight="600"
+  <polygon points="148,88 212,44 276,88 212,132" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="212" y="83" fill="#122127" font-size="13" font-weight="600"
         font-family="'IBM Plex Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif"
         text-anchor="middle">태스크</text>
-  <text x="212" y="112" fill="#122127" font-size="13" font-weight="600"
+  <text x="212" y="100" fill="#122127" font-size="13" font-weight="600"
         font-family="'IBM Plex Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif"
         text-anchor="middle">유형</text>
 

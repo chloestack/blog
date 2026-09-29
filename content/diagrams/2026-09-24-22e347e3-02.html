@@ -39,28 +39,28 @@
 
   <!-- 1. 클라이언트 → 노드 A : 요청 (잘못된 노드) — top horizontal -->
   <!-- Client right edge (284, 136) → Node A left edge (388, 136) -->
-  <path d="M284,136 L382,136" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-24-22e347e3-02-arrow)"/>
+  <path d="M240,136 L384,136" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-24-22e347e3-02-arrow)"/>
   <!-- label mask -->
   <rect x="284" y="108" width="96" height="20" rx="2" fill="#f8fafb"/>
   <text x="332" y="122" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.04em">요청 (잘못된 노드)</text>
 
   <!-- 2. 노드 A → 클라이언트 : -MOVED 응답 — bottom horizontal, offset down -->
   <!-- Node A left edge (388, 156) → Client right edge (284, 156) -->
-  <path d="M388,156 L290,156" fill="none" stroke="#a96a08" stroke-width="1" marker-end="url(#2026-09-24-22e347e3-02-arrow-warn)"/>
+  <path d="M388,156 L240,156" fill="none" stroke="#a96a08" stroke-width="1" marker-end="url(#2026-09-24-22e347e3-02-arrow-warn)"/>
   <!-- label mask -->
   <rect x="288" y="160" width="104" height="20" rx="2" fill="#f8fafb"/>
   <text x="340" y="174" fill="#a96a08" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.04em">-MOVED 3 노드C</text>
 
   <!-- 3. 클라이언트 → 노드 C : 재요청 — elbow: right from client bottom, down, right to node C -->
   <!-- Client center-bottom (232, 168) → down to y=220 → right to Node C left edge (596, 220) -->
-  <path d="M232,168 L232,220 Q240,228 248,228 L590,228" fill="none" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-24-22e347e3-02-arrow-accent)"/>
+  <path d="M208,168 L208,220 Q208,228 216,228 L592,228" fill="none" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-24-22e347e3-02-arrow-accent)"/>
   <!-- label mask -->
   <rect x="368" y="204" width="84" height="20" rx="2" fill="#f8fafb"/>
   <text x="410" y="218" fill="#0d5763" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">재요청 → 노드C</text>
 
   <!-- 4. 노드 C → 클라이언트 : 응답 — elbow: left from Node C bottom, down, left to client -->
   <!-- Node C center-bottom (660, 268) → down to y=268 → elbow → left to client -->
-  <path d="M660,268 L660,284 Q652,292 644,292 L248,292 Q240,292 232,284 L232,272" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-24-22e347e3-02-arrow)"/>
+  <path d="M660,268 L660,284 Q660,292 652,292 L168,292 Q160,292 160,284 L160,172" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-24-22e347e3-02-arrow)"/>
   <!-- label mask -->
   <rect x="392" y="276" width="40" height="16" rx="2" fill="#f8fafb"/>
   <text x="412" y="288" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">응답</text>

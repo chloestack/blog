@@ -31,135 +31,96 @@
   <!-- Background -->
   <rect width="960" height="360" fill="#f8fafb"/>
 
-  <!-- ═══════════════════════════════════════════════
-       CONNECTORS (drawn before boxes)
-  ════════════════════════════════════════════════ -->
+  <!-- 배치(2026-09-29 다시 그림): 결정 마름모 중심 (304,180), 꼭짓점 위 (304,112)·아래 (304,248)·왼쪽 (236,180).
+       히트 경로는 위 줄(y=84)로 디코딩 박스 위에서, 미스 경로는 아래 줄(y=276)로 KV 저장을 거쳐
+       디코딩 아래에서 들어간다. 두 경로는 디코딩 중심 x=790에서 만난다. -->
 
-  <!-- 요청 도착 → 캐시 히트인가 (straight horizontal) -->
+  <!-- 연결선 (박스보다 먼저) -->
+  <!-- 요청 도착 → 캐시 히트인가 -->
   <line x1="172" y1="180" x2="232" y2="180" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-29-67f67d8d-02-pc-arrow)"/>
 
-  <!-- 캐시 히트인가 → KV 캐시 로드 (Yes, upper-right elbow) -->
-  <!-- from diamond top (304,132) up then right to box -->
-  <path d="M304,148 L304,116 Q304,108 312,108 L404,108" fill="none" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-29-67f67d8d-02-pc-arrow-accent)"/>
-  <!-- Yes label -->
-  <rect x="326" y="96" width="20" height="12" rx="2" fill="#f8fafb"/>
-  <text x="336" y="105" fill="#0d5763" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">예</text>
+  <!-- 예: 마름모 위 꼭짓점 → KV 캐시 로드 -->
+  <path d="M304,112 L304,92 Q304,84 312,84 L400,84" fill="none" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-29-67f67d8d-02-pc-arrow-accent)"/>
+  <rect x="340" y="78" width="20" height="12" rx="2" fill="#f8fafb"/>
+  <text x="350" y="87" fill="#0d5763" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">예</text>
 
-  <!-- 캐시 히트인가 → 프리필 전체 수행 (No, lower-right elbow) -->
-  <path d="M304,212 L304,252 Q304,260 312,260 L404,260" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-29-67f67d8d-02-pc-arrow)"/>
-  <!-- 아니오 label -->
-  <rect x="312" y="248" width="40" height="12" rx="2" fill="#f8fafb"/>
-  <text x="332" y="257" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500" text-anchor="middle">아니오</text>
+  <!-- 아니오: 마름모 아래 꼭짓점 → 프리필 전체 수행 -->
+  <path d="M304,248 L304,268 Q304,276 312,276 L400,276" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-29-67f67d8d-02-pc-arrow)"/>
+  <rect x="330" y="270" width="40" height="12" rx="2" fill="#f8fafb"/>
+  <text x="350" y="279" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500" text-anchor="middle">아니오</text>
 
-  <!-- KV 캐시 로드 → 디코딩 (straight horizontal, top path) -->
-  <line x1="556" y1="108" x2="716" y2="108" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-29-67f67d8d-02-pc-arrow-accent)"/>
+  <!-- KV 캐시 로드 → 디코딩 (위에서 들어감) -->
+  <path d="M556,84 L782,84 Q790,84 790,92 L790,148" fill="none" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-29-67f67d8d-02-pc-arrow-accent)"/>
 
-  <!-- 프리필 전체 수행 → KV 캐시 저장 (straight horizontal) -->
-  <line x1="556" y1="260" x2="636" y2="260" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-29-67f67d8d-02-pc-arrow)"/>
+  <!-- 프리필 전체 수행 → KV 캐시 저장 -->
+  <line x1="556" y1="276" x2="726" y2="276" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-29-67f67d8d-02-pc-arrow)"/>
 
-  <!-- KV 캐시 저장 → 디코딩 (elbow up then right) -->
-  <path d="M756,232 L756,136 Q756,128 764,128 L716,128" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-29-67f67d8d-02-pc-arrow)"/>
-  <!-- Reroute: KV캐시저장 right edge → elbow up → diag box left edge -->
-  <!-- KV 캐시 저장 box: x=636,y=232,w=120,h=56 → right edge at x=756,cy=260 -->
-  <!-- 디코딩 box: x=716,y=80,w=140,h=56 → left edge at x=716,cy=108 -->
-  <!-- path: from (756,260) go right to (780,260), up to (780,108), left to (716+140=856... wait, need to enter from right? -->
-  <!-- Let me re-route: from KV저장 right (756,260) → right bend → up → enter 디코딩 from bottom -->
+  <!-- KV 캐시 저장 → 디코딩 (아래에서 들어감) -->
+  <line x1="790" y1="248" x2="790" y2="212" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-29-67f67d8d-02-pc-arrow)"/>
 
-  <!-- KV 캐시 저장 → 디코딩: exit right of 저장(756,260), go to (800,260), up to (800,144), left-enter 디코딩 bottom (786,136) -->
-  <!-- Actually let me use simpler routing: exit top of 저장, go up, enter bottom of 디코딩 -->
-
-  <!-- ═══════════════════════════════════════════════
-       BOXES (drawn after connectors)
-  ════════════════════════════════════════════════ -->
-
-  <!-- ① 요청 도착 (input oval) x=52,y=156,w=120,h=48 cx=112,cy=180 -->
+  <!-- 박스 -->
+  <!-- 요청 도착 -->
   <rect x="52" y="156" width="120" height="48" rx="20" fill="rgba(58,84,143,0.08)" stroke="#3a548f" stroke-width="1"/>
   <text x="112" y="176" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">요청</text>
   <text x="112" y="194" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">도착</text>
 
-  <!-- ② 캐시 히트인가 (decision diamond) cx=304,cy=180, half=48 -->
-  <!-- Diamond points: top(304,132) right(352,180) bottom(304,228) left(256,180) -->
-  <rect x="256" y="132" width="96" height="96" rx="0" fill="rgba(13,87,99,0.06)" stroke="#0d5763" stroke-width="1.2"
-        transform="rotate(45,304,180)"/>
-  <!-- Mask for diamond label area -->
-  <rect x="264" y="164" width="80" height="32" rx="2" fill="rgba(13,87,99,0.06)"/>
+  <!-- 캐시 히트인가 (마름모) -->
+  <rect x="256" y="132" width="96" height="96" rx="0" fill="#f8fafb" transform="rotate(45,304,180)"/>
+  <rect x="256" y="132" width="96" height="96" rx="0" fill="rgba(13,87,99,0.06)" stroke="#0d5763" stroke-width="1.2" transform="rotate(45,304,180)"/>
   <text x="304" y="178" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">캐시</text>
   <text x="304" y="194" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">히트인가</text>
 
-  <!-- ③ KV 캐시 로드 (focal / accent) x=404,y=80,w=152,h=56 cx=480,cy=108 -->
-  <rect x="404" y="80" width="152" height="56" rx="6" fill="#f8fafb"/>
-  <rect x="404" y="80" width="152" height="56" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
-  <!-- tag -->
-  <rect x="412" y="87" width="28" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
-  <text x="426" y="96" fill="rgba(13,87,99,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">HIT</text>
-  <text x="480" y="112" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">KV 캐시 로드</text>
-  <text x="480" y="128" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">프리필 생략</text>
+  <!-- KV 캐시 로드 -->
+  <rect x="404" y="56" width="152" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="404" y="56" width="152" height="56" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="412" y="63" width="28" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="426" y="72" fill="rgba(13,87,99,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">HIT</text>
+  <text x="480" y="88" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">KV 캐시 로드</text>
+  <text x="480" y="104" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">프리필 생략</text>
 
-  <!-- ④ 프리필 전체 수행 (backend) x=404,y=232,w=152,h=56 cx=480,cy=260 -->
-  <rect x="404" y="232" width="152" height="56" rx="6" fill="#f8fafb"/>
-  <rect x="404" y="232" width="152" height="56" rx="6" fill="white" stroke="#122127" stroke-width="1"/>
-  <!-- tag -->
-  <rect x="412" y="239" width="28" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.30)" stroke-width="0.8"/>
-  <text x="426" y="248" fill="rgba(18,33,39,0.7)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">MISS</text>
-  <text x="480" y="264" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">프리필 전체</text>
-  <text x="480" y="280" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">수행</text>
+  <!-- 프리필 전체 수행 -->
+  <rect x="404" y="248" width="152" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="404" y="248" width="152" height="56" rx="6" fill="white" stroke="#122127" stroke-width="1"/>
+  <rect x="412" y="255" width="28" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.30)" stroke-width="0.8"/>
+  <text x="426" y="264" fill="rgba(18,33,39,0.7)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">MISS</text>
+  <text x="480" y="286" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">프리필 전체 수행</text>
 
-  <!-- ⑤ KV 캐시 저장 (store) x=636,y=232,w=120,h=56 cx=696,cy=260 -->
-  <rect x="636" y="232" width="120" height="56" rx="6" fill="#f8fafb"/>
-  <rect x="636" y="232" width="120" height="56" rx="6" fill="rgba(18,33,39,0.05)" stroke="#3f545c" stroke-width="1"/>
-  <!-- tag -->
-  <rect x="644" y="239" width="28" height="12" rx="2" fill="transparent" stroke="rgba(63,84,92,0.35)" stroke-width="0.8"/>
-  <text x="658" y="248" fill="rgba(63,84,92,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">KV</text>
-  <text x="696" y="264" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">KV 캐시</text>
-  <text x="696" y="280" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">저장</text>
+  <!-- KV 캐시 저장 -->
+  <rect x="730" y="248" width="120" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="730" y="248" width="120" height="56" rx="6" fill="rgba(18,33,39,0.05)" stroke="#3f545c" stroke-width="1"/>
+  <rect x="738" y="255" width="28" height="12" rx="2" fill="transparent" stroke="rgba(63,84,92,0.35)" stroke-width="0.8"/>
+  <text x="752" y="264" fill="rgba(63,84,92,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">KV</text>
+  <text x="790" y="286" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">KV 캐시 저장</text>
 
-  <!-- ⑥ 디코딩 토큰 생성 (muted / store) x=716,y=152,w=148,h=56 cx=790,cy=180 -->
+  <!-- 디코딩 -->
   <rect x="716" y="152" width="148" height="56" rx="6" fill="#f8fafb"/>
   <rect x="716" y="152" width="148" height="56" rx="6" fill="rgba(18,33,39,0.03)" stroke="rgba(18,33,39,0.25)" stroke-width="1"/>
-  <!-- tag -->
   <rect x="724" y="159" width="36" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.20)" stroke-width="0.8"/>
   <text x="742" y="168" fill="rgba(18,33,39,0.55)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">DECODE</text>
   <text x="790" y="184" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">디코딩</text>
   <text x="790" y="200" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">토큰 생성</text>
 
   <!-- ═══════════════════════════════════════════════
-       RE-DRAW CONNECTORS that need to clear boxes
-       (KV저장 → 디코딩: top exit of 저장 → elbow right → enter 디코딩 right side)
-  ════════════════════════════════════════════════ -->
-
-  <!-- KV 캐시 저장 top(696,232) → up to (696,144) → right to (864,144) → down to 디코딩 right(864,180) 
-       But 디코딩 box is x=716..864, so right edge=864. Enter from right.
-       Wait: 디코딩 right edge = 716+148 = 864, cy=180. 
-       Connector: exit KV저장 top at (696,232), go up to (696,144), right to (872,144), down to (872,180), left into (864,180).
-  -->
-  <path d="M696,232 L696,144 Q696,136 704,136 L856,136 Q864,136 864,144 L864,180" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-29-67f67d8d-02-pc-arrow)"/>
-
-  <!-- ═══════════════════════════════════════════════
-       KV 캐시 로드 → 디코딩 (top path): exit right of 로드(556,108) → right → enter left of 디코딩(716,180)
-       Need elbow: from (556,108) right to (636,108), down to (636,180), right to (716,180)
-  ════════════════════════════════════════════════ -->
-
-  <!-- ═══════════════════════════════════════════════
        LEGEND STRIP
   ════════════════════════════════════════════════ -->
-  <line x1="40" y1="316" x2="920" y2="316" stroke="rgba(18,33,39,0.10)" stroke-width="0.8"/>
-  <text x="40" y="330" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.14em">LEGEND</text>
+  <line x1="40" y1="328" x2="920" y2="328" stroke="rgba(18,33,39,0.10)" stroke-width="0.8"/>
+  <text x="40" y="342" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.14em">LEGEND</text>
 
   <!-- Legend: 캐시 히트 경로 -->
-  <line x1="116" y1="326" x2="140" y2="326" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-29-67f67d8d-02-pc-arrow-accent)"/>
-  <text x="148" y="330" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif">캐시 히트 경로</text>
+  <line x1="116" y1="338" x2="140" y2="338" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-29-67f67d8d-02-pc-arrow-accent)"/>
+  <text x="148" y="342" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif">캐시 히트 경로</text>
 
   <!-- Legend: 캐시 미스 경로 -->
-  <line x1="288" y1="326" x2="312" y2="326" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-29-67f67d8d-02-pc-arrow)"/>
-  <text x="320" y="330" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif">캐시 미스 경로</text>
+  <line x1="288" y1="338" x2="312" y2="338" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-29-67f67d8d-02-pc-arrow)"/>
+  <text x="320" y="342" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif">캐시 미스 경로</text>
 
   <!-- Legend: 의사결정 -->
-  <rect x="460" y="319" width="12" height="12" rx="0" fill="rgba(13,87,99,0.06)" stroke="#0d5763" stroke-width="1" transform="rotate(45,466,325)"/>
-  <text x="480" y="330" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif">의사결정</text>
+  <rect x="460" y="331" width="12" height="12" rx="0" fill="rgba(13,87,99,0.06)" stroke="#0d5763" stroke-width="1" transform="rotate(45,466,337)"/>
+  <text x="480" y="342" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif">의사결정</text>
 
   <!-- Legend: 캐시 저장 -->
-  <rect x="560" y="319" width="20" height="12" rx="4" fill="rgba(18,33,39,0.05)" stroke="#3f545c" stroke-width="1"/>
-  <text x="588" y="330" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif">KV 저장/생성</text>
+  <rect x="560" y="331" width="20" height="12" rx="4" fill="rgba(18,33,39,0.05)" stroke="#3f545c" stroke-width="1"/>
+  <text x="588" y="342" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif">KV 저장/생성</text>
 
 </svg>
 </body>

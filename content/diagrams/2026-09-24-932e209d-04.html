@@ -34,67 +34,9 @@
 
   <!-- ── Connectors (drawn before boxes) ── -->
 
-  <!-- TR → BS: straight vertical -->
-  <line x1="480" y1="112" x2="480" y2="156" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-24-932e209d-04-arrow)"/>
-
-  <!-- BS → FP: straight vertical -->
-  <line x1="480" y1="224" x2="480" y2="268" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-24-932e209d-04-arrow)"/>
-
-  <!-- FP → SEL: straight vertical -->
-  <line x1="480" y1="336" x2="480" y2="380" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-24-932e209d-04-arrow)"/>
-
-  <!-- SEL → PM: elbow right then down, avoiding center column -->
-  <!-- SEL right edge (620,416) → right → PM right, then into PM -->
-  <path d="M 620 416 Q 628 416 628 424 L 628 472 Q 628 480 620 480 L 596 480" fill="none" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-24-932e209d-04-arrow-accent)"/>
-
-  <!-- PM → EVAL: elbow: PM bottom (480,524) down to EVAL -->
-  <!-- Actually PM is in same column, let's do straight -->
-  <line x1="480" y1="496" x2="480" y2="156" stroke="none"/>
-
-  <!-- Re-plan layout: single column top-down with enough spacing -->
-  <!-- Layout plan:
-    TR:   cx=480, cy=80,   w=200, h=52  → top=54, bot=106
-    BS:   cx=480, cy=172,  w=200, h=52  → top=146, bot=198
-    FP:   cx=480, cy=264,  w=200, h=52  → top=238, bot=290
-    SEL:  cx=480, cy=356,  w=200, h=52  → top=330, bot=382
-    PM:   cx=480, cy=448,  w=200, h=52  → top=422, bot=474
-    EVAL: cx=480, cy=520,  w=200, h=52  → top=494, bot=546  ← too tight for legend
-    Need to reduce or use 2 columns for last two
-  -->
-  <!-- Use two-column layout for PM and EVAL to keep within 600px height
-       Left column (cx=300): TR, BS, FP
-       Center merge → SEL
-       Right fork: PM (cx=660), EVAL (cx=660) is linear
-       Actually: single column, but tighter spacing.
-       Recalculate with 72px center-to-center:
-       TR:   cy=68
-       BS:   cy=152  (84px gap)
-       FP:   cy=236
-       SEL:  cy=320
-       PM:   cy=404
-       EVAL: cy=488
-       BEST: cy=540 ← too far
-       Need to compress gaps to 72px:
-       TR:   cy=64
-       BS:   cy=140  gap=76
-       FP:   cy=216
-       SEL:  cy=292
-       PM:   cy=368
-       EVAL: cy=444
-       BEST: cy=520 ← legend at 560?  borderline but ok with 600px viewBox+40px legend
-       Box h=48, so:
-       TR:   top=40,  bot=88
-       BS:   top=116, bot=164
-       FP:   top=192, bot=240
-       SEL:  top=268, bot=316
-       PM:   top=344, bot=392
-       EVAL: top=420, bot=468
-       BEST: top=496, bot=544
-       Legend strip starts at ~556
-       That works. Let me redraw with these coords.
-  -->
-
-  <!-- CLEAR previous connector attempts — redrawing all below properly -->
+  <!-- 평가 루프 → 프롬프트 메타최적화 (반복): 평가 박스 오른쪽 모서리(600,444)에서 나가
+       최적화 박스 오른쪽 모서리(616,368)로 되돌아간다 -->
+  <path d="M600,444 L632,444 Q640,444 640,436 L640,376 Q640,368 632,368 L620,368" fill="none" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-24-932e209d-04-arrow-accent)"/>
 
   <!-- TR → BS -->
   <line x1="480" y1="88" x2="480" y2="116" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-24-932e209d-04-arrow)"/>

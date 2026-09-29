@@ -18,7 +18,7 @@
   aria-labelledby="2026-09-24-22e347e3-01-slot-title 2026-09-24-22e347e3-01-slot-desc"
 >
   <title id="2026-09-24-22e347e3-01-slot-title">Redis Key Slot Routing Flow</title>
-  <desc id="2026-09-24-22e347e3-01-slot-desc">Flowchart showing Redis Cluster slot assignment: from key input, checking for a hash tag, applying CRC16, computing mod 16384 to get the slot number, then routing to the responsible node.</desc>
+  <desc id="2026-09-24-22e347e3-01-slot-desc">Redis Cluster slot assignment flow: determines whether a hash tag exists in the key input, applies CRC16, computes mod 16384 to get the slot number, then routes to the responsible node.</desc>
 
   <defs>
     <!-- Arrow markers -->
@@ -38,38 +38,25 @@
   <!-- ─────────────────────────────────────── -->
 
   <!-- K → HT (right, straight) -->
-  <path d="M 188,160 L 268,160" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-24-22e347e3-01-slot-arrow)"/>
+  <path d="M 188,160 L 240,160" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-24-22e347e3-01-slot-arrow)"/>
 
   <!-- HT → BK (예, up-right elbow) -->
-  <path d="M 340,132 Q 340,108 348,108 L 460,108" fill="none" stroke="#0d5763" stroke-width="1" marker-end="url(#2026-09-24-22e347e3-01-slot-arrow-accent)"/>
+  <path d="M 340,142 L 340,116 Q 340,108 348,108 L 456,108" fill="none" stroke="#0d5763" stroke-width="1" marker-end="url(#2026-09-24-22e347e3-01-slot-arrow-accent)"/>
   <!-- 예 label -->
   <rect x="366" y="92" width="20" height="12" rx="2" fill="#f8fafb"/>
   <text x="376" y="101" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Yes</text>
 
   <!-- HT → FK (아니오, down-right elbow) -->
-  <path d="M 340,188 Q 340,212 348,212 L 460,212" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-24-22e347e3-01-slot-arrow)"/>
+  <path d="M 340,178 L 340,204 Q 340,212 348,212 L 456,212" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-24-22e347e3-01-slot-arrow)"/>
   <!-- 아니오 label -->
   <rect x="352" y="196" width="36" height="12" rx="2" fill="#f8fafb"/>
   <text x="370" y="205" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">No</text>
 
-  <!-- BK → SL (right-down elbow to SL) -->
-  <path d="M 572,108 Q 608,108 608,132 L 608,148" fill="none" stroke="#0d5763" stroke-width="1" marker-end="url(#2026-09-24-22e347e3-01-slot-arrow-accent)"/>
-
-  <!-- FK → SL (right-up elbow to SL) -->
-  <path d="M 572,212 Q 608,212 608,188 L 608,212" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-24-22e347e3-01-slot-arrow)"/>
-
-  <!-- Adjusted: BK → SL straight merge point -->
-  <!-- Let's redo with a shared merge: BK exits right, FK exits right, both go to SL centered -->
-
-  <!-- ─────────────────────────────────────── -->
-  <!-- REVISED ARROWS -->
-  <!-- ─────────────────────────────────────── -->
-
   <!-- BK (x=460..572, cy=108) → corner (640,108) → corner (640,160) → SL (x=652, y=160) -->
-  <path d="M 572,108 L 636,108 Q 644,108 644,116 L 644,152 Q 644,160 652,160" fill="none" stroke="#0d5763" stroke-width="1" marker-end="url(#2026-09-24-22e347e3-01-slot-arrow-accent)"/>
+  <path d="M 572,108 L 636,108 Q 644,108 644,116 L 644,160 L 648,160" fill="none" stroke="#0d5763" stroke-width="1" marker-end="url(#2026-09-24-22e347e3-01-slot-arrow-accent)"/>
 
   <!-- FK (x=460..572, cy=212) → corner (640,212) → corner (640,168) → SL (x=652, y=160) -->
-  <path d="M 572,212 L 636,212 Q 644,212 644,204 L 644,168 Q 644,160 652,160" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-24-22e347e3-01-slot-arrow)"/>
+  <path d="M 572,212 L 636,212 Q 644,212 644,204 L 644,160 L 648,160" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-24-22e347e3-01-slot-arrow)"/>
 
   <!-- SL → ND (right, straight) -->
   <path d="M 772,160 L 808,160" fill="none" stroke="#0d5763" stroke-width="1" marker-end="url(#2026-09-24-22e347e3-01-slot-arrow-accent)"/>
@@ -96,7 +83,7 @@
   <rect x="460" y="80" width="112" height="56" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
   <rect x="468" y="86" width="32" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
   <text x="484" y="95" fill="rgba(18,33,39,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">HASH</text>
-  <text x="516" y="113" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Bracket content</text>
+  <text x="516" y="113" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Braces content</text>
   <text x="516" y="127" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">CRC16 apply</text>
 
   <!-- FK: 키 전체에 CRC16 (backend) -->
@@ -104,7 +91,7 @@
   <rect x="460" y="184" width="112" height="56" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
   <rect x="468" y="190" width="32" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
   <text x="484" y="199" fill="rgba(18,33,39,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">HASH</text>
-  <text x="516" y="217" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Whole key</text>
+  <text x="516" y="217" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Entire key</text>
   <text x="516" y="231" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">CRC16 apply</text>
 
   <!-- SL: 슬롯 번호 mod 16384 (focal) -->
@@ -112,7 +99,7 @@
   <rect x="652" y="132" width="120" height="56" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
   <rect x="660" y="138" width="32" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
   <text x="676" y="147" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">SLOT</text>
-  <text x="712" y="162" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Slot number</text>
+  <text x="712" y="162" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Slot Number</text>
   <text x="712" y="176" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">mod 16384</text>
 
   <!-- ND: 담당 노드로 라우팅 (backend) -->
@@ -131,11 +118,11 @@
 
   <!-- focal swatch -->
   <rect x="100" y="338" width="12" height="12" rx="2" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
-  <text x="118" y="348" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">Key step</text>
+  <text x="118" y="348" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">Key Step</text>
 
   <!-- backend swatch -->
   <rect x="240" y="338" width="12" height="12" rx="2" fill="#ffffff" stroke="#122127" stroke-width="1"/>
-  <text x="258" y="348" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">Process step</text>
+  <text x="258" y="348" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">Process Step</text>
 
   <!-- input swatch -->
   <rect x="380" y="338" width="12" height="12" rx="2" fill="rgba(63,84,92,0.10)" stroke="#6c8188" stroke-width="1"/>
@@ -143,7 +130,7 @@
 
   <!-- decision swatch -->
   <polygon points="500,344 508,338 516,344 508,350" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
-  <text x="524" y="348" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">Branch decision</text>
+  <text x="524" y="348" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">Branch</text>
 
 </svg>
 </body>

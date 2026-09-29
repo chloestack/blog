@@ -16,7 +16,7 @@
 <svg viewBox="0 0 960 600" xmlns="http://www.w3.org/2000/svg"
      role="img" aria-labelledby="2026-09-24-932e209d-04-dspy-title 2026-09-24-932e209d-04-dspy-desc">
   <title id="2026-09-24-932e209d-04-dspy-title">DSPy MIPROv2 Optimization Pipeline</title>
-  <desc id="2026-09-24-932e209d-04-dspy-desc">DSPy automatic optimization flow starting from training examples, collecting Bootstrap execution traces, building a candidate few-shot pool, selecting examples, running prompt meta-optimization, and going through an evaluation loop to save the optimal parameters.</desc>
+  <desc id="2026-09-24-932e209d-04-dspy-desc">DSPy automatic optimization flow: starting from training examples, collecting Bootstrap execution traces, building a candidate few-shot pool, selecting examples, performing prompt meta-optimization, running an evaluation loop, and saving the best parameters.</desc>
 
   <defs>
     <!-- Arrow markers -->
@@ -34,67 +34,9 @@
 
   <!-- ── Connectors (drawn before boxes) ── -->
 
-  <!-- TR → BS: straight vertical -->
-  <line x1="480" y1="112" x2="480" y2="156" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-24-932e209d-04-arrow)"/>
-
-  <!-- BS → FP: straight vertical -->
-  <line x1="480" y1="224" x2="480" y2="268" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-24-932e209d-04-arrow)"/>
-
-  <!-- FP → SEL: straight vertical -->
-  <line x1="480" y1="336" x2="480" y2="380" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-24-932e209d-04-arrow)"/>
-
-  <!-- SEL → PM: elbow right then down, avoiding center column -->
-  <!-- SEL right edge (620,416) → right → PM right, then into PM -->
-  <path d="M 620 416 Q 628 416 628 424 L 628 472 Q 628 480 620 480 L 596 480" fill="none" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-24-932e209d-04-arrow-accent)"/>
-
-  <!-- PM → EVAL: elbow: PM bottom (480,524) down to EVAL -->
-  <!-- Actually PM is in same column, let's do straight -->
-  <line x1="480" y1="496" x2="480" y2="156" stroke="none"/>
-
-  <!-- Re-plan layout: single column top-down with enough spacing -->
-  <!-- Layout plan:
-    TR:   cx=480, cy=80,   w=200, h=52  → top=54, bot=106
-    BS:   cx=480, cy=172,  w=200, h=52  → top=146, bot=198
-    FP:   cx=480, cy=264,  w=200, h=52  → top=238, bot=290
-    SEL:  cx=480, cy=356,  w=200, h=52  → top=330, bot=382
-    PM:   cx=480, cy=448,  w=200, h=52  → top=422, bot=474
-    EVAL: cx=480, cy=520,  w=200, h=52  → top=494, bot=546  ← too tight for legend
-    Need to reduce or use 2 columns for last two
-  -->
-  <!-- Use two-column layout for PM and EVAL to keep within 600px height
-       Left column (cx=300): TR, BS, FP
-       Center merge → SEL
-       Right fork: PM (cx=660), EVAL (cx=660) is linear
-       Actually: single column, but tighter spacing.
-       Recalculate with 72px center-to-center:
-       TR:   cy=68
-       BS:   cy=152  (84px gap)
-       FP:   cy=236
-       SEL:  cy=320
-       PM:   cy=404
-       EVAL: cy=488
-       BEST: cy=540 ← too far
-       Need to compress gaps to 72px:
-       TR:   cy=64
-       BS:   cy=140  gap=76
-       FP:   cy=216
-       SEL:  cy=292
-       PM:   cy=368
-       EVAL: cy=444
-       BEST: cy=520 ← legend at 560?  borderline but ok with 600px viewBox+40px legend
-       Box h=48, so:
-       TR:   top=40,  bot=88
-       BS:   top=116, bot=164
-       FP:   top=192, bot=240
-       SEL:  top=268, bot=316
-       PM:   top=344, bot=392
-       EVAL: top=420, bot=468
-       BEST: top=496, bot=544
-       Legend strip starts at ~556
-       That works. Let me redraw with these coords.
-  -->
-
-  <!-- CLEAR previous connector attempts — redrawing all below properly -->
+  <!-- Eval loop → Prompt meta-optimization (iteration): exits eval box right edge (600,444)
+       returns to optimization box right edge (616,368) -->
+  <path d="M600,444 L632,444 Q640,444 640,436 L640,376 Q640,368 632,368 L620,368" fill="none" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-24-932e209d-04-arrow-accent)"/>
 
   <!-- TR → BS -->
   <line x1="480" y1="88" x2="480" y2="116" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-09-24-932e209d-04-arrow)"/>
@@ -167,14 +109,14 @@
   <rect x="368" y="426" width="28" height="12" rx="2" fill="transparent" stroke="rgba(63,84,92,0.4)" stroke-width="0.8"/>
   <text x="382" y="435" fill="rgba(63,84,92,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">EVAL</text>
   <text x="480" y="448" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Evaluation Loop</text>
-  <text x="480" y="462" fill="#6c8188" font-size="9" font-family="'IBM Plex Mono', monospace" text-anchor="middle">metric measure · iterate</text>
+  <text x="480" y="462" fill="#6c8188" font-size="9" font-family="'IBM Plex Mono', monospace" text-anchor="middle">metric score · iterate</text>
 
-  <!-- BEST: Save Optimal Parameters (FOCAL) -->
+  <!-- BEST: Save Best Parameters (FOCAL) -->
   <rect x="360" y="496" width="240" height="48" rx="6" fill="#f8fafb"/>
   <rect x="360" y="496" width="240" height="48" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.5"/>
   <rect x="368" y="502" width="32" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.5)" stroke-width="0.8"/>
   <text x="384" y="511" fill="rgba(13,87,99,0.9)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">OUTPUT</text>
-  <text x="480" y="524" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Save Optimal Parameters</text>
+  <text x="480" y="524" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Save Best Parameters</text>
   <text x="480" y="538" fill="#3f545c" font-size="9" font-family="'IBM Plex Mono', monospace" text-anchor="middle">best program · .json</text>
 
   <!-- ── LEGEND ── -->
@@ -202,7 +144,7 @@
 
   <!-- Legend: arrow accent -->
   <line x1="648" y1="580" x2="672" y2="580" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-09-24-932e209d-04-arrow-accent)"/>
-  <text x="678" y="584" fill="#3f545c" font-size="8" font-family="'IBM Plex Mono', monospace" letter-spacing="0.10em">Optimize Path</text>
+  <text x="678" y="584" fill="#3f545c" font-size="8" font-family="'IBM Plex Mono', monospace" letter-spacing="0.10em">Optim. Path</text>
 
 </svg>
 </div>
