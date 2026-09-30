@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tool Call Strategy — Parallel vs Sequential</title>
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #f8fafb;
+    font-family: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+    display: flex;
+    justify-content: center;
+    padding: 0;
+  }
+  .diagram-wrap {
+    width: 100%;
+    max-width: 960px;
+  }
+  svg {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+</style>
+</head>
+<body>
+<div class="diagram-wrap">
+<svg viewBox="0 0 960 620" xmlns="http://www.w3.org/2000/svg"
+     role="img" aria-labelledby="2026-10-01-233c5172-04-tool-call-title 2026-10-01-233c5172-04-tool-call-desc">
+  <title id="2026-10-01-233c5172-04-tool-call-title">Tool Call Strategy — Parallel vs Sequential</title>
+  <desc id="2026-10-01-233c5172-04-tool-call-desc">Flowchart showing an agent evaluating tool dependencies, branching into parallel calls for independent tools or sequential calls for dependent tools, then merging results.</desc>
+
+  <defs>
+    <!-- arrow markers -->
+    <marker id="2026-10-01-233c5172-04-arr" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0,8 3,0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-10-01-233c5172-04-arr-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0,8 3,0 6" fill="#0d5763"/>
+    </marker>
+    <marker id="2026-10-01-233c5172-04-arr-muted" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0,8 3,0 6" fill="#6c8188"/>
+    </marker>
+  </defs>
+
+  <!-- background -->
+  <rect width="960" height="620" fill="#f8fafb"/>
+
+  <!-- ===================== ARROWS (drawn before boxes) ===================== -->
+
+  <!-- A → Q (에이전트 요청 → 의존성 판단) -->
+  <path d="M480,108 L480,152" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-01-233c5172-04-arr)"/>
+
+  <!-- Q → 병렬 (left branch, Yes-independent) -->
+  <path d="M438,192 Q438,192 280,192 L280,248" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-01-233c5172-04-arr)"/>
+
+  <!-- Q → 순차 (right branch, dependent) -->
+  <path d="M522,192 Q522,192 680,192 L680,248" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-01-233c5172-04-arr)"/>
+
+  <!-- 병렬 → 도구A 결과 -->
+  <path d="M220,308 L220,356" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-01-233c5172-04-arr)"/>
+
+  <!-- 병렬 → 도구B 결과 -->
+  <path d="M340,308 L340,356" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-01-233c5172-04-arr)"/>
+
+  <!-- 순차 → 도구A→B 결과 -->
+  <path d="M680,308 L680,356" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-01-233c5172-04-arr)"/>
+
+  <!-- 도구A 결과 → 결과 통합 -->
+  <path d="M220,416 L220,464 Q220,480 236,480 L408,480" fill="none" stroke="#6c8188" stroke-width="1" marker-end="url(#2026-10-01-233c5172-04-arr-muted)"/>
+
+  <!-- 도구B 결과 → 결과 통합 -->
+  <path d="M340,416 L340,464 Q340,480 356,480 L408,480" fill="none" stroke="#6c8188" stroke-width="1" marker-end="url(#2026-10-01-233c5172-04-arr-muted)"/>
+
+  <!-- 도구A→B 결과 → 결과 통합 -->
+  <path d="M680,416 L680,464 Q680,480 664,480 L552,480" fill="none" stroke="#6c8188" stroke-width="1" marker-end="url(#2026-10-01-233c5172-04-arr-muted)"/>
+
+  <!-- ===================== NODES ===================== -->
+
+  <!-- A: 에이전트 요청 (focal — accent) -->
+  <!-- paper mask -->
+  <rect x="376" y="60" width="208" height="48" rx="6" fill="#f8fafb"/>
+  <!-- node box -->
+  <rect x="376" y="60" width="208" height="48" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <!-- type tag -->
+  <rect x="384" y="66" width="36" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="402" y="75" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">START</text>
+  <!-- label -->
+  <text x="480" y="90" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">Agent Request</text>
+
+  <!-- Q: 의존성 판단 (decision diamond — focal) -->
+  <!-- paper mask for diamond -->
+  <polygon points="480,152 554,192 480,232 406,192" fill="#f8fafb"/>
+  <!-- diamond fill -->
+  <polygon points="480,152 554,192 480,232 406,192" fill="rgba(13,87,99,0.06)" stroke="#0d5763" stroke-width="1.2"/>
+  <!-- label line 1 -->
+  <text x="480" y="188" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">Tool Dependency?</text>
+
+  <!-- Branch labels on arrows -->
+  <!-- "독립적" label on left branch -->
+  <rect x="330" y="182" width="44" height="16" rx="2" fill="#f8fafb"/>
+  <text x="352" y="193" fill="#6c8188" font-size="11" font-weight="500" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">Independent</text>
+
+  <!-- "의존 관계" label on right branch -->
+  <rect x="588" y="182" width="60" height="16" rx="2" fill="#f8fafb"/>
+  <text x="618" y="193" fill="#6c8188" font-size="11" font-weight="500" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">Dependent</text>
+
+  <!-- P: 병렬 호출 (backend) -->
+  <rect x="180" y="248" width="200" height="60" rx="6" fill="#f8fafb"/>
+  <rect x="180" y="248" width="200" height="60" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="188" y="254" width="40" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="208" y="263" fill="rgba(18,33,39,0.7)" font-size="7" font-family="'IBM Plex Mono',monospace" text-anchor="middle" letter-spacing="0.08em">PARALLEL</text>
+  <text x="280" y="281" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">Parallel Call</text>
+  <text x="280" y="297" fill="#6c8188" font-size="11" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">Reduce Latency</text>
+
+  <!-- S: 순차 호출 (backend) -->
+  <rect x="580" y="248" width="200" height="60" rx="6" fill="#f8fafb"/>
+  <rect x="580" y="248" width="200" height="60" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="588" y="254" width="40" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="608" y="263" fill="rgba(18,33,39,0.7)" font-size="7" font-family="'IBM Plex Mono',monospace" text-anchor="middle" letter-spacing="0.08em">SEQUENCE</text>
+  <text x="680" y="281" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">Sequential Call</text>
+  <text x="680" y="297" fill="#6c8188" font-size="11" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">Pass Result</text>
+
+  <!-- R1: 도구 A 결과 (store) -->
+  <rect x="160" y="356" width="120" height="60" rx="6" fill="#f8fafb"/>
+  <rect x="160" y="356" width="120" height="60" rx="6" fill="rgba(18,33,39,0.04)" stroke="#3f545c" stroke-width="1"/>
+  <text x="220" y="382" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">Tool A</text>
+  <text x="220" y="399" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">Result</text>
+
+  <!-- R2: 도구 B 결과 (store) -->
+  <rect x="280" y="356" width="120" height="60" rx="6" fill="#f8fafb"/>
+  <rect x="280" y="356" width="120" height="60" rx="6" fill="rgba(18,33,39,0.04)" stroke="#3f545c" stroke-width="1"/>
+  <text x="340" y="382" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">Tool B</text>
+  <text x="340" y="399" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">Result</text>
+
+  <!-- R3: 도구A→B 결과 (store, chained) -->
+  <rect x="600" y="356" width="160" height="60" rx="6" fill="#f8fafb"/>
+  <rect x="600" y="356" width="160" height="60" rx="6" fill="rgba(18,33,39,0.04)" stroke="#3f545c" stroke-width="1"/>
+  <text x="680" y="379" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">Tool A Result</text>
+  <text x="680" y="397" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono',monospace" text-anchor="middle">→ Tool B Input</text>
+
+  <!-- C: 결과 통합 (merge point + box) -->
+  <!-- merge dot -->
+  <circle cx="480" cy="480" r="4" fill="#3f545c"/>
+  <!-- box -->
+  <rect x="408" y="496" width="144" height="60" rx="6" fill="#f8fafb"/>
+  <rect x="408" y="496" width="144" height="60" rx="6" fill="rgba(18,33,39,0.03)" stroke="rgba(18,33,39,0.25)" stroke-width="1"/>
+  <!-- connector from merge dot to box -->
+  <path d="M480,484 L480,496" fill="none" stroke="#6c8188" stroke-width="1" marker-end="url(#2026-10-01-233c5172-04-arr-muted)"/>
+  <text x="480" y="524" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">Merge Results</text>
+  <text x="480" y="541" fill="#6c8188" font-size="11" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">Next Inference</text>
+
+  <!-- ===================== LEGEND ===================== -->
+  <line x1="40" y1="588" x2="920" y2="588" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+  <text x="40" y="602" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono',monospace" letter-spacing="0.14em">LEGEND</text>
+  <!-- focal -->
+  <rect x="108" y="594" width="12" height="12" rx="2" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="126" y="604" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif">Entry / Decision</text>
+  <!-- backend -->
+  <rect x="248" y="594" width="12" height="12" rx="2" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <text x="266" y="604" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif">Call Strategy</text>
+  <!-- store -->
+  <rect x="368" y="594" width="12" height="12" rx="2" fill="rgba(18,33,39,0.04)" stroke="#3f545c" stroke-width="1"/>
+  <text x="386" y="604" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif">Tool Result</text>
+  <!-- external -->
+  <rect x="472" y="594" width="12" height="12" rx="2" fill="rgba(18,33,39,0.03)" stroke="rgba(18,33,39,0.25)" stroke-width="1"/>
+  <text x="490" y="604" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif">Merge / Output</text>
+</svg>
+</div>
+</body>
+</html>

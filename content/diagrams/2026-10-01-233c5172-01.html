@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; font-family: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; }
+  .diagram-wrap { width: 100%; max-width: 960px; margin: 0 auto; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<div class="diagram-wrap">
+<svg viewBox="0 0 960 440" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="2026-10-01-233c5172-01-llm-tool-call-title 2026-10-01-233c5172-01-llm-tool-call-desc">
+  <title id="2026-10-01-233c5172-01-llm-tool-call-title">LLM 도구 호출 흐름</title>
+  <desc id="2026-10-01-233c5172-01-llm-tool-call-desc">사용자 입력부터 모델 추론, 도구 호출 여부 판단, 도구 실행, 결과 반환까지의 LLM 도구 호출 루프를 단계별로 보여주는 순서도.</desc>
+
+  <defs>
+    <!-- Arrow markers -->
+    <marker id="2026-10-01-233c5172-01-arr" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-10-01-233c5172-01-arr-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <marker id="2026-10-01-233c5172-01-arr-muted" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#6c8188"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="960" height="440" fill="#f8fafb"/>
+
+  <!-- ===================== CONNECTORS (drawn before boxes) ===================== -->
+
+  <!-- U → M  (사용자 입력 → 모델 추론) -->
+  <path d="M 168,200 L 228,200" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-01-233c5172-01-arr)"/>
+
+  <!-- M → Q  (모델 추론 → 도구 호출 필요한가) -->
+  <path d="M 388,200 L 448,200" fill="none" stroke="#0d5763" stroke-width="1" marker-end="url(#2026-10-01-233c5172-01-arr-accent)"/>
+
+  <!-- Q → TC  예 (위로) -->
+  <!-- Diamond top is at y=164, exit top-center: (520,164) → up → right to TC center (648,100) -->
+  <path d="M 520,164 L 520,100 L 588,100" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-01-233c5172-01-arr)" stroke-dasharray="none"/>
+  <!-- label 예 -->
+  <rect x="510" y="118" width="20" height="14" rx="2" fill="#f8fafb"/>
+  <text x="520" y="128" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="500">예</text>
+
+  <!-- Q → TR  아니오 (아래로) -->
+  <!-- Diamond bottom: (520,236) → down → right to TR center (648,296) -->
+  <path d="M 520,236 L 520,296 L 588,296" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-01-233c5172-01-arr)"/>
+  <!-- label 아니오 -->
+  <rect x="496" y="252" width="48" height="14" rx="2" fill="#f8fafb"/>
+  <text x="520" y="262" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="500">아니오</text>
+
+  <!-- TC → E  (도구 호출 생성 → 도구 실행) -->
+  <path d="M 720,100 L 756,100" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-01-233c5172-01-arr)"/>
+
+  <!-- E → R  (도구 실행 → 결과 반환) -->
+  <!-- E right edge (868,100) → right → down → left to R center -->
+  <!-- R is at (648,200), so route: from E (868,100) right to x=900, down to y=200, left to R right edge (728,200) -->
+  <path d="M 868,100 L 900,100 L 900,200 L 728,200" fill="none" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-10-01-233c5172-01-arr-accent)"/>
+
+  <!-- R → M  (결과 반환 → 모델 추론, feedback loop) -->
+  <!-- R bottom (688,228) → down to y=340 → left to x=308 → up to M bottom (308,228) -->
+  <path d="M 688,228 L 688,340 L 308,340 L 308,228" fill="none" stroke="#6c8188" stroke-width="1" stroke-dasharray="5,4" marker-end="url(#2026-10-01-233c5172-01-arr-muted)"/>
+  <!-- loop label -->
+  <rect x="468" y="326" width="64" height="14" rx="2" fill="#f8fafb"/>
+  <text x="500" y="336" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.04em">다음 턴</text>
+
+  <!-- ===================== NODES ===================== -->
+
+  <!-- U: 사용자 입력 — input type -->
+  <!-- oval rx=20, centered at (104,200), w=128, h=52 -->
+  <rect x="40" y="174" width="128" height="52" rx="20" fill="rgba(63,84,92,0.10)" stroke="#6c8188" stroke-width="1"/>
+  <text x="104" y="197" fill="#122127" font-size="14" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">사용자 입력</text>
+  <text x="104" y="213" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">User Input</text>
+
+  <!-- M: 모델 추론 — focal (accent) -->
+  <!-- rect centered at (308,200), w=160, h=64 -->
+  <rect x="228" y="168" width="160" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="228" y="168" width="160" height="64" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <!-- tag -->
+  <rect x="236" y="174" width="36" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="254" y="183" fill="rgba(13,87,99,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">MODEL</text>
+  <text x="308" y="200" fill="#122127" font-size="14" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">모델 추론</text>
+  <text x="308" y="216" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">도구 선택 판단</text>
+
+  <!-- Q: 도구 호출 필요한가 — focal (accent), diamond -->
+  <!-- diamond center (520,200), half-w=72, half-h=36 -->
+  <rect x="448" y="164" width="144" height="72" rx="6" fill="#f8fafb"/>
+  <polygon points="520,164 592,200 520,236 448,200" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="520" y="196" fill="#122127" font-size="13" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">도구 호출</text>
+  <text x="520" y="211" fill="#122127" font-size="13" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">필요한가?</text>
+
+  <!-- TC: 도구 호출 생성 — backend -->
+  <!-- rect centered at (652,100), w=128, h=52 -->
+  <rect x="588" y="74" width="132" height="52" rx="6" fill="#f8fafb"/>
+  <rect x="588" y="74" width="132" height="52" rx="6" fill="white" stroke="#122127" stroke-width="1"/>
+  <!-- tag -->
+  <rect x="596" y="80" width="28" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="610" y="89" fill="rgba(18,33,39,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">GEN</text>
+  <text x="654" y="104" fill="#122127" font-size="14" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">도구 호출</text>
+  <text x="654" y="119" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">생성</text>
+
+  <!-- E: 도구 실행 — backend -->
+  <!-- rect centered at (812,100), w=112, h=52 -->
+  <rect x="756" y="74" width="112" height="52" rx="6" fill="#f8fafb"/>
+  <rect x="756" y="74" width="112" height="52" rx="6" fill="white" stroke="#122127" stroke-width="1"/>
+  <!-- tag -->
+  <rect x="764" y="80" width="28" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="778" y="89" fill="rgba(18,33,39,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">EXEC</text>
+  <text x="812" y="107" fill="#122127" font-size="14" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">도구 실행</text>
+
+  <!-- R: 결과 반환 — store/state -->
+  <!-- rect centered at (648+40=668,200), w=140, h=52 -->
+  <!-- actually center at (688,200-14=186)... let's fix: center (688,200), h=56 -->
+  <rect x="588" y="172" width="140" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="588" y="172" width="140" height="56" rx="6" fill="rgba(18,33,39,0.05)" stroke="#6c8188" stroke-width="1"/>
+  <!-- tag -->
+  <rect x="596" y="178" width="36" height="12" rx="2" fill="transparent" stroke="rgba(108,129,136,0.40)" stroke-width="0.8"/>
+  <text x="614" y="187" fill="rgba(108,129,136,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">RESULT</text>
+  <text x="658" y="203" fill="#122127" font-size="14" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">결과 반환</text>
+  <text x="658" y="219" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">다음 턴 입력</text>
+
+  <!-- TR: 텍스트 응답 — terminal oval -->
+  <rect x="588" y="270" width="132" height="52" rx="20" fill="#f8fafb"/>
+  <rect x="588" y="270" width="132" height="52" rx="20" fill="rgba(63,84,92,0.06)" stroke="#6c8188" stroke-width="1" stroke-dasharray="5,3"/>
+  <text x="654" y="299" fill="#122127" font-size="14" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">텍스트 응답</text>
+
+  <!-- ===================== LEGEND ===================== -->
+  <line x1="32" y1="392" x2="928" y2="392" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+  <text x="32" y="406" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.14em">LEGEND</text>
+
+  <!-- focal node sample -->
+  <rect x="96" y="397" width="52" height="20" rx="4" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="122" y="411" fill="#122127" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="500">핵심 단계</text>
+
+  <!-- step sample -->
+  <rect x="164" y="397" width="52" height="20" rx="4" fill="white" stroke="#122127" stroke-width="1"/>
+  <text x="190" y="411" fill="#122127" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="500">처리 단계</text>
+
+  <!-- state sample -->
+  <rect x="232" y="397" width="52" height="20" rx="4" fill="rgba(18,33,39,0.05)" stroke="#6c8188" stroke-width="1"/>
+  <text x="258" y="411" fill="#122127" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="500">데이터 상태</text>
+
+  <!-- input sample (oval) -->
+  <rect x="300" y="397" width="64" height="20" rx="10" fill="rgba(63,84,92,0.10)" stroke="#6c8188" stroke-width="1"/>
+  <text x="332" y="411" fill="#122127" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="500">입·출력</text>
+
+  <!-- feedback arrow sample -->
+  <line x1="384" y1="407" x2="420" y2="407" stroke="#6c8188" stroke-width="1" stroke-dasharray="5,4" marker-end="url(#2026-10-01-233c5172-01-arr-muted)"/>
+  <text x="440" y="411" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500">피드백 루프</text>
+
+</svg>
+</div>
+</body>
+</html>

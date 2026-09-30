@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; font-family: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<svg
+  viewBox="0 0 960 480"
+  xmlns="http://www.w3.org/2000/svg"
+  role="img"
+  aria-labelledby="2026-10-01-233c5172-05-toolcall-title 2026-10-01-233c5172-05-toolcall-desc"
+>
+  <title id="2026-10-01-233c5172-05-toolcall-title">도구 호출 캐시·레이트리밋 처리 흐름</title>
+  <desc id="2026-10-01-233c5172-05-toolcall-desc">도구 호출 요청이 캐시 확인을 거쳐 적중 시 즉시 반환하고, 미적중 시 외부 API를 호출한 뒤 레이트 리밋 초과 여부에 따라 지수 백오프 재시도 또는 결과 반환 및 캐시 저장 경로로 분기되는 흐름을 보여준다.</desc>
+
+  <defs>
+    <!-- Arrow markers -->
+    <marker id="2026-10-01-233c5172-05-tc-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-10-01-233c5172-05-tc-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <marker id="2026-10-01-233c5172-05-tc-arrow-back" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#6c8188"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="960" height="480" fill="#f8fafb"/>
+
+  <!-- ===================== ARROWS (drawn before boxes) ===================== -->
+
+  <!-- D → C (도구 호출 요청 → 캐시 있나) -->
+  <line x1="148" y1="196" x2="220" y2="196" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-01-233c5172-05-tc-arrow)"/>
+
+  <!-- C → CH (예) right-angle: right then up to CH -->
+  <!-- C center: 272,196  CH center: 272,100 -->
+  <path d="M272,172 L272,128" fill="none" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-10-01-233c5172-05-tc-arrow-accent)"/>
+  <!-- label 예 -->
+  <rect x="254" y="148" width="20" height="14" rx="2" fill="#f8fafb"/>
+  <text x="264" y="158" fill="#0d5763" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500" text-anchor="middle">예</text>
+
+  <!-- C → T (아니오) right -->
+  <line x1="324" y1="196" x2="400" y2="196" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-01-233c5172-05-tc-arrow)"/>
+  <!-- label 아니오 -->
+  <rect x="338" y="184" width="40" height="14" rx="2" fill="#f8fafb"/>
+  <text x="358" y="194" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500" text-anchor="middle">아니오</text>
+
+  <!-- T → RL (외부 API → 레이트리밋) -->
+  <line x1="524" y1="196" x2="592" y2="196" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-01-233c5172-05-tc-arrow)"/>
+
+  <!-- RL → BO (예) down -->
+  <!-- RL center: 648,196  BO center: 648,320 -->
+  <path d="M648,228 L648,296" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-01-233c5172-05-tc-arrow)"/>
+  <!-- label 예 -->
+  <rect x="630" y="252" width="20" height="14" rx="2" fill="#f8fafb"/>
+  <text x="640" y="262" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500" text-anchor="middle">예</text>
+
+  <!-- RL → RS (아니오) right -->
+  <line x1="704" y1="196" x2="776" y2="196" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-01-233c5172-05-tc-arrow)"/>
+  <!-- label 아니오 -->
+  <rect x="716" y="184" width="40" height="14" rx="2" fill="#f8fafb"/>
+  <text x="736" y="194" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500" text-anchor="middle">아니오</text>
+
+  <!-- RS → CS (결과 반환 → 캐시 저장) down -->
+  <!-- RS center: 836,196  CS center: 836,320 -->
+  <path d="M836,228 L836,296" fill="none" stroke="#6c8188" stroke-width="1" stroke-dasharray="5,4" marker-end="url(#2026-10-01-233c5172-05-tc-arrow-back)"/>
+
+  <!-- BO → T back loop: BO left to x=380, up to y=196, right to T left edge -->
+  <!-- BO center: 648,320  T: x=400..524, y=172..220 -->
+  <path d="M600,320 L380,320 L380,196 L400,196" fill="none" stroke="#6c8188" stroke-width="1" stroke-dasharray="5,4" marker-end="url(#2026-10-01-233c5172-05-tc-arrow-back)"/>
+  <!-- label 재시도 -->
+  <rect x="462" y="308" width="44" height="14" rx="2" fill="#f8fafb"/>
+  <text x="484" y="318" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500" text-anchor="middle">재시도</text>
+
+  <!-- CS → CH: CS left to x=200, up to CH y=100, right to CH right edge -->
+  <!-- CS center: 836,320  CH: x=208..336, y=76..124 -->
+  <!-- route: CS left segment down, then far-left column up to CH -->
+  <path d="M808,320 L200,320 L200,124" fill="none" stroke="#6c8188" stroke-width="1" stroke-dasharray="5,4" marker-end="url(#2026-10-01-233c5172-05-tc-arrow-back)"/>
+  <!-- label 캐시 -->
+  <rect x="469" y="308" width="0" height="0" rx="2" fill="#f8fafb"/>
+
+  <!-- ===================== NODES ===================== -->
+
+  <!-- D: 도구 호출 요청 — INPUT type, oval, x=20 y=172 w=128 h=48 -->
+  <rect x="20" y="172" width="128" height="48" rx="20" fill="rgba(63,84,92,0.10)" stroke="#6c8188" stroke-width="1"/>
+  <text x="84" y="192" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">도구 호출</text>
+  <text x="84" y="208" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">요청</text>
+
+  <!-- C: 캐시 있나 — FOCAL decision diamond, center 272,196 -->
+  <!-- Diamond: center 272,196, half-w=52, half-h=32 -->
+  <rect x="220" y="164" width="104" height="64" rx="0" fill="#f8fafb"/>
+  <polygon points="272,164 324,196 272,228 220,196" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="272" y="191" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">캐시</text>
+  <text x="272" y="205" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">있나?</text>
+
+  <!-- CH: 캐시 응답 반환 — BACKEND, x=208 y=76 w=128 h=48 -->
+  <rect x="208" y="76" width="128" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="208" y="76" width="128" height="48" rx="6" fill="white" stroke="#122127" stroke-width="1"/>
+  <!-- tag -->
+  <rect x="216" y="82" width="24" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="228" y="91" fill="rgba(18,33,39,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">HIT</text>
+  <text x="272" y="108" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">캐시 응답</text>
+  <text x="272" y="124" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">반환</text>
+
+  <!-- T: 외부 API 호출 — BACKEND, x=400 y=172 w=124 h=48 -->
+  <rect x="400" y="172" width="124" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="400" y="172" width="124" height="48" rx="6" fill="white" stroke="#122127" stroke-width="1"/>
+  <!-- tag -->
+  <rect x="408" y="178" width="24" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="420" y="187" fill="rgba(18,33,39,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">API</text>
+  <text x="462" y="200" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">외부 API</text>
+  <text x="462" y="216" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">호출</text>
+
+  <!-- RL: 레이트 리밋 초과 — FOCAL decision diamond, center 648,196 -->
+  <rect x="592" y="164" width="112" height="64" rx="0" fill="#f8fafb"/>
+  <polygon points="648,164 704,196 648,228 592,196" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="648" y="191" fill="#122127" font-size="10" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">레이트 리밋</text>
+  <text x="648" y="205" fill="#122127" font-size="10" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">초과?</text>
+
+  <!-- BO: 지수 백오프 대기 후 재시도 — BACKEND, x=580 y=296 w=136 h=48 -->
+  <rect x="580" y="296" width="136" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="580" y="296" width="136" height="48" rx="6" fill="white" stroke="#122127" stroke-width="1"/>
+  <!-- tag -->
+  <rect x="588" y="302" width="32" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="604" y="311" fill="rgba(18,33,39,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">RETRY</text>
+  <text x="648" y="326" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">지수 백오프</text>
+  <text x="648" y="340" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">대기 후 재시도</text>
+
+  <!-- RS: 결과 반환 — BACKEND, x=776 y=172 w=120 h=48 -->
+  <rect x="776" y="172" width="120" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="776" y="172" width="120" height="48" rx="6" fill="white" stroke="#122127" stroke-width="1"/>
+  <!-- tag -->
+  <rect x="784" y="178" width="28" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="798" y="187" fill="rgba(18,33,39,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">RESP</text>
+  <text x="836" y="204" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">결과 반환</text>
+
+  <!-- CS: 캐시 저장(조회성만) — STORE type, x=776 y=296 w=120 h=48 -->
+  <rect x="776" y="296" width="120" height="48" rx="6" fill="rgba(18,33,39,0.05)" stroke="#3f545c" stroke-width="1"/>
+  <!-- tag -->
+  <rect x="784" y="302" width="32" height="12" rx="2" fill="transparent" stroke="rgba(63,84,92,0.40)" stroke-width="0.8"/>
+  <text x="800" y="311" fill="rgba(63,84,92,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">CACHE</text>
+  <text x="836" y="328" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">캐시 저장</text>
+  <text x="836" y="342" fill="#6c8188" font-size="9" font-family="'IBM Plex Mono', monospace" text-anchor="middle">조회성만</text>
+
+  <!-- ===================== LEGEND ===================== -->
+  <line x1="40" y1="418" x2="920" y2="418" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+  <text x="40" y="432" fill="#3f545c" font-size="8" font-family="'IBM Plex Mono', monospace" letter-spacing="0.14em">LEGEND</text>
+
+  <!-- legend items -->
+  <!-- focal decision -->
+  <polygon points="88,444 100,452 88,460 76,452" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="108" y="456" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">주요 분기</text>
+
+  <!-- backend step -->
+  <rect x="196" y="444" width="20" height="16" rx="4" fill="white" stroke="#122127" stroke-width="1"/>
+  <text x="224" y="456" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">처리 단계</text>
+
+  <!-- store -->
+  <rect x="316" y="444" width="20" height="16" rx="4" fill="rgba(18,33,39,0.05)" stroke="#3f545c" stroke-width="1"/>
+  <text x="344" y="456" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">저장소</text>
+
+  <!-- dashed return -->
+  <line x1="420" y1="452" x2="452" y2="452" stroke="#6c8188" stroke-width="1" stroke-dasharray="5,4" marker-end="url(#2026-10-01-233c5172-05-tc-arrow-back)"/>
+  <text x="460" y="456" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">비동기 경로</text>
+
+  <!-- input -->
+  <rect x="556" y="444" width="20" height="16" rx="8" fill="rgba(63,84,92,0.10)" stroke="#6c8188" stroke-width="1"/>
+  <text x="584" y="456" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">진입점</text>
+
+</svg>
+</body>
+</html>

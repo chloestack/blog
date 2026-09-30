@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>도구 스키마 설계 구조</title>
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; font-family: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 960 600"
+  role="img"
+  aria-labelledby="2026-10-01-233c5172-02-schema-title 2026-10-01-233c5172-02-schema-desc"
+>
+  <title id="2026-10-01-233c5172-02-schema-title">도구 스키마 설계 구조</title>
+  <desc id="2026-10-01-233c5172-02-schema-desc">도구 스키마의 세 구성 요소(이름, 설명, 파라미터)와 하위 세부 항목이 모델 도구 선택 품질에 어떻게 연결되는지 보여주는 흐름도.</desc>
+
+  <defs>
+    <!-- 화살표 마커 -->
+    <marker id="2026-10-01-233c5172-02-arrow-muted" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#6c8188"/>
+    </marker>
+    <marker id="2026-10-01-233c5172-02-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+  </defs>
+
+  <!-- 배경 -->
+  <rect width="960" height="600" fill="#f8fafb"/>
+
+  <!-- ─────────────────────────────────────────
+       레이어 0: 커넥터 (박스보다 먼저 그림)
+  ───────────────────────────────────────── -->
+
+  <!-- 도구 스키마 → 이름 (S→N): 480,108 → 280,212 -->
+  <path d="M 480,108 L 480,140 L 280,140 L 280,212"
+        fill="none" stroke="#6c8188" stroke-width="1" marker-end="url(#2026-10-01-233c5172-02-arrow-muted)"/>
+
+  <!-- 도구 스키마 → 설명 (S→D): 480,108 → 480,212 -->
+  <path d="M 480,108 L 480,212"
+        fill="none" stroke="#6c8188" stroke-width="1" marker-end="url(#2026-10-01-233c5172-02-arrow-muted)"/>
+
+  <!-- 도구 스키마 → 파라미터 (S→P): 480,108 → 680,212 -->
+  <path d="M 480,108 L 480,140 L 680,140 L 680,212"
+        fill="none" stroke="#6c8188" stroke-width="1" marker-end="url(#2026-10-01-233c5172-02-arrow-muted)"/>
+
+  <!-- 파라미터 → required (P→R): 680,268 → 560,356 -->
+  <path d="M 680,268 L 680,308 L 560,308 L 560,356"
+        fill="none" stroke="#6c8188" stroke-width="1" marker-end="url(#2026-10-01-233c5172-02-arrow-muted)"/>
+
+  <!-- 파라미터 → optional (P→O): 680,268 → 800,356 -->
+  <path d="M 680,268 L 680,308 L 800,308 L 800,356"
+        fill="none" stroke="#6c8188" stroke-width="1" marker-end="url(#2026-10-01-233c5172-02-arrow-muted)"/>
+
+  <!-- 이름 → 모델 도구 선택 (N→Q): 280,268 → 400,460 -->
+  <path d="M 280,268 L 280,420 L 400,420 L 400,460"
+        fill="none" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-10-01-233c5172-02-arrow-accent)"/>
+
+  <!-- 설명 → 모델 도구 선택 (D→Q): 480,268 → 480,460 -->
+  <path d="M 480,268 L 480,460"
+        fill="none" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-10-01-233c5172-02-arrow-accent)"/>
+
+  <!-- 파라미터 → 모델 도구 선택 (P→Q): 680,268 → 560,460 -->
+  <path d="M 680,268 L 680,420 L 560,420 L 560,460"
+        fill="none" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-10-01-233c5172-02-arrow-accent)"/>
+
+
+  <!-- ─────────────────────────────────────────
+       레이어 1: 노드 박스
+  ───────────────────────────────────────── -->
+
+  <!-- 도구 스키마 (focal, 링크-블루 계열 #DBE2F2 → 여기서는 accent 처리) -->
+  <!-- 중앙 상단: cx=480, cy=72, w=200, h=52 -->
+  <rect x="380" y="52" width="200" height="52" rx="6" fill="#f8fafb"/>
+  <rect x="380" y="52" width="200" height="52" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.5"/>
+  <!-- 태그 박스 -->
+  <rect x="388" y="60" width="36" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="406" y="69" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">SCHEMA</text>
+  <text x="480" y="88" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">도구 스키마</text>
+
+  <!-- 이름 (accent 계열) cx=280, cy=240, w=180, h=52 -->
+  <rect x="190" y="212" width="180" height="52" rx="6" fill="#f8fafb"/>
+  <rect x="190" y="212" width="180" height="52" rx="6" fill="rgba(13,87,99,0.06)" stroke="#0d5763" stroke-width="1"/>
+  <rect x="198" y="220" width="24" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="210" y="229" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">NAME</text>
+  <text x="280" y="244" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">이름</text>
+  <text x="280" y="258" fill="#6c8188" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">동사 + 명사</text>
+
+  <!-- 설명 (accent 계열) cx=480, cy=240, w=180, h=52 -->
+  <rect x="390" y="212" width="180" height="52" rx="6" fill="#f8fafb"/>
+  <rect x="390" y="212" width="180" height="52" rx="6" fill="rgba(13,87,99,0.06)" stroke="#0d5763" stroke-width="1"/>
+  <rect x="398" y="220" width="24" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="410" y="229" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">DESC</text>
+  <text x="480" y="244" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">설명</text>
+  <text x="480" y="258" fill="#6c8188" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">언제 · 제약 · 실패</text>
+
+  <!-- 파라미터 (accent 계열) cx=680, cy=240, w=180, h=52 -->
+  <rect x="590" y="212" width="180" height="52" rx="6" fill="#f8fafb"/>
+  <rect x="590" y="212" width="180" height="52" rx="6" fill="rgba(13,87,99,0.06)" stroke="#0d5763" stroke-width="1"/>
+  <rect x="598" y="220" width="32" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="614" y="229" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">PARAM</text>
+  <text x="680" y="244" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">파라미터</text>
+  <text x="680" y="258" fill="#6c8188" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">type · enum · range</text>
+
+  <!-- required cx=560, cy=384, w=160, h=52 -->
+  <rect x="480" y="356" width="160" height="52" rx="6" fill="#f8fafb"/>
+  <rect x="480" y="356" width="160" height="52" rx="6" fill="rgba(169,106,8,0.08)" stroke="#a96a08" stroke-width="1"/>
+  <rect x="488" y="364" width="40" height="12" rx="2" fill="transparent" stroke="rgba(169,106,8,0.40)" stroke-width="0.8"/>
+  <text x="508" y="373" fill="rgba(169,106,8,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">REQUIRED</text>
+  <text x="560" y="388" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">required</text>
+  <text x="560" y="402" fill="#6c8188" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">필수 인자 명시</text>
+
+  <!-- optional cx=800, cy=384, w=160, h=52 -->
+  <rect x="720" y="356" width="160" height="52" rx="6" fill="#f8fafb"/>
+  <rect x="720" y="356" width="160" height="52" rx="6" fill="rgba(63,84,92,0.06)" stroke="#c3d0d4" stroke-width="1"/>
+  <rect x="728" y="364" width="40" height="12" rx="2" fill="transparent" stroke="rgba(99,129,136,0.40)" stroke-width="0.8"/>
+  <text x="748" y="373" fill="rgba(108,129,136,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">OPTIONAL</text>
+  <text x="800" y="388" fill="#3f545c" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">optional</text>
+  <text x="800" y="402" fill="#6c8188" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">기본값 제공</text>
+
+  <!-- 모델 도구 선택 (focal, ok 계열) cx=480, cy=500, w=280, h=56 -->
+  <rect x="340" y="460" width="280" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="340" y="460" width="280" height="56" rx="6" fill="rgba(40,109,80,0.08)" stroke="#286d50" stroke-width="1.5"/>
+  <rect x="348" y="468" width="40" height="12" rx="2" fill="transparent" stroke="rgba(40,109,80,0.40)" stroke-width="0.8"/>
+  <text x="368" y="477" fill="rgba(40,109,80,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">OUTPUT</text>
+  <text x="480" y="494" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">모델 도구 선택</text>
+  <text x="480" y="510" fill="#286d50" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">호출 품질 향상</text>
+
+  <!-- ─────────────────────────────────────────
+       레전드
+  ───────────────────────────────────────── -->
+  <line x1="32" y1="554" x2="928" y2="554" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+
+  <!-- 범례 항목들 -->
+  <!-- SCHEMA -->
+  <rect x="32" y="565" width="12" height="12" rx="2" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="50" y="575" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.06em">스키마 구성</text>
+
+  <!-- REQUIRED -->
+  <rect x="180" y="565" width="12" height="12" rx="2" fill="rgba(169,106,8,0.08)" stroke="#a96a08" stroke-width="1"/>
+  <text x="198" y="575" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.06em">필수 항목</text>
+
+  <!-- OPTIONAL -->
+  <rect x="308" y="565" width="12" height="12" rx="2" fill="rgba(63,84,92,0.06)" stroke="#c3d0d4" stroke-width="1"/>
+  <text x="326" y="575" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.06em">선택 항목</text>
+
+  <!-- OUTPUT -->
+  <rect x="428" y="565" width="12" height="12" rx="2" fill="rgba(40,109,80,0.08)" stroke="#286d50" stroke-width="1"/>
+  <text x="446" y="575" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.06em">품질 결과</text>
+
+</svg>
+</body>
+</html>

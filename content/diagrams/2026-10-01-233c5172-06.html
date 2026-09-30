@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>도구 실행 권한 흐름</title>
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; font-family: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 660"
+     role="img" aria-labelledby="2026-10-01-233c5172-06-flow-title 2026-10-01-233c5172-06-flow-desc">
+  <title id="2026-10-01-233c5172-06-flow-title">도구 실행 권한 흐름</title>
+  <desc id="2026-10-01-233c5172-06-flow-desc">에이전트 요청이 권한 정책 검사를 거쳐 고위험 도구 여부를 확인하고, 승인 또는 차단 경로를 통해 도구를 실행하거나 권한 오류를 반환한 뒤 감사 로그를 기록하는 흐름.</desc>
+
+  <defs>
+    <!-- 배경 도트 패턴 -->
+    <pattern id="2026-10-01-233c5172-06-dots" width="22" height="22" patternUnits="userSpaceOnUse">
+      <circle cx="1" cy="1" r="0.9" fill="rgba(18,33,39,0.08)"/>
+    </pattern>
+
+    <!-- 화살표 마커 -->
+    <marker id="2026-10-01-233c5172-06-arrow-muted" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-10-01-233c5172-06-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <marker id="2026-10-01-233c5172-06-arrow-soft" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#6c8188"/>
+    </marker>
+  </defs>
+
+  <!-- 배경 -->
+  <rect width="720" height="660" fill="#f8fafb"/>
+  <rect width="720" height="660" fill="url(#2026-10-01-233c5172-06-dots)" opacity="0.5"/>
+
+  <!-- ========== 연결선 (박스보다 먼저 그림) ========== -->
+
+  <!-- 에이전트 요청 → 권한 정책 (수직) -->
+  <line x1="360" y1="100" x2="360" y2="164"
+        stroke="#3f545c" stroke-width="1.2" marker-end="url(#2026-10-01-233c5172-06-arrow-muted)"/>
+
+  <!-- 권한 정책 → 고위험 도구 (통과, 수직) -->
+  <line x1="360" y1="228" x2="360" y2="292"
+        stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-10-01-233c5172-06-arrow-accent)"/>
+  <!-- 라벨: 통과 -->
+  <rect x="340" y="247" width="40" height="14" rx="2" fill="#f8fafb"/>
+  <text x="360" y="257" fill="#0d5763" font-size="11" font-weight="600"
+        font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">통과</text>
+
+  <!-- 권한 정책 → 권한 오류 반환 (차단, 오른쪽으로 꺾기) -->
+  <!-- 수평 세그먼트: 권한 정책 오른쪽 꼭짓점 → 오른쪽 -->
+  <path d="M 416 196 H 548 Q 556 196 556 204 V 284"
+        fill="none" stroke="#6c8188" stroke-width="1.2" marker-end="url(#2026-10-01-233c5172-06-arrow-soft)"/>
+  <!-- 라벨: 차단 -->
+  <rect x="464" y="183" width="40" height="14" rx="2" fill="#f8fafb"/>
+  <text x="484" y="193" fill="#6c8188" font-size="11" font-weight="500"
+        font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">차단</text>
+
+  <!-- 고위험 도구 → 사용자 확인 요청 (예, 왼쪽으로 꺾기) -->
+  <path d="M 304 340 H 192 Q 184 340 184 348 V 396"
+        fill="none" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-10-01-233c5172-06-arrow-accent)"/>
+  <!-- 라벨: 예 -->
+  <rect x="218" y="327" width="28" height="14" rx="2" fill="#f8fafb"/>
+  <text x="232" y="337" fill="#0d5763" font-size="11" font-weight="600"
+        font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">예</text>
+
+  <!-- 고위험 도구 → 도구 실행 (아니오, 수직) -->
+  <line x1="360" y1="372" x2="360" y2="396"
+        stroke="#3f545c" stroke-width="1.2" marker-end="url(#2026-10-01-233c5172-06-arrow-muted)"/>
+  <!-- 라벨: 아니오 -->
+  <rect x="324" y="379" width="52" height="14" rx="2" fill="#f8fafb"/>
+  <text x="350" y="389" fill="#3f545c" font-size="11" font-weight="500"
+        font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">아니오</text>
+
+  <!-- 사용자 확인 요청 → 도구 실행 (승인, 오른쪽으로 꺾기) -->
+  <path d="M 244 448 H 316 Q 324 448 324 456 V 476 Q 324 484 332 484 H 308 Q 316 484 316 476"
+        fill="none" stroke="#0d5763" stroke-width="1.2"/>
+  <!-- 사용자 확인 → 도구 실행: 승인 경로 재설계 (오른쪽으로 나와 도구실행 왼쪽으로 진입) -->
+  <path d="M 244 432 Q 244 440 252 440 H 308 Q 316 440 316 448 V 456 Q 316 464 324 464 H 332"
+        fill="none" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-10-01-233c5172-06-arrow-accent)"/>
+  <!-- 라벨: 승인 -->
+  <rect x="256" y="427" width="40" height="14" rx="2" fill="#f8fafb"/>
+  <text x="276" y="437" fill="#0d5763" font-size="11" font-weight="600"
+        font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">승인</text>
+
+  <!-- 사용자 확인 요청 → 권한 오류 반환 (거부, 오른쪽으로 꺾기) -->
+  <path d="M 244 420 H 468 Q 476 420 476 428 V 436 Q 476 444 548 444 Q 556 444 556 436 V 360"
+        fill="none" stroke="#6c8188" stroke-width="1.2" marker-end="url(#2026-10-01-233c5172-06-arrow-soft)"/>
+  <!-- 라벨: 거부 -->
+  <rect x="316" y="407" width="40" height="14" rx="2" fill="#f8fafb"/>
+  <text x="336" y="417" fill="#6c8188" font-size="11" font-weight="500"
+        font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">거부</text>
+
+  <!-- 도구 실행 → 감사 로그 기록 (수직) -->
+  <line x1="360" y1="512" x2="360" y2="556"
+        stroke="#3f545c" stroke-width="1.2" marker-end="url(#2026-10-01-233c5172-06-arrow-muted)"/>
+
+  <!-- ========== 노드 ========== -->
+
+  <!-- 에이전트 요청 (시작 타원) -->
+  <rect x="264" y="48" width="192" height="52" rx="24" fill="#f8fafb"/>
+  <rect x="264" y="48" width="192" height="52" rx="24"
+        fill="rgba(58,84,143,0.08)" stroke="#3a548f" stroke-width="1.2"/>
+  <text x="360" y="74" fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">에이전트 요청</text>
+  <text x="360" y="90" fill="#3f545c" font-size="10"
+        font-family="'IBM Plex Mono', monospace" text-anchor="middle">tool_call</text>
+
+  <!-- 권한 정책 통과하나 (다이아몬드) -->
+  <!-- 다이아몬드: 중심 (360, 196), 가로 56, 세로 32 -->
+  <rect x="252" y="164" width="216" height="64" rx="4" fill="#f8fafb"/>
+  <polygon points="360,164 468,196 360,228 252,196"
+           fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="360" y="192" fill="#122127" font-size="12" font-weight="600"
+        font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">권한 정책</text>
+  <text x="360" y="207" fill="#122127" font-size="12" font-weight="600"
+        font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">통과하나?</text>
+
+  <!-- 고위험 도구인가 (다이아몬드) -->
+  <rect x="252" y="292" width="216" height="80" rx="4" fill="#f8fafb"/>
+  <polygon points="360,292 468,340 360,372 252,340"
+           fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="360" y="336" fill="#122127" font-size="12" font-weight="600"
+        font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">고위험</text>
+  <text x="360" y="351" fill="#122127" font-size="12" font-weight="600"
+        font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">도구인가?</text>
+
+  <!-- 사용자 확인 요청 (일반 박스, 왼쪽) -->
+  <rect x="100" y="396" width="144" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="100" y="396" width="144" height="56" rx="6"
+        fill="rgba(169,106,8,0.08)" stroke="#a96a08" stroke-width="1"/>
+  <!-- 타입 태그 -->
+  <rect x="108" y="404" width="36" height="12" rx="2"
+        fill="transparent" stroke="rgba(169,106,8,0.40)" stroke-width="0.8"/>
+  <text x="126" y="413" fill="rgba(169,106,8,0.80)" font-size="8" font-weight="500"
+        font-family="'IBM Plex Mono', monospace" text-anchor="middle"
+        letter-spacing="0.08em">CONFIRM</text>
+  <text x="172" y="423" fill="#122127" font-size="13" font-weight="600"
+        font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">사용자 확인</text>
+  <text x="172" y="440" fill="#122127" font-size="13" font-weight="600"
+        font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">요청</text>
+
+  <!-- 도구 실행 (focal 박스) -->
+  <rect x="296" y="396" width="128" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="296" y="396" width="128" height="56" rx="6"
+        fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <!-- 타입 태그 -->
+  <rect x="304" y="404" width="28" height="12" rx="2"
+        fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="318" y="413" fill="rgba(13,87,99,0.80)" font-size="8" font-weight="500"
+        font-family="'IBM Plex Mono', monospace" text-anchor="middle"
+        letter-spacing="0.08em">EXEC</text>
+  <text x="360" y="431" fill="#122127" font-size="13" font-weight="600"
+        font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">도구 실행</text>
+  <text x="360" y="447" fill="#3f545c" font-size="10"
+        font-family="'IBM Plex Mono', monospace" text-anchor="middle">tool.invoke()</text>
+
+  <!-- 권한 오류 반환 (오른쪽) -->
+  <rect x="492" y="284" width="128" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="492" y="284" width="128" height="56" rx="6"
+        fill="rgba(148,56,43,0.06)" stroke="#94382b" stroke-width="1"/>
+  <!-- 타입 태그 -->
+  <rect x="500" y="292" width="28" height="12" rx="2"
+        fill="transparent" stroke="rgba(148,56,43,0.40)" stroke-width="0.8"/>
+  <text x="514" y="301" fill="rgba(148,56,43,0.80)" font-size="8" font-weight="500"
+        font-family="'IBM Plex Mono', monospace" text-anchor="middle"
+        letter-spacing="0.08em">ERROR</text>
+  <text x="556" y="319" fill="#122127" font-size="13" font-weight="600"
+        font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">권한 오류 반환</text>
+  <text x="556" y="335" fill="#3f545c" font-size="10"
+        font-family="'IBM Plex Mono', monospace" text-anchor="middle">로그 기록</text>
+
+  <!-- 감사 로그 기록 (종료 타원) -->
+  <rect x="248" y="556" width="224" height="52" rx="24" fill="#f8fafb"/>
+  <rect x="248" y="556" width="224" height="52" rx="24"
+        fill="rgba(18,33,39,0.04)" stroke="#c3d0d4" stroke-width="1"/>
+  <!-- 타입 태그 -->
+  <rect x="256" y="564" width="28" height="12" rx="2"
+        fill="transparent" stroke="rgba(18,33,39,0.20)" stroke-width="0.8"/>
+  <text x="270" y="573" fill="#6c8188" font-size="8" font-weight="500"
+        font-family="'IBM Plex Mono', monospace" text-anchor="middle"
+        letter-spacing="0.08em">LOG</text>
+  <text x="360" y="584" fill="#3f545c" font-size="13" font-weight="600"
+        font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">감사 로그 기록</text>
+  <text x="360" y="599" fill="#6c8188" font-size="10"
+        font-family="'IBM Plex Mono', monospace" text-anchor="middle">audit.write()</text>
+
+  <!-- ========== 범례 ========== -->
+  <line x1="32" y1="630" x2="688" y2="630"
+        stroke="rgba(18,33,39,0.10)" stroke-width="0.8"/>
+
+  <!-- 범례 항목들 -->
+  <!-- 흐름 시작/종료 -->
+  <rect x="32" y="638" width="14" height="10" rx="5"
+        fill="rgba(58,84,143,0.08)" stroke="#3a548f" stroke-width="1"/>
+  <text x="52" y="647" fill="#6c8188" font-size="10"
+        font-family="'IBM Plex Sans KR', sans-serif">시작 / 종료</text>
+
+  <!-- 정책 검사 -->
+  <polygon points="138,638 152,643 138,648 124,643"
+           fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="158" y="647" fill="#6c8188" font-size="10"
+        font-family="'IBM Plex Sans KR', sans-serif">정책 검사</text>
+
+  <!-- 확인 요청 -->
+  <rect x="238" y="638" width="14" height="10" rx="2"
+        fill="rgba(169,106,8,0.08)" stroke="#a96a08" stroke-width="1"/>
+  <text x="258" y="647" fill="#6c8188" font-size="10"
+        font-family="'IBM Plex Sans KR', sans-serif">확인 요청</text>
+
+  <!-- 실행 -->
+  <rect x="344" y="638" width="14" height="10" rx="2"
+        fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="364" y="647" fill="#6c8188" font-size="10"
+        font-family="'IBM Plex Sans KR', sans-serif">실행</text>
+
+  <!-- 오류 -->
+  <rect x="416" y="638" width="14" height="10" rx="2"
+        fill="rgba(148,56,43,0.06)" stroke="#94382b" stroke-width="1"/>
+  <text x="436" y="647" fill="#6c8188" font-size="10"
+        font-family="'IBM Plex Sans KR', sans-serif">오류 / 차단</text>
+
+</svg>
+</body>
+</html>
