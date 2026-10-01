@@ -314,7 +314,7 @@ The fact that an agent can call external tools implies a risk: incorrect instruc
 A permission model at the tool level is the basic defense against this risk. Tools provided to the agent should be restricted to the **minimum permissions** needed for the task. There is no reason to give a read-only analytics agent data-modification tools. **High-risk tools** — email sends, payments, data deletion, external system integrations — must either have a user confirmation step before execution or record an audit log after execution. In production, recording every state-changing operation the agent performs in a traceable audit log is essential for both compliance and incident analysis.
 
 ```diagram
-2026-10-01-233c5172-06
+en/2026-10-01-233c5172-06
 ```
 
 A permission policy combined with a confirmation step for high-risk tools forms a two-layer defense against unintended side effects.

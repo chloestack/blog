@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; font-family: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<svg viewBox="0 0 960 600" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="2026-10-02-1cb47ab1-07-ops-trap-title 2026-10-02-1cb47ab1-07-ops-trap-desc">
+  <title id="2026-10-02-1cb47ab1-07-ops-trap-title">Multimodal RAG Operational Pitfalls and Solutions</title>
+  <desc id="2026-10-02-1cb47ab1-07-ops-trap-desc">A diagram showing three operational pitfalls (page boundary breaks, embedding model version mismatch, image resolution errors) and their respective resolution strategies.</desc>
+
+  <defs>
+    <marker id="2026-10-02-1cb47ab1-07-arr-muted" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#6c8188"/>
+    </marker>
+    <marker id="2026-10-02-1cb47ab1-07-arr-warn" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#a96a08"/>
+    </marker>
+    <marker id="2026-10-02-1cb47ab1-07-arr-ok" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#286d50"/>
+    </marker>
+  </defs>
+
+  <!-- background -->
+  <rect width="960" height="600" fill="#f8fafb"/>
+
+  <!-- ─── arrows (drawn before boxes) ─── -->
+
+  <!-- ERR → E1 (left branch) -->
+  <path d="M 480,148 L 480,164 L 212,164 L 212,192" fill="none" stroke="#6c8188" stroke-width="1" marker-end="url(#2026-10-02-1cb47ab1-07-arr-muted)"/>
+  <!-- ERR → E2 (center branch) -->
+  <path d="M 480,148 L 480,192" fill="none" stroke="#6c8188" stroke-width="1" marker-end="url(#2026-10-02-1cb47ab1-07-arr-muted)"/>
+  <!-- ERR → E3 (right branch) -->
+  <path d="M 480,148 L 480,164 L 748,164 L 748,192" fill="none" stroke="#6c8188" stroke-width="1" marker-end="url(#2026-10-02-1cb47ab1-07-arr-muted)"/>
+
+  <!-- E1 → S1 -->
+  <path d="M 212,272 L 212,312" fill="none" stroke="#a96a08" stroke-width="1" marker-end="url(#2026-10-02-1cb47ab1-07-arr-warn)"/>
+  <!-- E2 → S2 -->
+  <path d="M 480,272 L 480,312" fill="none" stroke="#a96a08" stroke-width="1" marker-end="url(#2026-10-02-1cb47ab1-07-arr-warn)"/>
+  <!-- E3 → S3 -->
+  <path d="M 748,272 L 748,312" fill="none" stroke="#a96a08" stroke-width="1" marker-end="url(#2026-10-02-1cb47ab1-07-arr-warn)"/>
+
+  <!-- ─── ERR node (focal) ─── -->
+  <rect x="356" y="60" width="248" height="88" rx="6" fill="#f8fafb"/>
+  <rect x="356" y="60" width="248" height="88" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.5"/>
+  <rect x="364" y="68" width="52" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.5)" stroke-width="0.8"/>
+  <text x="390" y="77" fill="#0d5763" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.1em" font-weight="500">FOCAL</text>
+  <text x="480" y="104" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Operational Pitfalls</text>
+  <text x="480" y="122" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">Operational Pitfalls</text>
+
+  <!-- ─── E1 node ─── -->
+  <rect x="88" y="192" width="248" height="80" rx="6" fill="#f8fafb"/>
+  <rect x="88" y="192" width="248" height="80" rx="6" fill="#fdf6e8" stroke="#a96a08" stroke-width="1.2"/>
+  <text x="212" y="228" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Page Boundary</text>
+  <text x="212" y="248" fill="#5c3d06" font-size="11" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Table/Figure Break</text>
+
+  <!-- ─── E2 node ─── -->
+  <rect x="356" y="192" width="248" height="80" rx="6" fill="#f8fafb"/>
+  <rect x="356" y="192" width="248" height="80" rx="6" fill="#fdf6e8" stroke="#a96a08" stroke-width="1.2"/>
+  <text x="480" y="228" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Embedding Model</text>
+  <text x="480" y="248" fill="#5c3d06" font-size="11" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Version Mismatch</text>
+
+  <!-- ─── E3 node ─── -->
+  <rect x="624" y="192" width="248" height="80" rx="6" fill="#f8fafb"/>
+  <rect x="624" y="192" width="248" height="80" rx="6" fill="#fdf6e8" stroke="#a96a08" stroke-width="1.2"/>
+  <text x="748" y="228" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Image Resolution</text>
+  <text x="748" y="248" fill="#5c3d06" font-size="11" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Misconfiguration</text>
+
+  <!-- ─── S1 node ─── -->
+  <rect x="88" y="312" width="248" height="80" rx="6" fill="#f8fafb"/>
+  <rect x="88" y="312" width="248" height="80" rx="6" fill="#eaf3ee" stroke="#286d50" stroke-width="1.2"/>
+  <text x="212" y="348" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Adjacent Page Merge</text>
+  <text x="212" y="368" fill="#1d4e38" font-size="11" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Boundary Chunk Fix</text>
+
+  <!-- ─── S2 node ─── -->
+  <rect x="356" y="312" width="248" height="80" rx="6" fill="#f8fafb"/>
+  <rect x="356" y="312" width="248" height="80" rx="6" fill="#eaf3ee" stroke="#286d50" stroke-width="1.2"/>
+  <text x="480" y="342" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Version Metadata Log</text>
+  <text x="480" y="362" fill="#1d4e38" font-size="11" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Re-index on Change</text>
+
+  <!-- ─── S3 node ─── -->
+  <rect x="624" y="312" width="248" height="80" rx="6" fill="#f8fafb"/>
+  <rect x="624" y="312" width="248" height="80" rx="6" fill="#eaf3ee" stroke="#286d50" stroke-width="1.2"/>
+  <text x="748" y="342" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">150 DPI Default</text>
+  <text x="748" y="362" fill="#1d4e38" font-size="11" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Formulas at 300 DPI</text>
+
+  <!-- ─── column connectors (horizontal) ─── -->
+  <!-- horizontal line connecting E nodes -->
+  <line x1="336" y1="232" x2="356" y2="232" stroke="rgba(18,33,39,0.12)" stroke-width="0.8" stroke-dasharray="3,3"/>
+  <line x1="604" y1="232" x2="624" y2="232" stroke="rgba(18,33,39,0.12)" stroke-width="0.8" stroke-dasharray="3,3"/>
+
+  <!-- ─── legend strip ─── -->
+  <line x1="40" y1="532" x2="920" y2="532" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+  <text x="40" y="544" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.14em">LEGEND</text>
+
+  <!-- legend: 함정 -->
+  <rect x="116" y="536" width="40" height="16" rx="4" fill="#fdf6e8" stroke="#a96a08" stroke-width="1.2"/>
+  <text x="162" y="548" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">Pitfall (Problem)</text>
+
+  <!-- legend: 해결 -->
+  <rect x="296" y="536" width="40" height="16" rx="4" fill="#eaf3ee" stroke="#286d50" stroke-width="1.2"/>
+  <text x="342" y="548" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">Solution Strategy</text>
+
+  <!-- legend: focal -->
+  <rect x="476" y="536" width="40" height="16" rx="4" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="522" y="548" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">Key Concept</text>
+</svg>
+</body>
+</html>

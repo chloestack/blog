@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,8 +14,8 @@
 <body>
 <div class="diagram-wrap">
 <svg viewBox="0 0 960 650" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="2026-10-01-233c5172-06-title 2026-10-01-233c5172-06-desc">
-  <title id="2026-10-01-233c5172-06-title">도구 실행 권한 흐름</title>
-  <desc id="2026-10-01-233c5172-06-desc">에이전트 요청이 권한 정책 검사를 거쳐 고위험 도구 여부를 확인하고, 승인 또는 차단 경로를 통해 도구를 실행하거나 권한 오류를 반환한 뒤 감사 로그를 기록하는 흐름.</desc>
+  <title id="2026-10-01-233c5172-06-title">Tool Execution Permission Flow</title>
+  <desc id="2026-10-01-233c5172-06-desc">An agent request passes a permission policy check, then a high-risk tool check; it either runs the tool (directly or after user approval) or returns a permission error, and every outcome is written to the audit log.</desc>
   <defs><marker id="2026-10-01-233c5172-06-arr-soft" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#3f545c"/></marker><marker id="2026-10-01-233c5172-06-arr-acc" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#0d5763"/></marker><marker id="2026-10-01-233c5172-06-arr-muted" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#6c8188"/></marker></defs>
   <rect width="960" height="650" fill="#f8fafb"/>
   <!-- connectors -->
@@ -31,65 +31,65 @@
   <!-- nodes -->
   <rect x="240" y="24" width="200" height="52" rx="26" fill="#f8fafb"/>
   <rect x="240" y="24" width="200" height="52" rx="26" fill="rgba(63,84,92,0.10)" stroke="#6c8188" stroke-width="1"/>
-  <text x="340" y="47" fill="#122127" font-size="14" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">에이전트 요청</text>
+  <text x="340" y="47" fill="#122127" font-size="14" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">Agent Request</text>
   <text x="340" y="63" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">tool_call</text>
   <polygon points="340,110 436,150 340,190 244,150" fill="#f8fafb"/>
   <polygon points="340,110 436,150 340,190 244,150" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
-  <text x="340" y="146" fill="#122127" font-size="13" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">권한 정책</text>
-  <text x="340" y="162" fill="#122127" font-size="13" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">통과하나?</text>
+  <text x="340" y="146" fill="#122127" font-size="13" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">Passes permission</text>
+  <text x="340" y="162" fill="#122127" font-size="13" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">policy?</text>
   <polygon points="340,230 436,270 340,310 244,270" fill="#f8fafb"/>
   <polygon points="340,230 436,270 340,310 244,270" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
-  <text x="340" y="266" fill="#122127" font-size="13" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">고위험</text>
-  <text x="340" y="282" fill="#122127" font-size="13" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">도구인가?</text>
+  <text x="340" y="266" fill="#122127" font-size="13" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">High-risk</text>
+  <text x="340" y="282" fill="#122127" font-size="13" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">tool?</text>
   <rect x="476" y="242" width="136" height="56" rx="6" fill="#f8fafb"/>
   <rect x="476" y="242" width="136" height="56" rx="6" fill="rgba(168,106,18,0.08)" stroke="#a86a12" stroke-width="1.2"/>
   <rect x="484" y="248" width="47" height="12" rx="2" fill="none" stroke="#a86a12" stroke-opacity="0.4" stroke-width="0.8"/>
   <text x="508" y="257" fill="#a86a12" fill-opacity="0.85" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">CONFIRM</text>
-  <text x="544" y="280" fill="#122127" font-size="13" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">사용자 확인</text>
+  <text x="544" y="280" fill="#122127" font-size="13" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">Ask User</text>
   <rect x="652" y="242" width="144" height="56" rx="6" fill="#f8fafb"/>
   <rect x="652" y="242" width="144" height="56" rx="6" fill="rgba(155,59,59,0.06)" stroke="#9b3b3b" stroke-width="1.2"/>
   <rect x="660" y="248" width="36" height="12" rx="2" fill="none" stroke="#9b3b3b" stroke-opacity="0.4" stroke-width="0.8"/>
   <text x="678" y="257" fill="#9b3b3b" fill-opacity="0.85" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">ERROR</text>
-  <text x="724" y="276" fill="#122127" font-size="13" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">권한 오류 반환</text>
-  <text x="724" y="292" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">로그 기록</text>
+  <text x="724" y="276" fill="#122127" font-size="13" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">Permission Error</text>
+  <text x="724" y="292" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">logged</text>
   <rect x="240" y="380" width="200" height="56" rx="6" fill="#f8fafb"/>
   <rect x="240" y="380" width="200" height="56" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
   <rect x="248" y="386" width="30" height="12" rx="2" fill="none" stroke="#0d5763" stroke-opacity="0.4" stroke-width="0.8"/>
   <text x="263" y="395" fill="#0d5763" fill-opacity="0.85" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">EXEC</text>
-  <text x="340" y="414" fill="#122127" font-size="14" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">도구 실행</text>
+  <text x="340" y="414" fill="#122127" font-size="14" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">Run Tool</text>
   <text x="340" y="430" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">tool.invoke()</text>
   <rect x="240" y="500" width="200" height="56" rx="26" fill="#f8fafb"/>
   <rect x="240" y="500" width="200" height="56" rx="26" fill="rgba(18,33,39,0.05)" stroke="#6c8188" stroke-width="1"/>
   <rect x="248" y="506" width="25" height="12" rx="2" fill="none" stroke="#6c8188" stroke-opacity="0.4" stroke-width="0.8"/>
   <text x="260" y="515" fill="#6c8188" fill-opacity="0.85" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">LOG</text>
-  <text x="340" y="534" fill="#122127" font-size="14" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">감사 로그 기록</text>
+  <text x="340" y="534" fill="#122127" font-size="14" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">Write Audit Log</text>
   <text x="340" y="550" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">audit.write()</text>
   <!-- edge labels -->
-  <rect x="546" y="144" width="28" height="14" rx="2" fill="#f8fafb"/>
-  <text x="560" y="154" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500" text-anchor="middle">차단</text>
-  <rect x="326" y="204" width="28" height="14" rx="2" fill="#f8fafb"/>
-  <text x="340" y="214" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500" text-anchor="middle">통과</text>
-  <text x="456" y="262" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500" text-anchor="middle">예</text>
-  <rect x="321" y="339" width="38" height="14" rx="2" fill="#f8fafb"/>
-  <text x="340" y="349" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500" text-anchor="middle">아니오</text>
-  <rect x="530" y="346" width="28" height="14" rx="2" fill="#f8fafb"/>
-  <text x="544" y="356" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500" text-anchor="middle">승인</text>
-  <text x="632" y="262" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500" text-anchor="middle">거부</text>
+  <rect x="536" y="144" width="49" height="14" rx="2" fill="#f8fafb"/>
+  <text x="560" y="154" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500" text-anchor="middle">Blocked</text>
+  <rect x="324" y="204" width="31" height="14" rx="2" fill="#f8fafb"/>
+  <text x="340" y="214" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500" text-anchor="middle">Pass</text>
+  <text x="456" y="262" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500" text-anchor="middle">Yes</text>
+  <rect x="330" y="339" width="20" height="14" rx="2" fill="#f8fafb"/>
+  <text x="340" y="349" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500" text-anchor="middle">No</text>
+  <rect x="517" y="346" width="54" height="14" rx="2" fill="#f8fafb"/>
+  <text x="544" y="356" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500" text-anchor="middle">Approved</text>
+  <text x="632" y="262" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500" text-anchor="middle">Denied</text>
   <!-- legend -->
   <line x1="32" y1="602" x2="928" y2="602" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
   <text x="32" y="624" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.14em">LEGEND</text>
   <rect x="110" y="613" width="18" height="14" rx="7" fill="rgba(63,84,92,0.10)" stroke="#6c8188" stroke-width="1"/>
-  <text x="136" y="624" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif">요청</text>
-  <polygon points="186.0,620 197.0,614 208.0,620 197.0,626" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
-  <text x="216.0" y="624" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif">정책 검사</text>
-  <rect x="294.38" y="613" width="18" height="14" rx="3" fill="rgba(168,106,18,0.08)" stroke="#a86a12" stroke-width="1"/>
-  <text x="320.38" y="624" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif">확인 요청</text>
-  <rect x="398.76" y="613" width="18" height="14" rx="3" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
-  <text x="424.76" y="624" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif">실행</text>
-  <rect x="474.76" y="613" width="18" height="14" rx="3" fill="rgba(155,59,59,0.06)" stroke="#9b3b3b" stroke-width="1"/>
-  <text x="500.76" y="624" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif">오류 / 차단</text>
-  <rect x="591.9" y="613" width="18" height="14" rx="3" fill="rgba(18,33,39,0.05)" stroke="#6c8188" stroke-width="1"/>
-  <text x="617.9" y="624" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif">감사 기록</text>
+  <text x="136" y="624" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif">Request</text>
+  <polygon points="208.66,620 219.66,614 230.66,620 219.66,626" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="238.66" y="624" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif">Policy check</text>
+  <rect x="343.22" y="613" width="18" height="14" rx="3" fill="rgba(168,106,18,0.08)" stroke="#a86a12" stroke-width="1"/>
+  <text x="369.22" y="624" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif">Confirmation</text>
+  <rect x="473.78000000000003" y="613" width="18" height="14" rx="3" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="499.78000000000003" y="624" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif">Execution</text>
+  <rect x="585.2" y="613" width="18" height="14" rx="3" fill="rgba(155,59,59,0.06)" stroke="#9b3b3b" stroke-width="1"/>
+  <text x="611.2" y="624" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif">Error / blocked</text>
+  <rect x="734.9000000000001" y="613" width="18" height="14" rx="3" fill="rgba(18,33,39,0.05)" stroke="#6c8188" stroke-width="1"/>
+  <text x="760.9000000000001" y="624" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif">Audit record</text>
 </svg>
 </div>
 </body>

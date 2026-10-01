@@ -49,8 +49,8 @@
   <text x="520" y="128" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="500">Yes</text>
 
   <!-- Q → TR  No (down) -->
-  <!-- Diamond bottom: (520,236) → down → right to TR center (648,296) -->
-  <path d="M 520,236 L 520,296 L 588,296" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-01-233c5172-01-arr)"/>
+  <!-- Diamond bottom: (520,236) → down → right to TR left edge (548,296) -->
+  <path d="M 520,236 L 520,296 L 548,296" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-01-233c5172-01-arr)"/>
   <!-- label No -->
   <rect x="496" y="252" width="48" height="14" rx="2" fill="#f8fafb"/>
   <text x="520" y="262" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="500">No</text>
@@ -63,8 +63,8 @@
   <path d="M 868,100 L 900,100 L 900,200 L 728,200" fill="none" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-10-01-233c5172-01-arr-accent)"/>
 
   <!-- R → M  (Result Return → Model Inference, feedback loop) -->
-  <!-- R bottom (688,228) → down to y=340 → left to x=308 → up to M bottom (308,228) -->
-  <path d="M 688,228 L 688,340 L 308,340 L 308,228" fill="none" stroke="#6c8188" stroke-width="1" stroke-dasharray="5,4" marker-end="url(#2026-10-01-233c5172-01-arr-muted)"/>
+  <!-- R bottom (704,228) → down to y=340 → left to x=308 → up to M bottom -->
+  <path d="M 704,228 L 704,340 L 308,340 L 308,232" fill="none" stroke="#6c8188" stroke-width="1" stroke-dasharray="5,4" marker-end="url(#2026-10-01-233c5172-01-arr-muted)"/>
   <!-- loop label -->
   <rect x="468" y="326" width="64" height="14" rx="2" fill="#f8fafb"/>
   <text x="500" y="336" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.04em">Next Turn</text>
@@ -75,7 +75,7 @@
   <!-- oval rx=20, centered at (104,200), w=128, h=52 -->
   <rect x="40" y="174" width="128" height="52" rx="20" fill="rgba(63,84,92,0.10)" stroke="#6c8188" stroke-width="1"/>
   <text x="104" y="197" fill="#122127" font-size="14" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">User Input</text>
-  <text x="104" y="213" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">User Input</text>
+  <text x="104" y="213" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">prompt</text>
 
   <!-- M: Model Inference — focal (accent) -->
   <!-- rect centered at (308,200), w=160, h=64 -->
@@ -124,9 +124,9 @@
   <text x="658" y="219" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Next Turn Input</text>
 
   <!-- TR: Text Response — terminal oval -->
-  <rect x="588" y="270" width="132" height="52" rx="20" fill="#f8fafb"/>
-  <rect x="588" y="270" width="132" height="52" rx="20" fill="rgba(63,84,92,0.06)" stroke="#6c8188" stroke-width="1" stroke-dasharray="5,3"/>
-  <text x="654" y="299" fill="#122127" font-size="14" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">Text Response</text>
+  <rect x="548" y="270" width="132" height="52" rx="20" fill="#f8fafb"/>
+  <rect x="548" y="270" width="132" height="52" rx="20" fill="rgba(63,84,92,0.06)" stroke="#6c8188" stroke-width="1" stroke-dasharray="5,3"/>
+  <text x="614" y="299" fill="#122127" font-size="14" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">Text Response</text>
 
   <!-- ===================== LEGEND ===================== -->
   <line x1="32" y1="392" x2="928" y2="392" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
@@ -149,7 +149,8 @@
   <text x="332" y="411" fill="#122127" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="500">I/O</text>
 
   <!-- feedback arrow sample -->
-  <line x1="384" y1="407" x2="420" y2="407" stroke="#6c8188" stroke-width="1" stroke-dasharray="5,4" marker-end="url(#2026-10-01-233c5172-01-arr-muted)"/>
+  <line x1="384" y1="407" x2="414" y2="407" stroke="#6c8188" stroke-width="1" stroke-dasharray="5,4"/>
+  <polygon points="414,404 420,407 414,410" fill="#6c8188"/>
   <text x="440" y="411" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500">Feedback Loop</text>
 
 </svg>

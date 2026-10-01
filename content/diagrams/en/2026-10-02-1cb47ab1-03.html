@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PDF Layout Analysis Pipeline</title>
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; font-family: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; }
+  .diagram-wrap { width: 100%; max-width: 960px; margin: 0 auto; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<div class="diagram-wrap">
+<svg viewBox="0 0 960 600" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="2026-10-02-1cb47ab1-03-pdf-pipeline-title 2026-10-02-1cb47ab1-03-pdf-pipeline-desc">
+  <title id="2026-10-02-1cb47ab1-03-pdf-pipeline-title">PDF Layout Analysis Pipeline</title>
+  <desc id="2026-10-02-1cb47ab1-03-pdf-pipeline-desc">A pipeline that detects four elements — title, body text, table, and image — from a PDF page via a layout analysis model, integrates them into section hierarchy metadata, and saves to an index.</desc>
+
+  <defs>
+    <!-- Arrow markers -->
+    <marker id="2026-10-02-1cb47ab1-03-arr" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-10-02-1cb47ab1-03-arr-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <marker id="2026-10-02-1cb47ab1-03-arr-muted" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#6c8188"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="960" height="600" fill="#f8fafb"/>
+
+  <!-- ===================== CONNECTORS (drawn before boxes) ===================== -->
+
+  <!-- PDF Page → Layout Analysis Model -->
+  <path d="M 480 96 L 480 136" fill="none" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-10-02-1cb47ab1-03-arr-accent)"/>
+
+  <!-- Layout Analysis Model → 4 element nodes (fan out) -->
+  <!-- to Title (left) -->
+  <path d="M 444 200 L 444 212 Q 444 224 432 224 L 272 224 Q 260 224 260 236 L 260 256" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-02-1cb47ab1-03-arr)"/>
+  <!-- to NarrativeText (center-left) -->
+  <path d="M 462 200 L 462 212 Q 462 236 450 236 L 400 236 Q 388 236 388 248 L 388 256" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-02-1cb47ab1-03-arr)"/>
+  <!-- to Table (center-right) -->
+  <path d="M 498 200 L 498 212 Q 498 236 510 236 L 560 236 Q 572 236 572 248 L 572 256" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-02-1cb47ab1-03-arr)"/>
+  <!-- to Figure (right) -->
+  <path d="M 516 200 L 516 212 Q 516 224 528 224 L 692 224 Q 704 224 704 236 L 704 256" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-02-1cb47ab1-03-arr)"/>
+
+  <!-- 4 element nodes → Section Hierarchy Metadata (fan in) -->
+  <!-- Title → H -->
+  <path d="M 260 316 L 260 344 Q 260 356 272 356 L 436 356 Q 448 356 448 368 L 448 384" fill="none" stroke="#6c8188" stroke-width="1" marker-end="url(#2026-10-02-1cb47ab1-03-arr-muted)"/>
+  <!-- NarrativeText → H -->
+  <path d="M 388 316 L 388 344 Q 388 368 400 368 L 460 368 Q 468 368 468 376 L 468 384" fill="none" stroke="#6c8188" stroke-width="1" marker-end="url(#2026-10-02-1cb47ab1-03-arr-muted)"/>
+  <!-- Table → H -->
+  <path d="M 572 316 L 572 344 Q 572 368 560 368 L 500 368 Q 492 368 492 376 L 492 384" fill="none" stroke="#6c8188" stroke-width="1" marker-end="url(#2026-10-02-1cb47ab1-03-arr-muted)"/>
+  <!-- Figure → H -->
+  <path d="M 704 316 L 704 344 Q 704 356 692 356 L 524 356 Q 512 356 512 368 L 512 384" fill="none" stroke="#6c8188" stroke-width="1" marker-end="url(#2026-10-02-1cb47ab1-03-arr-muted)"/>
+
+  <!-- Section Hierarchy Metadata → Index Store -->
+  <path d="M 480 444 L 480 484" fill="none" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-10-02-1cb47ab1-03-arr-accent)"/>
+
+
+  <!-- ===================== NODES ===================== -->
+
+  <!-- PDF Page — input -->
+  <rect x="380" y="48" width="200" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="380" y="48" width="200" height="48" rx="6" fill="rgba(58,84,143,0.07)" stroke="rgba(58,84,143,0.40)" stroke-width="1"/>
+  <rect x="388" y="56" width="32" height="12" rx="2" fill="transparent" stroke="rgba(58,84,143,0.35)" stroke-width="0.8"/>
+  <text x="404" y="65" fill="rgba(58,84,143,0.75)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.1em">INPUT</text>
+  <text x="480" y="78" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">PDF Page</text>
+
+  <!-- Layout Analysis Model — focal/accent -->
+  <rect x="360" y="136" width="240" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="360" y="136" width="240" height="64" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="368" y="144" width="36" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="386" y="153" fill="rgba(13,87,99,0.80)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.1em">MODEL</text>
+  <text x="480" y="170" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Layout Analysis Model</text>
+  <text x="480" y="188" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">Layout Analysis</text>
+
+  <!-- Title Detection -->
+  <rect x="192" y="256" width="136" height="60" rx="6" fill="#f8fafb"/>
+  <rect x="192" y="256" width="136" height="60" rx="6" fill="rgba(18,33,39,0.03)" stroke="rgba(18,33,39,0.28)" stroke-width="1"/>
+  <rect x="200" y="264" width="28" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.22)" stroke-width="0.8"/>
+  <text x="214" y="273" fill="rgba(18,33,39,0.55)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.1em">TYPE</text>
+  <text x="260" y="288" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Title Detection</text>
+  <text x="260" y="305" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">Title</text>
+
+  <!-- NarrativeText -->
+  <rect x="324" y="256" width="128" height="60" rx="6" fill="#f8fafb"/>
+  <rect x="324" y="256" width="128" height="60" rx="6" fill="rgba(18,33,39,0.03)" stroke="rgba(18,33,39,0.28)" stroke-width="1"/>
+  <rect x="332" y="264" width="28" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.22)" stroke-width="0.8"/>
+  <text x="346" y="273" fill="rgba(18,33,39,0.55)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.1em">TYPE</text>
+  <text x="388" y="287" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Body Text</text>
+  <text x="388" y="304" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">NarrativeText</text>
+
+  <!-- Table Detection -->
+  <rect x="508" y="256" width="128" height="60" rx="6" fill="#f8fafb"/>
+  <rect x="508" y="256" width="128" height="60" rx="6" fill="rgba(18,33,39,0.03)" stroke="rgba(18,33,39,0.28)" stroke-width="1"/>
+  <rect x="516" y="264" width="28" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.22)" stroke-width="0.8"/>
+  <text x="530" y="273" fill="rgba(18,33,39,0.55)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.1em">TYPE</text>
+  <text x="572" y="288" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Table Detection</text>
+  <text x="572" y="305" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">Table</text>
+
+  <!-- Figure Detection -->
+  <rect x="636" y="256" width="136" height="60" rx="6" fill="#f8fafb"/>
+  <rect x="636" y="256" width="136" height="60" rx="6" fill="rgba(18,33,39,0.03)" stroke="rgba(18,33,39,0.28)" stroke-width="1"/>
+  <rect x="644" y="264" width="28" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.22)" stroke-width="0.8"/>
+  <text x="658" y="273" fill="rgba(18,33,39,0.55)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.1em">TYPE</text>
+  <text x="704" y="288" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Image Detection</text>
+  <text x="704" y="305" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">Figure</text>
+
+  <!-- Section Hierarchy Metadata — backend/step -->
+  <rect x="360" y="384" width="240" height="60" rx="6" fill="#f8fafb"/>
+  <rect x="360" y="384" width="240" height="60" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="368" y="392" width="36" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.35)" stroke-width="0.8"/>
+  <text x="386" y="401" fill="rgba(18,33,39,0.65)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.1em">META</text>
+  <text x="480" y="418" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Section Hierarchy Meta</text>
+  <text x="480" y="436" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">section hierarchy</text>
+
+  <!-- Index Store — store -->
+  <!-- Cylinder-like store box -->
+  <rect x="384" y="484" width="192" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="384" y="484" width="192" height="56" rx="6" fill="rgba(18,33,39,0.05)" stroke="#3f545c" stroke-width="1"/>
+  <rect x="392" y="492" width="36" height="12" rx="2" fill="transparent" stroke="rgba(63,84,92,0.40)" stroke-width="0.8"/>
+  <text x="410" y="501" fill="rgba(63,84,92,0.75)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.1em">STORE</text>
+  <text x="480" y="521" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Index Store</text>
+
+  <!-- ===================== LEGEND ===================== -->
+  <line x1="40" y1="568" x2="920" y2="568" stroke="rgba(18,33,39,0.10)" stroke-width="0.8"/>
+  <text x="40" y="582" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.12em">LEGEND</text>
+
+  <!-- legend: focal -->
+  <rect x="116" y="573" width="14" height="10" rx="2" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="136" y="582" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">Core Model</text>
+
+  <!-- legend: element type -->
+  <rect x="228" y="573" width="14" height="10" rx="2" fill="rgba(18,33,39,0.03)" stroke="rgba(18,33,39,0.28)" stroke-width="1"/>
+  <text x="248" y="582" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">Detected Element</text>
+
+  <!-- legend: step -->
+  <rect x="340" y="573" width="14" height="10" rx="2" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <text x="360" y="582" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">Process Step</text>
+
+  <!-- legend: store -->
+  <rect x="448" y="573" width="14" height="10" rx="2" fill="rgba(18,33,39,0.05)" stroke="#3f545c" stroke-width="1"/>
+  <text x="468" y="582" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">Storage</text>
+
+  <!-- legend: input -->
+  <rect x="532" y="573" width="14" height="10" rx="2" fill="rgba(58,84,143,0.07)" stroke="rgba(58,84,143,0.40)" stroke-width="1"/>
+  <text x="552" y="582" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">Input</text>
+
+</svg>
+</div>
+</body>
+</html>

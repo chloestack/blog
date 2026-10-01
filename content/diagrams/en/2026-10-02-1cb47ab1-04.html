@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; font-family: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; }
+  .diagram-wrap { max-width: 960px; margin: 0 auto; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<div class="diagram-wrap">
+<svg viewBox="0 0 960 480" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="2026-10-02-1cb47ab1-04-mmrag-title 2026-10-02-1cb47ab1-04-mmrag-desc">
+  <title id="2026-10-02-1cb47ab1-04-mmrag-title">Multimodal RAG Retrieval Pipeline</title>
+  <desc id="2026-10-02-1cb47ab1-04-mmrag-desc">A flowchart showing two paths: a text query and an image are encoded by CLIP (single vector) and ColPali (patch tokens) respectively, then processed through Cosine Similarity and MaxSim operations to produce fast retrieval results and high-precision retrieval results.</desc>
+
+  <defs>
+    <!-- 화살표 마커 -->
+    <marker id="2026-10-02-1cb47ab1-04-mmrag-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-10-02-1cb47ab1-04-mmrag-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <marker id="2026-10-02-1cb47ab1-04-mmrag-arrow-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3a548f"/>
+    </marker>
+    <marker id="2026-10-02-1cb47ab1-04-mmrag-arrow-muted" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#6c8188"/>
+    </marker>
+  </defs>
+
+  <!-- 배경 -->
+  <rect width="960" height="480" fill="#f8fafb"/>
+
+  <!--
+    레이아웃 (5열):
+    Col1 입력: x=40  (width=108)
+    Col2 인코딩: x=200 (width=120)
+    Col3 유사도: x=388 (width=132)
+    Col4 결과: x=584 (width=128)
+
+    Row1 (텍스트 경로): cy=152
+    Row2 (이미지 입력): cy=272  (두 인코딩 사이 중간)
+    Row2a (CLIP): cy=228
+    Row2b (ColPali): cy=316
+    Row3 (유사도/결과도 두 줄):
+      SIM1/R1: cy=228
+      SIM2/R2: cy=316
+  -->
+
+  <!-- ══════════════════════════════
+       화살표 (박스보다 먼저)
+  ══════════════════════════════ -->
+
+  <!-- 텍스트 쿼리 → 쿼리 인코딩 -->
+  <path d="M 148,152 L 196,152" fill="none" stroke="#3a548f" stroke-width="1" marker-end="url(#2026-10-02-1cb47ab1-04-mmrag-arrow-link)"/>
+
+  <!-- 이미지 → CLIP (위) -->
+  <path d="M 148,272 L 168,272 L 168,228 L 196,228" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-02-1cb47ab1-04-mmrag-arrow)"/>
+
+  <!-- 이미지 → ColPali (아래) -->
+  <path d="M 148,272 L 168,272 L 168,316 L 196,316" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-02-1cb47ab1-04-mmrag-arrow)"/>
+
+  <!-- 쿼리 인코딩 → 코사인 유사도 (위로 꺾임) -->
+  <path d="M 320,152 L 356,152 L 356,228 L 384,228" fill="none" stroke="#3a548f" stroke-width="1" marker-end="url(#2026-10-02-1cb47ab1-04-mmrag-arrow-link)"/>
+
+  <!-- 쿼리 인코딩 → MaxSim 연산 (아래로 꺾임) -->
+  <path d="M 320,152 L 356,152 L 356,316 L 384,316" fill="none" stroke="#3a548f" stroke-width="1" marker-end="url(#2026-10-02-1cb47ab1-04-mmrag-arrow-link)"/>
+
+  <!-- CLIP → 코사인 유사도 -->
+  <path d="M 320,228 L 384,228" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-02-1cb47ab1-04-mmrag-arrow)"/>
+
+  <!-- ColPali → MaxSim 연산 -->
+  <path d="M 320,316 L 384,316" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-02-1cb47ab1-04-mmrag-arrow)"/>
+
+  <!-- 코사인 유사도 → 검색 결과 빠름 -->
+  <path d="M 520,228 L 580,228" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-02-1cb47ab1-04-mmrag-arrow)"/>
+
+  <!-- MaxSim 연산 → 검색 결과 고정밀 (accent) -->
+  <path d="M 520,316 L 580,316" fill="none" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-10-02-1cb47ab1-04-mmrag-arrow-accent)"/>
+
+
+  <!-- ══════════════════════════════
+       노드 박스
+  ══════════════════════════════ -->
+
+  <!-- ── 텍스트 쿼리 (입력) x=40 cy=152 w=108 h=48 -->
+  <rect x="40" y="128" width="108" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="40" y="128" width="108" height="48" rx="6" fill="rgba(58,84,143,0.08)" stroke="#3a548f" stroke-width="1"/>
+  <rect x="48" y="134" width="36" height="12" rx="2" fill="transparent" stroke="rgba(58,84,143,0.40)" stroke-width="0.8"/>
+  <text x="66" y="143" fill="rgba(58,84,143,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">INPUT</text>
+  <text x="94" y="157" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Text Query</text>
+
+  <!-- ── 이미지 (입력) x=40 cy=272 w=108 h=48 -->
+  <rect x="40" y="248" width="108" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="40" y="248" width="108" height="48" rx="6" fill="rgba(58,84,143,0.08)" stroke="#3a548f" stroke-width="1"/>
+  <rect x="48" y="254" width="36" height="12" rx="2" fill="transparent" stroke="rgba(58,84,143,0.40)" stroke-width="0.8"/>
+  <text x="66" y="263" fill="rgba(58,84,143,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">INPUT</text>
+  <text x="94" y="277" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Image</text>
+
+  <!-- ── 쿼리 인코딩 (accent) x=200 cy=152 w=120 h=48 -->
+  <rect x="200" y="128" width="120" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="200" y="128" width="120" height="48" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="208" y="134" width="28" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="222" y="143" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">ENC</text>
+  <text x="260" y="157" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Query Encoding</text>
+
+  <!-- ── CLIP / 단일 벡터 (accent) x=200 cy=228 w=120 h=48 -->
+  <rect x="200" y="204" width="120" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="200" y="204" width="120" height="48" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="208" y="210" width="28" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="222" y="219" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">ENC</text>
+  <text x="260" y="233" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">CLIP</text>
+  <text x="260" y="247" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">single vector</text>
+
+  <!-- ── ColPali / 패치 토큰 (focal accent) x=200 cy=316 w=120 h=48 -->
+  <rect x="200" y="292" width="120" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="200" y="292" width="120" height="48" rx="6" fill="rgba(13,87,99,0.12)" stroke="#0d5763" stroke-width="1.5"/>
+  <rect x="208" y="298" width="28" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="222" y="307" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">ENC</text>
+  <text x="260" y="321" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">ColPali</text>
+  <text x="260" y="335" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">patch tokens</text>
+
+  <!-- ── 코사인 유사도 (muted) x=384 cy=228 w=136 h=48 -->
+  <rect x="384" y="204" width="136" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="384" y="204" width="136" height="48" rx="6" fill="rgba(18,33,39,0.03)" stroke="#6c8188" stroke-width="1"/>
+  <rect x="392" y="210" width="28" height="12" rx="2" fill="transparent" stroke="rgba(108,129,136,0.40)" stroke-width="0.8"/>
+  <text x="406" y="219" fill="rgba(108,129,136,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">SIM</text>
+  <text x="452" y="233" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Cosine Similarity</text>
+  <text x="452" y="247" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">Cosine Similarity</text>
+
+  <!-- ── MaxSim 연산 (accent) x=384 cy=316 w=136 h=48 -->
+  <rect x="384" y="292" width="136" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="384" y="292" width="136" height="48" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="392" y="298" width="28" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="406" y="307" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">SIM</text>
+  <text x="452" y="321" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">MaxSim Op.</text>
+  <text x="452" y="335" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">Late Interaction</text>
+
+  <!-- ── 검색 결과 / 빠름 (muted result) x=580 cy=228 w=132 h=48 -->
+  <rect x="580" y="204" width="132" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="580" y="204" width="132" height="48" rx="6" fill="rgba(18,33,39,0.03)" stroke="#6c8188" stroke-width="1"/>
+  <rect x="588" y="210" width="40" height="12" rx="2" fill="transparent" stroke="rgba(108,129,136,0.40)" stroke-width="0.8"/>
+  <text x="608" y="219" fill="rgba(108,129,136,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">RESULT</text>
+  <text x="646" y="233" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Search Result</text>
+  <text x="646" y="247" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Fast</text>
+
+  <!-- ── 검색 결과 / 고정밀 (accent result) x=580 cy=316 w=132 h=48 -->
+  <rect x="580" y="292" width="132" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="580" y="292" width="132" height="48" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="588" y="298" width="40" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="608" y="307" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">RESULT</text>
+  <text x="646" y="321" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Search Result</text>
+  <text x="646" y="335" fill="#0d5763" font-size="10" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">High Precision</text>
+
+  <!-- ══════════════════════════════
+       경로 레이블 (화살표 위)
+  ══════════════════════════════ -->
+
+  <!-- 이미지 분기 위 레이블 -->
+  <rect x="142" y="238" width="48" height="13" rx="2" fill="#f8fafb"/>
+  <text x="166" y="248" fill="#6c8188" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.06em">CLIP</text>
+
+  <rect x="142" y="290" width="56" height="13" rx="2" fill="#f8fafb"/>
+  <text x="170" y="300" fill="#6c8188" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.06em">ColPali</text>
+
+  <!-- 쿼리 인코딩 분기 레이블 -->
+  <rect x="326" y="180" width="52" height="13" rx="2" fill="#f8fafb"/>
+  <text x="352" y="190" fill="#3a548f" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.06em">QUERY</text>
+
+  <rect x="326" y="272" width="52" height="13" rx="2" fill="#f8fafb"/>
+  <text x="352" y="282" fill="#3a548f" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.06em">QUERY</text>
+
+  <!-- ══════════════════════════════
+       범례
+  ══════════════════════════════ -->
+  <line x1="40" y1="412" x2="920" y2="412" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+
+  <text x="40" y="428" fill="#3f545c" font-size="8" font-family="'IBM Plex Mono', monospace" letter-spacing="0.14em">LEGEND</text>
+
+  <!-- focal -->
+  <rect x="108" y="418" width="14" height="14" rx="3" fill="rgba(13,87,99,0.12)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="128" y="429" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">Key Path (ColPali)</text>
+
+  <!-- muted -->
+  <rect x="280" y="418" width="14" height="14" rx="3" fill="rgba(18,33,39,0.03)" stroke="#6c8188" stroke-width="1"/>
+  <text x="300" y="429" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">Std. Path (CLIP)</text>
+
+  <!-- input -->
+  <rect x="452" y="418" width="14" height="14" rx="3" fill="rgba(58,84,143,0.08)" stroke="#3a548f" stroke-width="1"/>
+  <text x="472" y="429" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">Input</text>
+
+  <!-- arrow muted -->
+  <line x1="552" y1="425" x2="572" y2="425" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-02-1cb47ab1-04-mmrag-arrow)"/>
+  <text x="580" y="429" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">Data Flow</text>
+
+</svg>
+</div>
+</body>
+</html>

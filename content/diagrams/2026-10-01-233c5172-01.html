@@ -49,8 +49,8 @@
   <text x="520" y="128" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="500">예</text>
 
   <!-- Q → TR  아니오 (아래로) -->
-  <!-- Diamond bottom: (520,236) → down → right to TR center (648,296) -->
-  <path d="M 520,236 L 520,296 L 588,296" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-01-233c5172-01-arr)"/>
+  <!-- Diamond bottom: (520,236) → down → right to TR left edge (548,296) -->
+  <path d="M 520,236 L 520,296 L 548,296" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-01-233c5172-01-arr)"/>
   <!-- label 아니오 -->
   <rect x="496" y="252" width="48" height="14" rx="2" fill="#f8fafb"/>
   <text x="520" y="262" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="500">아니오</text>
@@ -60,12 +60,11 @@
 
   <!-- E → R  (도구 실행 → 결과 반환) -->
   <!-- E right edge (868,100) → right → down → left to R center -->
-  <!-- R is at (648,200), so route: from E (868,100) right to x=900, down to y=200, left to R right edge (728,200) -->
   <path d="M 868,100 L 900,100 L 900,200 L 728,200" fill="none" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-10-01-233c5172-01-arr-accent)"/>
 
   <!-- R → M  (결과 반환 → 모델 추론, feedback loop) -->
-  <!-- R bottom (688,228) → down to y=340 → left to x=308 → up to M bottom (308,228) -->
-  <path d="M 688,228 L 688,340 L 308,340 L 308,228" fill="none" stroke="#6c8188" stroke-width="1" stroke-dasharray="5,4" marker-end="url(#2026-10-01-233c5172-01-arr-muted)"/>
+  <!-- R bottom (704,228) → down to y=340 → left to x=308 → up to M bottom -->
+  <path d="M 704,228 L 704,340 L 308,340 L 308,232" fill="none" stroke="#6c8188" stroke-width="1" stroke-dasharray="5,4" marker-end="url(#2026-10-01-233c5172-01-arr-muted)"/>
   <!-- loop label -->
   <rect x="468" y="326" width="64" height="14" rx="2" fill="#f8fafb"/>
   <text x="500" y="336" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.04em">다음 턴</text>
@@ -115,8 +114,6 @@
   <text x="812" y="107" fill="#122127" font-size="14" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">도구 실행</text>
 
   <!-- R: 결과 반환 — store/state -->
-  <!-- rect centered at (648+40=668,200), w=140, h=52 -->
-  <!-- actually center at (688,200-14=186)... let's fix: center (688,200), h=56 -->
   <rect x="588" y="172" width="140" height="56" rx="6" fill="#f8fafb"/>
   <rect x="588" y="172" width="140" height="56" rx="6" fill="rgba(18,33,39,0.05)" stroke="#6c8188" stroke-width="1"/>
   <!-- tag -->
@@ -126,9 +123,9 @@
   <text x="658" y="219" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">다음 턴 입력</text>
 
   <!-- TR: 텍스트 응답 — terminal oval -->
-  <rect x="588" y="270" width="132" height="52" rx="20" fill="#f8fafb"/>
-  <rect x="588" y="270" width="132" height="52" rx="20" fill="rgba(63,84,92,0.06)" stroke="#6c8188" stroke-width="1" stroke-dasharray="5,3"/>
-  <text x="654" y="299" fill="#122127" font-size="14" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">텍스트 응답</text>
+  <rect x="548" y="270" width="132" height="52" rx="20" fill="#f8fafb"/>
+  <rect x="548" y="270" width="132" height="52" rx="20" fill="rgba(63,84,92,0.06)" stroke="#6c8188" stroke-width="1" stroke-dasharray="5,3"/>
+  <text x="614" y="299" fill="#122127" font-size="14" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">텍스트 응답</text>
 
   <!-- ===================== LEGEND ===================== -->
   <line x1="32" y1="392" x2="928" y2="392" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
@@ -151,7 +148,8 @@
   <text x="332" y="411" fill="#122127" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="500">입·출력</text>
 
   <!-- feedback arrow sample -->
-  <line x1="384" y1="407" x2="420" y2="407" stroke="#6c8188" stroke-width="1" stroke-dasharray="5,4" marker-end="url(#2026-10-01-233c5172-01-arr-muted)"/>
+  <line x1="384" y1="407" x2="414" y2="407" stroke="#6c8188" stroke-width="1" stroke-dasharray="5,4"/>
+  <polygon points="414,404 420,407 414,410" fill="#6c8188"/>
   <text x="440" y="411" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500">피드백 루프</text>
 
 </svg>

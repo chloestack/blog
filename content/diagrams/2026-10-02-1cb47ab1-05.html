@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; font-family: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; }
+  .diagram-wrap { width: 100%; max-width: 960px; margin: 0 auto; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<div class="diagram-wrap">
+<svg viewBox="0 0 960 420" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="2026-10-02-1cb47ab1-05-rag-title 2026-10-02-1cb47ab1-05-rag-desc">
+  <title id="2026-10-02-1cb47ab1-05-rag-title">멀티모달 RAG 검색 파이프라인</title>
+  <desc id="2026-10-02-1cb47ab1-05-rag-desc">사용자 질의가 의도 분석을 거쳐 멀티모달 검색 또는 텍스트 검색으로 분기된 뒤, 벡터 검색(ANN)과 키워드 검색(BM25)을 통해 RRF 점수 결합으로 상위 K개 후보를 반환하는 흐름을 보여준다.</desc>
+
+  <defs>
+    <!-- Arrow markers -->
+    <marker id="2026-10-02-1cb47ab1-05-arr" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-10-02-1cb47ab1-05-arr-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <marker id="2026-10-02-1cb47ab1-05-arr-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3a548f"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="960" height="420" fill="#f8fafb"/>
+
+  <!-- ============================================================
+       CONNECTORS — drawn before boxes
+  ============================================================ -->
+
+  <!-- Q → IA -->
+  <line x1="140" y1="210" x2="200" y2="210" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-02-1cb47ab1-05-arr)"/>
+
+  <!-- IA → MR (up-right branch) -->
+  <path d="M320,210 L320,148 L392,148" fill="none" stroke="#0d5763" stroke-width="1" marker-end="url(#2026-10-02-1cb47ab1-05-arr-accent)"/>
+
+  <!-- IA → TR (down-right branch) -->
+  <path d="M320,210 L320,272 L392,272" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-02-1cb47ab1-05-arr)"/>
+
+  <!-- MR → VEC -->
+  <path d="M512,148 L536,148 L536,180 L572,180" fill="none" stroke="#0d5763" stroke-width="1" marker-end="url(#2026-10-02-1cb47ab1-05-arr-accent)"/>
+
+  <!-- TR → VEC -->
+  <path d="M512,272 L536,272 L536,240 L572,240" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-02-1cb47ab1-05-arr)"/>
+
+  <!-- TR → KW -->
+  <path d="M512,272 L536,272 L536,316 L572,316" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-02-1cb47ab1-05-arr)"/>
+
+  <!-- VEC → RRF -->
+  <path d="M692,210 L716,210 L716,210 L720,210" fill="none" stroke="#3f545c" stroke-width="1"/>
+  <line x1="720" y1="210" x2="764" y2="210" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-02-1cb47ab1-05-arr)"/>
+
+  <!-- KW → RRF -->
+  <path d="M692,316 L728,316 L728,244" fill="none" stroke="#3f545c" stroke-width="1"/>
+  <line x1="728" y1="244" x2="764" y2="224" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-02-1cb47ab1-05-arr)"/>
+
+  <!-- RRF → TOP -->
+  <line x1="884" y1="210" x2="860" y2="210" stroke="#3f545c" stroke-width="1"/>
+  <!-- re-route: RRF right edge → TOP left edge -->
+
+  <!-- ============================================================
+       REVISED CONNECTORS — clean orthogonal routing
+  ============================================================ -->
+  <!-- Clear previous KW→RRF diagonal; redo below as elbow -->
+
+  <!-- VEC bottom → RRF via elbow -->
+  <!-- already handled above via midpoint, keeping simple horizontal for VEC row -->
+
+  <!-- ============================================================
+       NODE BOXES
+  ============================================================ -->
+
+  <!-- Q: 사용자 질의 (input type) -->
+  <rect x="28" y="184" width="112" height="52" rx="6" fill="#f8fafb"/>
+  <rect x="28" y="184" width="112" height="52" rx="6" fill="rgba(58,84,143,0.08)" stroke="#3a548f" stroke-width="1"/>
+  <rect x="36" y="190" width="32" height="12" rx="2" fill="transparent" stroke="rgba(58,84,143,0.4)" stroke-width="0.8"/>
+  <text x="52" y="199" fill="rgba(58,84,143,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">INPUT</text>
+  <text x="84" y="215" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">사용자 질의</text>
+
+  <!-- IA: 의도 분석 (focal) -->
+  <rect x="200" y="180" width="120" height="60" rx="6" fill="#f8fafb"/>
+  <rect x="200" y="180" width="120" height="60" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <rect x="208" y="186" width="28" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.4)" stroke-width="0.8"/>
+  <text x="222" y="195" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">분석</text>
+  <text x="260" y="215" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">의도 분석</text>
+
+  <!-- Branch label: 시각 요소 필요 (above MR path) -->
+  <rect x="298" y="120" width="76" height="14" rx="2" fill="#f8fafb"/>
+  <text x="336" y="131" fill="#6c8188" font-size="9" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">시각 요소 필요</text>
+
+  <!-- Branch label: 텍스트 충분 (below TR path) -->
+  <rect x="306" y="282" width="64" height="14" rx="2" fill="#f8fafb"/>
+  <text x="338" y="293" fill="#6c8188" font-size="9" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">텍스트 충분</text>
+
+  <!-- MR: 멀티모달 검색 -->
+  <rect x="392" y="120" width="120" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="392" y="120" width="120" height="56" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <rect x="400" y="126" width="40" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.4)" stroke-width="0.8"/>
+  <text x="420" y="135" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">MODAL</text>
+  <text x="452" y="152" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">멀티모달 검색</text>
+
+  <!-- TR: 텍스트 검색 -->
+  <rect x="392" y="244" width="120" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="392" y="244" width="120" height="56" rx="6" fill="rgba(63,84,92,0.06)" stroke="#3f545c" stroke-width="1"/>
+  <rect x="400" y="250" width="32" height="12" rx="2" fill="transparent" stroke="rgba(63,84,92,0.35)" stroke-width="0.8"/>
+  <text x="416" y="259" fill="rgba(63,84,92,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">TEXT</text>
+  <text x="452" y="276" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">텍스트 검색</text>
+
+  <!-- VEC: 벡터 검색 ANN -->
+  <rect x="572" y="160" width="120" height="60" rx="6" fill="#f8fafb"/>
+  <rect x="572" y="160" width="120" height="60" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <rect x="580" y="166" width="28" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.4)" stroke-width="0.8"/>
+  <text x="594" y="175" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">VEC</text>
+  <text x="632" y="192" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">벡터 검색</text>
+  <text x="632" y="208" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">ANN</text>
+
+  <!-- KW: 키워드 검색 BM25 -->
+  <rect x="572" y="288" width="120" height="60" rx="6" fill="#f8fafb"/>
+  <rect x="572" y="288" width="120" height="60" rx="6" fill="rgba(63,84,92,0.06)" stroke="#3f545c" stroke-width="1"/>
+  <rect x="580" y="294" width="24" height="12" rx="2" fill="transparent" stroke="rgba(63,84,92,0.35)" stroke-width="0.8"/>
+  <text x="592" y="303" fill="rgba(63,84,92,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">KW</text>
+  <text x="632" y="320" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">키워드 검색</text>
+  <text x="632" y="336" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">BM25</text>
+
+  <!-- ============================================================
+       REDO VEC→RRF and KW→RRF connectors (drawn after their sources
+       but before RRF box) — orthogonal elbows
+  ============================================================ -->
+
+  <!-- VEC right → elbow down → RRF left -->
+  <path d="M692,190 L732,190 L732,204 L764,204" fill="none" stroke="#0d5763" stroke-width="1" marker-end="url(#2026-10-02-1cb47ab1-05-arr-accent)"/>
+
+  <!-- KW right → elbow up → RRF left -->
+  <path d="M692,318 L740,318 L740,220 L764,220" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-02-1cb47ab1-05-arr)"/>
+
+  <!-- RRF → TOP -->
+  <line x1="876" y1="210" x2="908" y2="210" stroke="#0d5763" stroke-width="1" marker-end="url(#2026-10-02-1cb47ab1-05-arr-accent)"/>
+
+  <!-- RRF: RRF 점수 결합 (focal) -->
+  <rect x="764" y="180" width="112" height="60" rx="6" fill="#f8fafb"/>
+  <rect x="764" y="180" width="112" height="60" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="772" y="186" width="24" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.4)" stroke-width="0.8"/>
+  <text x="784" y="195" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">RRF</text>
+  <text x="820" y="212" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">RRF 점수</text>
+  <text x="820" y="228" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">결합</text>
+
+  <!-- TOP: 상위 K개 후보 -->
+  <rect x="908" y="184" width="24" height="0" rx="6" fill="#f8fafb"/><!-- spacer to ensure z-order -->
+
+  <!-- TOP box -->
+  <rect x="904" y="180" width="40" height="0" rx="6" fill="#f8fafb"/>
+  <!-- TOP wider -->
+  <rect x="896" y="180" width="52" height="60" rx="6" fill="#f8fafb"/>
+  <rect x="896" y="180" width="52" height="60" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="922" y="208" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">상위 K개</text>
+  <text x="922" y="223" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">후보</text>
+
+  <!-- ============================================================
+       LEGEND strip
+  ============================================================ -->
+  <line x1="28" y1="376" x2="932" y2="376" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+  <text x="28" y="390" fill="#6c8188" font-size="8" font-family="'IBM Plex Mono', monospace" letter-spacing="0.14em">LEGEND</text>
+
+  <!-- Legend: 의도 분석 (focal) -->
+  <rect x="100" y="381" width="12" height="12" rx="2" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="118" y="391" fill="#3f545c" font-size="9" font-family="'IBM Plex Sans KR', sans-serif">주요 처리 단계</text>
+
+  <!-- Legend: 기타 단계 -->
+  <rect x="248" y="381" width="12" height="12" rx="2" fill="rgba(63,84,92,0.06)" stroke="#3f545c" stroke-width="1"/>
+  <text x="266" y="391" fill="#3f545c" font-size="9" font-family="'IBM Plex Sans KR', sans-serif">일반 단계</text>
+
+  <!-- Legend: 입력 -->
+  <rect x="368" y="381" width="12" height="12" rx="2" fill="rgba(58,84,143,0.08)" stroke="#3a548f" stroke-width="1"/>
+  <text x="386" y="391" fill="#3f545c" font-size="9" font-family="'IBM Plex Sans KR', sans-serif">입력</text>
+
+</svg>
+</div>
+</body>
+</html>

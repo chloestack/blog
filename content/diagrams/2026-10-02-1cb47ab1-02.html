@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>멀티모달 RAG 전략 선택</title>
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; font-family: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; }
+  .diagram-wrap { width: 100%; max-width: 960px; margin: 0 auto; }
+  svg { width: 100%; height: auto; display: block; }
+</style>
+</head>
+<body>
+<div class="diagram-wrap">
+<svg viewBox="0 0 960 420" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="2026-10-02-1cb47ab1-02-rag-title 2026-10-02-1cb47ab1-02-rag-desc">
+  <title id="2026-10-02-1cb47ab1-02-rag-title">멀티모달 RAG 이미지 검색 전략 선택</title>
+  <desc id="2026-10-02-1cb47ab1-02-rag-desc">쿼리가 전략 선택 분기를 거쳐 VLM 요약, CLIP 임베딩, ColPali 인코딩 세 경로로 분기되고, 각 경로가 장점 노드로 연결되는 흐름도.</desc>
+
+  <defs>
+    <!-- Arrow markers -->
+    <marker id="2026-10-02-1cb47ab1-02-rag-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-10-02-1cb47ab1-02-rag-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <marker id="2026-10-02-1cb47ab1-02-rag-arrow-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3a548f"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="960" height="420" fill="#f8fafb"/>
+
+  <!-- ===================== ARROWS (drawn before boxes) ===================== -->
+
+  <!-- Q → R (query → decision) -->
+  <path d="M 136,176 L 212,176" stroke="#0d5763" stroke-width="1.2" fill="none" marker-end="url(#2026-10-02-1cb47ab1-02-rag-arrow-accent)"/>
+
+  <!-- R → S (요약 방식) — exit top-right of diamond, route up then right -->
+  <path d="M 296,144 Q 296,96 340,96 L 488,96" stroke="#3f545c" stroke-width="1" fill="none" marker-end="url(#2026-10-02-1cb47ab1-02-rag-arrow)" stroke-dasharray="none"/>
+  <!-- label: 요약 방식 -->
+  <rect x="352" y="76" width="68" height="14" rx="2" fill="#f8fafb"/>
+  <text x="386" y="87" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">요약 방식</text>
+
+  <!-- R → C (CLIP) — exit right of diamond -->
+  <path d="M 312,176 L 488,176" stroke="#3f545c" stroke-width="1" fill="none" marker-end="url(#2026-10-02-1cb47ab1-02-rag-arrow)"/>
+  <!-- label: CLIP -->
+  <rect x="374" y="160" width="36" height="14" rx="2" fill="#f8fafb"/>
+  <text x="392" y="171" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono',ui-monospace,monospace" text-anchor="middle">CLIP</text>
+
+  <!-- R → CP (ColPali) — exit bottom-right of diamond, route down then right -->
+  <path d="M 296,208 Q 296,260 340,260 L 488,260" stroke="#3f545c" stroke-width="1" fill="none" marker-end="url(#2026-10-02-1cb47ab1-02-rag-arrow)"/>
+  <!-- label: ColPali -->
+  <rect x="352" y="240" width="52" height="14" rx="2" fill="#f8fafb"/>
+  <text x="378" y="251" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono',ui-monospace,monospace" text-anchor="middle">ColPali</text>
+
+  <!-- S → ok1 -->
+  <path d="M 644,96 L 740,96" stroke="#3f545c" stroke-width="1" fill="none" marker-end="url(#2026-10-02-1cb47ab1-02-rag-arrow)"/>
+
+  <!-- C → ok2 -->
+  <path d="M 644,176 L 740,176" stroke="#3f545c" stroke-width="1" fill="none" marker-end="url(#2026-10-02-1cb47ab1-02-rag-arrow)"/>
+
+  <!-- CP → ok3 -->
+  <path d="M 644,260 L 740,260" stroke="#3f545c" stroke-width="1" fill="none" marker-end="url(#2026-10-02-1cb47ab1-02-rag-arrow)"/>
+
+  <!-- ===================== NODES ===================== -->
+
+  <!-- Q: 쿼리 (input/link treatment) -->
+  <rect x="32" y="152" width="104" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="32" y="152" width="104" height="48" rx="6" fill="rgba(58,84,143,0.08)" stroke="#3a548f" stroke-width="1"/>
+  <rect x="40" y="158" width="28" height="12" rx="2" fill="transparent" stroke="rgba(58,84,143,0.4)" stroke-width="0.8"/>
+  <text x="54" y="167" fill="rgba(58,84,143,0.8)" font-size="7" font-family="'IBM Plex Mono',ui-monospace,monospace" text-anchor="middle" letter-spacing="0.08em">INPUT</text>
+  <text x="84" y="182" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">쿼리</text>
+
+  <!-- R: 전략 선택 (decision diamond — focal/accent) -->
+  <!-- Diamond centered at (268, 176), half-width=56, half-height=44 -->
+  <polygon points="212,176 268,132 324,176 268,220" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="268" y="170" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">전략</text>
+  <text x="268" y="186" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">선택</text>
+
+  <!-- S: VLM 요약 -->
+  <rect x="488" y="60" width="156" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="488" y="60" width="156" height="72" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="496" y="66" width="24" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.4)" stroke-width="0.8"/>
+  <text x="508" y="75" fill="rgba(18,33,39,0.8)" font-size="7" font-family="'IBM Plex Mono',ui-monospace,monospace" text-anchor="middle" letter-spacing="0.08em">VLM</text>
+  <text x="566" y="95" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">VLM 요약</text>
+  <text x="566" y="112" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono',ui-monospace,monospace" text-anchor="middle">→ 텍스트 임베딩</text>
+
+  <!-- C: 이미지 직접 임베딩 -->
+  <rect x="488" y="144" width="156" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="488" y="144" width="156" height="64" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="496" y="150" width="32" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.4)" stroke-width="0.8"/>
+  <text x="512" y="159" fill="rgba(18,33,39,0.8)" font-size="7" font-family="'IBM Plex Mono',ui-monospace,monospace" text-anchor="middle" letter-spacing="0.08em">CLIP</text>
+  <text x="566" y="176" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">이미지 직접</text>
+  <text x="566" y="193" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">임베딩</text>
+
+  <!-- CP: 페이지 패치 토큰 인코딩 -->
+  <rect x="488" y="228" width="156" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="488" y="228" width="156" height="64" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="496" y="234" width="44" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.4)" stroke-width="0.8"/>
+  <text x="518" y="243" fill="rgba(18,33,39,0.8)" font-size="7" font-family="'IBM Plex Mono',ui-monospace,monospace" text-anchor="middle" letter-spacing="0.08em">COLPALI</text>
+  <text x="566" y="260" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">페이지 패치</text>
+  <text x="566" y="277" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">토큰 인코딩</text>
+
+  <!-- ok1: 기존 인프라 재사용 가능 (store/outcome treatment) -->
+  <rect x="740" y="64" width="168" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="740" y="64" width="168" height="64" rx="6" fill="rgba(18,33,39,0.04)" stroke="#6c8188" stroke-width="1"/>
+  <text x="824" y="90" fill="#122127" font-size="13" font-weight="500" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">기존 인프라</text>
+  <text x="824" y="107" fill="#122127" font-size="13" font-weight="500" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">재사용 가능</text>
+
+  <!-- ok2: 실시간 처리 적합 -->
+  <rect x="740" y="148" width="168" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="740" y="148" width="168" height="56" rx="6" fill="rgba(18,33,39,0.04)" stroke="#6c8188" stroke-width="1"/>
+  <text x="824" y="174" fill="#122127" font-size="13" font-weight="500" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">실시간 처리</text>
+  <text x="824" y="191" fill="#122127" font-size="13" font-weight="500" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">적합</text>
+
+  <!-- ok3: 고정밀 시각 검색 (focal — accent) -->
+  <rect x="740" y="228" width="168" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="740" y="228" width="168" height="64" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="824" y="254" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">고정밀</text>
+  <text x="824" y="271" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">시각 검색</text>
+
+  <!-- ===================== LEGEND ===================== -->
+  <line x1="32" y1="352" x2="928" y2="352" stroke="rgba(18,33,39,0.10)" stroke-width="0.8"/>
+  <text x="32" y="366" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono',ui-monospace,monospace" letter-spacing="0.14em">LEGEND</text>
+
+  <!-- legend: 쿼리 입력 -->
+  <rect x="108" y="356" width="16" height="12" rx="3" fill="rgba(58,84,143,0.08)" stroke="#3a548f" stroke-width="1"/>
+  <text x="130" y="366" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif">입력</text>
+
+  <!-- legend: 전략 분기 -->
+  <polygon points="172,368 182,358 192,368 182,378" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="200" y="370" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif">전략 분기</text>
+
+  <!-- legend: 처리 방식 -->
+  <rect x="276" y="356" width="16" height="12" rx="3" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <text x="298" y="366" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif">처리 방식</text>
+
+  <!-- legend: 특성 (일반) -->
+  <rect x="368" y="356" width="16" height="12" rx="3" fill="rgba(18,33,39,0.04)" stroke="#6c8188" stroke-width="1"/>
+  <text x="390" y="366" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif">특성 (일반)</text>
+
+  <!-- legend: 특성 (강조) -->
+  <rect x="468" y="356" width="16" height="12" rx="3" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="490" y="366" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif">특성 (강조)</text>
+
+</svg>
+</div>
+</body>
+</html>

@@ -3,157 +3,86 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tool Schema Design Structure</title>
 <link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   body { background: #f8fafb; font-family: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; }
+  .diagram-wrap { width: 100%; max-width: 960px; margin: 0 auto; }
   svg { display: block; width: 100%; height: auto; }
 </style>
 </head>
 <body>
-<svg
-  xmlns="http://www.w3.org/2000/svg"
-  viewBox="0 0 960 600"
-  role="img"
-  aria-labelledby="2026-10-01-233c5172-02-schema-title 2026-10-01-233c5172-02-schema-desc"
->
-  <title id="2026-10-01-233c5172-02-schema-title">Tool Schema Design Structure</title>
-  <desc id="2026-10-01-233c5172-02-schema-desc">Flowchart showing how the three components of a tool schema (name, description, parameters) and their sub-items connect to model tool selection quality.</desc>
-
-  <defs>
-    <!-- 화살표 마커 -->
-    <marker id="2026-10-01-233c5172-02-arrow-muted" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
-      <polygon points="0 0, 8 3, 0 6" fill="#6c8188"/>
-    </marker>
-    <marker id="2026-10-01-233c5172-02-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
-      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
-    </marker>
-  </defs>
-
-  <!-- 배경 -->
-  <rect width="960" height="600" fill="#f8fafb"/>
-
-  <!-- ─────────────────────────────────────────
-       레이어 0: 커넥터 (박스보다 먼저 그림)
-  ───────────────────────────────────────── -->
-
-  <!-- 도구 스키마 → 이름 (S→N): 480,108 → 280,212 -->
-  <path d="M 480,108 L 480,140 L 280,140 L 280,212"
-        fill="none" stroke="#6c8188" stroke-width="1" marker-end="url(#2026-10-01-233c5172-02-arrow-muted)"/>
-
-  <!-- 도구 스키마 → 설명 (S→D): 480,108 → 480,212 -->
-  <path d="M 480,108 L 480,212"
-        fill="none" stroke="#6c8188" stroke-width="1" marker-end="url(#2026-10-01-233c5172-02-arrow-muted)"/>
-
-  <!-- 도구 스키마 → 파라미터 (S→P): 480,108 → 680,212 -->
-  <path d="M 480,108 L 480,140 L 680,140 L 680,212"
-        fill="none" stroke="#6c8188" stroke-width="1" marker-end="url(#2026-10-01-233c5172-02-arrow-muted)"/>
-
-  <!-- 파라미터 → required (P→R): 680,268 → 560,356 -->
-  <path d="M 680,268 L 680,308 L 560,308 L 560,356"
-        fill="none" stroke="#6c8188" stroke-width="1" marker-end="url(#2026-10-01-233c5172-02-arrow-muted)"/>
-
-  <!-- 파라미터 → optional (P→O): 680,268 → 800,356 -->
-  <path d="M 680,268 L 680,308 L 800,308 L 800,356"
-        fill="none" stroke="#6c8188" stroke-width="1" marker-end="url(#2026-10-01-233c5172-02-arrow-muted)"/>
-
-  <!-- 이름 → 모델 도구 선택 (N→Q): 280,268 → 400,460 -->
-  <path d="M 280,268 L 280,420 L 400,420 L 400,460"
-        fill="none" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-10-01-233c5172-02-arrow-accent)"/>
-
-  <!-- 설명 → 모델 도구 선택 (D→Q): 480,268 → 480,460 -->
-  <path d="M 480,268 L 480,460"
-        fill="none" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-10-01-233c5172-02-arrow-accent)"/>
-
-  <!-- 파라미터 → 모델 도구 선택 (P→Q): 680,268 → 560,460 -->
-  <path d="M 680,268 L 680,420 L 560,420 L 560,460"
-        fill="none" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-10-01-233c5172-02-arrow-accent)"/>
-
-
-  <!-- ─────────────────────────────────────────
-       레이어 1: 노드 박스
-  ───────────────────────────────────────── -->
-
-  <!-- 도구 스키마 (focal, 링크-블루 계열 #DBE2F2 → 여기서는 accent 처리) -->
-  <!-- 중앙 상단: cx=480, cy=72, w=200, h=52 -->
-  <rect x="380" y="52" width="200" height="52" rx="6" fill="#f8fafb"/>
-  <rect x="380" y="52" width="200" height="52" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.5"/>
-  <!-- 태그 박스 -->
-  <rect x="388" y="60" width="36" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
-  <text x="406" y="69" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">SCHEMA</text>
-  <text x="480" y="88" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Tool Schema</text>
-
-  <!-- 이름 (accent 계열) cx=280, cy=240, w=180, h=52 -->
-  <rect x="190" y="212" width="180" height="52" rx="6" fill="#f8fafb"/>
-  <rect x="190" y="212" width="180" height="52" rx="6" fill="rgba(13,87,99,0.06)" stroke="#0d5763" stroke-width="1"/>
-  <rect x="198" y="220" width="24" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
-  <text x="210" y="229" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">NAME</text>
-  <text x="280" y="244" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Name</text>
-  <text x="280" y="258" fill="#6c8188" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">verb + noun</text>
-
-  <!-- 설명 (accent 계열) cx=480, cy=240, w=180, h=52 -->
-  <rect x="390" y="212" width="180" height="52" rx="6" fill="#f8fafb"/>
-  <rect x="390" y="212" width="180" height="52" rx="6" fill="rgba(13,87,99,0.06)" stroke="#0d5763" stroke-width="1"/>
-  <rect x="398" y="220" width="24" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
-  <text x="410" y="229" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">DESC</text>
-  <text x="480" y="244" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Description</text>
-  <text x="480" y="258" fill="#6c8188" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">when · limit · fail</text>
-
-  <!-- 파라미터 (accent 계열) cx=680, cy=240, w=180, h=52 -->
-  <rect x="590" y="212" width="180" height="52" rx="6" fill="#f8fafb"/>
-  <rect x="590" y="212" width="180" height="52" rx="6" fill="rgba(13,87,99,0.06)" stroke="#0d5763" stroke-width="1"/>
-  <rect x="598" y="220" width="32" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
-  <text x="614" y="229" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">PARAM</text>
-  <text x="680" y="244" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Parameters</text>
-  <text x="680" y="258" fill="#6c8188" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">type · enum · range</text>
-
-  <!-- required cx=560, cy=384, w=160, h=52 -->
-  <rect x="480" y="356" width="160" height="52" rx="6" fill="#f8fafb"/>
-  <rect x="480" y="356" width="160" height="52" rx="6" fill="rgba(169,106,8,0.08)" stroke="#a96a08" stroke-width="1"/>
-  <rect x="488" y="364" width="40" height="12" rx="2" fill="transparent" stroke="rgba(169,106,8,0.40)" stroke-width="0.8"/>
-  <text x="508" y="373" fill="rgba(169,106,8,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">REQUIRED</text>
-  <text x="560" y="388" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">required</text>
-  <text x="560" y="402" fill="#6c8188" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">mandatory args</text>
-
-  <!-- optional cx=800, cy=384, w=160, h=52 -->
-  <rect x="720" y="356" width="160" height="52" rx="6" fill="#f8fafb"/>
-  <rect x="720" y="356" width="160" height="52" rx="6" fill="rgba(63,84,92,0.06)" stroke="#c3d0d4" stroke-width="1"/>
-  <rect x="728" y="364" width="40" height="12" rx="2" fill="transparent" stroke="rgba(99,129,136,0.40)" stroke-width="0.8"/>
-  <text x="748" y="373" fill="rgba(108,129,136,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">OPTIONAL</text>
-  <text x="800" y="388" fill="#3f545c" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">optional</text>
-  <text x="800" y="402" fill="#6c8188" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">provide default</text>
-
-  <!-- 모델 도구 선택 (focal, ok 계열) cx=480, cy=500, w=280, h=56 -->
-  <rect x="340" y="460" width="280" height="56" rx="6" fill="#f8fafb"/>
-  <rect x="340" y="460" width="280" height="56" rx="6" fill="rgba(40,109,80,0.08)" stroke="#286d50" stroke-width="1.5"/>
-  <rect x="348" y="468" width="40" height="12" rx="2" fill="transparent" stroke="rgba(40,109,80,0.40)" stroke-width="0.8"/>
-  <text x="368" y="477" fill="rgba(40,109,80,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">OUTPUT</text>
-  <text x="480" y="494" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Model Tool Selection</text>
-  <text x="480" y="510" fill="#286d50" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">improved call quality</text>
-
-  <!-- ─────────────────────────────────────────
-       레전드
-  ───────────────────────────────────────── -->
-  <line x1="32" y1="554" x2="928" y2="554" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
-
-  <!-- 범례 항목들 -->
-  <!-- SCHEMA -->
-  <rect x="32" y="565" width="12" height="12" rx="2" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
-  <text x="50" y="575" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.06em">Schema component</text>
-
-  <!-- REQUIRED -->
-  <rect x="180" y="565" width="12" height="12" rx="2" fill="rgba(169,106,8,0.08)" stroke="#a96a08" stroke-width="1"/>
-  <text x="198" y="575" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.06em">Required item</text>
-
-  <!-- OPTIONAL -->
-  <rect x="308" y="565" width="12" height="12" rx="2" fill="rgba(63,84,92,0.06)" stroke="#c3d0d4" stroke-width="1"/>
-  <text x="326" y="575" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.06em">Optional item</text>
-
-  <!-- OUTPUT -->
-  <rect x="428" y="565" width="12" height="12" rx="2" fill="rgba(40,109,80,0.08)" stroke="#286d50" stroke-width="1"/>
-  <text x="446" y="575" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.06em">Quality output</text>
-
+<div class="diagram-wrap">
+<svg viewBox="0 0 960 540" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="2026-10-01-233c5172-02-title 2026-10-01-233c5172-02-desc">
+  <title id="2026-10-01-233c5172-02-title">Tool Schema Design Structure</title>
+  <desc id="2026-10-01-233c5172-02-desc">Flowchart showing how the three components of a tool schema (name, description, parameters) and their sub-items connect to model tool selection quality.</desc>
+  <defs><marker id="2026-10-01-233c5172-02-arr-soft" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#3f545c"/></marker><marker id="2026-10-01-233c5172-02-arr-acc" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#0d5763"/></marker><marker id="2026-10-01-233c5172-02-arr-muted" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#6c8188"/></marker></defs>
+  <rect width="960" height="540" fill="#f8fafb"/>
+  <!-- connectors -->
+  <path d="M 480,96 L 480,128 L 200,128 L 200,160" fill="none" stroke="#6c8188" stroke-width="1" marker-end="url(#2026-10-01-233c5172-02-arr-muted)"/>
+  <path d="M 480,96 L 480,160" fill="none" stroke="#6c8188" stroke-width="1" marker-end="url(#2026-10-01-233c5172-02-arr-muted)"/>
+  <path d="M 480,96 L 480,128 L 760,128 L 760,160" fill="none" stroke="#6c8188" stroke-width="1" marker-end="url(#2026-10-01-233c5172-02-arr-muted)"/>
+  <path d="M 760,216 L 760,244 L 670,244 L 670,268" fill="none" stroke="#6c8188" stroke-width="1" marker-end="url(#2026-10-01-233c5172-02-arr-muted)"/>
+  <path d="M 760,216 L 760,244 L 850,244 L 850,268" fill="none" stroke="#6c8188" stroke-width="1" marker-end="url(#2026-10-01-233c5172-02-arr-muted)"/>
+  <path d="M 200,216 L 200,432 L 280,432" fill="none" stroke="#0d5763" stroke-width="1" marker-end="url(#2026-10-01-233c5172-02-arr-acc)"/>
+  <path d="M 480,216 L 480,400" fill="none" stroke="#0d5763" stroke-width="1" marker-end="url(#2026-10-01-233c5172-02-arr-acc)"/>
+  <path d="M 850,324 L 850,352 L 670,352" fill="none" stroke="#0d5763" stroke-width="1"/>
+  <path d="M 670,324 L 670,432 L 640,432" fill="none" stroke="#0d5763" stroke-width="1" marker-end="url(#2026-10-01-233c5172-02-arr-acc)"/>
+  <!-- nodes -->
+  <rect x="380" y="40" width="200" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="380" y="40" width="200" height="56" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="388" y="46" width="42" height="12" rx="2" fill="none" stroke="#0d5763" stroke-opacity="0.4" stroke-width="0.8"/>
+  <text x="409" y="55" fill="#0d5763" fill-opacity="0.85" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">SCHEMA</text>
+  <text x="480" y="78" fill="#122127" font-size="14" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">Tool Schema</text>
+  <rect x="100" y="160" width="200" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="100" y="160" width="200" height="56" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="108" y="166" width="30" height="12" rx="2" fill="none" stroke="#0d5763" stroke-opacity="0.4" stroke-width="0.8"/>
+  <text x="123" y="175" fill="#0d5763" fill-opacity="0.85" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">NAME</text>
+  <text x="200" y="194" fill="#122127" font-size="14" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">Name</text>
+  <text x="200" y="210" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">verb + noun</text>
+  <rect x="380" y="160" width="200" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="380" y="160" width="200" height="56" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="388" y="166" width="30" height="12" rx="2" fill="none" stroke="#0d5763" stroke-opacity="0.4" stroke-width="0.8"/>
+  <text x="403" y="175" fill="#0d5763" fill-opacity="0.85" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">DESC</text>
+  <text x="480" y="194" fill="#122127" font-size="14" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">Description</text>
+  <text x="480" y="210" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">when · limits · failure</text>
+  <rect x="660" y="160" width="200" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="660" y="160" width="200" height="56" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="668" y="166" width="36" height="12" rx="2" fill="none" stroke="#0d5763" stroke-opacity="0.4" stroke-width="0.8"/>
+  <text x="686" y="175" fill="#0d5763" fill-opacity="0.85" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">PARAM</text>
+  <text x="760" y="194" fill="#122127" font-size="14" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">Parameters</text>
+  <text x="760" y="210" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">type · enum · range</text>
+  <rect x="596" y="268" width="148" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="596" y="268" width="148" height="56" rx="6" fill="rgba(168,106,18,0.08)" stroke="#a86a12" stroke-width="1.2"/>
+  <rect x="604" y="274" width="53" height="12" rx="2" fill="none" stroke="#a86a12" stroke-opacity="0.4" stroke-width="0.8"/>
+  <text x="630" y="283" fill="#a86a12" fill-opacity="0.85" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">REQUIRED</text>
+  <text x="670" y="302" fill="#122127" font-size="14" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">required</text>
+  <text x="670" y="318" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">mandatory args</text>
+  <rect x="776" y="268" width="148" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="776" y="268" width="148" height="56" rx="6" fill="rgba(18,33,39,0.05)" stroke="#6c8188" stroke-width="1"/>
+  <rect x="784" y="274" width="53" height="12" rx="2" fill="none" stroke="#6c8188" stroke-opacity="0.4" stroke-width="0.8"/>
+  <text x="810" y="283" fill="#6c8188" fill-opacity="0.85" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">OPTIONAL</text>
+  <text x="850" y="302" fill="#122127" font-size="14" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">optional</text>
+  <text x="850" y="318" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">provide default</text>
+  <rect x="280" y="400" width="360" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="280" y="400" width="360" height="64" rx="6" fill="rgba(47,111,85,0.08)" stroke="#2f6f55" stroke-width="1.2"/>
+  <rect x="288" y="406" width="42" height="12" rx="2" fill="none" stroke="#2f6f55" stroke-opacity="0.4" stroke-width="0.8"/>
+  <text x="309" y="415" fill="#2f6f55" fill-opacity="0.85" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">OUTPUT</text>
+  <text x="460" y="438" fill="#122127" font-size="14" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">Model Tool Selection</text>
+  <text x="460" y="454" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">better call quality</text>
+  <!-- edge labels -->
+  <!-- legend -->
+  <line x1="32" y1="492" x2="928" y2="492" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+  <text x="32" y="514" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.14em">LEGEND</text>
+  <rect x="110" y="503" width="18" height="14" rx="3" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="136" y="514" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif">Schema component</text>
+  <rect x="266.08" y="503" width="18" height="14" rx="3" fill="rgba(168,106,18,0.08)" stroke="#a86a12" stroke-width="1"/>
+  <text x="292.08" y="514" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif">Required item</text>
+  <rect x="403.02" y="503" width="18" height="14" rx="3" fill="rgba(18,33,39,0.05)" stroke="#6c8188" stroke-width="1"/>
+  <text x="429.02" y="514" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif">Optional item</text>
+  <rect x="539.96" y="503" width="18" height="14" rx="3" fill="rgba(47,111,85,0.08)" stroke="#2f6f55" stroke-width="1"/>
+  <text x="565.96" y="514" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif">Quality outcome</text>
 </svg>
+</div>
 </body>
 </html>
