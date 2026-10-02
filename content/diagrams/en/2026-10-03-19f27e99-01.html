@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; font-family: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; }
+  .diagram-wrap { max-width: 960px; margin: 0 auto; padding: 0; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<div class="diagram-wrap">
+<svg viewBox="0 0 960 360" xmlns="http://www.w3.org/2000/svg"
+     role="img" aria-labelledby="2026-10-03-19f27e99-01-routing-title 2026-10-03-19f27e99-01-routing-desc">
+  <title id="2026-10-03-19f27e99-01-routing-title">Reasoning Model vs Standard Model Routing</title>
+  <desc id="2026-10-03-19f27e99-01-routing-desc">Routing flow that branches to a reasoning model or standard model based on problem type. Complex design and proof problems go to the reasoning model; simple summarisation and transformation go to the standard model.</desc>
+
+  <defs>
+    <!-- Arrow markers -->
+    <marker id="2026-10-03-19f27e99-01-arr-muted" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-10-03-19f27e99-01-arr-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <marker id="2026-10-03-19f27e99-01-arr-ok" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#286d50"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="960" height="360" fill="#f8fafb"/>
+
+  <!-- ───────────────────────────────────────────
+       ARROWS (drawn before boxes)
+  ─────────────────────────────────────────────── -->
+
+  <!-- P1 → R  (top row, horizontal) -->
+  <path d="M 200 108 L 372 108" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-03-19f27e99-01-arr-muted)"/>
+
+  <!-- R → A1  (top row, horizontal) -->
+  <path d="M 532 108 L 712 108" fill="none" stroke="#0d5763" stroke-width="1" marker-end="url(#2026-10-03-19f27e99-01-arr-accent)"/>
+
+  <!-- P2 → S  (bottom row, horizontal) -->
+  <path d="M 200 252 L 372 252" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-03-19f27e99-01-arr-muted)"/>
+
+  <!-- S → A2  (bottom row, horizontal) -->
+  <path d="M 532 252 L 712 252" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-03-19f27e99-01-arr-muted)"/>
+
+  <!-- ───────────────────────────────────────────
+       ROW LABELS (eyebrow, behind nodes)
+  ─────────────────────────────────────────────── -->
+
+  <!-- Top lane subtle band -->
+  <rect x="28" y="68" width="904" height="80" rx="6" fill="rgba(13,87,99,0.03)" stroke="none"/>
+  <!-- Bottom lane subtle band -->
+  <rect x="28" y="212" width="904" height="80" rx="6" fill="rgba(63,84,92,0.03)" stroke="none"/>
+
+  <!-- ───────────────────────────────────────────
+       NODE BOXES
+  ─────────────────────────────────────────────── -->
+
+  <!-- === P1: Complex Problem === -->
+  <!-- paper mask -->
+  <rect x="44" y="72" width="156" height="72" rx="6" fill="#f8fafb"/>
+  <!-- box -->
+  <rect x="44" y="72" width="156" height="72" rx="6" fill="rgba(58,84,143,0.07)" stroke="#3a548f" stroke-width="1"/>
+  <!-- tag -->
+  <rect x="52" y="78" width="36" height="12" rx="2" fill="transparent" stroke="rgba(58,84,143,0.40)" stroke-width="0.8"/>
+  <text x="70" y="87" fill="rgba(58,84,143,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">INPUT</text>
+  <!-- name -->
+  <text x="122" y="118" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Complex Problem</text>
+  <!-- sublabel -->
+  <text x="122" y="134" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">design·proof·reasoning</text>
+
+  <!-- === R: Reasoning Model (FOCAL) === -->
+  <!-- paper mask -->
+  <rect x="372" y="72" width="160" height="72" rx="6" fill="#f8fafb"/>
+  <!-- box -->
+  <rect x="372" y="72" width="160" height="72" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <!-- tag -->
+  <rect x="380" y="78" width="36" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="398" y="87" fill="rgba(13,87,99,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">MODEL</text>
+  <!-- name -->
+  <text x="452" y="111" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Reasoning Model</text>
+  <!-- sublabel -->
+  <text x="452" y="127" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">think then respond</text>
+
+  <!-- === A1: Accurate Answer === -->
+  <!-- paper mask -->
+  <rect x="712" y="72" width="152" height="72" rx="6" fill="#f8fafb"/>
+  <!-- box -->
+  <rect x="712" y="72" width="152" height="72" rx="6" fill="rgba(40,109,80,0.08)" stroke="#286d50" stroke-width="1"/>
+  <!-- tag -->
+  <rect x="720" y="78" width="36" height="12" rx="2" fill="transparent" stroke="rgba(40,109,80,0.40)" stroke-width="0.8"/>
+  <text x="738" y="87" fill="rgba(40,109,80,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">OUTPUT</text>
+  <!-- name -->
+  <text x="788" y="115" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Accurate Answer</text>
+
+  <!-- === P2: Simple Query === -->
+  <!-- paper mask -->
+  <rect x="44" y="216" width="156" height="72" rx="6" fill="#f8fafb"/>
+  <!-- box -->
+  <rect x="44" y="216" width="156" height="72" rx="6" fill="rgba(58,84,143,0.07)" stroke="#3a548f" stroke-width="1"/>
+  <!-- tag -->
+  <rect x="52" y="222" width="36" height="12" rx="2" fill="transparent" stroke="rgba(58,84,143,0.40)" stroke-width="0.8"/>
+  <text x="70" y="231" fill="rgba(58,84,143,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">INPUT</text>
+  <!-- name -->
+  <text x="122" y="262" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Simple Query</text>
+  <!-- sublabel -->
+  <text x="122" y="278" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">summarise·classify·convert</text>
+
+  <!-- === S: Standard Model === -->
+  <!-- paper mask -->
+  <rect x="372" y="216" width="160" height="72" rx="6" fill="#f8fafb"/>
+  <!-- box -->
+  <rect x="372" y="216" width="160" height="72" rx="6" fill="rgba(238,242,244,1)" stroke="#c3d0d4" stroke-width="1"/>
+  <!-- tag -->
+  <rect x="380" y="222" width="36" height="12" rx="2" fill="transparent" stroke="rgba(63,84,92,0.35)" stroke-width="0.8"/>
+  <text x="398" y="231" fill="rgba(63,84,92,0.7)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">MODEL</text>
+  <!-- name -->
+  <text x="452" y="255" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Standard Model</text>
+  <!-- sublabel -->
+  <text x="452" y="271" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">respond immediately</text>
+
+  <!-- === A2: Fast Answer === -->
+  <!-- paper mask -->
+  <rect x="712" y="216" width="152" height="72" rx="6" fill="#f8fafb"/>
+  <!-- box -->
+  <rect x="712" y="216" width="152" height="72" rx="6" fill="rgba(40,109,80,0.08)" stroke="#286d50" stroke-width="1"/>
+  <!-- tag -->
+  <rect x="720" y="222" width="36" height="12" rx="2" fill="transparent" stroke="rgba(40,109,80,0.40)" stroke-width="0.8"/>
+  <text x="738" y="231" fill="rgba(40,109,80,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">OUTPUT</text>
+  <!-- name -->
+  <text x="788" y="259" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Fast Answer</text>
+
+  <!-- ───────────────────────────────────────────
+       ARROW LABELS
+  ─────────────────────────────────────────────── -->
+
+  <!-- P1→R label: "routing" -->
+  <rect x="268" y="96" width="36" height="12" rx="2" fill="#f8fafb"/>
+  <text x="286" y="105" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="500">route</text>
+
+  <!-- R→A1 label: "output" -->
+  <rect x="594" y="96" width="28" height="12" rx="2" fill="#f8fafb"/>
+  <text x="608" y="105" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="500">output</text>
+
+  <!-- P2→S label: "routing" -->
+  <rect x="268" y="240" width="36" height="12" rx="2" fill="#f8fafb"/>
+  <text x="286" y="249" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="500">route</text>
+
+  <!-- S→A2 label: "output" -->
+  <rect x="594" y="240" width="28" height="12" rx="2" fill="#f8fafb"/>
+  <text x="608" y="249" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="500">output</text>
+
+  <!-- ───────────────────────────────────────────
+       LEGEND
+  ─────────────────────────────────────────────── -->
+  <line x1="44" y1="312" x2="916" y2="312" stroke="rgba(18,33,39,0.10)" stroke-width="0.8"/>
+
+  <!-- legend label -->
+  <text x="44" y="328" fill="#3f545c" font-size="9" font-family="'IBM Plex Mono', monospace" letter-spacing="0.14em">LEGEND</text>
+
+  <!-- focal -->
+  <rect x="104" y="320" width="12" height="12" rx="2" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="120" y="330" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500">Reasoning Model (focal)</text>
+
+  <!-- input -->
+  <rect x="260" y="320" width="12" height="12" rx="2" fill="rgba(58,84,143,0.07)" stroke="#3a548f" stroke-width="1"/>
+  <text x="276" y="330" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500">Problem Type (input)</text>
+
+  <!-- output -->
+  <rect x="420" y="320" width="12" height="12" rx="2" fill="rgba(40,109,80,0.08)" stroke="#286d50" stroke-width="1"/>
+  <text x="436" y="330" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500">Answer (output)</text>
+
+  <!-- standard model -->
+  <rect x="548" y="320" width="12" height="12" rx="2" fill="#eef2f4" stroke="#c3d0d4" stroke-width="1"/>
+  <text x="564" y="330" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500">Standard Model</text>
+
+</svg>
+</div>
+</body>
+</html>

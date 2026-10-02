@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; font-family: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; }
+  .diagram-wrap { max-width: 960px; margin: 0 auto; padding: 0; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<div class="diagram-wrap">
+<svg viewBox="0 0 960 360" xmlns="http://www.w3.org/2000/svg"
+     role="img" aria-labelledby="2026-10-03-19f27e99-01-routing-title 2026-10-03-19f27e99-01-routing-desc">
+  <title id="2026-10-03-19f27e99-01-routing-title">추론 모델 vs 표준 모델 라우팅</title>
+  <desc id="2026-10-03-19f27e99-01-routing-desc">문제 유형에 따라 추론 모델과 표준 모델로 분기하는 라우팅 흐름도. 복잡한 설계·증명 문제는 추론 모델로, 단순 요약·변환은 표준 모델로 보낸다.</desc>
+
+  <defs>
+    <!-- Arrow markers -->
+    <marker id="2026-10-03-19f27e99-01-arr-muted" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-10-03-19f27e99-01-arr-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <marker id="2026-10-03-19f27e99-01-arr-ok" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#286d50"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="960" height="360" fill="#f8fafb"/>
+
+  <!-- ───────────────────────────────────────────
+       ARROWS (drawn before boxes)
+  ─────────────────────────────────────────────── -->
+
+  <!-- P1 → R  (top row, horizontal) -->
+  <path d="M 200 108 L 372 108" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-03-19f27e99-01-arr-muted)"/>
+
+  <!-- R → A1  (top row, horizontal) -->
+  <path d="M 532 108 L 712 108" fill="none" stroke="#0d5763" stroke-width="1" marker-end="url(#2026-10-03-19f27e99-01-arr-accent)"/>
+
+  <!-- P2 → S  (bottom row, horizontal) -->
+  <path d="M 200 252 L 372 252" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-03-19f27e99-01-arr-muted)"/>
+
+  <!-- S → A2  (bottom row, horizontal) -->
+  <path d="M 532 252 L 712 252" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-03-19f27e99-01-arr-muted)"/>
+
+  <!-- ───────────────────────────────────────────
+       ROW LABELS (eyebrow, behind nodes)
+  ─────────────────────────────────────────────── -->
+
+  <!-- Top lane subtle band -->
+  <rect x="28" y="68" width="904" height="80" rx="6" fill="rgba(13,87,99,0.03)" stroke="none"/>
+  <!-- Bottom lane subtle band -->
+  <rect x="28" y="212" width="904" height="80" rx="6" fill="rgba(63,84,92,0.03)" stroke="none"/>
+
+  <!-- ───────────────────────────────────────────
+       NODE BOXES
+  ─────────────────────────────────────────────── -->
+
+  <!-- === P1: 복잡한 문제 === -->
+  <!-- paper mask -->
+  <rect x="44" y="72" width="156" height="72" rx="6" fill="#f8fafb"/>
+  <!-- box -->
+  <rect x="44" y="72" width="156" height="72" rx="6" fill="rgba(58,84,143,0.07)" stroke="#3a548f" stroke-width="1"/>
+  <!-- tag -->
+  <rect x="52" y="78" width="36" height="12" rx="2" fill="transparent" stroke="rgba(58,84,143,0.40)" stroke-width="0.8"/>
+  <text x="70" y="87" fill="rgba(58,84,143,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">INPUT</text>
+  <!-- name -->
+  <text x="122" y="118" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">복잡한 문제</text>
+  <!-- sublabel -->
+  <text x="122" y="134" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">설계·증명·추론</text>
+
+  <!-- === R: 추론 모델 (FOCAL) === -->
+  <!-- paper mask -->
+  <rect x="372" y="72" width="160" height="72" rx="6" fill="#f8fafb"/>
+  <!-- box -->
+  <rect x="372" y="72" width="160" height="72" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <!-- tag -->
+  <rect x="380" y="78" width="36" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="398" y="87" fill="rgba(13,87,99,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">MODEL</text>
+  <!-- name -->
+  <text x="452" y="111" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">추론 모델</text>
+  <!-- sublabel -->
+  <text x="452" y="127" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">내부 사고 후 응답</text>
+
+  <!-- === A1: 정확한 답변 === -->
+  <!-- paper mask -->
+  <rect x="712" y="72" width="152" height="72" rx="6" fill="#f8fafb"/>
+  <!-- box -->
+  <rect x="712" y="72" width="152" height="72" rx="6" fill="rgba(40,109,80,0.08)" stroke="#286d50" stroke-width="1"/>
+  <!-- tag -->
+  <rect x="720" y="78" width="36" height="12" rx="2" fill="transparent" stroke="rgba(40,109,80,0.40)" stroke-width="0.8"/>
+  <text x="738" y="87" fill="rgba(40,109,80,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">OUTPUT</text>
+  <!-- name -->
+  <text x="788" y="115" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">정확한 답변</text>
+
+  <!-- === P2: 단순 질문 === -->
+  <!-- paper mask -->
+  <rect x="44" y="216" width="156" height="72" rx="6" fill="#f8fafb"/>
+  <!-- box -->
+  <rect x="44" y="216" width="156" height="72" rx="6" fill="rgba(58,84,143,0.07)" stroke="#3a548f" stroke-width="1"/>
+  <!-- tag -->
+  <rect x="52" y="222" width="36" height="12" rx="2" fill="transparent" stroke="rgba(58,84,143,0.40)" stroke-width="0.8"/>
+  <text x="70" y="231" fill="rgba(58,84,143,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">INPUT</text>
+  <!-- name -->
+  <text x="122" y="262" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">단순 질문</text>
+  <!-- sublabel -->
+  <text x="122" y="278" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">요약·분류·변환</text>
+
+  <!-- === S: 표준 모델 === -->
+  <!-- paper mask -->
+  <rect x="372" y="216" width="160" height="72" rx="6" fill="#f8fafb"/>
+  <!-- box -->
+  <rect x="372" y="216" width="160" height="72" rx="6" fill="rgba(238,242,244,1)" stroke="#c3d0d4" stroke-width="1"/>
+  <!-- tag -->
+  <rect x="380" y="222" width="36" height="12" rx="2" fill="transparent" stroke="rgba(63,84,92,0.35)" stroke-width="0.8"/>
+  <text x="398" y="231" fill="rgba(63,84,92,0.7)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">MODEL</text>
+  <!-- name -->
+  <text x="452" y="255" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">표준 모델</text>
+  <!-- sublabel -->
+  <text x="452" y="271" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">즉시 응답</text>
+
+  <!-- === A2: 빠른 답변 === -->
+  <!-- paper mask -->
+  <rect x="712" y="216" width="152" height="72" rx="6" fill="#f8fafb"/>
+  <!-- box -->
+  <rect x="712" y="216" width="152" height="72" rx="6" fill="rgba(40,109,80,0.08)" stroke="#286d50" stroke-width="1"/>
+  <!-- tag -->
+  <rect x="720" y="222" width="36" height="12" rx="2" fill="transparent" stroke="rgba(40,109,80,0.40)" stroke-width="0.8"/>
+  <text x="738" y="231" fill="rgba(40,109,80,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">OUTPUT</text>
+  <!-- name -->
+  <text x="788" y="259" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">빠른 답변</text>
+
+  <!-- ───────────────────────────────────────────
+       ARROW LABELS
+  ─────────────────────────────────────────────── -->
+
+  <!-- P1→R label: "라우팅" -->
+  <rect x="268" y="96" width="36" height="12" rx="2" fill="#f8fafb"/>
+  <text x="286" y="105" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="500">라우팅</text>
+
+  <!-- R→A1 label: "출력" -->
+  <rect x="594" y="96" width="28" height="12" rx="2" fill="#f8fafb"/>
+  <text x="608" y="105" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="500">출력</text>
+
+  <!-- P2→S label: "라우팅" -->
+  <rect x="268" y="240" width="36" height="12" rx="2" fill="#f8fafb"/>
+  <text x="286" y="249" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="500">라우팅</text>
+
+  <!-- S→A2 label: "출력" -->
+  <rect x="594" y="240" width="28" height="12" rx="2" fill="#f8fafb"/>
+  <text x="608" y="249" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="500">출력</text>
+
+  <!-- ───────────────────────────────────────────
+       LEGEND
+  ─────────────────────────────────────────────── -->
+  <line x1="44" y1="312" x2="916" y2="312" stroke="rgba(18,33,39,0.10)" stroke-width="0.8"/>
+
+  <!-- legend label -->
+  <text x="44" y="328" fill="#3f545c" font-size="9" font-family="'IBM Plex Mono', monospace" letter-spacing="0.14em">LEGEND</text>
+
+  <!-- focal -->
+  <rect x="104" y="320" width="12" height="12" rx="2" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="120" y="330" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500">추론 모델 (focal)</text>
+
+  <!-- input -->
+  <rect x="260" y="320" width="12" height="12" rx="2" fill="rgba(58,84,143,0.07)" stroke="#3a548f" stroke-width="1"/>
+  <text x="276" y="330" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500">문제 유형 (입력)</text>
+
+  <!-- output -->
+  <rect x="420" y="320" width="12" height="12" rx="2" fill="rgba(40,109,80,0.08)" stroke="#286d50" stroke-width="1"/>
+  <text x="436" y="330" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500">답변 (출력)</text>
+
+  <!-- standard model -->
+  <rect x="548" y="320" width="12" height="12" rx="2" fill="#eef2f4" stroke="#c3d0d4" stroke-width="1"/>
+  <text x="564" y="330" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500">표준 모델</text>
+
+</svg>
+</div>
+</body>
+</html>

@@ -27,5 +27,6 @@ export const POST_PAIRS: Record<string, string> = {
   "2026-09-29-Prompt-Caching으로-LLM-API-비용-줄이기-—-Anthropic·OpenAI-캐싱-전략-비교": "2026-09-29-llm-prompt-caching-anthropic-openai-comparison",
   "2026-09-30-Agentic-RAG-설계-—-검색-판단을-에이전트에게-위임하는-RAG-아키텍처": "2026-09-30-agentic-rag-design-delegating-retrieval-decisions",
   "2026-10-01-LLM-Tool-Calling-설계-패턴-—-에이전트-신뢰성-높이기": "2026-10-01-llm-tool-calling-design-patterns-reliable-agents",
-  "2026-10-02-멀티모달-RAG-구현-—-이미지·표-포함-PDF-검색-파이프라인-설계": "2026-10-02-multimodal-rag-pdf-images-tables-pipeline"
+  "2026-10-02-멀티모달-RAG-구현-—-이미지·표-포함-PDF-검색-파이프라인-설계": "2026-10-02-multimodal-rag-pdf-images-tables-pipeline",
+  "2026-10-03-추론-모델-프롬프팅-전략-—-o3·Claude-Opus를-비용-효율적으로-활용하는-법": "2026-10-03-reasoning-model-prompting-cost-effective-strategies"
 };

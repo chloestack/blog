@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<svg viewBox="0 0 960 280" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="2026-10-03-19f27e99-06-pipeline-title 2026-10-03-19f27e99-06-pipeline-desc">
+  <title id="2026-10-03-19f27e99-06-pipeline-title">추론 모델 비용 효율 파이프라인</title>
+  <desc id="2026-10-03-19f27e99-06-pipeline-desc">대용량 문서를 Haiku 청크 요약 → Sonnet 중간 집계 → Opus 최종 추론·검증 순서로 처리해 인사이트 보고서를 생성하는 3단계 캐스케이드 파이프라인.</desc>
+
+  <defs>
+    <!-- 기본 화살표 -->
+    <marker id="2026-10-03-19f27e99-06-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <!-- 강조 화살표 -->
+    <marker id="2026-10-03-19f27e99-06-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+  </defs>
+
+  <!-- 배경 -->
+  <rect width="960" height="280" fill="#f8fafb"/>
+
+  <!-- ── 화살표 (노드보다 먼저) ── -->
+
+  <!-- I → H -->
+  <line x1="196" y1="124" x2="240" y2="124" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-03-19f27e99-06-arrow)"/>
+
+  <!-- H → S -->
+  <line x1="380" y1="124" x2="424" y2="124" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-03-19f27e99-06-arrow)"/>
+
+  <!-- S → O -->
+  <line x1="564" y1="124" x2="608" y2="124" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-10-03-19f27e99-06-arrow-accent)"/>
+
+  <!-- O → F -->
+  <line x1="748" y1="124" x2="792" y2="124" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-10-03-19f27e99-06-arrow-accent)"/>
+
+  <!-- ── 노드 ── -->
+
+  <!-- 노드 1: 대용량 문서 (input) -->
+  <!-- 마스크 -->
+  <rect x="48" y="88" width="148" height="72" rx="6" fill="#f8fafb"/>
+  <!-- 배경 박스 -->
+  <rect x="48" y="88" width="148" height="72" rx="6" fill="rgba(58,84,143,0.07)" stroke="#3a548f" stroke-width="1"/>
+  <!-- 타입 태그 -->
+  <rect x="56" y="96" width="32" height="12" rx="2" fill="transparent" stroke="rgba(58,84,143,0.40)" stroke-width="0.8"/>
+  <text x="72" y="105" fill="rgba(58,84,143,0.80)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">INPUT</text>
+  <!-- 노드명 -->
+  <text x="122" y="128" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif" text-anchor="middle">대용량 문서</text>
+  <!-- 서브라벨 -->
+  <text x="122" y="148" fill="#6c8188" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">raw corpus</text>
+
+  <!-- 노드 2: Haiku 청크 요약 (muted step) -->
+  <rect x="240" y="88" width="140" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="240" y="88" width="140" height="72" rx="6" fill="#eef2f4" stroke="#c3d0d4" stroke-width="1"/>
+  <rect x="248" y="96" width="28" height="12" rx="2" fill="transparent" stroke="rgba(99,129,136,0.40)" stroke-width="0.8"/>
+  <text x="262" y="105" fill="rgba(99,129,136,0.80)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">LLM</text>
+  <text x="310" y="122" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif" text-anchor="middle">Haiku</text>
+  <text x="310" y="140" fill="#3f545c" font-size="12" font-weight="500" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif" text-anchor="middle">청크 요약</text>
+  <text x="310" y="154" fill="#6c8188" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">저비용·고속</text>
+
+  <!-- 노드 3: Sonnet 중간 집계 (muted step) -->
+  <rect x="424" y="88" width="140" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="424" y="88" width="140" height="72" rx="6" fill="#eef2f4" stroke="#c3d0d4" stroke-width="1"/>
+  <rect x="432" y="96" width="28" height="12" rx="2" fill="transparent" stroke="rgba(99,129,136,0.40)" stroke-width="0.8"/>
+  <text x="446" y="105" fill="rgba(99,129,136,0.80)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">LLM</text>
+  <text x="494" y="122" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif" text-anchor="middle">Sonnet</text>
+  <text x="494" y="140" fill="#3f545c" font-size="12" font-weight="500" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif" text-anchor="middle">중간 집계</text>
+  <text x="494" y="154" fill="#6c8188" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">중간 비용</text>
+
+  <!-- 노드 4: Opus 추론 (focal/accent) -->
+  <rect x="608" y="80" width="140" height="88" rx="6" fill="#f8fafb"/>
+  <rect x="608" y="80" width="140" height="88" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="616" y="88" width="36" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="634" y="97" fill="rgba(13,87,99,0.80)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">FOCAL</text>
+  <text x="678" y="118" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif" text-anchor="middle">Opus 추론</text>
+  <text x="678" y="136" fill="#0d5763" font-size="12" font-weight="500" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif" text-anchor="middle">최종 판단·검증</text>
+  <text x="678" y="156" fill="#6c8188" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">고정밀·고비용</text>
+
+  <!-- 노드 5: 인사이트 보고서 (output/ok) -->
+  <rect x="792" y="88" width="140" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="792" y="88" width="140" height="72" rx="6" fill="rgba(40,109,80,0.07)" stroke="#286d50" stroke-width="1"/>
+  <rect x="800" y="96" width="36" height="12" rx="2" fill="transparent" stroke="rgba(40,109,80,0.40)" stroke-width="0.8"/>
+  <text x="818" y="105" fill="rgba(40,109,80,0.80)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">OUTPUT</text>
+  <text x="862" y="128" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif" text-anchor="middle">인사이트</text>
+  <text x="862" y="146" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif" text-anchor="middle">보고서</text>
+
+  <!-- ── 화살표 라벨 ── -->
+
+  <!-- I→H 라벨 -->
+  <rect x="199" y="108" width="40" height="12" rx="2" fill="#f8fafb"/>
+  <text x="219" y="117" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle" font-weight="500">분할</text>
+
+  <!-- H→S 라벨 -->
+  <rect x="383" y="108" width="40" height="12" rx="2" fill="#f8fafb"/>
+  <text x="403" y="117" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle" font-weight="500">집계</text>
+
+  <!-- S→O 라벨 -->
+  <rect x="567" y="108" width="40" height="12" rx="2" fill="#f8fafb"/>
+  <text x="587" y="117" fill="#0d5763" font-size="10" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle" font-weight="500">추론</text>
+
+  <!-- O→F 라벨 -->
+  <rect x="751" y="108" width="40" height="12" rx="2" fill="#f8fafb"/>
+  <text x="771" y="117" fill="#0d5763" font-size="10" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle" font-weight="500">출력</text>
+
+  <!-- ── 레전드 구분선 ── -->
+  <line x1="32" y1="208" x2="928" y2="208" stroke="rgba(18,33,39,0.10)" stroke-width="0.8"/>
+
+  <!-- 레전드 -->
+  <text x="32" y="224" fill="#6c8188" font-size="8" font-family="'IBM Plex Mono', monospace" letter-spacing="0.14em">LEGEND</text>
+
+  <!-- 입력 샘플 -->
+  <rect x="96" y="214" width="12" height="12" rx="2" fill="rgba(58,84,143,0.07)" stroke="#3a548f" stroke-width="1"/>
+  <text x="114" y="224" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" font-weight="400">입력</text>
+
+  <!-- 처리 단계 샘플 -->
+  <rect x="164" y="214" width="12" height="12" rx="2" fill="#eef2f4" stroke="#c3d0d4" stroke-width="1"/>
+  <text x="182" y="224" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" font-weight="400">처리 단계</text>
+
+  <!-- 핵심 추론 샘플 -->
+  <rect x="264" y="214" width="12" height="12" rx="2" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="282" y="224" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" font-weight="400">핵심 추론 단계</text>
+
+  <!-- 출력 샘플 -->
+  <rect x="388" y="214" width="12" height="12" rx="2" fill="rgba(40,109,80,0.07)" stroke="#286d50" stroke-width="1"/>
+  <text x="406" y="224" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" font-weight="400">출력</text>
+
+</svg>
+</body>
+</html>

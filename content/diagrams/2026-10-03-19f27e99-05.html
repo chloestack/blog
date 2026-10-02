@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>추론 모델 선택 흐름</title>
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; font-family: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; }
+  .diagram-wrap { display: block; width: 100%; max-width: 960px; margin: 0 auto; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<div class="diagram-wrap">
+<svg
+  viewBox="0 0 960 600"
+  xmlns="http://www.w3.org/2000/svg"
+  role="img"
+  aria-labelledby="2026-10-03-19f27e99-05-flowchart-title 2026-10-03-19f27e99-05-flowchart-desc"
+>
+<title id="2026-10-03-19f27e99-05-flowchart-title">추론 모델 선택 플로우차트</title>
+<desc id="2026-10-03-19f27e99-05-flowchart-desc">작업 유형에 따라 표준 모델(Haiku·Sonnet)과 추론 모델(o3·Opus) 중 하나를 선택하는 의사결정 흐름. 단일 정답 여부와 패턴 매칭 가능 여부, 설계·분석·증명 여부를 순서대로 판단해 모델을 고른다.</desc>
+
+<defs>
+  <!-- Arrow markers -->
+  <marker id="2026-10-03-19f27e99-05-fc-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+    <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+  </marker>
+  <marker id="2026-10-03-19f27e99-05-fc-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+    <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+  </marker>
+
+  <!-- Drop pattern (none — clean paper) -->
+</defs>
+
+<!-- Background -->
+<rect width="960" height="600" fill="#f8fafb"/>
+
+<!-- ============================================================
+     CONNECTORS — drawn before nodes
+     ============================================================ -->
+
+<!-- T → Q1 (down) -->
+<path d="M480,116 L480,164" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-03-19f27e99-05-fc-arrow)"/>
+
+<!-- Q1 → Q2 : YES (right then down) -->
+<path d="M544,204 L664,204 Q672,204 672,212 L672,260" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-03-19f27e99-05-fc-arrow)" stroke-dasharray="none"/>
+
+<!-- Q1 → Q3 : NO (left then down) -->
+<path d="M416,204 L296,204 Q288,204 288,212 L288,260" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-03-19f27e99-05-fc-arrow)"/>
+
+<!-- Q2 → S : YES (right then down) -->
+<path d="M736,300 L800,300 Q808,300 808,308 L808,380" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-03-19f27e99-05-fc-arrow)"/>
+
+<!-- Q2 → R : NO (down) -->
+<path d="M672,340 L672,380" fill="none" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-10-03-19f27e99-05-fc-arrow-accent)"/>
+
+<!-- Q3 → R : YES (down to R via left path) -->
+<path d="M288,340 L288,400 Q288,408 296,408 L380,408" fill="none" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-10-03-19f27e99-05-fc-arrow-accent)"/>
+
+<!-- Q3 → S : NO (left then down) -->
+<path d="M224,300 L160,300 Q152,300 152,308 L152,380" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-03-19f27e99-05-fc-arrow)"/>
+
+<!-- ============================================================
+     ARROW LABELS
+     ============================================================ -->
+
+<!-- Q1→Q2 YES label -->
+<rect x="572" y="193" width="28" height="14" rx="2" fill="#f8fafb"/>
+<text x="586" y="203" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="500">예</text>
+
+<!-- Q1→Q3 NO label -->
+<rect x="316" y="193" width="44" height="14" rx="2" fill="#f8fafb"/>
+<text x="338" y="203" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="500">아니오</text>
+
+<!-- Q2→S YES label -->
+<rect x="742" y="289" width="28" height="14" rx="2" fill="#f8fafb"/>
+<text x="756" y="299" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="500">예</text>
+
+<!-- Q2→R NO label -->
+<rect x="648" y="349" width="44" height="14" rx="2" fill="#f8fafb"/>
+<text x="670" y="359" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="500">아니오</text>
+
+<!-- Q3→R YES label -->
+<rect x="264" y="349" width="28" height="14" rx="2" fill="#f8fafb"/>
+<text x="278" y="359" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="500">예</text>
+
+<!-- Q3→S NO label -->
+<rect x="152" y="289" width="44" height="14" rx="2" fill="#f8fafb"/>
+<text x="174" y="299" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="500">아니오</text>
+
+<!-- ============================================================
+     NODES
+     ============================================================ -->
+
+<!-- ── T: 작업 분류 (start oval, link/accent treatment) ── -->
+<rect x="392" y="60" width="176" height="56" rx="28" fill="#f8fafb"/>
+<rect x="392" y="60" width="176" height="56" rx="28" fill="rgba(58,84,143,0.07)" stroke="#3a548f" stroke-width="1"/>
+<text x="480" y="88" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">작업 분류</text>
+<text x="480" y="105" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">ENTRY</text>
+
+<!-- ── Q1: 단일 정답이 존재하나 (diamond) ── -->
+<!-- Diamond center: 480, 204. Half-width 64, half-height 40 -->
+<rect x="416" y="164" width="128" height="80" fill="#f8fafb"/>
+<polygon points="480,164 544,204 480,244 416,204" fill="rgba(13,87,99,0.06)" stroke="#0d5763" stroke-width="1"/>
+<text x="480" y="198" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">단일 정답이</text>
+<text x="480" y="213" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">존재하나</text>
+
+<!-- ── Q2: 패턴 매칭으로 빠르게 찾나 (diamond) ── -->
+<!-- Diamond center: 672, 300. Half-width 64, half-height 40 -->
+<rect x="608" y="260" width="128" height="80" fill="#f8fafb"/>
+<polygon points="672,260 736,300 672,340 608,300" fill="rgba(13,87,99,0.06)" stroke="#0d5763" stroke-width="1"/>
+<text x="672" y="294" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">패턴 매칭으로</text>
+<text x="672" y="308" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">빠르게 찾나</text>
+
+<!-- ── Q3: 설계·분석·증명인가 (diamond) ── -->
+<!-- Diamond center: 288, 300. Half-width 64, half-height 40 -->
+<rect x="224" y="260" width="128" height="80" fill="#f8fafb"/>
+<polygon points="288,260 352,300 288,340 224,300" fill="rgba(13,87,99,0.06)" stroke="#0d5763" stroke-width="1"/>
+<text x="288" y="294" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">설계·분석·</text>
+<text x="288" y="308" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">증명인가</text>
+
+<!-- ── S: 표준 모델 (result box, green tint) ── -->
+<!-- Two instances needed: from Q2-YES and Q3-NO -->
+<!-- S from Q2: center 808, 420 -->
+<rect x="728" y="380" width="160" height="72" rx="6" fill="#f8fafb"/>
+<rect x="728" y="380" width="160" height="72" rx="6" fill="rgba(40,109,80,0.07)" stroke="#286d50" stroke-width="1"/>
+<!-- tag -->
+<rect x="736" y="387" width="44" height="12" rx="2" fill="transparent" stroke="rgba(40,109,80,0.40)" stroke-width="0.8"/>
+<text x="758" y="396" fill="rgba(40,109,80,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">표준 모델</text>
+<text x="808" y="420" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Haiku · Sonnet</text>
+<text x="808" y="437" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">패턴 매칭 충분</text>
+
+<!-- S from Q3: center 152, 420 -->
+<rect x="72" y="380" width="160" height="72" rx="6" fill="#f8fafb"/>
+<rect x="72" y="380" width="160" height="72" rx="6" fill="rgba(40,109,80,0.07)" stroke="#286d50" stroke-width="1"/>
+<rect x="80" y="387" width="44" height="12" rx="2" fill="transparent" stroke="rgba(40,109,80,0.40)" stroke-width="0.8"/>
+<text x="102" y="396" fill="rgba(40,109,80,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">표준 모델</text>
+<text x="152" y="420" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Haiku · Sonnet</text>
+<text x="152" y="437" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">오픈엔드 작업</text>
+
+<!-- ── R: 추론 모델 (accent focal, teal tint) ── -->
+<!-- center 536, 408 -->
+<rect x="380" y="376" width="184" height="72" rx="6" fill="#f8fafb"/>
+<rect x="380" y="376" width="184" height="72" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+<rect x="388" y="383" width="44" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+<text x="410" y="392" fill="rgba(13,87,99,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">추론 모델</text>
+<text x="472" y="416" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">o3 · Opus</text>
+<text x="472" y="433" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">복잡 추론 필요</text>
+
+<!-- ============================================================
+     LEGEND — horizontal bottom strip
+     ============================================================ -->
+<line x1="40" y1="524" x2="920" y2="524" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+<text x="40" y="536" fill="#6c8188" font-size="9" font-family="'IBM Plex Mono', monospace" letter-spacing="0.14em">LEGEND</text>
+
+<!-- Legend items -->
+<!-- decision diamond swatch -->
+<polygon points="100,543 112,549 100,555 88,549" fill="rgba(13,87,99,0.06)" stroke="#0d5763" stroke-width="1"/>
+<text x="120" y="553" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">판단</text>
+
+<!-- standard model swatch -->
+<rect x="176" y="541" width="20" height="14" rx="3" fill="rgba(40,109,80,0.07)" stroke="#286d50" stroke-width="1"/>
+<text x="204" y="553" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">표준 모델</text>
+
+<!-- reasoning model swatch -->
+<rect x="296" y="541" width="20" height="14" rx="3" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+<text x="324" y="553" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">추론 모델</text>
+
+<!-- entry swatch -->
+<rect x="416" y="541" width="20" height="14" rx="7" fill="rgba(58,84,143,0.07)" stroke="#3a548f" stroke-width="1"/>
+<text x="444" y="553" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">시작점</text>
+
+</svg>
+</div>
+</body>
+</html>

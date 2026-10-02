@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 320" role="img" aria-labelledby="2026-10-03-19f27e99-03-cost-flow-title 2026-10-03-19f27e99-03-cost-flow-desc">
+  <title id="2026-10-03-19f27e99-03-cost-flow-title">추론 모델 토큰 비용 흐름</title>
+  <desc id="2026-10-03-19f27e99-03-cost-flow-desc">입력 토큰이 추론 모델로 들어가 사고 토큰(대량 소비)과 출력 토큰(소량)으로 분기되고, 두 흐름이 합산되어 총 청구 비용이 결정되는 구조를 보여주는 흐름도.</desc>
+
+  <defs>
+    <!-- 기본 화살표 (muted) -->
+    <marker id="2026-10-03-19f27e99-03-arr" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <!-- 강조 화살표 (accent) -->
+    <marker id="2026-10-03-19f27e99-03-arr-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <!-- 경고 화살표 (warm) -->
+    <marker id="2026-10-03-19f27e99-03-arr-warn" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#a96a08"/>
+    </marker>
+  </defs>
+
+  <!-- 배경 -->
+  <rect width="960" height="320" fill="#f8fafb"/>
+
+  <!-- ===================== CONNECTORS (drawn before boxes) ===================== -->
+
+  <!-- 입력 토큰 → 추론 모델 (수평 직선) -->
+  <line x1="196" y1="160" x2="304" y2="160" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-03-19f27e99-03-arr)"/>
+
+  <!-- 추론 모델 → 사고 토큰 (우측 상단 꺾기) -->
+  <!-- 출발: 추론 모델 우측 중앙 (484, 160) → 수평으로 540 → 꺾어서 사고 토큰 좌측 중앙 (564, 100) -->
+  <path d="M484,160 H532 Q540,160 540,152 V108 Q540,100 548,100 H564"
+        stroke="#0d5763" stroke-width="1.2" fill="none" marker-end="url(#2026-10-03-19f27e99-03-arr-accent)"/>
+
+  <!-- 추론 모델 → 출력 토큰 (우측 하단 꺾기) -->
+  <!-- 출발: 추론 모델 우측 중앙 (484, 160) → 수평으로 540 → 꺾어서 출력 토큰 좌측 중앙 (564, 220) -->
+  <path d="M484,160 H532 Q540,160 540,168 V212 Q540,220 548,220 H564"
+        stroke="#3f545c" stroke-width="1" fill="none" marker-end="url(#2026-10-03-19f27e99-03-arr)"/>
+
+  <!-- 사고 토큰 → 총 청구 비용 (우측 하단 꺾기) -->
+  <!-- 출발: 사고 토큰 우측 중앙 (724, 100) → 수평으로 780 → 꺾어서 총 청구 비용 좌측 중앙 (764, 160) -->
+  <!-- 사고 토큰 우측: x=724, y=100 / 총 청구 비용 좌측: x=764, y=160 -->
+  <path d="M724,100 H748 Q756,100 756,108 V152 Q756,160 764,160 H764"
+        stroke="#a96a08" stroke-width="1.2" fill="none" marker-end="url(#2026-10-03-19f27e99-03-arr-warn)"/>
+
+  <!-- 출력 토큰 → 총 청구 비용 (우측 상단 꺾기) -->
+  <!-- 출발: 출력 토큰 우측 중앙 (724, 220) → 수평으로 780 → 꺾어서 총 청구 비용 좌측 중앙 (764, 160) -->
+  <path d="M724,220 H748 Q756,220 756,212 V168 Q756,160 764,160 H764"
+        stroke="#3f545c" stroke-width="1" fill="none" marker-end="url(#2026-10-03-19f27e99-03-arr)"/>
+
+  <!-- ===================== NODES ===================== -->
+
+  <!-- 노드 1: 입력 토큰 (link/blue 계열) x=36, y=124, w=160, h=72 -->
+  <!-- paper mask -->
+  <rect x="36" y="124" width="160" height="72" rx="6" fill="#f8fafb"/>
+  <!-- styled box -->
+  <rect x="36" y="124" width="160" height="72" rx="6" fill="rgba(58,84,143,0.08)" stroke="#3a548f" stroke-width="1"/>
+  <!-- tag -->
+  <rect x="44" y="130" width="28" height="12" rx="2" fill="transparent" stroke="rgba(58,84,143,0.4)" stroke-width="0.8"/>
+  <text x="58" y="139" fill="rgba(58,84,143,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">INPUT</text>
+  <!-- name -->
+  <text x="116" y="157" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">입력 토큰</text>
+  <!-- sublabel -->
+  <text x="116" y="175" fill="#6c8188" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">저렴한 단가</text>
+
+  <!-- 노드 2: 추론 모델 (focal/accent) x=304, y=116, w=180, h=88 -->
+  <rect x="304" y="116" width="180" height="88" rx="6" fill="#f8fafb"/>
+  <rect x="304" y="116" width="180" height="88" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="312" y="122" width="32" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.4)" stroke-width="0.8"/>
+  <text x="328" y="131" fill="rgba(13,87,99,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">MODEL</text>
+  <text x="394" y="157" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">추론 모델</text>
+  <text x="394" y="175" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">o3 · Claude Opus</text>
+
+  <!-- 노드 3: 사고 토큰 (warn 계열) x=564, y=64, w=160, h=72 -->
+  <rect x="564" y="64" width="160" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="564" y="64" width="160" height="72" rx="6" fill="rgba(169,106,8,0.08)" stroke="#a96a08" stroke-width="1"/>
+  <rect x="572" y="70" width="36" height="12" rx="2" fill="transparent" stroke="rgba(169,106,8,0.4)" stroke-width="0.8"/>
+  <text x="590" y="79" fill="rgba(169,106,8,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">THINK</text>
+  <text x="644" y="97" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">사고 토큰</text>
+  <text x="644" y="115" fill="#6c8188" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">출력 단가 · 대량 소비</text>
+
+  <!-- 노드 4: 출력 토큰 (muted) x=564, y=184, w=160, h=72 -->
+  <rect x="564" y="184" width="160" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="564" y="184" width="160" height="72" rx="6" fill="rgba(195,208,212,0.20)" stroke="#c3d0d4" stroke-width="1"/>
+  <rect x="572" y="190" width="36" height="12" rx="2" fill="transparent" stroke="rgba(63,84,92,0.3)" stroke-width="0.8"/>
+  <text x="590" y="199" fill="rgba(63,84,92,0.6)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">OUTPUT</text>
+  <text x="644" y="217" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">출력 토큰</text>
+  <text x="644" y="235" fill="#6c8188" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">출력 단가 · 소량</text>
+
+  <!-- 노드 5: 총 청구 비용 (focal/accent) x=764, y=124, w=160, h=72 -->
+  <rect x="764" y="124" width="160" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="764" y="124" width="160" height="72" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="772" y="130" width="28" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.4)" stroke-width="0.8"/>
+  <text x="786" y="139" fill="rgba(13,87,99,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">COST</text>
+  <text x="844" y="157" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">총 청구 비용</text>
+  <text x="844" y="175" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">사고 + 출력 합산</text>
+
+  <!-- ===================== LEGEND ===================== -->
+  <line x1="36" y1="280" x2="924" y2="280" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+  <text x="36" y="296" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.14em">LEGEND</text>
+
+  <!-- legend item 1 -->
+  <rect x="112" y="288" width="10" height="10" rx="2" fill="rgba(58,84,143,0.08)" stroke="#3a548f" stroke-width="0.8"/>
+  <text x="128" y="297" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">입력</text>
+
+  <!-- legend item 2 -->
+  <rect x="188" y="288" width="10" height="10" rx="2" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="204" y="297" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">모델 / 비용</text>
+
+  <!-- legend item 3 -->
+  <rect x="304" y="288" width="10" height="10" rx="2" fill="rgba(169,106,8,0.08)" stroke="#a96a08" stroke-width="0.8"/>
+  <text x="320" y="297" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">사고 토큰 (비용 주도)</text>
+
+  <!-- legend item 4 -->
+  <rect x="476" y="288" width="10" height="10" rx="2" fill="rgba(195,208,212,0.20)" stroke="#c3d0d4" stroke-width="0.8"/>
+  <text x="492" y="297" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">출력 토큰 (소량)</text>
+
+</svg>
+</body>
+</html>

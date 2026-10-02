@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reasoning Model Inner Loop</title>
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+</style>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg"
+     viewBox="0 0 720 560"
+     role="img"
+     aria-labelledby="2026-10-03-19f27e99-02-reasoning-loop-title 2026-10-03-19f27e99-02-reasoning-loop-desc"
+     style="display:block;width:100%;max-width:720px;">
+
+  <title id="2026-10-03-19f27e99-02-reasoning-loop-title">Reasoning Model Inner Loop</title>
+  <desc id="2026-10-03-19f27e99-02-reasoning-loop-desc">A user question leads to internal thinking steps, passes self-verification, and when no errors are found, a final response is generated and delivered to the user. If errors are found, the flow returns to the thinking step in a repeating loop.</desc>
+
+  <defs>
+    <!-- Arrow markers -->
+    <marker id="2026-10-03-19f27e99-02-rl-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-10-03-19f27e99-02-rl-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <marker id="2026-10-03-19f27e99-02-rl-arrow-loop" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3a548f"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="720" height="560" fill="#f8fafb"/>
+
+  <!-- ───────────── ARROWS (drawn before boxes) ───────────── -->
+
+  <!-- Q → T vertical -->
+  <path d="M 360 116 L 360 152" stroke="#3f545c" stroke-width="1" fill="none" marker-end="url(#2026-10-03-19f27e99-02-rl-arrow)"/>
+
+  <!-- T → V vertical -->
+  <path d="M 360 228 L 360 264" stroke="#0d5763" stroke-width="1" fill="none" marker-end="url(#2026-10-03-19f27e99-02-rl-arrow-accent)"/>
+
+  <!-- V →(No) → O vertical -->
+  <path d="M 360 332 L 360 368" stroke="#0d5763" stroke-width="1" fill="none" marker-end="url(#2026-10-03-19f27e99-02-rl-arrow-accent)"/>
+  <!-- label No -->
+  <rect x="330" y="341" width="60" height="14" rx="2" fill="#f8fafb"/>
+  <text x="360" y="352" fill="#0d5763" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500" text-anchor="middle">No</text>
+
+  <!-- V →(Yes) feedback loop -->
+  <path d="M 284 298 L 208 298 L 208 190 L 296 190"
+        stroke="#3a548f" stroke-width="1" stroke-dasharray="5,4" fill="none"
+        marker-end="url(#2026-10-03-19f27e99-02-rl-arrow-loop)"/>
+  <!-- label Yes -->
+  <rect x="222" y="280" width="28" height="14" rx="2" fill="#f8fafb"/>
+  <text x="236" y="291" fill="#3a548f" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500" text-anchor="middle">Yes</text>
+
+  <!-- ───────────── NODES ───────────── -->
+
+  <!-- Node Q: User Question — input treatment (oval start) -->
+  <ellipse cx="360" cy="88" rx="88" ry="24" fill="#f8fafb"/>
+  <ellipse cx="360" cy="88" rx="88" ry="24" fill="rgba(58,84,143,0.07)" stroke="#3a548f" stroke-width="1"/>
+  <rect x="320" y="68" width="28" height="12" rx="2" fill="transparent" stroke="rgba(58,84,143,0.40)" stroke-width="0.8"/>
+  <text x="334" y="77" fill="rgba(58,84,143,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">INPUT</text>
+  <text x="360" y="93" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">User Question</text>
+
+  <!-- Node T: Thinking Step — focal (accent) -->
+  <rect x="284" y="152" width="152" height="76" rx="6" fill="#f8fafb"/>
+  <rect x="284" y="152" width="152" height="76" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="292" y="160" width="36" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="310" y="169" fill="rgba(13,87,99,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">THINK</text>
+  <text x="360" y="196" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Thinking Step</text>
+  <text x="360" y="214" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">internal reasoning</text>
+
+  <!-- Node V: Self-Verification — focal decision diamond -->
+  <polygon points="360,264 436,298 360,332 284,298" fill="#f8fafb"/>
+  <polygon points="360,264 436,298 360,332 284,298" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="360" y="293" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Self-Verify</text>
+  <text x="360" y="309" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Errors found?</text>
+
+  <!-- Node O: Generate Final Response — backend/step -->
+  <rect x="284" y="368" width="152" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="284" y="368" width="152" height="64" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="292" y="376" width="32" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="308" y="385" fill="rgba(18,33,39,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">GEN</text>
+  <text x="360" y="404" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Generate Response</text>
+  <text x="360" y="421" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">output</text>
+
+  <!-- Node R: Deliver to User — oval end -->
+  <ellipse cx="360" cy="480" rx="96" ry="24" fill="#f8fafb"/>
+  <ellipse cx="360" cy="480" rx="96" ry="24" fill="rgba(18,33,39,0.04)" stroke="rgba(18,33,39,0.30)" stroke-width="1"/>
+  <text x="360" y="485" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Deliver to User</text>
+
+  <!-- ───────────── LEGEND STRIP ───────────── -->
+  <line x1="40" y1="524" x2="680" y2="524" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+
+  <!-- legend label -->
+  <text x="40" y="538" fill="#6c8188" font-size="8" font-family="'IBM Plex Mono', monospace" letter-spacing="0.14em">LEGEND</text>
+
+  <!-- item 1: focal -->
+  <rect x="88" y="528" width="12" height="12" rx="2" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="106" y="539" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">Core Reasoning Step</text>
+
+  <!-- item 2: input -->
+  <ellipse cx="224" cy="534" rx="12" ry="7" fill="rgba(58,84,143,0.07)" stroke="#3a548f" stroke-width="1"/>
+  <text x="241" y="539" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">Input / Output</text>
+
+  <!-- item 3: step -->
+  <rect x="316" y="528" width="12" height="12" rx="2" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <text x="334" y="539" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">Process Step</text>
+
+  <!-- item 4: feedback loop arrow -->
+  <line x1="414" y1="534" x2="436" y2="534" stroke="#3a548f" stroke-width="1" stroke-dasharray="5,4" marker-end="url(#2026-10-03-19f27e99-02-rl-arrow-loop)"/>
+  <text x="442" y="539" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">Retry Loop</text>
+
+</svg>
+</body>
+</html>

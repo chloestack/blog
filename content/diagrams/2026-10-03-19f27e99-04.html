@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>추론 모델 프롬프팅 전략</title>
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; font-family: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; }
+  .diagram-wrap { display: block; width: 100%; max-width: 960px; margin: 0 auto; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<div class="diagram-wrap">
+<svg viewBox="0 0 960 600" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="2026-10-03-19f27e99-04-pmt-title 2026-10-03-19f27e99-04-pmt-desc">
+  <title id="2026-10-03-19f27e99-04-pmt-title">추론 모델 프롬프팅 전략 플로우차트</title>
+  <desc id="2026-10-03-19f27e99-04-pmt-desc">프롬프트 작성 시 과정 지시 포함 여부에 따라 CoT 강제(추론 경로 제약) 또는 결과 명세(추론 모델 위임)로 분기되며, 위임 경로가 최적 결과로 이어지는 의사결정 흐름을 보여준다.</desc>
+
+  <defs>
+    <!-- 화살표 마커 -->
+    <marker id="2026-10-03-19f27e99-04-pmt-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-10-03-19f27e99-04-pmt-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <marker id="2026-10-03-19f27e99-04-pmt-arrow-stop" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#94382b"/>
+    </marker>
+  </defs>
+
+  <!-- 배경 -->
+  <rect width="960" height="600" fill="#f8fafb"/>
+
+  <!-- ─────────────────────────────────────────────
+       커넥터 (nodes 보다 먼저)
+       레이아웃:
+         Q  (480, 60)  w=200 h=52  cx=480 cy=86    → 바닥 y=112
+         D  (480,172)  w=160 h=64  cx=480 cy=204   diamond
+         B  (240,308)  w=200 h=52  cx=240 cy=334   → top y=308
+         G  (480,308)  w=200 h=52  cx=480 cy=334   → top y=308
+         R  (480,416)  w=200 h=52  cx=480 cy=442   → top y=416
+         O  (480,512)  w=200 h=52  cx=480 cy=538   → top y=512
+  ───────────────────────────────────────────── -->
+
+  <!-- Q → D : 수직 직선 (y112 → y172) -->
+  <line x1="480" y1="112" x2="480" y2="168" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-03-19f27e99-04-pmt-arrow)"/>
+
+  <!-- D → B (아니오 아님, 예 분기) : 다이아몬드 왼쪽 꼭지(x=400,y=204) → B 오른쪽(x=340,y=334) -->
+  <!-- 직각 엘보: (400,204) → (240,204) → (240,308) -->
+  <path d="M400,204 L240,204 L240,308" fill="none" stroke="#94382b" stroke-width="1" marker-end="url(#2026-10-03-19f27e99-04-pmt-arrow-stop)"/>
+
+  <!-- D → G (아니오 분기) : 다이아몬드 바닥(480,236) → G 위(480,308) -->
+  <line x1="480" y1="236" x2="480" y2="308" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-03-19f27e99-04-pmt-arrow)"/>
+
+  <!-- G → R : 수직 직선 (y360 → y416) -->
+  <line x1="480" y1="360" x2="480" y2="416" stroke="#0d5763" stroke-width="1" marker-end="url(#2026-10-03-19f27e99-04-pmt-arrow-accent)"/>
+
+  <!-- R → O : 수직 직선 (y468 → y512) -->
+  <line x1="480" y1="468" x2="480" y2="512" stroke="#0d5763" stroke-width="1" marker-end="url(#2026-10-03-19f27e99-04-pmt-arrow-accent)"/>
+
+  <!-- ─────────────────────────────────────
+       화살표 레이블
+  ───────────────────────────────────────── -->
+
+  <!-- "예" 레이블 — D → B 수평 구간 중점 x=(400+240)/2=320, y=204 -->
+  <rect x="308" y="192" width="24" height="14" rx="2" fill="#f8fafb"/>
+  <text x="320" y="202" fill="#94382b" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500" text-anchor="middle">예</text>
+
+  <!-- "아니오" 레이블 — D → G 수직 구간, 옆에 배치 -->
+  <rect x="488" y="250" width="40" height="14" rx="2" fill="#f8fafb"/>
+  <text x="508" y="260" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500" text-anchor="middle">아니오</text>
+
+  <!-- ─────────────────────────────────────
+       노드
+  ───────────────────────────────────────── -->
+
+  <!-- Q: 프롬프트 작성 — input 처리 (파란 계열) -->
+  <!-- paper mask -->
+  <rect x="379" y="60" width="202" height="52" rx="6" fill="#f8fafb"/>
+  <!-- 박스 -->
+  <rect x="380" y="60" width="200" height="52" rx="6" fill="rgba(58,84,143,0.08)" stroke="#3a548f" stroke-width="1"/>
+  <!-- 태그 -->
+  <rect x="388" y="67" width="24" height="11" rx="2" fill="transparent" stroke="rgba(58,84,143,0.40)" stroke-width="0.8"/>
+  <text x="400" y="75" fill="rgba(58,84,143,0.80)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">INPUT</text>
+  <!-- 이름 -->
+  <text x="480" y="90" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">프롬프트 작성</text>
+
+  <!-- D: 과정 지시 포함하나 — 다이아몬드 -->
+  <!-- paper mask -->
+  <rect x="399" y="171" width="162" height="66" rx="2" fill="#f8fafb"/>
+  <!-- 다이아몬드 -->
+  <polygon points="480,172 560,204 480,236 400,204" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="480" y="199" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">과정 지시</text>
+  <text x="480" y="214" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">포함하나?</text>
+
+  <!-- B: CoT 강제 — 경고/정지 노드 -->
+  <!-- paper mask -->
+  <rect x="139" y="308" width="202" height="52" rx="6" fill="#f8fafb"/>
+  <rect x="140" y="308" width="200" height="52" rx="6" fill="rgba(148,56,43,0.07)" stroke="#94382b" stroke-width="1"/>
+  <rect x="148" y="315" width="20" height="11" rx="2" fill="transparent" stroke="rgba(148,56,43,0.40)" stroke-width="0.8"/>
+  <text x="158" y="323" fill="rgba(148,56,43,0.80)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">NO</text>
+  <text x="240" y="337" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">CoT 강제</text>
+  <text x="240" y="351" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">추론 경로 제약</text>
+
+  <!-- G: 결과 명세 — 권장 노드 -->
+  <!-- paper mask -->
+  <rect x="379" y="308" width="202" height="52" rx="6" fill="#f8fafb"/>
+  <rect x="380" y="308" width="200" height="52" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <rect x="388" y="315" width="24" height="11" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="400" y="323" fill="rgba(13,87,99,0.80)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">GOOD</text>
+  <text x="480" y="337" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">결과 명세</text>
+  <text x="480" y="351" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">목적·기준 제시</text>
+
+  <!-- R: 추론 모델에 위임 — focal 노드 -->
+  <!-- paper mask -->
+  <rect x="379" y="416" width="202" height="52" rx="6" fill="#f8fafb"/>
+  <rect x="380" y="416" width="200" height="52" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="388" y="423" width="36" height="11" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="406" y="431" fill="rgba(13,87,99,0.80)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">MODEL</text>
+  <text x="480" y="449" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">추론 모델에 위임</text>
+
+  <!-- O: 최적 결과 — focal accent 노드 -->
+  <!-- paper mask -->
+  <rect x="379" y="512" width="202" height="52" rx="6" fill="#f8fafb"/>
+  <rect x="380" y="512" width="200" height="52" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.5"/>
+  <rect x="388" y="519" width="32" height="11" rx="2" fill="rgba(13,87,99,0.12)" stroke="rgba(13,87,99,0.50)" stroke-width="0.8"/>
+  <text x="404" y="527" fill="#0d5763" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">BEST</text>
+  <text x="480" y="548" fill="#0d5763" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">최적 결과</text>
+
+  <!-- ─────────────────────────────────────
+       범례 (하단 구분선 + 항목)
+  ───────────────────────────────────────── -->
+  <line x1="30" y1="572" x2="930" y2="572" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+
+  <!-- 범례: 권장 경로 -->
+  <rect x="30" y="582" width="10" height="10" rx="2" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="46" y="591" fill="#3f545c" font-size="9" font-family="'IBM Plex Mono', monospace" letter-spacing="0.08em">권장 경로</text>
+
+  <!-- 범례: 비권장 -->
+  <rect x="160" y="582" width="10" height="10" rx="2" fill="rgba(148,56,43,0.07)" stroke="#94382b" stroke-width="1"/>
+  <text x="176" y="591" fill="#3f545c" font-size="9" font-family="'IBM Plex Mono', monospace" letter-spacing="0.08em">CoT 강제 (비권장)</text>
+
+  <!-- 범례: 분기 -->
+  <polygon points="295,582 305,587 295,592 285,587" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="312" y="591" fill="#3f545c" font-size="9" font-family="'IBM Plex Mono', monospace" letter-spacing="0.08em">의사결정</text>
+
+</svg>
+</div>
+</body>
+</html>
