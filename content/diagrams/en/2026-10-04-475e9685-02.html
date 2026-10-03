@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LLM Request Routing Flow</title>
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; font-family: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; }
+  .diagram-wrap { width: 100%; max-width: 960px; margin: 0 auto; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<div class="diagram-wrap">
+<svg viewBox="0 0 960 600" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="2026-10-04-475e9685-02-routing-title 2026-10-04-475e9685-02-routing-desc">
+  <title id="2026-10-04-475e9685-02-routing-title">LLM Request Routing Flow</title>
+  <desc id="2026-10-04-475e9685-02-routing-desc">Decision flow routing LLM requests to lightweight, mid-range, or high-performance models based on token count. Under 200 tokens routes to lightweight, under 800 to mid-range, and above to high-performance.</desc>
+
+  <defs>
+    <!-- arrow markers -->
+    <marker id="2026-10-04-475e9685-02-r-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-10-04-475e9685-02-r-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <marker id="2026-10-04-475e9685-02-r-arrow-light" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3a548f"/>
+    </marker>
+    <marker id="2026-10-04-475e9685-02-r-arrow-ok" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#286d50"/>
+    </marker>
+    <marker id="2026-10-04-475e9685-02-r-arrow-warn" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#a96a08"/>
+    </marker>
+    <marker id="2026-10-04-475e9685-02-r-arrow-stop" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#94382b"/>
+    </marker>
+  </defs>
+
+  <!-- background -->
+  <rect width="100%" height="100%" fill="#f8fafb"/>
+
+  <!-- ======== ARROWS (drawn before boxes) ======== -->
+
+  <!-- Q → T (vertical) -->
+  <line x1="480" y1="108" x2="480" y2="160" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-10-04-475e9685-02-r-arrow-accent)"/>
+
+  <!-- T → D1 (vertical) -->
+  <line x1="480" y1="208" x2="480" y2="260" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-10-04-475e9685-02-r-arrow-accent)"/>
+
+  <!-- D1 → L: 예 — right then down -->
+  <!-- from D1 right midpoint (620, 300) → right elbow → down to L (700, 340) -->
+  <path d="M 620,300 L 700,300 Q 708,300 708,308 L 708,336" stroke="#286d50" stroke-width="1.2" fill="none" marker-end="url(#2026-10-04-475e9685-02-r-arrow-ok)"/>
+  <!-- label 예 on horizontal segment -->
+  <rect x="636" y="280" width="28" height="14" rx="2" fill="#f8fafb"/>
+  <text x="650" y="291" fill="#286d50" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500" text-anchor="middle">yes</text>
+
+  <!-- D1 → D2: 아니오 — vertical down -->
+  <line x1="480" y1="340" x2="480" y2="388" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-10-04-475e9685-02-r-arrow-accent)"/>
+  <!-- label 아니오 -->
+  <rect x="424" y="352" width="52" height="14" rx="2" fill="#f8fafb"/>
+  <text x="450" y="363" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500" text-anchor="middle">no</text>
+
+  <!-- D2 → M: 예 — right then down -->
+  <path d="M 620,428 L 700,428 Q 708,428 708,436 L 708,460" stroke="#a96a08" stroke-width="1.2" fill="none" marker-end="url(#2026-10-04-475e9685-02-r-arrow-warn)"/>
+  <!-- label 예 -->
+  <rect x="636" y="408" width="28" height="14" rx="2" fill="#f8fafb"/>
+  <text x="650" y="419" fill="#a96a08" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500" text-anchor="middle">yes</text>
+
+  <!-- D2 → H: 아니오 — left then down -->
+  <path d="M 340,428 L 252,428 Q 244,428 244,436 L 244,460" stroke="#94382b" stroke-width="1.2" fill="none" marker-end="url(#2026-10-04-475e9685-02-r-arrow-stop)"/>
+  <!-- label 아니오 -->
+  <rect x="268" y="408" width="52" height="14" rx="2" fill="#f8fafb"/>
+  <text x="294" y="419" fill="#94382b" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500" text-anchor="middle">no</text>
+
+  <!-- ======== NODES ======== -->
+
+  <!-- Q: 요청 수신 — oval/pill (start node) at top center -->
+  <!-- mask -->
+  <rect x="404" y="60" width="152" height="48" rx="24" fill="#f8fafb"/>
+  <!-- box: link/blue tint for entry -->
+  <rect x="404" y="60" width="152" height="48" rx="24" fill="rgba(58,84,143,0.06)" stroke="#3a548f" stroke-width="1"/>
+  <!-- tag -->
+  <rect x="416" y="68" width="32" height="12" rx="2" fill="transparent" stroke="rgba(58,84,143,0.40)" stroke-width="0.8"/>
+  <text x="432" y="77" fill="rgba(58,84,143,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">START</text>
+  <!-- label -->
+  <text x="480" y="92" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Receive Request</text>
+
+  <!-- T: 토큰 수 측정 — step box, accent -->
+  <!-- mask -->
+  <rect x="388" y="160" width="184" height="48" rx="6" fill="#f8fafb"/>
+  <!-- box: accent treatment (focal) -->
+  <rect x="388" y="160" width="184" height="48" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <!-- tag -->
+  <rect x="396" y="168" width="32" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="412" y="177" fill="rgba(13,87,99,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">STEP</text>
+  <!-- label -->
+  <text x="480" y="192" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Count Tokens</text>
+
+  <!-- D1: 200 미만인가 — diamond -->
+  <!-- mask -->
+  <polygon points="480,260 620,300 480,340 340,300" fill="#f8fafb"/>
+  <!-- box: accent -->
+  <polygon points="480,260 620,300 480,340 340,300" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <!-- label -->
+  <text x="480" y="296" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Under 200?</text>
+
+  <!-- D2: 800 미만인가 — diamond -->
+  <!-- mask -->
+  <polygon points="480,388 620,428 480,468 340,428" fill="#f8fafb"/>
+  <!-- box: accent -->
+  <polygon points="480,388 620,428 480,468 340,428" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <!-- label -->
+  <text x="480" y="424" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Under 800?</text>
+
+  <!-- L: 경량 모델 — right branch (ok/green) -->
+  <!-- mask -->
+  <rect x="648" y="336" width="120" height="52" rx="6" fill="#f8fafb"/>
+  <rect x="648" y="336" width="120" height="52" rx="6" fill="rgba(40,109,80,0.08)" stroke="#286d50" stroke-width="1"/>
+  <!-- tag -->
+  <rect x="656" y="344" width="32" height="12" rx="2" fill="transparent" stroke="rgba(40,109,80,0.40)" stroke-width="0.8"/>
+  <text x="672" y="353" fill="rgba(40,109,80,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">MODEL</text>
+  <!-- label -->
+  <text x="708" y="369" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Lightweight</text>
+  <!-- sublabel -->
+  <text x="708" y="382" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">&lt; 200 tokens</text>
+
+  <!-- M: 중간 모델 — right branch (warn/amber) -->
+  <!-- mask -->
+  <rect x="648" y="460" width="120" height="52" rx="6" fill="#f8fafb"/>
+  <rect x="648" y="460" width="120" height="52" rx="6" fill="rgba(169,106,8,0.08)" stroke="#a96a08" stroke-width="1"/>
+  <!-- tag -->
+  <rect x="656" y="468" width="32" height="12" rx="2" fill="transparent" stroke="rgba(169,106,8,0.40)" stroke-width="0.8"/>
+  <text x="672" y="477" fill="rgba(169,106,8,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">MODEL</text>
+  <!-- label -->
+  <text x="708" y="493" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Mid-range</text>
+  <!-- sublabel -->
+  <text x="708" y="506" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">200–800 tokens</text>
+
+  <!-- H: 고성능 모델 — left branch (stop/red) -->
+  <!-- mask -->
+  <rect x="184" y="460" width="120" height="52" rx="6" fill="#f8fafb"/>
+  <rect x="184" y="460" width="120" height="52" rx="6" fill="rgba(148,56,43,0.08)" stroke="#94382b" stroke-width="1"/>
+  <!-- tag -->
+  <rect x="192" y="468" width="32" height="12" rx="2" fill="transparent" stroke="rgba(148,56,43,0.40)" stroke-width="0.8"/>
+  <text x="208" y="477" fill="rgba(148,56,43,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">MODEL</text>
+  <!-- label -->
+  <text x="244" y="493" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">High-perf</text>
+  <!-- sublabel -->
+  <text x="244" y="506" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">800+ tokens</text>
+
+  <!-- ======== LEGEND ======== -->
+  <line x1="32" y1="562" x2="928" y2="562" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+
+  <!-- legend items -->
+  <!-- entry -->
+  <rect x="40" y="572" width="12" height="12" rx="6" fill="rgba(58,84,143,0.06)" stroke="#3a548f" stroke-width="0.8"/>
+  <text x="58" y="581" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.08em">Entry</text>
+
+  <!-- step -->
+  <rect x="128" y="572" width="12" height="12" rx="2" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="0.8"/>
+  <text x="146" y="581" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.08em">Step</text>
+
+  <!-- decision -->
+  <polygon points="226,578 232,572 238,578 232,584" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="0.8"/>
+  <text x="246" y="581" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.08em">Decision</text>
+
+  <!-- model ok -->
+  <rect x="340" y="572" width="12" height="12" rx="2" fill="rgba(40,109,80,0.08)" stroke="#286d50" stroke-width="0.8"/>
+  <text x="358" y="581" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.08em">Lightweight</text>
+
+  <!-- model warn -->
+  <rect x="448" y="572" width="12" height="12" rx="2" fill="rgba(169,106,8,0.08)" stroke="#a96a08" stroke-width="0.8"/>
+  <text x="466" y="581" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.08em">Mid-range</text>
+
+  <!-- model stop -->
+  <rect x="556" y="572" width="12" height="12" rx="2" fill="rgba(148,56,43,0.08)" stroke="#94382b" stroke-width="0.8"/>
+  <text x="574" y="581" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.08em">High-perf</text>
+
+</svg>
+</div>
+</body>
+</html>

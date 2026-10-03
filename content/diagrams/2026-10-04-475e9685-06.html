@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<svg viewBox="0 0 960 360" xmlns="http://www.w3.org/2000/svg"
+     role="img" aria-labelledby="2026-10-04-475e9685-06-routing-title 2026-10-04-475e9685-06-routing-desc">
+  <title id="2026-10-04-475e9685-06-routing-title">컨텍스트 한계 감지 및 모델 전환 흐름</title>
+  <desc id="2026-10-04-475e9685-06-routing-desc">히스토리 누적부터 토큰 계산, 컨텍스트 80% 초과 여부 판단, 초과 시 요약 압축 후 상위 모델 전환 검토, 미초과 시 현재 모델 유지로 이어지는 LLM 요청 라우팅 흐름도.</desc>
+
+  <defs>
+    <!-- 화살표 마커 -->
+    <marker id="2026-10-04-475e9685-06-r-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-10-04-475e9685-06-r-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <marker id="2026-10-04-475e9685-06-r-arrow-muted" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#6c8188"/>
+    </marker>
+  </defs>
+
+  <!-- 배경 -->
+  <rect width="960" height="360" fill="#f8fafb"/>
+
+  <!-- ============================================================
+       화살표 (노드보다 먼저)
+       흐름: H(80) → T(244) → D(436) → |예| S(600) → U(760)
+                                        → |아니오| C(600, y=264)
+  ============================================================ -->
+
+  <!-- H → T -->
+  <line x1="192" y1="148" x2="232" y2="148"
+        stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-04-475e9685-06-r-arrow)"/>
+
+  <!-- T → D -->
+  <line x1="336" y1="148" x2="376" y2="148"
+        stroke="#0d5763" stroke-width="1" marker-end="url(#2026-10-04-475e9685-06-r-arrow-accent)"/>
+
+  <!-- D → S (예, 위쪽 오른쪽) -->
+  <!-- 다이아몬드 오른쪽 꼭짓점 x=488, y=148 → S 왼쪽 x=560, y=148 -->
+  <line x1="488" y1="148" x2="548" y2="148"
+        stroke="#0d5763" stroke-width="1" marker-end="url(#2026-10-04-475e9685-06-r-arrow-accent)"/>
+
+  <!-- S → U -->
+  <line x1="664" y1="148" x2="704" y2="148"
+        stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-04-475e9685-06-r-arrow)"/>
+
+  <!-- D → C (아니오, 아래쪽) -->
+  <!-- 다이아몬드 아래 꼭짓점 x=436, y=200 → 아래로 → C 위쪽 -->
+  <path d="M436,200 L436,264 L548,264"
+        fill="none" stroke="#6c8188" stroke-width="1"
+        marker-end="url(#2026-10-04-475e9685-06-r-arrow-muted)"/>
+
+  <!-- ============================================================
+       화살표 라벨
+  ============================================================ -->
+
+  <!-- "예" 라벨 (D→S 위) -->
+  <rect x="498" y="132" width="20" height="12" rx="2" fill="#f8fafb"/>
+  <text x="508" y="141"
+        font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif"
+        font-size="10" font-weight="500" fill="#0d5763" text-anchor="middle">예</text>
+
+  <!-- "아니오" 라벨 (D→C 꺾임, 수직 구간 왼편) -->
+  <rect x="440" y="216" width="36" height="12" rx="2" fill="#f8fafb"/>
+  <text x="458" y="225"
+        font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif"
+        font-size="10" font-weight="500" fill="#6c8188" text-anchor="middle">아니오</text>
+
+  <!-- ============================================================
+       노드
+  ============================================================ -->
+
+  <!-- H: 히스토리 누적 (input 타입, 파란 계열) x=80 -->
+  <rect x="80" y="120" width="112" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="80" y="120" width="112" height="56" rx="6"
+        fill="rgba(58,84,143,0.08)" stroke="#3a548f" stroke-width="1"/>
+  <!-- 태그 -->
+  <rect x="88" y="126" width="28" height="11" rx="2"
+        fill="transparent" stroke="rgba(58,84,143,0.4)" stroke-width="0.8"/>
+  <text x="102" y="134"
+        font-family="'IBM Plex Mono',monospace"
+        font-size="7" fill="rgba(58,84,143,0.8)"
+        text-anchor="middle" letter-spacing="0.08em">INPUT</text>
+  <!-- 이름 -->
+  <text x="136" y="152"
+        font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif"
+        font-size="12" font-weight="600" fill="#122127" text-anchor="middle">히스토리 누적</text>
+
+  <!-- T: 총 토큰 계산 (accent 타입) x=244 -->
+  <rect x="232" y="120" width="104" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="232" y="120" width="104" height="56" rx="6"
+        fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <rect x="240" y="126" width="28" height="11" rx="2"
+        fill="transparent" stroke="rgba(13,87,99,0.4)" stroke-width="0.8"/>
+  <text x="254" y="134"
+        font-family="'IBM Plex Mono',monospace"
+        font-size="7" fill="rgba(13,87,99,0.8)"
+        text-anchor="middle" letter-spacing="0.08em">STEP</text>
+  <text x="284" y="152"
+        font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif"
+        font-size="12" font-weight="600" fill="#122127" text-anchor="middle">총 토큰 계산</text>
+
+  <!-- D: 컨텍스트 한계 80% 초과 (결정 다이아몬드) cx=436, cy=148, w=104, h=96 -->
+  <!-- 다이아몬드: 상=436,100 우=488,148 하=436,200 좌=376,148 -->
+  <polygon points="436,100 492,148 436,200 376,148"
+           fill="#f8fafb"/>
+  <polygon points="436,100 492,148 436,200 376,148"
+           fill="rgba(13,87,99,0.06)" stroke="#0d5763" stroke-width="1"/>
+  <text x="436" y="142"
+        font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif"
+        font-size="11" font-weight="600" fill="#122127" text-anchor="middle">컨텍스트</text>
+  <text x="436" y="156"
+        font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif"
+        font-size="11" font-weight="600" fill="#122127" text-anchor="middle">80% 초과?</text>
+
+  <!-- S: 히스토리 요약 압축 (warn 타입) x=548 -->
+  <rect x="548" y="120" width="116" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="548" y="120" width="116" height="56" rx="6"
+        fill="rgba(169,106,8,0.08)" stroke="#a96a08" stroke-width="1"/>
+  <rect x="556" y="126" width="28" height="11" rx="2"
+        fill="transparent" stroke="rgba(169,106,8,0.4)" stroke-width="0.8"/>
+  <text x="570" y="134"
+        font-family="'IBM Plex Mono',monospace"
+        font-size="7" fill="rgba(169,106,8,0.8)"
+        text-anchor="middle" letter-spacing="0.08em">STEP</text>
+  <text x="606" y="147"
+        font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif"
+        font-size="12" font-weight="600" fill="#122127" text-anchor="middle">히스토리 요약</text>
+  <text x="606" y="162"
+        font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif"
+        font-size="12" font-weight="600" fill="#122127" text-anchor="middle">압축</text>
+
+  <!-- U: 상위 모델 전환 검토 (focal/accent) x=704 -->
+  <rect x="704" y="120" width="128" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="704" y="120" width="128" height="56" rx="6"
+        fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="712" y="126" width="28" height="11" rx="2"
+        fill="transparent" stroke="rgba(13,87,99,0.5)" stroke-width="0.8"/>
+  <text x="726" y="134"
+        font-family="'IBM Plex Mono',monospace"
+        font-size="7" fill="rgba(13,87,99,0.9)"
+        text-anchor="middle" letter-spacing="0.08em">ACTION</text>
+  <text x="768" y="147"
+        font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif"
+        font-size="12" font-weight="600" fill="#122127" text-anchor="middle">상위 모델</text>
+  <text x="768" y="162"
+        font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif"
+        font-size="12" font-weight="600" fill="#122127" text-anchor="middle">전환 검토</text>
+
+  <!-- C: 현재 모델 유지 (store/ok 타입) x=548, y=236 -->
+  <rect x="548" y="236" width="116" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="548" y="236" width="116" height="56" rx="6"
+        fill="rgba(40,109,80,0.07)" stroke="#286d50" stroke-width="1"/>
+  <rect x="556" y="242" width="28" height="11" rx="2"
+        fill="transparent" stroke="rgba(40,109,80,0.4)" stroke-width="0.8"/>
+  <text x="570" y="250"
+        font-family="'IBM Plex Mono',monospace"
+        font-size="7" fill="rgba(40,109,80,0.8)"
+        text-anchor="middle" letter-spacing="0.08em">KEEP</text>
+  <text x="606" y="263"
+        font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif"
+        font-size="12" font-weight="600" fill="#122127" text-anchor="middle">현재 모델</text>
+  <text x="606" y="278"
+        font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif"
+        font-size="12" font-weight="600" fill="#122127" text-anchor="middle">유지</text>
+
+  <!-- ============================================================
+       레전드 (하단 수평 스트립)
+  ============================================================ -->
+  <line x1="40" y1="322" x2="920" y2="322"
+        stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+
+  <text x="40" y="336"
+        font-family="'IBM Plex Mono',monospace"
+        font-size="8" fill="#3f545c" letter-spacing="0.14em">LEGEND</text>
+
+  <!-- 입력 -->
+  <rect x="112" y="328" width="10" height="10" rx="2"
+        fill="rgba(58,84,143,0.08)" stroke="#3a548f" stroke-width="0.8"/>
+  <text x="126" y="337"
+        font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif"
+        font-size="9" fill="#3f545c">입력</text>
+
+  <!-- 처리 단계 -->
+  <rect x="168" y="328" width="10" height="10" rx="2"
+        fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="0.8"/>
+  <text x="182" y="337"
+        font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif"
+        font-size="9" fill="#3f545c">처리 단계</text>
+
+  <!-- 압축 필요 -->
+  <rect x="248" y="328" width="10" height="10" rx="2"
+        fill="rgba(169,106,8,0.08)" stroke="#a96a08" stroke-width="0.8"/>
+  <text x="262" y="337"
+        font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif"
+        font-size="9" fill="#3f545c">압축 필요</text>
+
+  <!-- 모델 전환 -->
+  <rect x="328" y="328" width="10" height="10" rx="2"
+        fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="342" y="337"
+        font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif"
+        font-size="9" fill="#3f545c">모델 전환</text>
+
+  <!-- 유지 -->
+  <rect x="408" y="328" width="10" height="10" rx="2"
+        fill="rgba(40,109,80,0.07)" stroke="#286d50" stroke-width="0.8"/>
+  <text x="422" y="337"
+        font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif"
+        font-size="9" fill="#3f545c">유지</text>
+
+</svg>
+</body>
+</html>

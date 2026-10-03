@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LLM 요청 라우팅 다이어그램</title>
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; font-family: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; }
+  .diagram-wrap { display: block; width: 100%; max-width: 960px; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<div class="diagram-wrap">
+<svg viewBox="0 0 960 440" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="2026-10-04-475e9685-03-routing-title 2026-10-04-475e9685-03-routing-desc">
+  <title id="2026-10-04-475e9685-03-routing-title">LLM 요청 라우팅 흐름</title>
+  <desc id="2026-10-04-475e9685-03-routing-desc">요청이 임베딩 생성과 분류 모델을 거쳐 복잡도(낮음·중간·높음)에 따라 경량·중간·고성능 모델로 분기되는 라우팅 흐름을 보여준다.</desc>
+
+  <defs>
+    <!-- 기본 화살표 -->
+    <marker id="2026-10-04-475e9685-03-arr" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <!-- 액센트 화살표 -->
+    <marker id="2026-10-04-475e9685-03-arr-acc" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <!-- 경량(낮음) 화살표 -->
+    <marker id="2026-10-04-475e9685-03-arr-low" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#286d50"/>
+    </marker>
+    <!-- 중간 화살표 -->
+    <marker id="2026-10-04-475e9685-03-arr-mid" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <!-- 고성능(높음) 화살표 -->
+    <marker id="2026-10-04-475e9685-03-arr-high" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3a548f"/>
+    </marker>
+  </defs>
+
+  <!-- 배경 -->
+  <rect width="960" height="440" fill="#f8fafb"/>
+
+  <!-- ══════════════════════════════════════════
+       커넥터 (박스보다 먼저)
+  ══════════════════════════════════════════ -->
+
+  <!-- 요청 → 임베딩 생성 -->
+  <line x1="168" y1="200" x2="228" y2="200" stroke="#3f545c" stroke-width="1.2" marker-end="url(#2026-10-04-475e9685-03-arr)"/>
+
+  <!-- 임베딩 생성 → 분류 모델 -->
+  <line x1="364" y1="200" x2="424" y2="200" stroke="#0d5763" stroke-width="1.5" marker-end="url(#2026-10-04-475e9685-03-arr-acc)"/>
+
+  <!-- 분류 모델 → 경량 모델 (낮음: 위로 꺾임) -->
+  <!-- 분류 모델 center: (560, 200), 경량 모델 center: (760, 100) -->
+  <!-- 분류 모델 top-center (560,172) → up → right → 경량 모델 left (700,100) -->
+  <path d="M560,172 L560,100 L700,100" fill="none" stroke="#286d50" stroke-width="1.2" marker-end="url(#2026-10-04-475e9685-03-arr-low)"/>
+
+  <!-- 분류 모델 → 중간 모델 (중간: 직선) -->
+  <line x1="620" y1="200" x2="700" y2="200" stroke="#3f545c" stroke-width="1.2" marker-end="url(#2026-10-04-475e9685-03-arr-mid)"/>
+
+  <!-- 분류 모델 → 고성능 모델 (높음: 아래로 꺾임) -->
+  <!-- 분류 모델 bottom-center (560,228) → down → right → 고성능 모델 left (700,300) -->
+  <path d="M560,228 L560,300 L700,300" fill="none" stroke="#3a548f" stroke-width="1.2" marker-end="url(#2026-10-04-475e9685-03-arr-high)"/>
+
+  <!-- ══════════════════════════════════════════
+       화살표 라벨
+  ══════════════════════════════════════════ -->
+
+  <!-- 낮음 라벨 (분류 모델 top ~ 경량 모델 경로 상단 수평 구간 중간) -->
+  <rect x="613" y="86" width="36" height="14" rx="2" fill="#f8fafb"/>
+  <text x="631" y="96" fill="#286d50" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500" text-anchor="middle">낮음</text>
+
+  <!-- 중간 라벨 -->
+  <rect x="641" y="186" width="36" height="14" rx="2" fill="#f8fafb"/>
+  <text x="659" y="196" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500" text-anchor="middle">중간</text>
+
+  <!-- 높음 라벨 (분류 모델 bottom ~ 고성능 모델 경로 하단 수평 구간 중간) -->
+  <rect x="613" y="286" width="36" height="14" rx="2" fill="#f8fafb"/>
+  <text x="631" y="296" fill="#3a548f" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500" text-anchor="middle">높음</text>
+
+  <!-- ══════════════════════════════════════════
+       노드 박스
+  ══════════════════════════════════════════ -->
+
+  <!-- 1. 요청 (input 타입, link 색 테두리) -->
+  <rect x="40" y="172" width="128" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="40" y="172" width="128" height="56" rx="6" fill="rgba(58,84,143,0.06)" stroke="#3a548f" stroke-width="1"/>
+  <!-- 태그 -->
+  <rect x="48" y="178" width="24" height="12" rx="2" fill="transparent" stroke="rgba(58,84,143,0.40)" stroke-width="0.8"/>
+  <text x="60" y="187" fill="rgba(58,84,143,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">IN</text>
+  <!-- 노드명 -->
+  <text x="104" y="203" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">요청</text>
+
+  <!-- 2. 임베딩 생성 (muted/store 타입) -->
+  <rect x="228" y="164" width="136" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="228" y="164" width="136" height="72" rx="6" fill="#eef2f4" stroke="#c3d0d4" stroke-width="1"/>
+  <!-- 태그 -->
+  <rect x="236" y="170" width="32" height="12" rx="2" fill="transparent" stroke="rgba(99,129,136,0.40)" stroke-width="0.8"/>
+  <text x="252" y="179" fill="rgba(99,129,136,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">STEP</text>
+  <!-- 노드명 -->
+  <text x="296" y="199" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">임베딩 생성</text>
+  <!-- 서브라벨 -->
+  <text x="296" y="217" fill="#6c8188" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">저비용</text>
+
+  <!-- 3. 분류 모델 (focal/accent 타입) -->
+  <rect x="424" y="160" width="196" height="80" rx="6" fill="#f8fafb"/>
+  <rect x="424" y="160" width="196" height="80" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.5"/>
+  <!-- 태그 -->
+  <rect x="432" y="166" width="36" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="450" y="175" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">MODEL</text>
+  <!-- 노드명 -->
+  <text x="522" y="199" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">분류 모델</text>
+  <!-- 서브라벨 -->
+  <text x="522" y="217" fill="#0d5763" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">복잡도 예측</text>
+
+  <!-- 4. 경량 모델 (낮음, ok 타입 - 연초록) -->
+  <rect x="700" y="72" width="160" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="700" y="72" width="160" height="56" rx="6" fill="#d6e9de" stroke="#286d50" stroke-width="1.2"/>
+  <!-- 태그 -->
+  <rect x="708" y="78" width="36" height="12" rx="2" fill="transparent" stroke="rgba(40,109,80,0.40)" stroke-width="0.8"/>
+  <text x="726" y="87" fill="rgba(40,109,80,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">LIGHT</text>
+  <!-- 노드명 -->
+  <text x="780" y="106" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">경량 모델</text>
+
+  <!-- 5. 중간 모델 (ok 타입 - 연초록) -->
+  <rect x="700" y="172" width="160" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="700" y="172" width="160" height="56" rx="6" fill="#d6e9de" stroke="#286d50" stroke-width="1.2"/>
+  <!-- 태그 -->
+  <rect x="708" y="178" width="36" height="12" rx="2" fill="transparent" stroke="rgba(40,109,80,0.40)" stroke-width="0.8"/>
+  <text x="726" y="187" fill="rgba(40,109,80,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">MID</text>
+  <!-- 노드명 -->
+  <text x="780" y="206" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">중간 모델</text>
+
+  <!-- 6. 고성능 모델 (높음, warn 타입 - 연노랑) -->
+  <rect x="700" y="272" width="160" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="700" y="272" width="160" height="56" rx="6" fill="rgba(58,84,143,0.08)" stroke="#3a548f" stroke-width="1.2"/>
+  <!-- 태그 -->
+  <rect x="708" y="278" width="40" height="12" rx="2" fill="transparent" stroke="rgba(58,84,143,0.40)" stroke-width="0.8"/>
+  <text x="728" y="287" fill="rgba(58,84,143,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">HEAVY</text>
+  <!-- 노드명 -->
+  <text x="780" y="306" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">고성능 모델</text>
+
+  <!-- ══════════════════════════════════════════
+       범례 (하단 수평 스트립)
+  ══════════════════════════════════════════ -->
+  <line x1="40" y1="378" x2="920" y2="378" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+
+  <text x="40" y="392" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.14em">LEGEND</text>
+
+  <!-- 분류 모델 (focal) -->
+  <rect x="120" y="382" width="14" height="14" rx="3" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="140" y="393" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" font-weight="400">분류 모델 (핵심)</text>
+
+  <!-- 경량·중간 (낮음·중간 복잡도) -->
+  <rect x="288" y="382" width="14" height="14" rx="3" fill="#d6e9de" stroke="#286d50" stroke-width="1.2"/>
+  <text x="308" y="393" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" font-weight="400">경량·중간 모델</text>
+
+  <!-- 고성능 (높음 복잡도) -->
+  <rect x="468" y="382" width="14" height="14" rx="3" fill="rgba(58,84,143,0.08)" stroke="#3a548f" stroke-width="1.2"/>
+  <text x="488" y="393" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" font-weight="400">고성능 모델 (높음)</text>
+
+  <!-- 임베딩 생성 (저비용) -->
+  <rect x="660" y="382" width="14" height="14" rx="3" fill="#eef2f4" stroke="#c3d0d4" stroke-width="1"/>
+  <text x="680" y="393" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" font-weight="400">임베딩 (저비용)</text>
+
+</svg>
+</div>
+</body>
+</html>

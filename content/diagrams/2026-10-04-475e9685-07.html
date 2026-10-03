@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<svg viewBox="0 0 960 340" xmlns="http://www.w3.org/2000/svg"
+     role="img" aria-labelledby="2026-10-04-475e9685-07-routing-title 2026-10-04-475e9685-07-routing-desc">
+
+  <title id="2026-10-04-475e9685-07-routing-title">LLM 요청 라우팅 — 섀도우 테스트 흐름</title>
+  <desc id="2026-10-04-475e9685-07-routing-desc">요청이 라우터에 도달하면 95%는 기존 모델로 전달되어 응답을 반환하고, 5%는 섀도우 트래픽으로 신규 모델에 보내져 품질 비교 및 로그 저장이 이루어진다.</desc>
+
+  <defs>
+    <!-- Arrow markers -->
+    <marker id="2026-10-04-475e9685-07-arr-muted" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-10-04-475e9685-07-arr-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <marker id="2026-10-04-475e9685-07-arr-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3a548f"/>
+    </marker>
+    <marker id="2026-10-04-475e9685-07-arr-soft" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#6c8188"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="960" height="340" fill="#f8fafb"/>
+
+  <!-- ═══════════════════════════════════════════
+       ARROWS — drawn before boxes
+  ═══════════════════════════════════════════ -->
+
+  <!-- 요청 → 라우터 (straight horizontal) -->
+  <line x1="148" y1="148" x2="208" y2="148"
+        stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-10-04-475e9685-07-arr-accent)"/>
+
+  <!-- 라우터 → 기존 모델 (straight horizontal, upper path) -->
+  <line x1="356" y1="120" x2="452" y2="120"
+        stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-04-475e9685-07-arr-muted)"/>
+  <!-- label mask -->
+  <rect x="378" y="103" width="28" height="12" rx="2" fill="#f8fafb"/>
+  <text x="392" y="112" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.04em">95%</text>
+
+  <!-- 라우터 → 신규 모델 (elbow: right then down) -->
+  <!-- Route: from router bottom-right (336, 176) → right to x=404, down to y=224, right to new-model -->
+  <path d="M 356 176 L 404 176 Q 412 176 412 184 L 412 220 Q 412 228 420 228 L 452 228"
+        stroke="#3a548f" stroke-width="1" stroke-dasharray="5,4"
+        fill="none" marker-end="url(#2026-10-04-475e9685-07-arr-link)"/>
+  <!-- label mask -->
+  <rect x="367" y="185" width="68" height="12" rx="2" fill="#f8fafb"/>
+  <text x="401" y="194" fill="#3a548f" font-size="10" font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.04em">5% 섀도우</text>
+
+  <!-- 기존 모델 → 응답 반환 (straight horizontal) -->
+  <line x1="580" y1="120" x2="672" y2="120"
+        stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-04-475e9685-07-arr-muted)"/>
+
+  <!-- 신규 모델 → 품질 비교 (straight horizontal) -->
+  <line x1="580" y1="228" x2="672" y2="228"
+        stroke="#6c8188" stroke-width="1" stroke-dasharray="5,4"
+        marker-end="url(#2026-10-04-475e9685-07-arr-soft)"/>
+
+  <!-- ═══════════════════════════════════════════
+       NODES — drawn after arrows
+  ═══════════════════════════════════════════ -->
+
+  <!-- 요청 (input / user) -->
+  <rect x="48" y="120" width="100" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="48" y="120" width="100" height="56" rx="6"
+        fill="rgba(63,84,92,0.10)" stroke="#6c8188" stroke-width="1"/>
+  <rect x="56" y="126" width="28" height="12" rx="2"
+        fill="transparent" stroke="rgba(108,129,136,0.40)" stroke-width="0.8"/>
+  <text x="70" y="135" fill="rgba(108,129,136,0.8)" font-size="8"
+        font-family="'IBM Plex Mono', monospace" text-anchor="middle"
+        letter-spacing="0.08em">INPUT</text>
+  <text x="98" y="153" fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">요청</text>
+
+  <!-- 라우터 (focal / accent) -->
+  <rect x="208" y="104" width="148" height="88" rx="6" fill="#f8fafb"/>
+  <rect x="208" y="104" width="148" height="88" rx="6"
+        fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="216" y="110" width="36" height="12" rx="2"
+        fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="234" y="119" fill="rgba(13,87,99,0.8)" font-size="8"
+        font-family="'IBM Plex Mono', monospace" text-anchor="middle"
+        letter-spacing="0.08em">ROUTER</text>
+  <text x="282" y="152" fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">라우터</text>
+  <text x="282" y="170" fill="#3f545c" font-size="11"
+        font-family="'IBM Plex Mono', monospace" text-anchor="middle">트래픽 분기</text>
+
+  <!-- 기존 모델 (backend) -->
+  <rect x="452" y="92" width="128" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="452" y="92" width="128" height="56" rx="6"
+        fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="460" y="98" width="28" height="12" rx="2"
+        fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="474" y="107" fill="rgba(18,33,39,0.8)" font-size="8"
+        font-family="'IBM Plex Mono', monospace" text-anchor="middle"
+        letter-spacing="0.08em">MODEL</text>
+  <text x="516" y="125" fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">기존 모델</text>
+  <text x="516" y="139" fill="#3f545c" font-size="11"
+        font-family="'IBM Plex Mono', monospace" text-anchor="middle">프로덕션</text>
+
+  <!-- 신규 모델 (optional / async — dashed border) -->
+  <rect x="452" y="200" width="128" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="452" y="200" width="128" height="56" rx="6"
+        fill="rgba(18,33,39,0.02)" stroke="rgba(18,33,39,0.20)" stroke-width="1"
+        stroke-dasharray="4,3"/>
+  <rect x="460" y="206" width="28" height="12" rx="2"
+        fill="transparent" stroke="rgba(18,33,39,0.25)" stroke-width="0.8"/>
+  <text x="474" y="215" fill="rgba(18,33,39,0.5)" font-size="8"
+        font-family="'IBM Plex Mono', monospace" text-anchor="middle"
+        letter-spacing="0.08em">SHADOW</text>
+  <text x="516" y="233" fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">신규 모델</text>
+  <text x="516" y="247" fill="#3f545c" font-size="11"
+        font-family="'IBM Plex Mono', monospace" text-anchor="middle">검증 중</text>
+
+  <!-- 응답 반환 (backend) -->
+  <rect x="672" y="92" width="128" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="672" y="92" width="128" height="56" rx="6"
+        fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="680" y="98" width="36" height="12" rx="2"
+        fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="698" y="107" fill="rgba(18,33,39,0.8)" font-size="8"
+        font-family="'IBM Plex Mono', monospace" text-anchor="middle"
+        letter-spacing="0.08em">RESPONSE</text>
+  <text x="736" y="125" fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">응답 반환</text>
+
+  <!-- 품질 비교 (store / muted) -->
+  <rect x="672" y="200" width="128" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="672" y="200" width="128" height="56" rx="6"
+        fill="rgba(18,33,39,0.05)" stroke="#3f545c" stroke-width="1"/>
+  <rect x="680" y="206" width="24" height="12" rx="2"
+        fill="transparent" stroke="rgba(63,84,92,0.40)" stroke-width="0.8"/>
+  <text x="692" y="215" fill="rgba(63,84,92,0.8)" font-size="8"
+        font-family="'IBM Plex Mono', monospace" text-anchor="middle"
+        letter-spacing="0.08em">LOG</text>
+  <text x="736" y="233" fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">품질 비교</text>
+  <text x="736" y="247" fill="#3f545c" font-size="11"
+        font-family="'IBM Plex Mono', monospace" text-anchor="middle">로그 저장</text>
+
+  <!-- ═══════════════════════════════════════════
+       LEGEND — horizontal bottom strip
+  ═══════════════════════════════════════════ -->
+  <line x1="40" y1="294" x2="920" y2="294"
+        stroke="rgba(18,33,39,0.10)" stroke-width="0.8"/>
+
+  <!-- Legend items -->
+  <line x1="48" y1="312" x2="68" y2="312"
+        stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-04-475e9685-07-arr-muted)"/>
+  <text x="76" y="316" fill="#3f545c" font-size="10"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">프로덕션 경로</text>
+
+  <line x1="220" y1="312" x2="240" y2="312"
+        stroke="#3a548f" stroke-width="1" stroke-dasharray="5,4"
+        marker-end="url(#2026-10-04-475e9685-07-arr-link)"/>
+  <text x="248" y="316" fill="#3f545c" font-size="10"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">섀도우 경로 (비동기)</text>
+
+  <!-- accent swatch -->
+  <rect x="420" y="306" width="12" height="12" rx="2"
+        fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="440" y="316" fill="#3f545c" font-size="10"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">핵심 컴포넌트</text>
+
+  <!-- dashed swatch -->
+  <rect x="580" y="306" width="12" height="12" rx="2"
+        fill="rgba(18,33,39,0.02)" stroke="rgba(18,33,39,0.20)" stroke-width="1"
+        stroke-dasharray="4,3"/>
+  <text x="600" y="316" fill="#3f545c" font-size="10"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">검증 중</text>
+
+</svg>
+</body>
+</html>

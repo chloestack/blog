@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; font-family: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 400" role="img" aria-labelledby="2026-10-04-475e9685-04-routing-title 2026-10-04-475e9685-04-routing-desc">
+  <title id="2026-10-04-475e9685-04-routing-title">LLM 요청 라우팅 비용 구조</title>
+  <desc id="2026-10-04-475e9685-04-routing-desc">전체 트래픽이 복잡도에 따라 단순(60%), 중간(25%), 복잡(15%) 세 경로로 분기되고, 각 경로는 경량·균형·고성능 모델로 라우팅되어 토큰당 비용이 달라지는 구조를 보여줍니다.</desc>
+
+  <defs>
+    <!-- 기본 화살표 -->
+    <marker id="2026-10-04-475e9685-04-arr" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <!-- 강조 화살표 (accent) -->
+    <marker id="2026-10-04-475e9685-04-arr-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <!-- 링크 화살표 -->
+    <marker id="2026-10-04-475e9685-04-arr-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3a548f"/>
+    </marker>
+  </defs>
+
+  <!-- 배경 -->
+  <rect width="960" height="400" fill="#f8fafb"/>
+
+  <!-- ─────────────────────────────────────────
+       ARROWS (before nodes, z-order)
+  ───────────────────────────────────────── -->
+
+  <!-- T → S: 위쪽 분기 (orthogonal elbow) -->
+  <!-- T 우측 중앙 (288,176) → 수평 → (360,176) → 수직 → (360,120) → 수평 → S 좌측 (412,120) -->
+  <path d="M 288,176 H 348 V 120 H 412" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-04-475e9685-04-arr)"/>
+
+  <!-- T → M: 중간 분기 (직선, 같은 y) -->
+  <!-- T 우측 (288,176) → M 좌측 (412,176) -->
+  <path d="M 288,176 H 412" fill="none" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-10-04-475e9685-04-arr-accent)"/>
+
+  <!-- T → P: 아래쪽 분기 -->
+  <!-- T 우측 (288,176) → (348,176) → (348,236) → P 좌측 (412,236) -->
+  <path d="M 288,176 H 348 V 236 H 412" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-04-475e9685-04-arr)"/>
+
+  <!-- S → C1 -->
+  <!-- S 우측 (572,120) → C1 좌측 (640,120) -->
+  <path d="M 572,120 H 640" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-04-475e9685-04-arr)"/>
+
+  <!-- M → C2 -->
+  <!-- M 우측 (572,176) → C2 좌측 (640,176) -->
+  <path d="M 572,176 H 640" fill="none" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-10-04-475e9685-04-arr-accent)"/>
+
+  <!-- P → C3 -->
+  <!-- P 우측 (572,236) → C3 좌측 (640,236) -->
+  <path d="M 572,236 H 640" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-04-475e9685-04-arr)"/>
+
+  <!-- ─────────────────────────────────────────
+       NODES
+  ───────────────────────────────────────── -->
+
+  <!-- T: 전체 트래픽 100% (focal, accent) -->
+  <!-- x=120, y=144, w=168, h=64 -->
+  <rect x="120" y="144" width="168" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="120" y="144" width="168" height="64" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="128" y="150" width="40" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.4)" stroke-width="0.8"/>
+  <text x="148" y="159" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">INPUT</text>
+  <text x="204" y="174" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">전체 트래픽</text>
+  <text x="204" y="192" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">100%</text>
+
+  <!-- S: 단순 60% (backend) -->
+  <!-- x=412, y=88, w=160, h=64 -->
+  <rect x="412" y="88" width="160" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="412" y="88" width="160" height="64" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="420" y="94" width="40" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.4)" stroke-width="0.8"/>
+  <text x="440" y="103" fill="rgba(18,33,39,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">LIGHT</text>
+  <text x="492" y="118" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">단순 요청</text>
+  <text x="492" y="136" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">60% · 경량 모델</text>
+
+  <!-- M: 중간 25% (focal 2nd accent) -->
+  <!-- x=412, y=144, w=160, h=64 -->
+  <rect x="412" y="144" width="160" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="412" y="144" width="160" height="64" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="420" y="150" width="48" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.4)" stroke-width="0.8"/>
+  <text x="444" y="159" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">BALANCE</text>
+  <text x="492" y="174" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">중간 요청</text>
+  <text x="492" y="192" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">25% · 균형 모델</text>
+
+  <!-- P: 복잡 15% (backend) -->
+  <!-- x=412, y=204, w=160, h=64 -->
+  <rect x="412" y="204" width="160" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="412" y="204" width="160" height="64" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="420" y="210" width="48" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.4)" stroke-width="0.8"/>
+  <text x="444" y="219" fill="rgba(18,33,39,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">COMPLEX</text>
+  <text x="492" y="234" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">복잡 요청</text>
+  <text x="492" y="252" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">15% · 고성능 모델</text>
+
+  <!-- C1: $0.15/1M (store/muted) -->
+  <!-- x=640, y=88, w=144, h=64 -->
+  <rect x="640" y="88" width="144" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="640" y="88" width="144" height="64" rx="6" fill="rgba(18,33,39,0.05)" stroke="#c3d0d4" stroke-width="1"/>
+  <rect x="648" y="94" width="36" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.2)" stroke-width="0.8"/>
+  <text x="666" y="103" fill="rgba(18,33,39,0.5)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">COST</text>
+  <text x="712" y="124" fill="#3f545c" font-size="14" font-weight="600" font-family="'IBM Plex Mono', monospace" text-anchor="middle">$0.15/1M</text>
+  <text x="712" y="140" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">토큰당 비용</text>
+
+  <!-- C2: $3.00/1M (store/muted) -->
+  <!-- x=640, y=144, w=144, h=64 -->
+  <rect x="640" y="144" width="144" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="640" y="144" width="144" height="64" rx="6" fill="rgba(18,33,39,0.05)" stroke="#c3d0d4" stroke-width="1"/>
+  <rect x="648" y="150" width="36" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.2)" stroke-width="0.8"/>
+  <text x="666" y="159" fill="rgba(18,33,39,0.5)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">COST</text>
+  <text x="712" y="180" fill="#3f545c" font-size="14" font-weight="600" font-family="'IBM Plex Mono', monospace" text-anchor="middle">$3.00/1M</text>
+  <text x="712" y="196" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">토큰당 비용</text>
+
+  <!-- C3: $15.00/1M (store/muted) -->
+  <!-- x=640, y=204, w=144, h=64 -->
+  <rect x="640" y="204" width="144" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="640" y="204" width="144" height="64" rx="6" fill="rgba(18,33,39,0.05)" stroke="#c3d0d4" stroke-width="1"/>
+  <rect x="648" y="210" width="36" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.2)" stroke-width="0.8"/>
+  <text x="666" y="219" fill="rgba(18,33,39,0.5)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">COST</text>
+  <text x="712" y="240" fill="#3f545c" font-size="14" font-weight="600" font-family="'IBM Plex Mono', monospace" text-anchor="middle">$15.00/1M</text>
+  <text x="712" y="256" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">토큰당 비용</text>
+
+  <!-- ─────────────────────────────────────────
+       ARROW LABELS
+  ───────────────────────────────────────── -->
+
+  <!-- T→S 레이블: 수직 세그먼트 x=348, y=120~176 → 중간 y=148, 레이블을 오른쪽에 -->
+  <rect x="352" y="140" width="28" height="14" rx="2" fill="#f8fafb"/>
+  <text x="366" y="150" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">60%</text>
+
+  <!-- T→M 레이블: 수평 세그먼트 x=288~412, y=176 → 중간 x=350 -->
+  <rect x="324" y="162" width="28" height="14" rx="2" fill="#f8fafb"/>
+  <text x="338" y="172" fill="#0d5763" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="600">25%</text>
+
+  <!-- T→P 레이블: 수직 세그먼트 x=348, y=176~236 → 중간 y=206, 레이블을 오른쪽에 -->
+  <rect x="352" y="198" width="28" height="14" rx="2" fill="#f8fafb"/>
+  <text x="366" y="208" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">15%</text>
+
+  <!-- ─────────────────────────────────────────
+       LEGEND
+  ───────────────────────────────────────── -->
+  <line x1="30" y1="332" x2="930" y2="332" stroke="rgba(18,33,39,0.10)" stroke-width="0.8"/>
+  <text x="30" y="348" fill="#6c8188" font-size="8" font-family="'IBM Plex Mono', monospace" letter-spacing="0.14em">LEGEND</text>
+
+  <!-- focal -->
+  <rect x="100" y="338" width="12" height="12" rx="2" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="116" y="348" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">라우터 / 핵심 경로</text>
+
+  <!-- backend -->
+  <rect x="280" y="338" width="12" height="12" rx="2" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <text x="296" y="348" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">모델 티어</text>
+
+  <!-- store -->
+  <rect x="420" y="338" width="12" height="12" rx="2" fill="rgba(18,33,39,0.05)" stroke="#c3d0d4" stroke-width="1"/>
+  <text x="436" y="348" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">비용 결과</text>
+
+  <!-- accent arrow -->
+  <line x1="580" y1="344" x2="608" y2="344" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-10-04-475e9685-04-arr-accent)"/>
+  <text x="616" y="348" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">주요 분기</text>
+
+  <!-- default arrow -->
+  <line x1="720" y1="344" x2="748" y2="344" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-04-475e9685-04-arr)"/>
+  <text x="756" y="348" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">일반 분기</text>
+
+</svg>
+</body>
+</html>

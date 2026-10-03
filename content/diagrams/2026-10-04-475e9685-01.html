@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: #f8fafb; }
+  body { display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; }
+  .diagram-wrap { width: 100%; max-width: 960px; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<div class="diagram-wrap">
+<svg viewBox="0 0 960 360" xmlns="http://www.w3.org/2000/svg"
+     role="img" aria-labelledby="2026-10-04-475e9685-01-routing-title 2026-10-04-475e9685-01-routing-desc">
+  <title id="2026-10-04-475e9685-01-routing-title">LLM 요청 라우팅 흐름</title>
+  <desc id="2026-10-04-475e9685-01-routing-desc">요청이 유입되면 복잡도 판단을 거쳐 단순 요청은 경량 모델로, 복잡 요청은 고성능 모델로 분기되고 두 경로 모두 최종 응답으로 수렴하는 라우팅 다이어그램.</desc>
+
+  <defs>
+    <!-- Arrow markers -->
+    <marker id="2026-10-04-475e9685-01-r-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-10-04-475e9685-01-r-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <marker id="2026-10-04-475e9685-01-r-arrow-blue" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3a548f"/>
+    </marker>
+    <marker id="2026-10-04-475e9685-01-r-arrow-green" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#286d50"/>
+    </marker>
+    <marker id="2026-10-04-475e9685-01-r-arrow-amber" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#a96a08"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="960" height="360" fill="#f8fafb"/>
+
+  <!-- ===================== CONNECTORS (drawn before boxes) ===================== -->
+
+  <!-- 요청 유입 → 복잡도 판단 (straight horizontal) -->
+  <line x1="188" y1="180" x2="296" y2="180"
+        stroke="#3a548f" stroke-width="1" marker-end="url(#2026-10-04-475e9685-01-r-arrow-blue)"/>
+
+  <!-- 복잡도 판단 → 경량 모델 (elbow: right then up) -->
+  <!-- exits right edge of diamond at x=424, y=180; turns at x=484, y=180; goes up to y=112; enters left of 경량 -->
+  <path d="M424,180 Q432,180 432,172 L432,116 Q432,108 440,108 L496,108"
+        fill="none" stroke="#286d50" stroke-width="1" marker-end="url(#2026-10-04-475e9685-01-r-arrow-green)"/>
+
+  <!-- 복잡도 판단 → 고성능 모델 (elbow: right then down) -->
+  <!-- exits right edge of diamond at x=424, y=180; turns; goes down to y=252; enters left of 고성능 -->
+  <path d="M424,180 Q432,180 432,188 L432,248 Q432,256 440,256 L496,256"
+        fill="none" stroke="#a96a08" stroke-width="1" marker-end="url(#2026-10-04-475e9685-01-r-arrow-amber)"/>
+
+  <!-- 경량 모델 → 응답 (elbow: exits right, goes down, enters left of 응답) -->
+  <!-- 경량 모델 right edge x=640, y=108; connector goes right to x=720, then down to y=180; then right to 응답 -->
+  <path d="M640,108 L720,108 Q728,108 728,116 L728,172 Q728,180 736,180 L772,180"
+        fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-04-475e9685-01-r-arrow)"/>
+
+  <!-- 고성능 모델 → 응답 (elbow: exits right, goes up, enters left of 응답) -->
+  <!-- 고성능 모델 right edge x=640, y=256; connector goes right to x=720+12=732 (offset to avoid overlap), then up to y=180 -->
+  <path d="M640,256 L732,256 Q740,256 740,248 L740,188 Q740,180 748,180 L772,180"
+        fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-04-475e9685-01-r-arrow)"/>
+
+  <!-- ===================== ARROW LABELS ===================== -->
+
+  <!-- "단순" label on 복잡도→경량 connector, on the upper segment -->
+  <rect x="418" y="126" width="28" height="14" rx="2" fill="#f8fafb"/>
+  <text x="432" y="136" fill="#286d50" font-size="10" font-weight="500"
+        font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">단순</text>
+
+  <!-- "복잡" label on 복잡도→고성능 connector, on the lower segment -->
+  <rect x="418" y="218" width="28" height="14" rx="2" fill="#f8fafb"/>
+  <text x="432" y="228" fill="#a96a08" font-size="10" font-weight="500"
+        font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">복잡</text>
+
+  <!-- ===================== NODES ===================== -->
+
+  <!-- 1. 요청 유입 (input type — oval, left) cx=120, cy=180 -->
+  <rect x="44" y="156" width="144" height="48" rx="20" fill="#f8fafb"/>
+  <rect x="44" y="156" width="144" height="48" rx="20"
+        fill="rgba(63,84,92,0.08)" stroke="#6c8188" stroke-width="1"/>
+  <text x="116" y="176" fill="#122127" font-size="12" font-weight="600"
+        font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">요청 유입</text>
+  <text x="116" y="192" fill="#3f545c" font-size="10"
+        font-family="'IBM Plex Mono', monospace" text-anchor="middle">LLM Request</text>
+
+  <!-- 2. 복잡도 판단 (focal decision diamond) cx=360, cy=180 -->
+  <!-- Diamond: center 360,180, half-w=64, half-h=52 -->
+  <rect x="296" y="128" width="128" height="104" rx="0" fill="#f8fafb"/>
+  <polygon points="360,128 424,180 360,232 296,180"
+           fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="360" y="175" fill="#122127" font-size="12" font-weight="600"
+        font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">복잡도</text>
+  <text x="360" y="191" fill="#122127" font-size="12" font-weight="600"
+        font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">판단</text>
+
+  <!-- 3. 경량 모델 (backend, upper path) x=496, y=84, w=144, h=48 -->
+  <rect x="496" y="84" width="144" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="496" y="84" width="144" height="48" rx="6"
+        fill="#d6e9de" stroke="#286d50" stroke-width="1"/>
+  <!-- tag -->
+  <rect x="504" y="90" width="36" height="12" rx="2"
+        fill="transparent" stroke="rgba(40,109,80,0.40)" stroke-width="0.8"/>
+  <text x="522" y="99" fill="rgba(40,109,80,0.8)" font-size="7"
+        font-family="'IBM Plex Mono', monospace" text-anchor="middle"
+        letter-spacing="0.08em">LIGHT</text>
+  <text x="568" y="107" fill="#122127" font-size="12" font-weight="600"
+        font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">경량 모델</text>
+  <text x="568" y="121" fill="#286d50" font-size="10"
+        font-family="'IBM Plex Mono', monospace" text-anchor="middle">저비용</text>
+
+  <!-- 4. 고성능 모델 (backend, lower path) x=496, y=232, w=144, h=48 -->
+  <rect x="496" y="232" width="144" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="496" y="232" width="144" height="48" rx="6"
+        fill="#f5e8cc" stroke="#a96a08" stroke-width="1"/>
+  <!-- tag -->
+  <rect x="504" y="238" width="36" height="12" rx="2"
+        fill="transparent" stroke="rgba(169,106,8,0.40)" stroke-width="0.8"/>
+  <text x="522" y="247" fill="rgba(169,106,8,0.8)" font-size="7"
+        font-family="'IBM Plex Mono', monospace" text-anchor="middle"
+        letter-spacing="0.08em">FULL</text>
+  <text x="568" y="255" fill="#122127" font-size="12" font-weight="600"
+        font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">고성능 모델</text>
+  <text x="568" y="269" fill="#a96a08" font-size="10"
+        font-family="'IBM Plex Mono', monospace" text-anchor="middle">고품질</text>
+
+  <!-- 5. 응답 (store/output, right) x=772, y=156, w=144, h=48 -->
+  <rect x="772" y="156" width="144" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="772" y="156" width="144" height="48" rx="6"
+        fill="#eef2f4" stroke="#c3d0d4" stroke-width="1"/>
+  <text x="844" y="176" fill="#3f545c" font-size="12" font-weight="600"
+        font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">응답</text>
+  <text x="844" y="192" fill="#6c8188" font-size="10"
+        font-family="'IBM Plex Mono', monospace" text-anchor="middle">Response</text>
+
+  <!-- ===================== LEGEND ===================== -->
+  <line x1="40" y1="308" x2="920" y2="308"
+        stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+
+  <text x="40" y="322" fill="#3f545c" font-size="8"
+        font-family="'IBM Plex Mono', monospace" letter-spacing="0.14em">LEGEND</text>
+
+  <!-- oval -->
+  <rect x="108" y="313" width="40" height="14" rx="7"
+        fill="rgba(63,84,92,0.08)" stroke="#6c8188" stroke-width="1"/>
+  <text x="128" y="322" fill="#3f545c" font-size="8"
+        font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">입력</text>
+
+  <!-- diamond small -->
+  <polygon points="182,320 194,313 206,320 194,327"
+           fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="222" y="324" fill="#3f545c" font-size="8"
+        font-family="'IBM Plex Sans KR', sans-serif">판단</text>
+
+  <!-- green rect -->
+  <rect x="270" y="313" width="40" height="14" rx="4"
+        fill="#d6e9de" stroke="#286d50" stroke-width="1"/>
+  <text x="290" y="322" fill="#3f545c" font-size="8"
+        font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">경량</text>
+
+  <!-- amber rect -->
+  <rect x="328" y="313" width="40" height="14" rx="4"
+        fill="#f5e8cc" stroke="#a96a08" stroke-width="1"/>
+  <text x="348" y="322" fill="#3f545c" font-size="8"
+        font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">고성능</text>
+
+  <!-- muted rect -->
+  <rect x="386" y="313" width="40" height="14" rx="4"
+        fill="#eef2f4" stroke="#c3d0d4" stroke-width="1"/>
+  <text x="406" y="322" fill="#3f545c" font-size="8"
+        font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">출력</text>
+
+</svg>
+</div>
+</body>
+</html>
