@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 960 500"
+  role="img"
+  aria-labelledby="2026-10-05-5c88b64b-05-hitl-title 2026-10-05-5c88b64b-05-hitl-desc"
+>
+  <title id="2026-10-05-5c88b64b-05-hitl-title">Human-in-the-Loop interrupt 처리 흐름</title>
+  <desc id="2026-10-05-5c88b64b-05-hitl-desc">AI 에이전트가 invoke를 실행한 뒤 interrupt 발생 여부를 판단하고, 알림 발송·타임아웃·승인 여부에 따라 재개·중단·만료로 분기하는 처리 흐름도.</desc>
+
+  <defs>
+    <!-- 마커 정의 -->
+    <marker id="2026-10-05-5c88b64b-05-hitl-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-10-05-5c88b64b-05-hitl-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <marker id="2026-10-05-5c88b64b-05-hitl-arrow-ok" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#286d50"/>
+    </marker>
+    <marker id="2026-10-05-5c88b64b-05-hitl-arrow-stop" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#94382b"/>
+    </marker>
+  </defs>
+
+  <!-- 배경 -->
+  <rect width="960" height="500" fill="#f8fafb"/>
+
+  <!-- ─────────────────────────────────────────────
+       커넥터 (노드보다 먼저 그림)
+  ───────────────────────────────────────────── -->
+
+  <!-- I → IP  (직선 수평) -->
+  <line x1="148" y1="200" x2="212" y2="200" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-05-5c88b64b-05-hitl-arrow)"/>
+
+  <!-- IP → N  |예| 위쪽 수직 + 수평 -->
+  <path d="M 268 172 L 268 140 L 400 140 L 400 164" fill="none" stroke="#0d5763" stroke-width="1" marker-end="url(#2026-10-05-5c88b64b-05-hitl-arrow-accent)"/>
+  <!-- 라벨: 예 -->
+  <rect x="314" y="128" width="20" height="12" rx="2" fill="#f8fafb"/>
+  <text x="324" y="138" fill="#0d5763" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="500">예</text>
+
+  <!-- IP → F  |아니오| 아래쪽 -->
+  <path d="M 268 228 L 268 260 L 400 260 L 400 236" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-05-5c88b64b-05-hitl-arrow)"/>
+  <!-- 라벨: 아니오 -->
+  <rect x="304" y="264" width="44" height="12" rx="2" fill="#f8fafb"/>
+  <text x="326" y="274" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="500">아니오</text>
+
+  <!-- N → T  (직선 수평) -->
+  <line x1="488" y1="196" x2="552" y2="196" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-05-5c88b64b-05-hitl-arrow)"/>
+
+  <!-- T → V  |예| 위쪽 -->
+  <path d="M 608 168 L 608 140 L 740 140 L 740 164" fill="none" stroke="#0d5763" stroke-width="1" marker-end="url(#2026-10-05-5c88b64b-05-hitl-arrow-accent)"/>
+  <!-- 라벨: 예 -->
+  <rect x="666" y="128" width="20" height="12" rx="2" fill="#f8fafb"/>
+  <text x="676" y="138" fill="#0d5763" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="500">예</text>
+
+  <!-- T → EX  |아니오| 아래쪽 -->
+  <path d="M 608 224 L 608 260 L 740 260 L 740 236" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-05-5c88b64b-05-hitl-arrow)"/>
+  <!-- 라벨: 아니오 -->
+  <rect x="644" y="264" width="44" height="12" rx="2" fill="#f8fafb"/>
+  <text x="666" y="274" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="500">아니오</text>
+
+  <!-- V → R  |예| 위쪽 수평 -->
+  <path d="M 796 168 L 796 108 L 880 108 L 880 164" fill="none" stroke="#286d50" stroke-width="1" marker-end="url(#2026-10-05-5c88b64b-05-hitl-arrow-ok)"/>
+  <!-- 라벨: 예 -->
+  <rect x="830" y="96" width="20" height="12" rx="2" fill="#f8fafb"/>
+  <text x="840" y="106" fill="#286d50" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="500">예</text>
+
+  <!-- V → AB  |아니오| 아래쪽 -->
+  <path d="M 796 224 L 796 300 L 880 300 L 880 236" fill="none" stroke="#94382b" stroke-width="1" marker-end="url(#2026-10-05-5c88b64b-05-hitl-arrow-stop)"/>
+  <!-- 라벨: 아니오 -->
+  <rect x="812" y="304" width="44" height="12" rx="2" fill="#f8fafb"/>
+  <text x="834" y="314" fill="#94382b" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="500">아니오</text>
+
+  <!-- ─────────────────────────────────────────────
+       노드
+  ───────────────────────────────────────────── -->
+
+  <!-- I: invoke 실행 (시작 oval, link/blue 처리) -->
+  <rect x="32" y="188" width="116" height="24" rx="0" fill="#f8fafb"/>
+  <rect x="32" y="180" width="116" height="40" rx="20" fill="rgba(58,84,143,0.08)" stroke="#3a548f" stroke-width="1"/>
+  <text x="90" y="204" fill="#122127" font-size="12" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">invoke 실행</text>
+
+  <!-- IP: interrupt 발생? (다이아몬드, accent/focal) -->
+  <rect x="200" y="188" width="136" height="24" rx="0" fill="#f8fafb"/>
+  <polygon points="268,168 336,200 268,232 200,200" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="268" y="197" fill="#122127" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">interrupt</text>
+  <text x="268" y="211" fill="#122127" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">발생?</text>
+
+  <!-- N: 알림 발송 (단계 박스, 강조) -->
+  <rect x="368" y="152" width="120" height="44" rx="6" fill="#f8fafb"/>
+  <rect x="368" y="164" width="120" height="44" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <!-- 타입 태그 -->
+  <rect x="376" y="170" width="32" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="392" y="179" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">NOTIFY</text>
+  <text x="428" y="193" fill="#122127" font-size="12" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">알림 발송</text>
+
+  <!-- F: 정상 완료 (단계 박스, ok 처리) -->
+  <rect x="368" y="196" width="120" height="44" rx="6" fill="#f8fafb"/>
+  <rect x="368" y="208" width="120" height="40" rx="6" fill="rgba(40,109,80,0.08)" stroke="#286d50" stroke-width="1"/>
+  <!-- 타입 태그 -->
+  <rect x="376" y="214" width="24" height="12" rx="2" fill="transparent" stroke="rgba(40,109,80,0.40)" stroke-width="0.8"/>
+  <text x="388" y="223" fill="rgba(40,109,80,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">OK</text>
+  <text x="428" y="234" fill="#122127" font-size="12" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">정상 완료</text>
+
+  <!-- T: 타임아웃 전에 응답? (다이아몬드, accent/focal) -->
+  <rect x="540" y="172" width="136" height="24" rx="0" fill="#f8fafb"/>
+  <polygon points="608,168 676,196 608,224 540,196" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="608" y="191" fill="#122127" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">타임아웃 전</text>
+  <text x="608" y="205" fill="#122127" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">응답 도착?</text>
+
+  <!-- V: 승인인가 (다이아몬드, accent/focal) -->
+  <rect x="728" y="168" width="136" height="24" rx="0" fill="#f8fafb"/>
+  <polygon points="796,164 864,196 796,228 728,196" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="796" y="191" fill="#122127" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">승인</text>
+  <text x="796" y="205" fill="#122127" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">인가?</text>
+
+  <!-- R: 재개·실행 (ok 박스) -->
+  <rect x="836" y="152" width="88" height="44" rx="6" fill="#f8fafb"/>
+  <rect x="836" y="164" width="88" height="44" rx="6" fill="rgba(40,109,80,0.08)" stroke="#286d50" stroke-width="1"/>
+  <!-- 타입 태그 -->
+  <rect x="844" y="170" width="24" height="12" rx="2" fill="transparent" stroke="rgba(40,109,80,0.40)" stroke-width="0.8"/>
+  <text x="856" y="179" fill="rgba(40,109,80,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">OK</text>
+  <text x="880" y="196" fill="#122127" font-size="12" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">재개·실행</text>
+
+  <!-- EX: 만료 처리 (stop 박스) -->
+  <rect x="836" y="196" width="88" height="44" rx="6" fill="#f8fafb"/>
+  <rect x="836" y="208" width="88" height="40" rx="6" fill="rgba(148,56,43,0.06)" stroke="#94382b" stroke-width="1"/>
+  <!-- 타입 태그 -->
+  <rect x="844" y="214" width="36" height="12" rx="2" fill="transparent" stroke="rgba(148,56,43,0.40)" stroke-width="0.8"/>
+  <text x="862" y="223" fill="rgba(148,56,43,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">EXPIRE</text>
+  <text x="880" y="238" fill="#122127" font-size="12" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">만료 처리</text>
+
+  <!-- AB: 중단·기록 (stop 박스) -->
+  <rect x="836" y="256" width="88" height="44" rx="6" fill="#f8fafb"/>
+  <rect x="836" y="268" width="88" height="44" rx="6" fill="rgba(148,56,43,0.06)" stroke="#94382b" stroke-width="1"/>
+  <!-- 타입 태그 -->
+  <rect x="844" y="274" width="28" height="12" rx="2" fill="transparent" stroke="rgba(148,56,43,0.40)" stroke-width="0.8"/>
+  <text x="858" y="283" fill="rgba(148,56,43,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">ABORT</text>
+  <text x="880" y="298" fill="#122127" font-size="12" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">중단·기록</text>
+
+  <!-- ─────────────────────────────────────────────
+       범례 하단 띠
+  ───────────────────────────────────────────── -->
+  <line x1="32" y1="432" x2="928" y2="432" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+  <text x="32" y="448" fill="#3f545c" font-size="8" font-family="'IBM Plex Mono', monospace" letter-spacing="0.14em">LEGEND</text>
+
+  <!-- 범례 아이템들 -->
+  <!-- invoke (시작) -->
+  <rect x="100" y="438" width="52" height="18" rx="9" fill="rgba(58,84,143,0.08)" stroke="#3a548f" stroke-width="1"/>
+  <text x="126" y="451" fill="#122127" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">시작점</text>
+
+  <!-- 결정 다이아몬드 -->
+  <polygon points="218,447 230,440 242,447 230,454" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="262" y="451" fill="#122127" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">결정 (interrupt/응답/승인)</text>
+
+  <!-- ok -->
+  <rect x="488" y="439" width="52" height="16" rx="4" fill="rgba(40,109,80,0.08)" stroke="#286d50" stroke-width="1"/>
+  <text x="514" y="451" fill="#122127" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">정상·재개</text>
+
+  <!-- stop -->
+  <rect x="568" y="439" width="52" height="16" rx="4" fill="rgba(148,56,43,0.06)" stroke="#94382b" stroke-width="1"/>
+  <text x="594" y="451" fill="#122127" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">중단·만료</text>
+
+</svg>
+</body>
+</html>

@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI 에이전트 추론 루프</title>
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; padding: 0; }
+  .diagram-wrap { width: 100%; max-width: 960px; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<div class="diagram-wrap">
+<svg viewBox="0 0 960 400" xmlns="http://www.w3.org/2000/svg"
+     role="img" aria-labelledby="2026-10-05-5c88b64b-01-hitl-loop-title 2026-10-05-5c88b64b-01-hitl-loop-desc">
+  <title id="2026-10-05-5c88b64b-01-hitl-loop-title">AI 에이전트 추론 루프</title>
+  <desc id="2026-10-05-5c88b64b-01-hitl-loop-desc">사용자 요청이 에이전트 추론으로 전달되고, 추론이 도구를 호출한 뒤 결과를 받아 다시 추론하는 반복 루프를 거쳐 최종 응답을 반환하는 흐름도.</desc>
+
+  <defs>
+    <!-- 기본 화살표 -->
+    <marker id="2026-10-05-5c88b64b-01-hitl-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <!-- 악센트 화살표 -->
+    <marker id="2026-10-05-5c88b64b-01-hitl-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <!-- 복귀 화살표 (점선) -->
+    <marker id="2026-10-05-5c88b64b-01-hitl-arrow-return" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#6c8188"/>
+    </marker>
+  </defs>
+
+  <!-- 배경 -->
+  <rect width="960" height="400" fill="#f8fafb"/>
+
+  <!-- ─────────────────────────────────────────────
+       순서: 화살표 먼저, 노드 나중
+  ───────────────────────────────────────────── -->
+
+  <!-- 화살표 1: 사용자 요청 → 에이전트 추론 -->
+  <path d="M 192 180 L 248 180" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-05-5c88b64b-01-hitl-arrow)"/>
+
+  <!-- 화살표 2: 에이전트 추론 → 도구 호출 -->
+  <path d="M 432 180 L 488 180" fill="none" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-10-05-5c88b64b-01-hitl-arrow-accent)"/>
+
+  <!-- 화살표 3: 결과 반환 → 에이전트 추론 (위쪽 복귀 루프) -->
+  <!-- 결과 반환 노드 중앙 x=700, 도구호출 노드 중앙 x=560 → 에이전트 추론 중앙 x=340 -->
+  <!-- 위쪽 호: 결과 반환 상단 → 에이전트 추론 상단 -->
+  <path d="M 700 132 C 700 84, 340 84, 340 132"
+        fill="none" stroke="#6c8188" stroke-width="1" stroke-dasharray="5,4"
+        marker-end="url(#2026-10-05-5c88b64b-01-hitl-arrow-return)"/>
+  <!-- 복귀 라벨 마스크 -->
+  <rect x="486" y="68" width="68" height="14" rx="2" fill="#f8fafb"/>
+  <text x="520" y="79" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif"
+        text-anchor="middle" font-weight="500">반복 추론</text>
+
+  <!-- 화살표 4: 도구 호출 → 결과 반환 -->
+  <path d="M 632 180 L 668 180" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-05-5c88b64b-01-hitl-arrow)"/>
+
+  <!-- 화살표 5: 에이전트 추론 → 최종 응답 (아래쪽 분기) -->
+  <path d="M 340 228 C 340 268, 820 268, 820 228"
+        fill="none" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-10-05-5c88b64b-01-hitl-arrow-accent)"/>
+  <!-- 최종 응답 분기 라벨 마스크 -->
+  <rect x="546" y="262" width="68" height="14" rx="2" fill="#f8fafb"/>
+  <text x="580" y="273" fill="#0d5763" font-size="10" font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.04em">완료 시</text>
+
+  <!-- ─────────────────────────────────────────────
+       노드
+  ───────────────────────────────────────────── -->
+
+  <!-- 노드 1: 사용자 요청 (input 타입) x=52, y=152, w=140, h=56 -->
+  <rect x="52" y="152" width="140" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="52" y="152" width="140" height="56" rx="6"
+        fill="rgba(63,84,92,0.10)" stroke="#6c8188" stroke-width="1"/>
+  <!-- 태그 -->
+  <rect x="60" y="159" width="32" height="12" rx="2" fill="transparent" stroke="rgba(108,129,136,0.40)" stroke-width="0.8"/>
+  <text x="76" y="168" fill="rgba(108,129,136,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.08em">INPUT</text>
+  <!-- 노드명 -->
+  <text x="122" y="186" fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif"
+        text-anchor="middle">사용자 요청</text>
+
+  <!-- 노드 2: 에이전트 추론 (focal 타입) x=248, y=132, w=184, h=96 -->
+  <rect x="248" y="132" width="184" height="96" rx="6" fill="#f8fafb"/>
+  <rect x="248" y="132" width="184" height="96" rx="6"
+        fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <!-- 태그 -->
+  <rect x="256" y="139" width="36" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="274" y="148" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.08em">AGENT</text>
+  <!-- 노드명 -->
+  <text x="340" y="178" fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif"
+        text-anchor="middle">에이전트 추론</text>
+  <!-- 서브라벨 -->
+  <text x="340" y="198" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle">LLM · reasoning</text>
+
+  <!-- 노드 3: 도구 호출 (backend 타입) x=488, y=148, w=144, h=64 -->
+  <rect x="488" y="148" width="144" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="488" y="148" width="144" height="64" rx="6"
+        fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <!-- 태그 -->
+  <rect x="496" y="155" width="28" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="510" y="164" fill="rgba(18,33,39,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.08em">TOOL</text>
+  <!-- 노드명 -->
+  <text x="560" y="182" fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif"
+        text-anchor="middle">도구 호출</text>
+  <!-- 서브라벨 -->
+  <text x="560" y="200" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle">DB · API · 파일</text>
+
+  <!-- 노드 4: 결과 반환 (store 타입) x=668, y=152, w=132, h=56 -->
+  <rect x="668" y="152" width="132" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="668" y="152" width="132" height="56" rx="6"
+        fill="rgba(18,33,39,0.05)" stroke="#3f545c" stroke-width="1"/>
+  <!-- 태그 -->
+  <rect x="676" y="159" width="36" height="12" rx="2" fill="transparent" stroke="rgba(63,84,92,0.40)" stroke-width="0.8"/>
+  <text x="694" y="168" fill="rgba(63,84,92,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.08em">RESULT</text>
+  <!-- 노드명 -->
+  <text x="734" y="186" fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif"
+        text-anchor="middle">결과 반환</text>
+
+  <!-- 노드 5: 최종 응답 (backend 타입, 완료) x=748, y=172, w=144, h=56 -->
+  <rect x="748" y="172" width="144" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="748" y="172" width="144" height="56" rx="6"
+        fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <!-- 태그 -->
+  <rect x="756" y="179" width="36" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="774" y="188" fill="rgba(18,33,39,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.08em">OUTPUT</text>
+  <!-- 노드명 -->
+  <text x="820" y="206" fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif"
+        text-anchor="middle">최종 응답</text>
+
+  <!-- ─────────────────────────────────────────────
+       범례 스트립
+  ───────────────────────────────────────────── -->
+  <line x1="40" y1="336" x2="920" y2="336" stroke="rgba(18,33,39,0.10)" stroke-width="0.8"/>
+
+  <!-- 범례 항목 1: 에이전트 추론 루프 -->
+  <line x1="40" y1="358" x2="64" y2="358" stroke="#6c8188" stroke-width="1" stroke-dasharray="5,4"/>
+  <polygon points="64,355 70,358 64,361" fill="#6c8188"/>
+  <text x="76" y="363" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif"
+        font-weight="500">추론 반복 루프</text>
+
+  <!-- 범례 항목 2: 주 흐름 -->
+  <line x1="220" y1="358" x2="244" y2="358" stroke="#0d5763" stroke-width="1.2"/>
+  <polygon points="244,355 250,358 244,361" fill="#0d5763"/>
+  <text x="256" y="363" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif"
+        font-weight="500">주 흐름 (focal)</text>
+
+  <!-- 범례 항목 3: 일반 흐름 -->
+  <line x1="400" y1="358" x2="424" y2="358" stroke="#3f545c" stroke-width="1"/>
+  <polygon points="424,355 430,358 424,361" fill="#3f545c"/>
+  <text x="436" y="363" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif"
+        font-weight="500">일반 흐름</text>
+
+  <!-- 범례 항목 4: 도구 호출 박스 -->
+  <rect x="580" y="349" width="16" height="16" rx="2" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <text x="602" y="363" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif"
+        font-weight="500">처리 단계</text>
+
+  <!-- 범례 항목 5: 에이전트 추론 박스 (focal) -->
+  <rect x="720" y="349" width="16" height="16" rx="2"
+        fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="742" y="363" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif"
+        font-weight="500">핵심 단계</text>
+
+</svg>
+</div>
+</body>
+</html>

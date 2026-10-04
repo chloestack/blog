@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 24px; }
+  .diagram-wrap { width: 100%; max-width: 960px; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<div class="diagram-wrap">
+<svg viewBox="0 0 960 320" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="2026-10-05-5c88b64b-03-hitl-gate-title 2026-10-05-5c88b64b-03-hitl-gate-desc">
+  <title id="2026-10-05-5c88b64b-03-hitl-gate-title">Human-in-the-Loop Approval Gate Flow</title>
+  <desc id="2026-10-05-5c88b64b-03-hitl-gate-desc">Shows the flow where an AI agent selects a tool, passes through an approval gate (interrupt), then either executes the tool and processes the result on approval, or returns a message on rejection.</desc>
+
+  <defs>
+    <!-- 기본(muted) 화살표 -->
+    <marker id="2026-10-05-5c88b64b-03-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <!-- accent 화살표 -->
+    <marker id="2026-10-05-5c88b64b-03-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <!-- 거부(soft-red) 화살표 -->
+    <marker id="2026-10-05-5c88b64b-03-arrow-stop" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#94382b"/>
+    </marker>
+    <!-- 승인(green) 화살표 -->
+    <marker id="2026-10-05-5c88b64b-03-arrow-ok" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#286d50"/>
+    </marker>
+  </defs>
+
+  <!-- 배경 -->
+  <rect width="960" height="320" fill="#f8fafb"/>
+
+  <!-- ===================== ARROWS (drawn before boxes) ===================== -->
+
+  <!-- A → G : 도구 선택 → 승인 게이트 (수평) -->
+  <line x1="212" y1="120" x2="332" y2="120" stroke="#3f545c" stroke-width="1.2" marker-end="url(#2026-10-05-5c88b64b-03-arrow)"/>
+
+  <!-- G → T : 승인 (수평) -->
+  <line x1="468" y1="104" x2="572" y2="104" stroke="#286d50" stroke-width="1.2" marker-end="url(#2026-10-05-5c88b64b-03-arrow-ok)"/>
+  <!-- 승인 라벨 -->
+  <rect x="490" y="88" width="32" height="12" rx="2" fill="#f8fafb"/>
+  <text x="506" y="98" fill="#286d50" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="500">Approve</text>
+
+  <!-- G → M : 거부 (게이트 하단 → 메시지 반환) -->
+  <!-- 수직 세그먼트: 게이트 하단(400,152) → (400,216) -->
+  <path d="M400,152 L400,216 Q400,224 392,224 L212,224 Q204,224 204,216 L204,172" stroke="#94382b" stroke-width="1.2" fill="none" stroke-dasharray="5,3" marker-end="url(#2026-10-05-5c88b64b-03-arrow-stop)"/>
+  <!-- 거부 라벨 -->
+  <rect x="372" y="180" width="32" height="12" rx="2" fill="#f8fafb"/>
+  <text x="388" y="190" fill="#94382b" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="500">Reject</text>
+
+  <!-- T → R : 도구 실행 → 결과 처리 (수평) -->
+  <line x1="712" y1="104" x2="796" y2="104" stroke="#3f545c" stroke-width="1.2" marker-end="url(#2026-10-05-5c88b64b-03-arrow)"/>
+
+  <!-- ===================== NODES ===================== -->
+
+  <!-- A: 도구 선택 (focal — accent) -->
+  <rect x="52" y="92" width="160" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="52" y="92" width="160" height="56" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <!-- 태그 -->
+  <rect x="60" y="98" width="36" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="78" y="107" fill="rgba(13,87,99,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">INPUT</text>
+  <!-- 이름 -->
+  <text x="132" y="124" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Tool Select</text>
+  <text x="132" y="140" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">tool call</text>
+
+  <!-- G: 승인 게이트 (warn — diamond 대신 focal 강조 박스) -->
+  <!-- 다이아몬드 형태 -->
+  <rect x="336" y="72" width="128" height="96" rx="6" fill="#f8fafb"/>
+  <!-- Diamond polygon -->
+  <polygon points="400,72 464,120 400,168 336,120" fill="rgba(13,87,99,0.05)" stroke="#0d5763" stroke-width="1.5"/>
+  <!-- 태그 -->
+  <rect x="367" y="88" width="44" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="389" y="97" fill="rgba(13,87,99,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">GATE</text>
+  <!-- 이름 -->
+  <text x="400" y="116" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Approval Gate</text>
+  <text x="400" y="130" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">interrupt</text>
+
+  <!-- T: 도구 실행 (backend) -->
+  <rect x="572" y="76" width="140" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="572" y="76" width="140" height="56" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="580" y="82" width="44" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="602" y="91" fill="rgba(18,33,39,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">ACTION</text>
+  <text x="642" y="108" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Tool Execute</text>
+  <text x="642" y="122" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">tool.run()</text>
+
+  <!-- R: 결과 처리 (backend) -->
+  <rect x="796" y="76" width="120" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="796" y="76" width="120" height="56" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="804" y="82" width="44" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="826" y="91" fill="rgba(18,33,39,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">OUTPUT</text>
+  <text x="856" y="112" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Process Result</text>
+
+  <!-- M: 메시지 반환 (optional/stop) — 거부 경로 -->
+  <rect x="52" y="148" width="160" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="52" y="148" width="160" height="56" rx="6" fill="rgba(148,56,43,0.06)" stroke="#94382b" stroke-width="1" stroke-dasharray="5,3"/>
+  <rect x="60" y="154" width="52" height="12" rx="2" fill="transparent" stroke="rgba(148,56,43,0.40)" stroke-width="0.8"/>
+  <text x="86" y="163" fill="rgba(148,56,43,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">REJECTED</text>
+  <text x="132" y="180" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Return Msg</text>
+  <text x="132" y="196" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">user feedback</text>
+
+  <!-- ===================== LEGEND ===================== -->
+  <line x1="40" y1="252" x2="920" y2="252" stroke="rgba(18,33,39,0.10)" stroke-width="0.8"/>
+
+  <!-- 범례 항목들 -->
+  <!-- 정상 경로 -->
+  <line x1="44" y1="272" x2="64" y2="272" stroke="#3f545c" stroke-width="1.2" marker-end="url(#2026-10-05-5c88b64b-03-arrow)"/>
+  <text x="72" y="276" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">Normal path</text>
+
+  <!-- 승인 -->
+  <line x1="180" y1="272" x2="200" y2="272" stroke="#286d50" stroke-width="1.2" marker-end="url(#2026-10-05-5c88b64b-03-arrow-ok)"/>
+  <text x="208" y="276" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">Approved</text>
+
+  <!-- 거부 -->
+  <line x1="280" y1="272" x2="300" y2="272" stroke="#94382b" stroke-width="1.2" stroke-dasharray="5,3" marker-end="url(#2026-10-05-5c88b64b-03-arrow-stop)"/>
+  <text x="308" y="276" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">Rejected (interrupt)</text>
+
+  <!-- 게이트 -->
+  <polygon points="452,264 464,272 452,280 440,272" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="472" y="276" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">Decision gate</text>
+
+  <!-- 거부 박스 -->
+  <rect x="572" y="263" width="12" height="12" rx="2" fill="rgba(148,56,43,0.06)" stroke="#94382b" stroke-width="1" stroke-dasharray="4,2"/>
+  <text x="592" y="273" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">Rejected state</text>
+
+</svg>
+</div>
+</body>
+</html>

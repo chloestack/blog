@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; }
+</style>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg"
+     viewBox="0 0 960 360"
+     width="100%"
+     role="img"
+     aria-labelledby="2026-10-05-5c88b64b-04-hitl-flow-title 2026-10-05-5c88b64b-04-hitl-flow-desc">
+  <title id="2026-10-05-5c88b64b-04-hitl-flow-title">Human-in-the-Loop Decision Flow</title>
+  <desc id="2026-10-05-5c88b64b-04-hitl-flow-desc">A Human-in-the-Loop flow where the agent reasoning result branches to an approval request if the impact scope threshold is exceeded, or proceeds to auto-execution if not.</desc>
+
+  <defs>
+    <!-- 기본 화살표 (muted) -->
+    <marker id="2026-10-05-5c88b64b-04-hitl-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <!-- 강조 화살표 (accent) -->
+    <marker id="2026-10-05-5c88b64b-04-hitl-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <!-- 대안 화살표 (soft) -->
+    <marker id="2026-10-05-5c88b64b-04-hitl-arrow-soft" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#6c8188"/>
+    </marker>
+  </defs>
+
+  <!-- 배경 -->
+  <rect width="960" height="360" fill="#f8fafb"/>
+
+  <!-- ===================== 화살표 (nodes보다 먼저) ===================== -->
+
+  <!-- A → Q: 에이전트 추론 → 판단 -->
+  <path d="M196,180 L252,180" fill="none" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-10-05-5c88b64b-04-hitl-arrow-accent)"/>
+
+  <!-- Q → T (아니오): 다이아몬드 오른쪽 → 자동 실행 -->
+  <path d="M388,180 L444,180" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-05-5c88b64b-04-hitl-arrow)"/>
+  <!-- 라벨: 아니오 -->
+  <rect x="394" y="164" width="36" height="12" rx="2" fill="#f8fafb"/>
+  <text x="412" y="173" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">No</text>
+
+  <!-- Q → G (예): 다이아몬드 위 → 승인 요청 (아래로) -->
+  <path d="M320,148 L320,96 L600,96 L600,144" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-05-5c88b64b-04-hitl-arrow)"/>
+  <!-- 라벨: 예 -->
+  <rect x="302" y="104" width="20" height="12" rx="2" fill="#f8fafb"/>
+  <text x="312" y="113" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Yes</text>
+
+  <!-- G → T (승인): 승인 요청 → 자동 실행 -->
+  <path d="M648,168 L680,168 L680,200 L640,200" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-05-5c88b64b-04-hitl-arrow)"/>
+  <!-- 라벨: 승인 -->
+  <rect x="654" y="152" width="32" height="12" rx="2" fill="#f8fafb"/>
+  <text x="670" y="161" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Approve</text>
+
+  <!-- G → AL (거부): 승인 요청 → 대안 실행 -->
+  <path d="M552,192 L480,192 L480,248 L748,248 L748,256" fill="none" stroke="#6c8188" stroke-width="1" stroke-dasharray="5,4" marker-end="url(#2026-10-05-5c88b64b-04-hitl-arrow-soft)"/>
+  <!-- 라벨: 거부 -->
+  <rect x="488" y="232" width="32" height="12" rx="2" fill="#f8fafb"/>
+  <text x="504" y="241" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Reject</text>
+
+  <!-- T → R: 자동 실행 → 결과 -->
+  <path d="M748,208 L804,208" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-05-5c88b64b-04-hitl-arrow)"/>
+
+  <!-- AL → R: 대안 실행 → 결과 -->
+  <path d="M748,288 L832,288 L832,228" fill="none" stroke="#6c8188" stroke-width="1" stroke-dasharray="5,4" marker-end="url(#2026-10-05-5c88b64b-04-hitl-arrow-soft)"/>
+
+  <!-- ===================== 노드 ===================== -->
+
+  <!-- A: 에이전트 추론 (focal) -->
+  <rect x="44" y="152" width="152" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="44" y="152" width="152" height="56" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="52" y="160" width="40" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="72" y="169" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">AGENT</text>
+  <text x="120" y="186" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Agent Reasoning</text>
+
+  <!-- Q: 영향 범위 임계값 초과? (focal — diamond) -->
+  <!-- 다이아몬드: 중심 (320, 180), 너비 136, 높이 64 -->
+  <polygon points="320,148 388,180 320,212 252,180" fill="#f8fafb"/>
+  <polygon points="320,148 388,180 320,212 252,180" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="320" y="176" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Impact Scope</text>
+  <text x="320" y="191" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Over Threshold?</text>
+
+  <!-- G: 승인 요청 (warn — backend) -->
+  <rect x="552" y="144" width="144" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="552" y="144" width="144" height="48" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="560" y="152" width="40" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="580" y="161" fill="rgba(18,33,39,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">HUMAN</text>
+  <text x="624" y="173" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Approval Request</text>
+
+  <!-- T: 자동 실행 (backend) -->
+  <rect x="444" y="180" width="196" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="444" y="180" width="196" height="48" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="452" y="188" width="48" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="476" y="197" fill="rgba(18,33,39,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">AUTO</text>
+  <text x="542" y="209" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Auto Execute</text>
+
+  <!-- AL: 대안 실행 (optional/muted) -->
+  <rect x="700" y="256" width="144" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="700" y="256" width="144" height="48" rx="6" fill="rgba(18,33,39,0.02)" stroke="rgba(18,33,39,0.20)" stroke-width="1" stroke-dasharray="4,3"/>
+  <rect x="708" y="264" width="48" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.20)" stroke-width="0.8"/>
+  <text x="732" y="273" fill="rgba(18,33,39,0.5)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">ALT</text>
+  <text x="772" y="285" fill="#3f545c" font-size="14" font-weight="500" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Alt Execute</text>
+
+  <!-- R: 결과 (store) -->
+  <rect x="804" y="184" width="120" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="804" y="184" width="120" height="48" rx="6" fill="rgba(18,33,39,0.05)" stroke="#3f545c" stroke-width="1"/>
+  <rect x="812" y="192" width="40" height="12" rx="2" fill="transparent" stroke="rgba(63,84,92,0.40)" stroke-width="0.8"/>
+  <text x="832" y="201" fill="rgba(63,84,92,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">RESULT</text>
+  <text x="864" y="213" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Result</text>
+
+  <!-- ===================== 범례 ===================== -->
+  <line x1="32" y1="322" x2="928" y2="322" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+  <text x="32" y="335" fill="#3f545c" font-size="8" font-family="'IBM Plex Mono', monospace" letter-spacing="0.14em">LEGEND</text>
+
+  <!-- focal -->
+  <rect x="100" y="326" width="12" height="12" rx="2" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="118" y="336" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">Key Step</text>
+
+  <!-- backend -->
+  <rect x="208" y="326" width="12" height="12" rx="2" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <text x="226" y="336" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">Exec Step</text>
+
+  <!-- store -->
+  <rect x="316" y="326" width="12" height="12" rx="2" fill="rgba(18,33,39,0.05)" stroke="#3f545c" stroke-width="1"/>
+  <text x="334" y="336" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">Result Store</text>
+
+  <!-- optional -->
+  <rect x="408" y="326" width="12" height="12" rx="2" fill="rgba(18,33,39,0.02)" stroke="rgba(18,33,39,0.20)" stroke-width="1" stroke-dasharray="3,2"/>
+  <text x="426" y="336" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">Alt Path</text>
+
+</svg>
+</body>
+</html>
