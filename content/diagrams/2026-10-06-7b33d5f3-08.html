@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RAG 모니터링 파이프라인</title>
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; font-family: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; }
+  .diagram-wrap { width: 100%; max-width: 960px; margin: 0 auto; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<div class="diagram-wrap">
+<svg viewBox="0 0 960 380" xmlns="http://www.w3.org/2000/svg"
+     role="img" aria-labelledby="2026-10-06-7b33d5f3-08-rag-mon-title 2026-10-06-7b33d5f3-08-rag-mon-desc">
+  <title id="2026-10-06-7b33d5f3-08-rag-mon-title">RAG Re-ranking 모니터링 파이프라인</title>
+  <desc id="2026-10-06-7b33d5f3-08-rag-mon-desc">검색 요청이 로깅 단계를 거쳐 점수 분포 추적과 임계값 알림으로 나뉘고, 두 지표가 이상 감지 판단 노드로 합류한 뒤 이상 여부에 따라 모델·파이프라인 점검 또는 정상 운영으로 분기되는 모니터링 흐름.</desc>
+
+  <defs>
+    <!-- Arrow markers -->
+    <marker id="2026-10-06-7b33d5f3-08-arr-muted" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-10-06-7b33d5f3-08-arr-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <marker id="2026-10-06-7b33d5f3-08-arr-warn" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#a96a08"/>
+    </marker>
+    <marker id="2026-10-06-7b33d5f3-08-arr-ok" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#286d50"/>
+    </marker>
+    <marker id="2026-10-06-7b33d5f3-08-arr-stop" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#94382b"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="960" height="380" fill="#f8fafb"/>
+
+  <!-- ─────────────────────────────────────────────
+       LAYOUT (left→right, 4px grid)
+       REQ(48,168)  LOG(188,148)  M1(356,100)  M2(356,216)  ALERT(548,168)  FIX(740,100)  OK(740,236)
+       Node boxes: w=120 h=56 except diamond
+  ──────────────────────────────────────────────── -->
+
+  <!-- ── ARROWS (drawn before boxes) ── -->
+
+  <!-- REQ → LOG -->
+  <line x1="168" y1="196" x2="188" y2="196"
+        stroke="#3f545c" stroke-width="1.2" marker-end="url(#2026-10-06-7b33d5f3-08-arr-muted)"/>
+
+  <!-- LOG → M1 (fan: top attach of LOG right edge, up then right) -->
+  <path d="M308,172 L332,172 L332,128 L356,128"
+        fill="none" stroke="#3f545c" stroke-width="1.2" marker-end="url(#2026-10-06-7b33d5f3-08-arr-muted)"/>
+
+  <!-- LOG → M2 (fan: bottom attach of LOG right edge, down then right) -->
+  <path d="M308,220 L332,220 L332,244 L356,244"
+        fill="none" stroke="#3f545c" stroke-width="1.2" marker-end="url(#2026-10-06-7b33d5f3-08-arr-muted)"/>
+
+  <!-- M1 → ALERT (right of M1, across to left of ALERT top) -->
+  <path d="M476,128 L512,128 L512,180 L548,180"
+        fill="none" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-10-06-7b33d5f3-08-arr-accent)"/>
+
+  <!-- M2 → ALERT (right of M2, across to left of ALERT bottom) -->
+  <path d="M476,244 L512,244 L512,212 L548,212"
+        fill="none" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-10-06-7b33d5f3-08-arr-accent)"/>
+
+  <!-- ALERT → FIX (yes — top-right vertex → up → right) -->
+  <path d="M620,168 L648,168 L648,128 L740,128"
+        fill="none" stroke="#a96a08" stroke-width="1.2" marker-end="url(#2026-10-06-7b33d5f3-08-arr-warn)"/>
+
+  <!-- ALERT → OK (no — bottom-right vertex → down → right) -->
+  <path d="M620,196 L648,196 L648,264 L740,264"
+        fill="none" stroke="#286d50" stroke-width="1.2" marker-end="url(#2026-10-06-7b33d5f3-08-arr-ok)"/>
+
+  <!-- Arrow labels -->
+  <!-- "예" label on ALERT→FIX path, midpoint ~(648,148) segment going rightward -->
+  <rect x="630" y="136" width="20" height="14" rx="2" fill="#f8fafb"/>
+  <text x="640" y="147" fill="#a96a08" font-size="10"
+        font-family="'IBM Plex Sans KR', sans-serif" font-weight="500"
+        text-anchor="middle">예</text>
+
+  <!-- "아니오" label on ALERT→OK path, midpoint ~(648,230) segment going downward — beside line -->
+  <rect x="652" y="224" width="40" height="14" rx="2" fill="#f8fafb"/>
+  <text x="672" y="235" fill="#286d50" font-size="10"
+        font-family="'IBM Plex Sans KR', sans-serif" font-weight="500"
+        text-anchor="middle">아니오</text>
+
+  <!-- ── NODE BOXES ── -->
+
+  <!-- REQ — Input treatment: muted@0.10 fill, soft stroke -->
+  <rect x="48" y="168" width="120" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="48" y="168" width="120" height="56" rx="6"
+        fill="rgba(63,84,92,0.10)" stroke="#6c8188" stroke-width="1"/>
+  <rect x="56" y="174" width="32" height="12" rx="2"
+        fill="transparent" stroke="rgba(108,129,136,0.40)" stroke-width="0.8"/>
+  <text x="72" y="183" fill="rgba(108,129,136,0.8)" font-size="7"
+        font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.08em">INPUT</text>
+  <text x="108" y="204" fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">검색 요청</text>
+
+  <!-- LOG — Focal (accent) -->
+  <rect x="188" y="148" width="120" height="96" rx="6" fill="#f8fafb"/>
+  <rect x="188" y="148" width="120" height="96" rx="6"
+        fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="196" y="154" width="28" height="12" rx="2"
+        fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="210" y="163" fill="rgba(13,87,99,0.8)" font-size="7"
+        font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.08em">LOG</text>
+  <text x="248" y="188" fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">요청·응답</text>
+  <text x="248" y="208" fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">로깅</text>
+  <text x="248" y="228" fill="#3f545c" font-size="11"
+        font-family="'IBM Plex Mono', monospace" text-anchor="middle">pipeline log</text>
+
+  <!-- M1 — Backend treatment -->
+  <rect x="356" y="100" width="120" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="356" y="100" width="120" height="56" rx="6"
+        fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="364" y="106" width="28" height="12" rx="2"
+        fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="378" y="115" fill="rgba(18,33,39,0.8)" font-size="7"
+        font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.08em">METRIC</text>
+  <text x="416" y="132" fill="#122127" font-size="13" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Re-ranking</text>
+  <text x="416" y="148" fill="#122127" font-size="13" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">점수 분포 추적</text>
+
+  <!-- M2 — Backend treatment -->
+  <rect x="356" y="216" width="120" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="356" y="216" width="120" height="56" rx="6"
+        fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="364" y="222" width="28" height="12" rx="2"
+        fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="378" y="231" fill="rgba(18,33,39,0.8)" font-size="7"
+        font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.08em">METRIC</text>
+  <text x="416" y="248" fill="#122127" font-size="13" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">1위 문서 점수</text>
+  <text x="416" y="264" fill="#122127" font-size="13" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">임계값 알림</text>
+
+  <!-- ALERT — Diamond decision (focal) -->
+  <!-- Diamond center: (584,192) half-w=72 half-h=40 -->
+  <polygon points="584,152 656,192 584,232 512,192" fill="#f8fafb"/>
+  <polygon points="584,152 656,192 584,232 512,192"
+           fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="584" y="188" fill="#122127" font-size="13" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">점수 분포</text>
+  <text x="584" y="204" fill="#122127" font-size="13" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">이상 감지?</text>
+
+  <!-- FIX — Backend treatment, warm red border hint -->
+  <rect x="740" y="100" width="136" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="740" y="100" width="136" height="56" rx="6"
+        fill="#ffffff" stroke="#94382b" stroke-width="1"/>
+  <rect x="748" y="106" width="28" height="12" rx="2"
+        fill="transparent" stroke="rgba(148,56,43,0.40)" stroke-width="0.8"/>
+  <text x="762" y="115" fill="rgba(148,56,43,0.8)" font-size="7"
+        font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.08em">ACTION</text>
+  <text x="808" y="132" fill="#122127" font-size="13" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">모델·파이프라인</text>
+  <text x="808" y="148" fill="#122127" font-size="13" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">점검</text>
+
+  <!-- OK — Store/state treatment, green border hint -->
+  <rect x="740" y="236" width="136" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="740" y="236" width="136" height="56" rx="6"
+        fill="rgba(18,33,39,0.05)" stroke="#286d50" stroke-width="1"/>
+  <rect x="748" y="242" width="28" height="12" rx="2"
+        fill="transparent" stroke="rgba(40,109,80,0.40)" stroke-width="0.8"/>
+  <text x="762" y="251" fill="rgba(40,109,80,0.8)" font-size="7"
+        font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.08em">STATUS</text>
+  <text x="808" y="272" fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">정상 운영</text>
+
+  <!-- ── LEGEND STRIP ── -->
+  <line x1="32" y1="322" x2="928" y2="322"
+        stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+
+  <text x="32" y="337" fill="#3f545c" font-size="10"
+        font-family="'IBM Plex Mono', monospace"
+        letter-spacing="0.14em">LEGEND</text>
+
+  <!-- INPUT -->
+  <rect x="104" y="328" width="36" height="14" rx="4"
+        fill="rgba(63,84,92,0.10)" stroke="#6c8188" stroke-width="0.8"/>
+  <text x="146" y="339" fill="#3f545c" font-size="10"
+        font-family="'IBM Plex Sans KR', sans-serif">입력</text>
+
+  <!-- FOCAL -->
+  <rect x="196" y="328" width="36" height="14" rx="4"
+        fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="238" y="339" fill="#3f545c" font-size="10"
+        font-family="'IBM Plex Sans KR', sans-serif">핵심 단계</text>
+
+  <!-- METRIC -->
+  <rect x="316" y="328" width="36" height="14" rx="4"
+        fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <text x="358" y="339" fill="#3f545c" font-size="10"
+        font-family="'IBM Plex Sans KR', sans-serif">지표 수집</text>
+
+  <!-- WARN -->
+  <rect x="436" y="328" width="36" height="14" rx="4"
+        fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <polygon points="454,329 472,343 436,343" fill="none" stroke="none"/>
+  <text x="436" y="339" fill="#3f545c" font-size="10"
+        font-family="'IBM Plex Mono', monospace">◇</text>
+  <text x="456" y="339" fill="#3f545c" font-size="10"
+        font-family="'IBM Plex Sans KR', sans-serif">판단</text>
+
+  <!-- ACTION -->
+  <rect x="512" y="328" width="36" height="14" rx="4"
+        fill="#ffffff" stroke="#94382b" stroke-width="1"/>
+  <text x="554" y="339" fill="#3f545c" font-size="10"
+        font-family="'IBM Plex Sans KR', sans-serif">개선 조치</text>
+
+  <!-- OK -->
+  <rect x="636" y="328" width="36" height="14" rx="4"
+        fill="rgba(18,33,39,0.05)" stroke="#286d50" stroke-width="1"/>
+  <text x="678" y="339" fill="#3f545c" font-size="10"
+        font-family="'IBM Plex Sans KR', sans-serif">정상 상태</text>
+
+</svg>
+</div>
+</body>
+</html>

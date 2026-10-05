@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RAG Re-ranking 파이프라인</title>
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; font-family: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; }
+  .diagram-wrap { display: block; width: 100%; max-width: 960px; margin: 0 auto; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<div class="diagram-wrap">
+<svg viewBox="0 0 960 600" xmlns="http://www.w3.org/2000/svg"
+     role="img" aria-labelledby="2026-10-06-7b33d5f3-04-rag-rerank-title 2026-10-06-7b33d5f3-04-rag-rerank-desc">
+  <title id="2026-10-06-7b33d5f3-04-rag-rerank-title">RAG Re-ranking 파이프라인 — 하이브리드 검색과 RRF 통합</title>
+  <desc id="2026-10-06-7b33d5f3-04-rag-rerank-desc">사용자 질문이 BM25 검색과 Dense 검색으로 병렬 처리되고, 두 순위 목록이 RRF 통합 수식으로 합산된 뒤 통합 후보 문서로 정렬되는 하이브리드 검색 흐름.</desc>
+
+  <defs>
+    <!-- Arrow markers -->
+    <marker id="2026-10-06-7b33d5f3-04-rag-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-10-06-7b33d5f3-04-rag-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <marker id="2026-10-06-7b33d5f3-04-rag-arrow-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3a548f"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="960" height="600" fill="#f8fafb"/>
+
+  <!-- ==================== ARROWS (drawn before boxes) ==================== -->
+
+  <!-- Q → BM25: goes left-down with elbow -->
+  <!-- Q center: (480, 108). BM25 center: (280, 264). -->
+  <!-- Exit Q bottom: (480,132). Elbow at (280,132). Enter BM25 top: (280,240) -->
+  <path d="M480,132 Q480,140 472,140 L288,140 Q280,140 280,148 L280,240"
+        fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-06-7b33d5f3-04-rag-arrow)"/>
+
+  <!-- Q → Dense: goes right-down with elbow -->
+  <!-- Dense center: (680, 264). Enter Dense top: (680,240) -->
+  <path d="M480,132 Q480,140 488,140 L672,140 Q680,140 680,148 L680,240"
+        fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-06-7b33d5f3-04-rag-arrow)"/>
+
+  <!-- BM25 → RRF -->
+  <!-- BM25 bottom: (280,288). RRF center: (480,380). Enter RRF left: (416,380) -->
+  <!-- Exit BM25 bottom: (280,288). Elbow down to y=364, then right to RRF left -->
+  <path d="M280,288 Q280,296 280,300 L280,364 Q280,372 288,372 L416,372 Q416,380 416,380"
+        fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-06-7b33d5f3-04-rag-arrow)"/>
+
+  <!-- Dense → RRF -->
+  <!-- Dense bottom: (680,288). Enter RRF right: (544,380) -->
+  <path d="M680,288 Q680,296 680,300 L680,364 Q680,372 672,372 L544,372 Q544,380 544,380"
+        fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-06-7b33d5f3-04-rag-arrow)"/>
+
+  <!-- RRF → CAND -->
+  <!-- RRF bottom center: (480,416). CAND top center: (480,472) -->
+  <line x1="480" y1="416" x2="480" y2="472" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-10-06-7b33d5f3-04-rag-arrow-accent)"/>
+
+  <!-- ==================== ARROW LABELS ==================== -->
+
+  <!-- Label: 순위 목록 (BM25→RRF arc, midpoint roughly at (280,336)) -->
+  <rect x="228" y="316" width="60" height="14" rx="2" fill="#f8fafb"/>
+  <text x="258" y="326" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif"
+        font-weight="500" text-anchor="middle">순위 목록</text>
+
+  <!-- Label: 순위 목록 (Dense→RRF arc, midpoint roughly at (680,336)) -->
+  <rect x="628" y="316" width="60" height="14" rx="2" fill="#f8fafb"/>
+  <text x="658" y="326" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif"
+        font-weight="500" text-anchor="middle">순위 목록</text>
+
+  <!-- ==================== NODE BOXES ==================== -->
+
+  <!-- Node: 사용자 질문 (Q) — INPUT type, centered at (480,108), w=160 h=48 -->
+  <!-- x=400, y=84 -->
+  <rect x="400" y="84" width="160" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="400" y="84" width="160" height="48" rx="6"
+        fill="rgba(58,84,143,0.08)" stroke="#3a548f" stroke-width="1"/>
+  <rect x="408" y="90" width="30" height="12" rx="2"
+        fill="transparent" stroke="rgba(58,84,143,0.40)" stroke-width="0.8"/>
+  <text x="423" y="99" fill="rgba(58,84,143,0.8)" font-size="8"
+        font-family="'IBM Plex Mono', monospace" text-anchor="middle"
+        letter-spacing="0.08em">INPUT</text>
+  <text x="480" y="116" fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">사용자 질문</text>
+
+  <!-- Node: BM25 검색 — BACKEND type, centered at (280,264), w=160 h=48 -->
+  <!-- x=200, y=240 -->
+  <rect x="200" y="240" width="160" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="200" y="240" width="160" height="48" rx="6"
+        fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <rect x="208" y="246" width="30" height="12" rx="2"
+        fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="223" y="255" fill="rgba(13,87,99,0.8)" font-size="8"
+        font-family="'IBM Plex Mono', monospace" text-anchor="middle"
+        letter-spacing="0.08em">BM25</text>
+  <text x="280" y="272" fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">BM25 검색</text>
+
+  <!-- Node: Dense 검색 (벡터 유사도) — BACKEND type, centered at (680,264), w=160 h=48 -->
+  <!-- x=600, y=240 -->
+  <rect x="600" y="240" width="160" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="600" y="240" width="160" height="48" rx="6"
+        fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <rect x="608" y="246" width="40" height="12" rx="2"
+        fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="628" y="255" fill="rgba(13,87,99,0.8)" font-size="8"
+        font-family="'IBM Plex Mono', monospace" text-anchor="middle"
+        letter-spacing="0.08em">DENSE</text>
+  <text x="680" y="268" fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Dense 검색</text>
+  <text x="680" y="284" fill="#6c8188" font-size="10"
+        font-family="'IBM Plex Mono', monospace" text-anchor="middle">벡터 유사도</text>
+
+  <!-- Node: RRF 통합 — FOCAL (accent) type, centered at (480,392), w=200 h=48 -->
+  <!-- x=380, y=368 -->
+  <rect x="380" y="368" width="200" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="380" y="368" width="200" height="48" rx="6"
+        fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="388" y="374" width="28" height="12" rx="2"
+        fill="transparent" stroke="rgba(13,87,99,0.50)" stroke-width="0.8"/>
+  <text x="402" y="383" fill="rgba(13,87,99,0.9)" font-size="8"
+        font-family="'IBM Plex Mono', monospace" text-anchor="middle"
+        letter-spacing="0.08em">RRF</text>
+  <text x="480" y="396" fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">RRF 통합</text>
+  <text x="480" y="410" fill="#0d5763" font-size="10"
+        font-family="'IBM Plex Mono', monospace" text-anchor="middle">1/(k + rank)</text>
+
+  <!-- Node: 통합 후보 문서 — STORE type, centered at (480,496), w=240 h=52 -->
+  <!-- x=360, y=472 -->
+  <rect x="360" y="472" width="240" height="52" rx="6" fill="#f8fafb"/>
+  <rect x="360" y="472" width="240" height="52" rx="6"
+        fill="rgba(18,33,39,0.05)" stroke="#3f545c" stroke-width="1"/>
+  <rect x="368" y="478" width="36" height="12" rx="2"
+        fill="transparent" stroke="rgba(63,84,92,0.40)" stroke-width="0.8"/>
+  <text x="386" y="487" fill="rgba(63,84,92,0.8)" font-size="8"
+        font-family="'IBM Plex Mono', monospace" text-anchor="middle"
+        letter-spacing="0.08em">OUTPUT</text>
+  <text x="480" y="504" fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">통합 후보 문서</text>
+  <text x="480" y="518" fill="#6c8188" font-size="10"
+        font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">중복 제거 후 점수순 정렬</text>
+
+  <!-- ==================== LEGEND STRIP ==================== -->
+  <line x1="40" y1="572" x2="920" y2="572" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+
+  <!-- Legend items -->
+  <!-- Input node swatch -->
+  <rect x="40" y="580" width="12" height="10" rx="2"
+        fill="rgba(58,84,143,0.08)" stroke="#3a548f" stroke-width="0.8"/>
+  <text x="57" y="589" fill="#3f545c" font-size="9"
+        font-family="'IBM Plex Mono', monospace" letter-spacing="0.10em">질문 입력</text>
+
+  <!-- BM25/Dense swatch -->
+  <rect x="148" y="580" width="12" height="10" rx="2"
+        fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="0.8"/>
+  <text x="165" y="589" fill="#3f545c" font-size="9"
+        font-family="'IBM Plex Mono', monospace" letter-spacing="0.10em">검색 모듈</text>
+
+  <!-- RRF swatch -->
+  <rect x="256" y="580" width="12" height="10" rx="2"
+        fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="273" y="589" fill="#3f545c" font-size="9"
+        font-family="'IBM Plex Mono', monospace" letter-spacing="0.10em">통합 (focal)</text>
+
+  <!-- Candidate swatch -->
+  <rect x="372" y="580" width="12" height="10" rx="2"
+        fill="rgba(18,33,39,0.05)" stroke="#3f545c" stroke-width="0.8"/>
+  <text x="389" y="589" fill="#3f545c" font-size="9"
+        font-family="'IBM Plex Mono', monospace" letter-spacing="0.10em">후보 문서 집합</text>
+</svg>
+</div>
+</body>
+</html>

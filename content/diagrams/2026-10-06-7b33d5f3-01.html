@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; display: flex; justify-content: center; padding: 0; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<svg
+  viewBox="0 0 960 260"
+  xmlns="http://www.w3.org/2000/svg"
+  role="img"
+  aria-labelledby="2026-10-06-7b33d5f3-01-rag-rerank-title 2026-10-06-7b33d5f3-01-rag-rerank-desc"
+>
+  <title id="2026-10-06-7b33d5f3-01-rag-rerank-title">RAG Re-ranking 파이프라인</title>
+  <desc id="2026-10-06-7b33d5f3-01-rag-rerank-desc">사용자 질문이 하이브리드 검색을 거쳐 후보 문서를 추출하고, Cross-Encoder Re-ranking으로 상위 문서를 선택한 뒤 LLM이 응답을 생성하는 파이프라인 흐름도.</desc>
+
+  <defs>
+    <!-- Arrow markers -->
+    <marker id="2026-10-06-7b33d5f3-01-rr-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-10-06-7b33d5f3-01-rr-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="960" height="260" fill="#f8fafb"/>
+
+  <!-- ============ CONNECTORS (drawn before boxes) ============ -->
+
+  <!-- Q → H -->
+  <line x1="164" y1="124" x2="200" y2="124" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-06-7b33d5f3-01-rr-arrow)"/>
+
+  <!-- H → C -->
+  <line x1="344" y1="124" x2="380" y2="124" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-06-7b33d5f3-01-rr-arrow)"/>
+
+  <!-- C → R -->
+  <line x1="524" y1="124" x2="560" y2="124" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-10-06-7b33d5f3-01-rr-arrow-accent)"/>
+
+  <!-- R → T -->
+  <line x1="700" y1="124" x2="736" y2="124" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-10-06-7b33d5f3-01-rr-arrow-accent)"/>
+
+  <!-- T → G -->
+  <line x1="836" y1="124" x2="872" y2="124" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-06-7b33d5f3-01-rr-arrow)"/>
+
+  <!-- ============ NODE 1: 사용자 질문 (input) ============ -->
+  <!-- paper mask -->
+  <rect x="36" y="88" width="128" height="72" rx="6" fill="#f8fafb"/>
+  <!-- box: input treatment -->
+  <rect x="36" y="88" width="128" height="72" rx="6" fill="rgba(63,84,92,0.10)" stroke="#6c8188" stroke-width="1"/>
+  <!-- type tag -->
+  <rect x="44" y="94" width="28" height="12" rx="2" fill="transparent" stroke="rgba(108,129,136,0.40)" stroke-width="0.8"/>
+  <text x="58" y="103" fill="rgba(108,129,136,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">INPUT</text>
+  <!-- name -->
+  <text x="100" y="130" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif" text-anchor="middle">사용자 질문</text>
+
+  <!-- ============ NODE 2: 하이브리드 검색 (backend) ============ -->
+  <rect x="200" y="88" width="144" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="200" y="88" width="144" height="72" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="208" y="94" width="40" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="228" y="103" fill="rgba(18,33,39,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">SEARCH</text>
+  <!-- name -->
+  <text x="272" y="122" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif" text-anchor="middle">하이브리드 검색</text>
+  <!-- sublabel -->
+  <text x="272" y="139" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">BM25 + Dense</text>
+
+  <!-- ============ NODE 3: 후보 문서 집합 (store) ============ -->
+  <rect x="380" y="88" width="144" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="380" y="88" width="144" height="72" rx="6" fill="rgba(18,33,39,0.05)" stroke="#3f545c" stroke-width="1"/>
+  <rect x="388" y="94" width="36" height="12" rx="2" fill="transparent" stroke="rgba(63,84,92,0.40)" stroke-width="0.8"/>
+  <text x="406" y="103" fill="rgba(63,84,92,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">DOCS</text>
+  <!-- name -->
+  <text x="452" y="122" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif" text-anchor="middle">후보 문서 집합</text>
+  <!-- sublabel -->
+  <text x="452" y="139" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">20 ~ 50개</text>
+
+  <!-- ============ NODE 4: Cross-Encoder Re-ranking (FOCAL) ============ -->
+  <rect x="560" y="80" width="140" height="88" rx="6" fill="#f8fafb"/>
+  <rect x="560" y="80" width="140" height="88" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="568" y="86" width="44" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="590" y="95" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">RERANK</text>
+  <!-- name -->
+  <text x="630" y="118" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif" text-anchor="middle">Cross-Encoder</text>
+  <text x="630" y="135" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif" text-anchor="middle">Re-ranking</text>
+
+  <!-- ============ NODE 5: 상위 문서 선택 (backend) ============ -->
+  <rect x="736" y="88" width="100" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="736" y="88" width="100" height="72" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="744" y="94" width="36" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="762" y="103" fill="rgba(18,33,39,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">SELECT</text>
+  <!-- name -->
+  <text x="786" y="118" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif" text-anchor="middle">상위 문서</text>
+  <text x="786" y="135" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif" text-anchor="middle">3~5개</text>
+
+  <!-- ============ NODE 6: LLM 생성 (backend) ============ -->
+  <rect x="872" y="88" width="56" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="872" y="88" width="56" height="72" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="880" y="94" width="28" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="894" y="103" fill="rgba(18,33,39,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">GEN</text>
+  <!-- name -->
+  <text x="900" y="122" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif" text-anchor="middle">LLM</text>
+  <text x="900" y="137" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif" text-anchor="middle">생성</text>
+
+  <!-- ============ LEGEND ============ -->
+  <line x1="36" y1="212" x2="924" y2="212" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+  <text x="36" y="228" fill="#3f545c" font-size="8" font-family="'IBM Plex Mono', monospace" letter-spacing="0.14em">LEGEND</text>
+
+  <!-- focal swatch -->
+  <rect x="108" y="218" width="12" height="12" rx="2" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="126" y="228" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif">핵심 단계</text>
+
+  <!-- backend swatch -->
+  <rect x="220" y="218" width="12" height="12" rx="2" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <text x="238" y="228" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif">처리 단계</text>
+
+  <!-- store swatch -->
+  <rect x="332" y="218" width="12" height="12" rx="2" fill="rgba(18,33,39,0.05)" stroke="#3f545c" stroke-width="1"/>
+  <text x="350" y="228" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif">문서 저장소</text>
+
+  <!-- input swatch -->
+  <rect x="444" y="218" width="12" height="12" rx="2" fill="rgba(63,84,92,0.10)" stroke="#6c8188" stroke-width="1"/>
+  <text x="462" y="228" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif">입력</text>
+
+</svg>
+</body>
+</html>

@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Re-ranker 모델 선택 흐름</title>
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 600" role="img" aria-labelledby="2026-10-06-7b33d5f3-05-reranker-title 2026-10-06-7b33d5f3-05-reranker-desc">
+  <title id="2026-10-06-7b33d5f3-05-reranker-title">Re-ranker 모델 선택 흐름도</title>
+  <desc id="2026-10-06-7b33d5f3-05-reranker-desc">RAG Re-ranking 파이프라인에서 모델을 선택하는 결정 흐름. 한국어 포함 여부와 GPU 추론 가능 여부에 따라 bge-reranker-v2-m3, Cohere API, 또는 ms-marco 계열 경량 모델로 분기된다.</desc>
+
+  <defs>
+    <!-- 기본 화살표 -->
+    <marker id="2026-10-06-7b33d5f3-05-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <!-- 악센트 화살표 -->
+    <marker id="2026-10-06-7b33d5f3-05-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+  </defs>
+
+  <!-- 배경 -->
+  <rect width="960" height="600" fill="#f8fafb"/>
+
+  <!-- ────────────────────────────────────────────
+       화살표 레이어 (노드보다 먼저 그림)
+  ──────────────────────────────────────────── -->
+
+  <!-- START → Q1 (수직 하강) -->
+  <line x1="480" y1="116" x2="480" y2="188" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-06-7b33d5f3-05-arrow)"/>
+
+  <!-- Q1 → Q2 (예, 오른쪽으로) -->
+  <!-- Q1 중심(480,240), 오른쪽 꼭짓점(480+60=540, 240) → Q2 중심(680,240) 수평 -->
+  <line x1="540" y1="240" x2="640" y2="240" stroke="#0d5763" stroke-width="1" marker-end="url(#2026-10-06-7b33d5f3-05-arrow-accent)"/>
+  <!-- "예" 레이블 -->
+  <rect x="561" y="225" width="24" height="12" rx="2" fill="#f8fafb"/>
+  <text x="573" y="234" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="500">예</text>
+
+  <!-- Q1 → ENG (아니오, 왼쪽으로) -->
+  <!-- Q1 왼쪽 꼭짓점(420, 240) → ENG 중심(240,240) 수평 -->
+  <line x1="420" y1="240" x2="360" y2="240" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-06-7b33d5f3-05-arrow)"/>
+  <!-- "아니오" 레이블 -->
+  <rect x="361" y="225" width="44" height="12" rx="2" fill="#f8fafb"/>
+  <text x="383" y="234" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="500">아니오</text>
+
+  <!-- Q2 → BGE (예, 수직 하강) -->
+  <!-- Q2 중심(700,240), 하단 꼭짓점(700,300) → BGE 중심(700,380) -->
+  <line x1="700" y1="300" x2="700" y2="348" stroke="#0d5763" stroke-width="1" marker-end="url(#2026-10-06-7b33d5f3-05-arrow-accent)"/>
+  <!-- "예" 레이블 -->
+  <rect x="688" y="311" width="24" height="12" rx="2" fill="#f8fafb"/>
+  <text x="700" y="320" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="500">예</text>
+
+  <!-- Q2 → API (아니오, 오른쪽) -->
+  <!-- Q2 오른쪽 꼭짓점(760, 240) → API 중심(868, 348)으로 꺾임 -->
+  <!-- 오른쪽으로 나가다가 아래로 꺾음: (760,240)→(868,240)→(868,348) -->
+  <path d="M 760 240 L 868 240 L 868 348" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-06-7b33d5f3-05-arrow)"/>
+  <!-- "아니오" 레이블 -->
+  <rect x="784" y="225" width="44" height="12" rx="2" fill="#f8fafb"/>
+  <text x="806" y="234" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="500">아니오</text>
+
+  <!-- ────────────────────────────────────────────
+       노드 레이어
+  ──────────────────────────────────────────── -->
+
+  <!-- START 노드 (타원형, 시작) — 악센트 처리 -->
+  <!-- 중심 (480, 80), 너비 200, 높이 36 → x=380, y=62, rx=18 -->
+  <rect x="380" y="62" width="200" height="36" rx="18" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="480" y="85" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif" text-anchor="middle">모델을 선택한다</text>
+
+  <!-- Q1 다이아몬드 — 한국어 포함 다국어인가 -->
+  <!-- 중심 (480, 240), 반폭 60, 반높이 52 -->
+  <polygon points="480,188 540,240 480,292 420,240" fill="#eef2f4" stroke="#3f545c" stroke-width="1"/>
+  <text x="480" y="234" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif" text-anchor="middle">한국어 포함</text>
+  <text x="480" y="250" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif" text-anchor="middle">다국어인가?</text>
+
+  <!-- Q2 다이아몬드 — GPU 추론 가능한가 -->
+  <!-- 중심 (700, 240), 반폭 60, 반높이 60 -->
+  <polygon points="700,180 760,240 700,300 640,240" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="700" y="234" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif" text-anchor="middle">GPU 추론</text>
+  <text x="700" y="250" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif" text-anchor="middle">가능한가?</text>
+
+  <!-- ENG 결과 노드 — ms-marco 계열 경량 모델 -->
+  <!-- 중심 (240, 240) → x=140, y=212, 너비 200, 높이 56 -->
+  <rect x="140" y="212" width="200" height="56" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="148" y="220" width="40" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="168" y="229" fill="rgba(18,33,39,0.7)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">MODEL</text>
+  <text x="240" y="246" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Mono', monospace" text-anchor="middle">ms-marco</text>
+  <text x="240" y="260" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">계열 경량 모델</text>
+
+  <!-- BGE 결과 노드 — bge-reranker-v2-m3 (악센트, 추천) -->
+  <!-- 중심 (700, 396) → x=596, y=348, 너비 208, 높이 64 -->
+  <rect x="596" y="348" width="208" height="64" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <rect x="604" y="356" width="40" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="624" y="365" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">MODEL</text>
+  <text x="700" y="384" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Mono', monospace" text-anchor="middle">bge-reranker-v2-m3</text>
+  <text x="700" y="400" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">다국어 · 고정확</text>
+
+  <!-- API 결과 노드 — Cohere API 또는 경량 모델 -->
+  <!-- 중심 (868, 396) → x=784, y=348, 너비 168, 높이 64 -->
+  <rect x="784" y="348" width="168" height="64" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="792" y="356" width="40" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="812" y="365" fill="rgba(18,33,39,0.7)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">API</text>
+  <text x="868" y="383" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Mono', monospace" text-anchor="middle">Cohere API</text>
+  <text x="868" y="399" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">또는 경량 모델</text>
+
+  <!-- ────────────────────────────────────────────
+       범례 (하단 수평 스트립)
+  ──────────────────────────────────────────── -->
+  <line x1="40" y1="532" x2="920" y2="532" stroke="rgba(18,33,39,0.10)" stroke-width="0.8"/>
+  <text x="40" y="548" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.14em">LEGEND</text>
+
+  <!-- 타원: 시작/종료 -->
+  <rect x="116" y="538" width="48" height="16" rx="8" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="140" y="550" fill="#3f545c" font-size="9" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">시작/종료</text>
+
+  <!-- 다이아몬드 모양 범례 -->
+  <polygon points="204,550 212,542 220,550 212,558" fill="#eef2f4" stroke="#3f545c" stroke-width="1"/>
+  <text x="248" y="554" fill="#3f545c" font-size="9" font-family="'IBM Plex Sans KR', sans-serif">결정 분기</text>
+
+  <!-- 사각형 범례 — 결과 노드 -->
+  <rect x="316" y="542" width="16" height="16" rx="3" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <text x="356" y="554" fill="#3f545c" font-size="9" font-family="'IBM Plex Sans KR', sans-serif">결과 모델</text>
+
+  <!-- 악센트 강조 범례 -->
+  <rect x="420" y="542" width="16" height="16" rx="3" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="460" y="554" fill="#3f545c" font-size="9" font-family="'IBM Plex Sans KR', sans-serif">권장 경로</text>
+
+</svg>
+</body>
+</html>

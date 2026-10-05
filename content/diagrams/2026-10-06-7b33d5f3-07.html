@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RAG Re-ranking 파이프라인 — 의사결정 흐름</title>
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { background: #f8fafb; }
+  body { background: #f8fafb; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 0; }
+  svg { display: block; width: 100%; height: auto; max-width: 960px; }
+</style>
+</head>
+<body>
+<svg
+  viewBox="0 0 960 560"
+  xmlns="http://www.w3.org/2000/svg"
+  role="img"
+  aria-labelledby="2026-10-06-7b33d5f3-07-rag-rerank-title 2026-10-06-7b33d5f3-07-rag-rerank-desc"
+>
+  <title id="2026-10-06-7b33d5f3-07-rag-rerank-title">RAG Re-ranking 파이프라인 의사결정 흐름</title>
+  <desc id="2026-10-06-7b33d5f3-07-rag-rerank-desc">RAG 시스템 구성 시 응답 지연시간과 정확도 요구사항에 따라 하이브리드+Re-ranking 풀 파이프라인, 하이브리드+경량 Re-ranking, 또는 하이브리드 검색만 사용하는 세 가지 경로로 분기되는 의사결정 흐름도.</desc>
+
+  <defs>
+    <!-- 배경 없음: 단일 paper 색 -->
+    <marker id="2026-10-06-7b33d5f3-07-arrow-muted" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-10-06-7b33d5f3-07-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+  </defs>
+
+  <!-- ── Background ── -->
+  <rect width="960" height="560" fill="#f8fafb"/>
+
+  <!-- ══════════════════════════════════════════
+       ARROWS (drawn before boxes, z-order below nodes)
+       ══════════════════════════════════════════ -->
+
+  <!-- START → Q1 (vertical, straight) -->
+  <line x1="480" y1="116" x2="480" y2="184" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-06-7b33d5f3-07-arrow-muted)"/>
+
+  <!-- Q1 →|1초 이상 OK| FULL (right branch, orthogonal elbow) -->
+  <!-- Q1 center: 480,228. Exit right edge: 620,228. FULL center: 756,228 -->
+  <path d="M620,228 L712,228" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-06-7b33d5f3-07-arrow-muted)"/>
+
+  <!-- Q1 →|500ms 이하| Q2 (downward) -->
+  <!-- Q1 center: 480,228. Exit bottom: 480,272. Q2 top: 480,324 -->
+  <line x1="480" y1="272" x2="480" y2="324" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-10-06-7b33d5f3-07-arrow-accent)"/>
+
+  <!-- Q2 →|예| HYB2 (left branch, orthogonal elbow) -->
+  <!-- Q2 center: 480,368. Exit left edge: 340,368. HYB2 center: 204,368 -->
+  <path d="M340,368 L268,368" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-06-7b33d5f3-07-arrow-muted)"/>
+
+  <!-- Q2 →|아니오| HYBRID (downward) -->
+  <!-- Q2 center: 480,368. Exit bottom: 480,412. HYBRID top: 480,452 -->
+  <line x1="480" y1="412" x2="480" y2="452" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-06-7b33d5f3-07-arrow-muted)"/>
+
+  <!-- ══════════════════════════════════════════
+       ARROW LABELS
+       ══════════════════════════════════════════ -->
+
+  <!-- "1초 이상 OK" label on horizontal segment Q1→FULL, midpoint x=(620+712)/2=666, y=228 -->
+  <rect x="631" y="212" width="72" height="14" rx="2" fill="#f8fafb"/>
+  <text x="667" y="222" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle" font-weight="500">1초 이상 OK</text>
+
+  <!-- "500ms 이하" label on vertical segment Q1→Q2 -->
+  <rect x="489" y="282" width="72" height="14" rx="2" fill="#f8fafb"/>
+  <text x="525" y="292" fill="#0d5763" font-size="10" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle" font-weight="500">500ms 이하</text>
+
+  <!-- "예" label on horizontal segment Q2→HYB2 -->
+  <rect x="305" y="352" width="24" height="14" rx="2" fill="#f8fafb"/>
+  <text x="317" y="362" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle" font-weight="500">예</text>
+
+  <!-- "아니오" label on vertical segment Q2→HYBRID -->
+  <rect x="487" y="422" width="48" height="14" rx="2" fill="#f8fafb"/>
+  <text x="511" y="432" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle" font-weight="500">아니오</text>
+
+  <!-- ══════════════════════════════════════════
+       NODES
+       ══════════════════════════════════════════ -->
+
+  <!-- START — oval (focal, 시작점) -->
+  <!-- cx=480, cy=84, rx=112, ry=32 -->
+  <rect x="368" y="52" width="224" height="64" rx="32" fill="#f8fafb"/>
+  <rect x="368" y="52" width="224" height="64" rx="32" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <!-- type tag -->
+  <rect x="376" y="58" width="28" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="390" y="67" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono',monospace" text-anchor="middle" letter-spacing="0.08em">START</text>
+  <!-- label -->
+  <text x="480" y="82" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">RAG 시스템을 구성한다</text>
+
+  <!-- Q1 — decision diamond -->
+  <!-- center: 480,228. half-width=140, half-height=44 -->
+  <rect x="340" y="184" width="280" height="88" fill="#f8fafb"/>
+  <polygon points="480,184 620,228 480,272 340,228" fill="rgba(13,87,99,0.06)" stroke="#0d5763" stroke-width="1.2"/>
+  <!-- label -->
+  <text x="480" y="222" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">응답 지연시간</text>
+  <text x="480" y="240" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">허용 범위</text>
+
+  <!-- Q2 — decision diamond -->
+  <!-- center: 480,368. half-width=140, half-height=44 -->
+  <rect x="340" y="324" width="280" height="88" fill="#f8fafb"/>
+  <polygon points="480,324 620,368 480,412 340,368" fill="rgba(13,87,99,0.06)" stroke="#0d5763" stroke-width="1.2"/>
+  <!-- label -->
+  <text x="480" y="362" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">정확도가</text>
+  <text x="480" y="380" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">핵심인가</text>
+
+  <!-- FULL — 하이브리드+Re-ranking 풀 파이프라인 (우측 분기) -->
+  <!-- center: 796,228. w=176, h=56 -->
+  <rect x="708" y="200" width="212" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="708" y="200" width="212" height="56" rx="6" fill="rgba(214,233,222,0.6)" stroke="#286d50" stroke-width="1"/>
+  <!-- type tag -->
+  <rect x="716" y="206" width="32" height="12" rx="2" fill="transparent" stroke="rgba(40,109,80,0.40)" stroke-width="0.8"/>
+  <text x="732" y="215" fill="rgba(40,109,80,0.8)" font-size="7" font-family="'IBM Plex Mono',monospace" text-anchor="middle" letter-spacing="0.08em">FULL</text>
+  <!-- label -->
+  <text x="814" y="226" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">하이브리드 + Re-ranking</text>
+  <text x="814" y="244" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">풀 파이프라인</text>
+
+  <!-- HYB2 — 하이브리드+경량 Re-ranking (좌측 분기) -->
+  <!-- center: 148,368. w=240, h=56 -->
+  <rect x="28" y="340" width="240" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="28" y="340" width="240" height="56" rx="6" fill="rgba(214,233,222,0.6)" stroke="#286d50" stroke-width="1"/>
+  <!-- type tag -->
+  <rect x="36" y="346" width="28" height="12" rx="2" fill="transparent" stroke="rgba(40,109,80,0.40)" stroke-width="0.8"/>
+  <text x="50" y="355" fill="rgba(40,109,80,0.8)" font-size="7" font-family="'IBM Plex Mono',monospace" text-anchor="middle" letter-spacing="0.08em">FAST</text>
+  <!-- label -->
+  <text x="148" y="366" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">하이브리드 + 경량 Re-ranking</text>
+  <text x="148" y="384" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">500ms 내 처리</text>
+
+  <!-- HYBRID — 하이브리드 검색만 (하단 분기) -->
+  <!-- center: 480,480. w=240, h=56 -->
+  <rect x="360" y="452" width="240" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="360" y="452" width="240" height="56" rx="6" fill="rgba(245,232,204,0.6)" stroke="#a96a08" stroke-width="1"/>
+  <!-- type tag -->
+  <rect x="368" y="458" width="36" height="12" rx="2" fill="transparent" stroke="rgba(169,106,8,0.40)" stroke-width="0.8"/>
+  <text x="386" y="467" fill="rgba(169,106,8,0.8)" font-size="7" font-family="'IBM Plex Mono',monospace" text-anchor="middle" letter-spacing="0.08em">BASIC</text>
+  <!-- label -->
+  <text x="480" y="478" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">하이브리드 검색만</text>
+  <text x="480" y="496" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">Re-ranking 생략</text>
+
+  <!-- ══════════════════════════════════════════
+       LEGEND STRIP
+       ══════════════════════════════════════════ -->
+  <line x1="28" y1="526" x2="932" y2="526" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+
+  <!-- Legend label -->
+  <text x="28" y="542" fill="#6c8188" font-size="8" font-family="'IBM Plex Mono',monospace" letter-spacing="0.14em">LEGEND</text>
+
+  <!-- Item 1: 시작점 -->
+  <rect x="108" y="532" width="40" height="16" rx="8" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="128" y="543" fill="#122127" font-size="9" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle" font-weight="500">시작</text>
+  <text x="154" y="543" fill="#6c8188" font-size="9" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" font-weight="400">시작점</text>
+
+  <!-- Item 2: 의사결정 -->
+  <polygon points="224,548 244,540 264,548 244,556" fill="rgba(13,87,99,0.06)" stroke="#0d5763" stroke-width="1"/>
+  <text x="270" y="543" fill="#6c8188" font-size="9" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" font-weight="400">의사결정</text>
+
+  <!-- Item 3: 권장 경로 (green) -->
+  <rect x="348" y="532" width="16" height="16" rx="3" fill="rgba(214,233,222,0.6)" stroke="#286d50" stroke-width="1"/>
+  <text x="370" y="543" fill="#6c8188" font-size="9" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" font-weight="400">권장 경로</text>
+
+  <!-- Item 4: 최소 구성 (amber) -->
+  <rect x="460" y="532" width="16" height="16" rx="3" fill="rgba(245,232,204,0.6)" stroke="#a96a08" stroke-width="1"/>
+  <text x="482" y="543" fill="#6c8188" font-size="9" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" font-weight="400">최소 구성</text>
+
+</svg>
+</body>
+</html>
