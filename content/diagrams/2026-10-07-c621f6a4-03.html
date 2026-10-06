@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>입력 안전성 검사 파이프라인</title>
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; font-family: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; }
+  .diagram-wrap { display: block; width: 100%; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<div class="diagram-wrap">
+<svg
+  viewBox="0 0 960 420"
+  xmlns="http://www.w3.org/2000/svg"
+  role="img"
+  aria-labelledby="2026-10-07-c621f6a4-03-guardrails-title 2026-10-07-c621f6a4-03-guardrails-desc"
+>
+<title id="2026-10-07-c621f6a4-03-guardrails-title">LLM 입력 안전성 검사 파이프라인</title>
+<desc id="2026-10-07-c621f6a4-03-guardrails-desc">사용자 입력이 키워드 매칭, 임베딩 유사도, 구조 분석 세 단계를 거쳐 차단·허용·경고 처리로 분기되는 흐름을 보여준다.</desc>
+
+<defs>
+  <!-- Arrow markers -->
+  <marker id="2026-10-07-c621f6a4-03-g-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+    <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+  </marker>
+  <marker id="2026-10-07-c621f6a4-03-g-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+    <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+  </marker>
+  <marker id="2026-10-07-c621f6a4-03-g-arrow-stop" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+    <polygon points="0 0, 8 3, 0 6" fill="#94382b"/>
+  </marker>
+  <marker id="2026-10-07-c621f6a4-03-g-arrow-ok" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+    <polygon points="0 0, 8 3, 0 6" fill="#286d50"/>
+  </marker>
+  <marker id="2026-10-07-c621f6a4-03-g-arrow-warn" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+    <polygon points="0 0, 8 3, 0 6" fill="#a96a08"/>
+  </marker>
+</defs>
+
+<!-- Background -->
+<rect width="960" height="420" fill="#f8fafb"/>
+
+<!-- ============================================================
+     ARROWS — drawn before boxes so z-order is correct
+     ============================================================ -->
+
+<!-- UI → KW (straight horizontal) -->
+<line x1="132" y1="140" x2="196" y2="140" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-10-07-c621f6a4-03-g-arrow-accent)"/>
+
+<!-- KW → EMB: "패턴 없음" — down then right to EMB -->
+<!-- KW bottom center (252,164) → EMB (352,140) via orthogonal elbow -->
+<path d="M252,164 Q252,180 268,180 L336,180 Q352,180 352,164" fill="none" stroke="#3f545c" stroke-width="1.2" marker-end="url(#2026-10-07-c621f6a4-03-g-arrow)"/>
+<rect x="277" y="171" width="50" height="13" rx="2" fill="#f8fafb"/>
+<text x="302" y="181" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">패턴 없음</text>
+
+<!-- KW → BLK: "패턴 탐지" — KW right(284,140) → BLK(644,260), route: right then down -->
+<!-- KW right edge is x=284, BLK center y=260, BLK left edge x=600 -->
+<!-- Path: from KW right (284,140) → right to x=320 → down to y=260 → right to BLK left (600,260) -->
+<path d="M284,140 L320,140 Q328,140 328,148 L328,252 Q328,260 336,260 L596,260" fill="none" stroke="#94382b" stroke-width="1.2" stroke-dasharray="5,3" marker-end="url(#2026-10-07-c621f6a4-03-g-arrow-stop)"/>
+<rect x="278" y="183" width="50" height="13" rx="2" fill="#f8fafb"/>
+<text x="303" y="193" fill="#94382b" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">패턴 탐지</text>
+
+<!-- EMB → BLK: "유사도 높음" — EMB bottom(408,164) → down to y=260 → right to BLK(600,260) -->
+<path d="M408,164 L408,252 Q408,260 416,260 L596,260" fill="none" stroke="#94382b" stroke-width="1.2" stroke-dasharray="5,3" marker-end="url(#2026-10-07-c621f6a4-03-g-arrow-stop)"/>
+<rect x="376" y="195" width="64" height="13" rx="2" fill="#f8fafb"/>
+<text x="408" y="205" fill="#94382b" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">유사도 높음</text>
+
+<!-- EMB → STR: "유사도 낮음" — straight horizontal -->
+<line x1="464" y1="140" x2="528" y2="140" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-10-07-c621f6a4-03-g-arrow-accent)"/>
+<rect x="469" y="126" width="54" height="13" rx="2" fill="#f8fafb"/>
+<text x="496" y="136" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">유사도 낮음</text>
+
+<!-- STR → PASS: "이상 없음" — straight horizontal -->
+<line x1="696" y1="128" x2="760" y2="128" stroke="#286d50" stroke-width="1.2" marker-end="url(#2026-10-07-c621f6a4-03-g-arrow-ok)"/>
+<rect x="701" y="115" width="54" height="13" rx="2" fill="#f8fafb"/>
+<text x="728" y="125" fill="#286d50" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">이상 없음</text>
+
+<!-- STR → LOG: "구조 이상" — STR bottom center(612+48=660, but STR center x=612) → down → right to LOG -->
+<!-- STR box: x=528 w=168 → center x=612, bottom y=164 → LOG center y=260, LOG left x=760 -->
+<path d="M612,164 L612,252 Q612,260 620,260 L756,260" fill="none" stroke="#a96a08" stroke-width="1.2" stroke-dasharray="5,3" marker-end="url(#2026-10-07-c621f6a4-03-g-arrow-warn)"/>
+<rect x="580" y="191" width="54" height="13" rx="2" fill="#f8fafb"/>
+<text x="607" y="201" fill="#a96a08" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">구조 이상</text>
+
+<!-- ============================================================
+     NODES
+     ============================================================ -->
+
+<!-- UI: 사용자 입력 — input type -->
+<!-- x=20, y=108, w=112, h=64, center=(76,140) -->
+<rect x="20" y="108" width="112" height="64" rx="6" fill="#f8fafb"/>
+<rect x="20" y="108" width="112" height="64" rx="6" fill="rgba(58,84,143,0.08)" stroke="#3a548f" stroke-width="1"/>
+<rect x="28" y="116" width="28" height="12" rx="2" fill="transparent" stroke="rgba(58,84,143,0.40)" stroke-width="0.8"/>
+<text x="42" y="125" fill="rgba(58,84,143,0.80)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">IN</text>
+<text x="76" y="144" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">사용자 입력</text>
+
+<!-- KW: 키워드 매칭 — focal (accent) -->
+<!-- x=196, y=108, w=88, h=64, center=(240,140) → actually w=88 so right=284 -->
+<!-- Let's make it w=96: x=196, w=96, center=244 right=292 — adjust arrows accordingly -->
+<!-- Re-plan: KW center x=252, so x=196 w=112 center=252 right=308 -->
+<rect x="196" y="108" width="112" height="64" rx="6" fill="#f8fafb"/>
+<rect x="196" y="108" width="112" height="64" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+<rect x="204" y="116" width="36" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+<text x="222" y="125" fill="rgba(13,87,99,0.80)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">STEP 1</text>
+<text x="252" y="141" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">키워드 매칭</text>
+<text x="252" y="157" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">빠른 차단</text>
+
+<!-- EMB: 임베딩 유사도 — focal (accent) -->
+<!-- x=352, y=108, w=112, h=64, center=(408,140) -->
+<rect x="352" y="108" width="112" height="64" rx="6" fill="#f8fafb"/>
+<rect x="352" y="108" width="112" height="64" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+<rect x="360" y="116" width="36" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+<text x="378" y="125" fill="rgba(13,87,99,0.80)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">STEP 2</text>
+<text x="408" y="141" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">임베딩 유사도</text>
+<text x="408" y="157" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">벡터 비교</text>
+
+<!-- STR: 구조 분석 — focal (accent) -->
+<!-- x=528, y=108, w=168, h=64, center=(612,140) -->
+<rect x="528" y="108" width="168" height="64" rx="6" fill="#f8fafb"/>
+<rect x="528" y="108" width="168" height="64" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+<rect x="536" y="116" width="36" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+<text x="554" y="125" fill="rgba(13,87,99,0.80)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">STEP 3</text>
+<text x="612" y="141" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">구조 분석</text>
+<text x="612" y="157" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">태그·구분자 탐지</text>
+
+<!-- PASS: 처리 허용 — ok -->
+<!-- x=760, y=100, w=120, h=56, center=(820,128) -->
+<rect x="760" y="100" width="120" height="56" rx="6" fill="#f8fafb"/>
+<rect x="760" y="100" width="120" height="56" rx="6" fill="rgba(40,109,80,0.10)" stroke="#286d50" stroke-width="1"/>
+<rect x="768" y="108" width="44" height="12" rx="2" fill="transparent" stroke="rgba(40,109,80,0.40)" stroke-width="0.8"/>
+<text x="790" y="117" fill="rgba(40,109,80,0.80)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">ALLOW</text>
+<text x="820" y="134" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">처리 허용</text>
+
+<!-- BLK: 차단 — stop -->
+<!-- x=600, y=232, w=120, h=56, center=(660,260) -->
+<rect x="600" y="232" width="120" height="56" rx="6" fill="#f8fafb"/>
+<rect x="600" y="232" width="120" height="56" rx="6" fill="rgba(148,56,43,0.10)" stroke="#94382b" stroke-width="1"/>
+<rect x="608" y="240" width="36" height="12" rx="2" fill="transparent" stroke="rgba(148,56,43,0.40)" stroke-width="0.8"/>
+<text x="626" y="249" fill="rgba(148,56,43,0.80)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">BLOCK</text>
+<text x="660" y="266" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">차단</text>
+
+<!-- LOG: 경고 + 로깅 — warn -->
+<!-- x=760, y=232, w=140, h=56, center=(830,260) -->
+<rect x="760" y="232" width="140" height="56" rx="6" fill="#f8fafb"/>
+<rect x="760" y="232" width="140" height="56" rx="6" fill="rgba(169,106,8,0.10)" stroke="#a96a08" stroke-width="1"/>
+<rect x="768" y="240" width="44" height="12" rx="2" fill="transparent" stroke="rgba(169,106,8,0.40)" stroke-width="0.8"/>
+<text x="790" y="249" fill="rgba(169,106,8,0.80)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">WARN</text>
+<text x="830" y="266" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">경고 + 로깅</text>
+
+<!-- ============================================================
+     LEGEND STRIP
+     ============================================================ -->
+<line x1="20" y1="348" x2="940" y2="348" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+<text x="20" y="364" fill="#6c8188" font-size="8" font-family="'IBM Plex Mono', monospace" letter-spacing="0.14em">LEGEND</text>
+
+<!-- 검사 단계 -->
+<rect x="92" y="354" width="52" height="16" rx="3" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+<text x="118" y="366" fill="#122127" font-size="9" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">검사 단계</text>
+
+<!-- 처리 허용 -->
+<rect x="160" y="354" width="52" height="16" rx="3" fill="rgba(40,109,80,0.10)" stroke="#286d50" stroke-width="1"/>
+<text x="186" y="366" fill="#122127" font-size="9" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">허용</text>
+
+<!-- 차단 -->
+<rect x="228" y="354" width="52" height="16" rx="3" fill="rgba(148,56,43,0.10)" stroke="#94382b" stroke-width="1"/>
+<text x="254" y="366" fill="#122127" font-size="9" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">차단</text>
+
+<!-- 경고 -->
+<rect x="296" y="354" width="52" height="16" rx="3" fill="rgba(169,106,8,0.10)" stroke="#a96a08" stroke-width="1"/>
+<text x="322" y="366" fill="#122127" font-size="9" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">경고</text>
+
+<!-- 실선 = 일반 흐름 -->
+<line x1="365" y1="362" x2="397" y2="362" stroke="#3f545c" stroke-width="1.2" marker-end="url(#2026-10-07-c621f6a4-03-g-arrow)"/>
+<text x="405" y="366" fill="#6c8188" font-size="9" font-family="'IBM Plex Sans KR', sans-serif">일반 흐름</text>
+
+<!-- 점선 = 분기 처리 -->
+<line x1="472" y1="362" x2="504" y2="362" stroke="#94382b" stroke-width="1.2" stroke-dasharray="5,3" marker-end="url(#2026-10-07-c621f6a4-03-g-arrow-stop)"/>
+<text x="512" y="366" fill="#6c8188" font-size="9" font-family="'IBM Plex Sans KR', sans-serif">분기 처리</text>
+
+</svg>
+</div>
+</body>
+</html>

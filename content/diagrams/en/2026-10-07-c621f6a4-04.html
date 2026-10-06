@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; }
+  .diagram-wrap { width: 100%; max-width: 960px; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<div class="diagram-wrap">
+<svg viewBox="0 0 960 600" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="2026-10-07-c621f6a4-04-pii-filter-title 2026-10-07-c621f6a4-04-pii-filter-desc">
+  <title id="2026-10-07-c621f6a4-04-pii-filter-title">PII Filtering Pipeline</title>
+  <desc id="2026-10-07-c621f6a4-04-pii-filter-desc">Shows a privacy protection flow where model output passes through regex detection, NER detection, and policy decision, then branches to full masking for public channels and tokenisation for internal logs.</desc>
+
+  <defs>
+    <!-- Arrow markers -->
+    <marker id="2026-10-07-c621f6a4-04-pii-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-10-07-c621f6a4-04-pii-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <marker id="2026-10-07-c621f6a4-04-pii-arrow-muted" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#6c8188"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="960" height="600" fill="#f8fafb"/>
+
+  <!-- ===== ARROWS (drawn before boxes) ===== -->
+
+  <!-- OUT → REG (vertical) -->
+  <line x1="480" y1="112" x2="480" y2="168" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-07-c621f6a4-04-pii-arrow)"/>
+
+  <!-- REG → NER (vertical) -->
+  <line x1="480" y1="232" x2="480" y2="288" stroke="#0d5763" stroke-width="1" marker-end="url(#2026-10-07-c621f6a4-04-pii-arrow-accent)"/>
+
+  <!-- NER → POL (vertical) -->
+  <line x1="480" y1="352" x2="480" y2="408" stroke="#0d5763" stroke-width="1" marker-end="url(#2026-10-07-c621f6a4-04-pii-arrow-accent)"/>
+
+  <!-- POL → FULL: 공개 채널 분기 (right elbow) -->
+  <!-- POL bottom-center (480,472) → right → down to FULL top-center (284,488) -->
+  <!-- Route: go left from POL left edge (364,440) → elbow down to FULL -->
+  <path d="M 364,440 L 284,440 Q 276,440 276,448 L 276,488" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-07-c621f6a4-04-pii-arrow)"/>
+
+  <!-- Arrow label: Public Channel -->
+  <rect x="288" y="428" width="60" height="16" rx="2" fill="#f8fafb"/>
+  <text x="318" y="440" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle" font-weight="500">Public Ch.</text>
+
+  <!-- POL → TOK: 내부 로그 분기 (left elbow) -->
+  <!-- Route: go right from POL right edge (596,440) → elbow down to TOK -->
+  <path d="M 596,440 L 680,440 Q 688,440 688,448 L 688,488" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-07-c621f6a4-04-pii-arrow)"/>
+
+  <!-- Arrow label: Internal Log -->
+  <rect x="622" y="428" width="56" height="16" rx="2" fill="#f8fafb"/>
+  <text x="650" y="440" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle" font-weight="500">Internal Log</text>
+
+  <!-- FULL → FIN (vertical) -->
+  <line x1="284" y1="552" x2="284" y2="568" stroke="#6c8188" stroke-width="1" marker-end="url(#2026-10-07-c621f6a4-04-pii-arrow-muted)"/>
+
+  <!-- TOK → AUD (vertical) -->
+  <line x1="688" y1="552" x2="688" y2="568" stroke="#6c8188" stroke-width="1" marker-end="url(#2026-10-07-c621f6a4-04-pii-arrow-muted)"/>
+
+  <!-- ===== NODES ===== -->
+
+  <!-- OUT: Model Output (input type) -->
+  <rect x="360" y="60" width="240" height="52" rx="6" fill="#f8fafb"/>
+  <rect x="360" y="60" width="240" height="52" rx="6" fill="rgba(58,84,143,0.06)" stroke="rgba(58,84,143,0.40)" stroke-width="1"/>
+  <rect x="368" y="68" width="28" height="12" rx="2" fill="transparent" stroke="rgba(58,84,143,0.40)" stroke-width="0.8"/>
+  <text x="382" y="77" fill="rgba(58,84,143,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">IN</text>
+  <text x="480" y="90" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Model Output</text>
+  <text x="480" y="105" fill="#6c8188" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">LLM response</text>
+
+  <!-- REG: Regex Detection (focal) -->
+  <rect x="344" y="168" width="272" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="344" y="168" width="272" height="64" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <rect x="352" y="176" width="40" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="372" y="185" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">REGEX</text>
+  <text x="480" y="200" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Regex Detection</text>
+  <text x="480" y="219" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">email · phone · card no.</text>
+
+  <!-- NER: NER Detection (focal) -->
+  <rect x="344" y="288" width="272" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="344" y="288" width="272" height="64" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <rect x="352" y="296" width="28" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="366" y="305" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">NER</text>
+  <text x="480" y="320" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">NER Detection</text>
+  <text x="480" y="339" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">name · address · org</text>
+
+  <!-- POL: Policy Decision (backend) -->
+  <rect x="364" y="408" width="232" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="364" y="408" width="232" height="64" rx="6" fill="white" stroke="#122127" stroke-width="1"/>
+  <rect x="372" y="416" width="36" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="390" y="425" fill="rgba(18,33,39,0.7)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">POLICY</text>
+  <text x="480" y="442" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Policy Decision</text>
+  <text x="480" y="461" fill="#6c8188" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">select masking type</text>
+
+  <!-- FULL: Full Masking -->
+  <rect x="168" y="488" width="232" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="168" y="488" width="232" height="64" rx="6" fill="white" stroke="#122127" stroke-width="1"/>
+  <rect x="176" y="496" width="36" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="194" y="505" fill="rgba(18,33,39,0.7)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">MASK</text>
+  <text x="284" y="522" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Full Masking</text>
+  <text x="284" y="541" fill="#6c8188" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">[PII removed]</text>
+
+  <!-- TOK: Tokenisation -->
+  <rect x="572" y="488" width="232" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="572" y="488" width="232" height="64" rx="6" fill="white" stroke="#122127" stroke-width="1"/>
+  <rect x="580" y="496" width="36" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="598" y="505" fill="rgba(18,33,39,0.7)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">TOKEN</text>
+  <text x="688" y="522" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Tokenisation</text>
+  <text x="688" y="541" fill="#6c8188" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">reversible</text>
+
+  <!-- FIN: Final Output (store/muted) -->
+  <rect x="168" y="568" width="232" height="12" rx="0" fill="transparent"/>
+  <!-- Oval terminal -->
+  <rect x="196" y="568" width="176" height="20" rx="10" fill="#f8fafb"/>
+  <rect x="196" y="568" width="176" height="20" rx="10" fill="rgba(18,33,39,0.04)" stroke="#c3d0d4" stroke-width="1"/>
+  <text x="284" y="583" fill="#3f545c" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Final Output</text>
+
+  <!-- AUD: Audit Log (store/muted) -->
+  <rect x="572" y="568" width="232" height="12" rx="0" fill="transparent"/>
+  <rect x="600" y="568" width="176" height="20" rx="10" fill="#f8fafb"/>
+  <rect x="600" y="568" width="176" height="20" rx="10" fill="rgba(18,33,39,0.04)" stroke="#c3d0d4" stroke-width="1"/>
+  <text x="688" y="583" fill="#3f545c" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Audit Log</text>
+
+  <!-- ===== LEGEND ===== -->
+  <line x1="40" y1="602" x2="920" y2="602" stroke="rgba(18,33,39,0.10)" stroke-width="0.8"/>
+  <!-- legend items -->
+  <!-- focal -->
+  <rect x="40" y="614" width="10" height="10" rx="2" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="56" y="623" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" font-weight="500">Detection (core)</text>
+  <!-- backend -->
+  <rect x="200" y="614" width="10" height="10" rx="2" fill="white" stroke="#122127" stroke-width="1"/>
+  <text x="216" y="623" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" font-weight="500">Processing</text>
+  <!-- input -->
+  <rect x="340" y="614" width="10" height="10" rx="2" fill="rgba(58,84,143,0.06)" stroke="rgba(58,84,143,0.40)" stroke-width="1"/>
+  <text x="356" y="623" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" font-weight="500">Input</text>
+  <!-- store -->
+  <rect x="436" y="615" width="10" height="8" rx="4" fill="rgba(18,33,39,0.04)" stroke="#c3d0d4" stroke-width="1"/>
+  <text x="452" y="623" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" font-weight="500">Output / Log</text>
+</svg>
+</div>
+</body>
+</html>

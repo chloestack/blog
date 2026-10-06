@@ -31,5 +31,6 @@ export const POST_PAIRS: Record<string, string> = {
   "2026-10-03-추론-모델-프롬프팅-전략-—-o3·Claude-Opus를-비용-효율적으로-활용하는-법": "2026-10-03-reasoning-model-prompting-cost-effective-strategies",
   "2026-10-04-LLM-요청-라우팅으로-비용과-품질-동시에-최적화하기": "2026-10-04-llm-request-routing-cost-quality-optimization",
   "2026-10-05-AI-에이전트-Human-in-the-Loop-설계법": "2026-10-05-ai-agent-human-in-the-loop-design",
-  "2026-10-06-RAG-Re-ranking-파이프라인-—-Cross-Encoder와-하이브리드-검색으로-정확도-높이기": "2026-10-06-rag-reranking-cross-encoder-hybrid-search"
+  "2026-10-06-RAG-Re-ranking-파이프라인-—-Cross-Encoder와-하이브리드-검색으로-정확도-높이기": "2026-10-06-rag-reranking-cross-encoder-hybrid-search",
+  "2026-10-07-LLM-Guardrails로-프로덕션-AI-입출력-안전성-구현하기": "2026-10-07-llm-guardrails-production-ai-safety"
 };

@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Per-Tenant Guardrails Request Processing Flow</title>
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; font-family: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; }
+  .diagram-wrap { display: block; width: 100%; max-width: 960px; margin: 0 auto; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<div class="diagram-wrap">
+<svg viewBox="0 0 960 400" xmlns="http://www.w3.org/2000/svg"
+     role="img" aria-labelledby="2026-10-07-c621f6a4-07-grd-title 2026-10-07-c621f6a4-07-grd-desc">
+  <title id="2026-10-07-c621f6a4-07-grd-title">Per-Tenant Guardrails Request Processing Flow</title>
+  <desc id="2026-10-07-c621f6a4-07-grd-desc">Flowchart showing the flow from request reception through tenant ID extraction, policy lookup, custom/default policy branching, Guardrails execution, and response.</desc>
+
+  <defs>
+    <!-- Arrow markers -->
+    <marker id="2026-10-07-c621f6a4-07-grd-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-10-07-c621f6a4-07-grd-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <marker id="2026-10-07-c621f6a4-07-grd-arrow-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3a548f"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="960" height="400" fill="#f8fafb"/>
+
+  <!-- ─────────────────────────────────────────────
+       ARROWS (drawn before nodes)
+  ───────────────────────────────────────────── -->
+
+  <!-- REQ → TID (straight horizontal) -->
+  <line x1="132" y1="160" x2="192" y2="160" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-07-c621f6a4-07-grd-arrow)"/>
+
+  <!-- TID → POL (straight horizontal) -->
+  <line x1="308" y1="160" x2="368" y2="160" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-07-c621f6a4-07-grd-arrow)"/>
+
+  <!-- POL → CP: right then up (orthogonal elbow) -->
+  <!-- POL right edge at x=484, y=160 → CP center at x=568, y=100 -->
+  <!-- Path: from (484,160) right to (528,160) then up to (528,100) then right to (548,100) -->
+  <path d="M484,160 L528,160 Q536,160 536,152 L536,108 Q536,100 544,100 L548,100"
+        stroke="#0d5763" stroke-width="1" fill="none" marker-end="url(#2026-10-07-c621f6a4-07-grd-arrow-accent)"/>
+
+  <!-- Label: Custom Policy -->
+  <rect x="490" y="116" width="56" height="16" rx="2" fill="#f8fafb"/>
+  <text x="518" y="127" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif"
+        text-anchor="middle">Custom Policy</text>
+
+  <!-- POL → DP: right then down (orthogonal elbow) -->
+  <!-- Path: from (484,160) right to (528,160) then down to (528,220) then right to (548,220) -->
+  <path d="M484,160 L528,160 Q536,160 536,168 L536,212 Q536,220 544,220 L548,220"
+        stroke="#3f545c" stroke-width="1" fill="none" marker-end="url(#2026-10-07-c621f6a4-07-grd-arrow)"/>
+
+  <!-- Label: Default Policy -->
+  <rect x="490" y="178" width="48" height="16" rx="2" fill="#f8fafb"/>
+  <text x="514" y="189" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif"
+        text-anchor="middle">Default Policy</text>
+
+  <!-- CP → GRD: right then down (orthogonal elbow) -->
+  <!-- CP right edge at x=668, y=100 → GRD left edge at x=724, y=160 -->
+  <path d="M668,100 L700,100 Q708,100 708,108 L708,152 Q708,160 716,160 L724,160"
+        stroke="#3f545c" stroke-width="1" fill="none" marker-end="url(#2026-10-07-c621f6a4-07-grd-arrow)"/>
+
+  <!-- DP → GRD: right then up (orthogonal elbow) -->
+  <!-- DP right edge at x=668, y=220 → GRD left edge at x=724, y=160 -->
+  <path d="M668,220 L700,220 Q708,220 708,212 L708,168 Q708,160 716,160 L724,160"
+        stroke="#3f545c" stroke-width="1" fill="none" marker-end="url(#2026-10-07-c621f6a4-07-grd-arrow)"/>
+
+  <!-- GRD → RES (straight horizontal) -->
+  <line x1="840" y1="160" x2="892" y2="160" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-10-07-c621f6a4-07-grd-arrow-accent)"/>
+
+  <!-- ─────────────────────────────────────────────
+       NODES
+  ───────────────────────────────────────────── -->
+
+  <!-- REQ: Request — oval (start), input style -->
+  <rect x="32" y="140" width="100" height="40" rx="20" fill="rgba(58,84,143,0.08)" stroke="#3a548f" stroke-width="1"/>
+  <text x="82" y="155" fill="#122127" font-size="12" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Request In</text>
+  <text x="82" y="171" fill="#3f545c" font-size="10"
+        font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle">Request</text>
+
+  <!-- TID: Tenant ID Extraction — backend box -->
+  <rect x="192" y="132" width="116" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="192" y="132" width="116" height="56" rx="6" fill="white" stroke="#122127" stroke-width="1"/>
+  <rect x="200" y="139" width="32" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="216" y="148" fill="rgba(18,33,39,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.08em">STEP</text>
+  <text x="250" y="159" fill="#122127" font-size="12" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Tenant ID</text>
+  <text x="250" y="175" fill="#122127" font-size="12" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Extract</text>
+
+  <!-- POL: Policy Lookup — focal box (accent) -->
+  <rect x="368" y="124" width="116" height="72" rx="6" fill="rgba(13,87,99,0.08)"/>
+  <rect x="368" y="124" width="116" height="72" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="376" y="131" width="40" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="396" y="140" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.08em">POLICY</text>
+  <text x="426" y="157" fill="#122127" font-size="12" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Policy Lookup</text>
+  <text x="426" y="173" fill="#3f545c" font-size="10"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Per-Tenant Override</text>
+
+  <!-- CP: Tenant Policy Apply — backend box -->
+  <rect x="548" y="72" width="120" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="548" y="72" width="120" height="56" rx="6" fill="white" stroke="#122127" stroke-width="1"/>
+  <rect x="556" y="79" width="48" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="580" y="88" fill="rgba(18,33,39,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.08em">CUSTOM</text>
+  <text x="608" y="107" fill="#122127" font-size="12" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Tenant Policy</text>
+  <text x="608" y="123" fill="#122127" font-size="12" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Apply</text>
+
+  <!-- DP: Default Policy Apply — backend box -->
+  <rect x="548" y="192" width="120" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="548" y="192" width="120" height="56" rx="6" fill="white" stroke="#122127" stroke-width="1"/>
+  <rect x="556" y="199" width="48" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="580" y="208" fill="rgba(18,33,39,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.08em">DEFAULT</text>
+  <text x="608" y="227" fill="#122127" font-size="12" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Default Policy</text>
+  <text x="608" y="243" fill="#122127" font-size="12" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Apply</text>
+
+  <!-- GRD: Guardrails Execute — focal box (accent) -->
+  <rect x="724" y="132" width="116" height="56" rx="6" fill="rgba(13,87,99,0.08)"/>
+  <rect x="724" y="132" width="116" height="56" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="732" y="139" width="56" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="760" y="148" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.08em">GUARDRAILS</text>
+  <text x="782" y="164" fill="#122127" font-size="12" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Guardrails</text>
+  <text x="782" y="180" fill="#122127" font-size="12" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Execute</text>
+
+  <!-- RES: Response — oval (end), store style -->
+  <rect x="892" y="140" width="36" height="40" rx="20" fill="rgba(13,87,99,0.08)"/>
+  <rect x="888" y="140" width="44" height="40" rx="20" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="910" y="155" fill="#122127" font-size="12" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Reply</text>
+  <text x="910" y="171" fill="#3f545c" font-size="10"
+        font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle">Response</text>
+
+  <!-- ─────────────────────────────────────────────
+       LEGEND STRIP
+  ───────────────────────────────────────────── -->
+  <line x1="32" y1="332" x2="928" y2="332" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+  <text x="32" y="348" fill="#6c8188" font-size="8" font-family="'IBM Plex Mono', monospace"
+        letter-spacing="0.14em">LEGEND</text>
+
+  <!-- Legend: Key Step -->
+  <rect x="100" y="338" width="48" height="20" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="124" y="353" fill="#122127" font-size="10" font-weight="600"
+        font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Key Step</text>
+
+  <!-- Legend: Process Step -->
+  <rect x="172" y="338" width="48" height="20" rx="6" fill="white" stroke="#122127" stroke-width="1"/>
+  <text x="196" y="353" fill="#122127" font-size="10" font-weight="600"
+        font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Process</text>
+
+  <!-- Legend: Start/End -->
+  <rect x="244" y="338" width="48" height="20" rx="20" fill="rgba(58,84,143,0.08)" stroke="#3a548f" stroke-width="1"/>
+  <text x="268" y="353" fill="#122127" font-size="10" font-weight="600"
+        font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Start / End</text>
+
+  <!-- Legend arrows -->
+  <line x1="320" y1="348" x2="344" y2="348" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-07-c621f6a4-07-grd-arrow)"/>
+  <text x="352" y="352" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">Default Flow</text>
+
+  <line x1="432" y1="348" x2="456" y2="348" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-10-07-c621f6a4-07-grd-arrow-accent)"/>
+  <text x="464" y="352" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">Main Flow</text>
+
+</svg>
+</div>
+</body>
+</html>
