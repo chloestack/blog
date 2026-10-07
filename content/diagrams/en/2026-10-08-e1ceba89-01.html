@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LLM Agent Eval Flow</title>
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; font-family: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; }
+  .diagram-wrap { width: 100%; max-width: 960px; margin: 0 auto; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<div class="diagram-wrap">
+<svg viewBox="0 0 960 340" xmlns="http://www.w3.org/2000/svg"
+     role="img" aria-labelledby="2026-10-08-e1ceba89-01-eval-flow-title 2026-10-08-e1ceba89-01-eval-flow-desc">
+  <title id="2026-10-08-e1ceba89-01-eval-flow-title">LLM Agent Eval Flow</title>
+  <desc id="2026-10-08-e1ceba89-01-eval-flow-desc">Flowchart showing how user input passes through agent execution and splits into two paths: rule-based testing (brittle &amp; incomplete) and trace-based Eval (step-by-step validation), with only the trace-based path leading to a reliable quality gate.</desc>
+
+  <defs>
+    <!-- 기본 화살표 -->
+    <marker id="2026-10-08-e1ceba89-01-ev-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <!-- 강조 화살표 (accent) -->
+    <marker id="2026-10-08-e1ceba89-01-ev-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <!-- 비강조/취성 화살표 -->
+    <marker id="2026-10-08-e1ceba89-01-ev-arrow-muted" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#6c8188"/>
+    </marker>
+  </defs>
+
+  <!-- 배경 -->
+  <rect width="960" height="340" fill="#f8fafb"/>
+
+  <!-- ===================== 커넥터 (노드보다 먼저) ===================== -->
+
+  <!-- T → A : 사용자 입력 → 에이전트 실행 -->
+  <path d="M 228,168 L 308,168" fill="none" stroke="#3a548f" stroke-width="1.2" marker-end="url(#2026-10-08-e1ceba89-01-ev-arrow)"/>
+
+  <!-- A → E1 : 에이전트 실행 → 규칙 기반 (위쪽으로 꺾임) -->
+  <!-- 출발: A 오른쪽 상단 460+132=592? 정확히 계산: A는 x=308~460, 중앙y=168 -->
+  <!-- E1은 x=500~668, y=72~132 → attach: E1 왼쪽 중앙 y=102 -->
+  <!-- A 오른쪽 상단 attach: x=460, y=148 (상단 1/3) -->
+  <!-- 꺾임: 480,148 → 480,102 → 500,102 -->
+  <path d="M 460,148 L 480,148 L 480,102 L 500,102"
+        fill="none" stroke="#6c8188" stroke-width="1" stroke-dasharray="5,3"
+        marker-end="url(#2026-10-08-e1ceba89-01-ev-arrow-muted)"/>
+
+  <!-- A → E2 : 에이전트 실행 → 트레이스 기반 (아래쪽으로 꺾임) -->
+  <!-- E2는 x=500~668, y=204~264 → attach: E2 왼쪽 중앙 y=234 -->
+  <!-- A 오른쪽 하단 attach: x=460, y=188 -->
+  <!-- 꺾임: 480,188 → 480,234 → 500,234 -->
+  <path d="M 460,188 L 480,188 L 480,234 L 500,234"
+        fill="none" stroke="#0d5763" stroke-width="1.5"
+        marker-end="url(#2026-10-08-e1ceba89-01-ev-arrow-accent)"/>
+
+  <!-- E2 → R : 트레이스 기반 → 품질 게이트 -->
+  <!-- E2 오른쪽 중앙 x=668, y=234 → R 왼쪽 중앙 x=720, y=168 -->
+  <!-- 꺾임: 692,234 → 692,168 → 720,168 -->
+  <path d="M 668,234 L 692,234 L 692,168 L 720,168"
+        fill="none" stroke="#0d5763" stroke-width="1.5"
+        marker-end="url(#2026-10-08-e1ceba89-01-ev-arrow-accent)"/>
+
+  <!-- ===================== 노드 ===================== -->
+
+  <!-- T: 사용자 입력 (input 스타일 — link blue tint) x=68 y=140 w=160 h=56 -->
+  <rect x="68" y="140" width="160" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="68" y="140" width="160" height="56" rx="6"
+        fill="rgba(58,84,143,0.08)" stroke="#3a548f" stroke-width="1"/>
+  <rect x="76" y="148" width="28" height="12" rx="2"
+        fill="transparent" stroke="rgba(58,84,143,0.40)" stroke-width="0.8"/>
+  <text x="90" y="157"
+        fill="rgba(58,84,143,0.8)" font-size="7"
+        font-family="'IBM Plex Mono', ui-monospace, monospace"
+        text-anchor="middle" letter-spacing="0.08em">INPUT</text>
+  <text x="148" y="172"
+        fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">User Input</text>
+
+  <!-- A: 에이전트 실행 (focal — accent) x=308 y=132 w=152 h=72 -->
+  <rect x="308" y="132" width="152" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="308" y="132" width="152" height="72" rx="6"
+        fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.5"/>
+  <rect x="316" y="140" width="36" height="12" rx="2"
+        fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="334" y="149"
+        fill="rgba(13,87,99,0.85)" font-size="7"
+        font-family="'IBM Plex Mono', ui-monospace, monospace"
+        text-anchor="middle" letter-spacing="0.08em">AGENT</text>
+  <text x="384" y="172"
+        fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Agent Execution</text>
+
+  <!-- E1: 규칙 기반 테스트 (optional/warn — dashed muted) x=500 y=72 w=168 h=60 -->
+  <rect x="500" y="72" width="168" height="60" rx="6" fill="#f8fafb"/>
+  <rect x="500" y="72" width="168" height="60" rx="6"
+        fill="rgba(45,49,66,0.02)" stroke="rgba(45,49,66,0.22)" stroke-width="1"
+        stroke-dasharray="4,3"/>
+  <rect x="508" y="80" width="28" height="12" rx="2"
+        fill="transparent" stroke="rgba(45,49,66,0.22)" stroke-width="0.8"/>
+  <text x="522" y="89"
+        fill="rgba(45,49,66,0.5)" font-size="7"
+        font-family="'IBM Plex Mono', ui-monospace, monospace"
+        text-anchor="middle" letter-spacing="0.08em">RULE</text>
+  <text x="584" y="106"
+        fill="#3f545c" font-size="13" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Rule-Based Testing</text>
+  <text x="584" y="122"
+        fill="#6c8188" font-size="11"
+        font-family="'IBM Plex Mono', ui-monospace, monospace"
+        text-anchor="middle">brittle · incomplete</text>
+
+  <!-- E2: 트레이스 기반 Eval (backend — ink border) x=500 y=204 w=168 h=60 -->
+  <rect x="500" y="204" width="168" height="60" rx="6" fill="#f8fafb"/>
+  <rect x="500" y="204" width="168" height="60" rx="6"
+        fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="508" y="212" width="36" height="12" rx="2"
+        fill="transparent" stroke="rgba(18,33,39,0.30)" stroke-width="0.8"/>
+  <text x="526" y="221"
+        fill="rgba(18,33,39,0.6)" font-size="7"
+        font-family="'IBM Plex Mono', ui-monospace, monospace"
+        text-anchor="middle" letter-spacing="0.08em">EVAL</text>
+  <text x="584" y="238"
+        fill="#122127" font-size="13" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Trace-Based Eval</text>
+  <text x="584" y="254"
+        fill="#3f545c" font-size="11"
+        font-family="'IBM Plex Mono', ui-monospace, monospace"
+        text-anchor="middle">step-by-step validation</text>
+
+  <!-- R: 신뢰성 있는 품질 게이트 (focal — accent) x=720 y=132 w=184 h=72 -->
+  <rect x="720" y="132" width="184" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="720" y="132" width="184" height="72" rx="6"
+        fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.5"/>
+  <rect x="728" y="140" width="36" height="12" rx="2"
+        fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="746" y="149"
+        fill="rgba(13,87,99,0.85)" font-size="7"
+        font-family="'IBM Plex Mono', ui-monospace, monospace"
+        text-anchor="middle" letter-spacing="0.08em">GATE</text>
+  <text x="812" y="168"
+        fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Reliable</text>
+  <text x="812" y="188"
+        fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Quality Gate</text>
+
+  <!-- ===================== 화살표 레이블 ===================== -->
+
+  <!-- A→E1 레이블 (경로 위 오픈 캔버스 구간: x=480 수직 세그먼트 옆) -->
+  <rect x="488" y="116" width="48" height="14" rx="2" fill="#f8fafb"/>
+  <text x="512" y="126"
+        fill="#6c8188" font-size="9"
+        font-family="'IBM Plex Mono', ui-monospace, monospace"
+        text-anchor="middle" letter-spacing="0.05em">legacy</text>
+
+  <!-- A→E2 레이블 -->
+  <rect x="488" y="196" width="48" height="14" rx="2" fill="#f8fafb"/>
+  <text x="512" y="206"
+        fill="#0d5763" font-size="9"
+        font-family="'IBM Plex Mono', ui-monospace, monospace"
+        text-anchor="middle" letter-spacing="0.05em">recommended</text>
+
+  <!-- ===================== 범례 ===================== -->
+  <line x1="40" y1="302" x2="920" y2="302"
+        stroke="rgba(18,33,39,0.10)" stroke-width="0.8"/>
+
+  <text x="40" y="318"
+        fill="#3f545c" font-size="8"
+        font-family="'IBM Plex Mono', ui-monospace, monospace"
+        letter-spacing="0.14em">LEGEND</text>
+
+  <!-- focal -->
+  <rect x="108" y="308" width="12" height="12" rx="2"
+        fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="124" y="318"
+        fill="#3f545c" font-size="8"
+        font-family="'IBM Plex Sans KR', sans-serif">Key Step</text>
+
+  <!-- backend -->
+  <rect x="216" y="308" width="12" height="12" rx="2"
+        fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <text x="232" y="318"
+        fill="#3f545c" font-size="8"
+        font-family="'IBM Plex Sans KR', sans-serif">General Step</text>
+
+  <!-- input -->
+  <rect x="324" y="308" width="12" height="12" rx="2"
+        fill="rgba(58,84,143,0.08)" stroke="#3a548f" stroke-width="1"/>
+  <text x="340" y="318"
+        fill="#3f545c" font-size="8"
+        font-family="'IBM Plex Sans KR', sans-serif">Input</text>
+
+  <!-- optional dashed -->
+  <rect x="392" y="308" width="12" height="12" rx="2"
+        fill="rgba(45,49,66,0.02)" stroke="rgba(45,49,66,0.22)" stroke-width="1"
+        stroke-dasharray="3,2"/>
+  <text x="408" y="318"
+        fill="#3f545c" font-size="8"
+        font-family="'IBM Plex Sans KR', sans-serif">Discouraged Path</text>
+
+  <!-- accent arrow -->
+  <line x1="508" y1="314" x2="524" y2="314"
+        stroke="#0d5763" stroke-width="1.5" marker-end="url(#2026-10-08-e1ceba89-01-ev-arrow-accent)"/>
+  <text x="536" y="318"
+        fill="#3f545c" font-size="8"
+        font-family="'IBM Plex Sans KR', sans-serif">Recommended Flow</text>
+
+  <!-- muted dashed arrow -->
+  <line x1="624" y1="314" x2="640" y2="314"
+        stroke="#6c8188" stroke-width="1" stroke-dasharray="4,3"
+        marker-end="url(#2026-10-08-e1ceba89-01-ev-arrow-muted)"/>
+  <text x="652" y="318"
+        fill="#3f545c" font-size="8"
+        font-family="'IBM Plex Sans KR', sans-serif">Legacy Flow</text>
+
+</svg>
+</div>
+</body>
+</html>

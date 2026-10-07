@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LLM Agent Evals Flow</title>
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; font-family: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 960 360"
+  role="img"
+  aria-labelledby="2026-10-08-e1ceba89-08-evals-title 2026-10-08-e1ceba89-08-evals-desc"
+>
+  <title id="2026-10-08-e1ceba89-08-evals-title">LLM Agent Evals Flow</title>
+  <desc id="2026-10-08-e1ceba89-08-evals-desc">Evaluation pipeline flow where all cases pass through a rule-based fast filter; clearly failed cases go directly to a report, while uncertain cases go through LLM-as-Judge precision evaluation leading to a score record.</desc>
+
+  <defs>
+    <!-- 화살표 마커 -->
+    <marker id="2026-10-08-e1ceba89-08-ev-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-10-08-e1ceba89-08-ev-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <marker id="2026-10-08-e1ceba89-08-ev-arrow-muted" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#6c8188"/>
+    </marker>
+  </defs>
+
+  <!-- 배경 -->
+  <rect width="960" height="360" fill="#f8fafb"/>
+
+  <!-- ────────────────────────────────────────────
+       레이어 1: 화살표 (노드 뒤에)
+  ──────────────────────────────────────────── -->
+
+  <!-- C → RB: 수평 직선 -->
+  <line x1="204" y1="180" x2="276" y2="180"
+        stroke="#3f545c" stroke-width="1.2"
+        marker-end="url(#2026-10-08-e1ceba89-08-ev-arrow)"/>
+
+  <!-- RB → LJ: 아래로 꺾어서 수평 (불확실 경로) -->
+  <!-- RB 박스 하단 중앙(356,216) → 아래로 → 오른쪽으로 LJ 좌측(528,268) -->
+  <path d="M 356 216 L 356 244 Q 356 252 364 252 L 520 252 Q 528 252 528 260 L 528 252"
+        fill="none" stroke="#3f545c" stroke-width="1.2"
+        marker-end="url(#2026-10-08-e1ceba89-08-ev-arrow)"/>
+
+  <!-- RB → F: 오른쪽 위 꺾어서 수평 (명확히 실패 경로) -->
+  <!-- RB 박스 상단 중앙(356,144) → 위로 → 오른쪽으로 F 좌측(528,100) -->
+  <path d="M 356 144 L 356 104 Q 356 96 364 96 L 520 96 Q 528 96 528 100 L 528 96"
+        fill="none" stroke="#6c8188" stroke-width="1.2"
+        marker-end="url(#2026-10-08-e1ceba89-08-ev-arrow-muted)"/>
+
+  <!-- LJ → SC: 수평 직선 -->
+  <line x1="672" y1="284" x2="744" y2="284"
+        stroke="#3f545c" stroke-width="1.2"
+        marker-end="url(#2026-10-08-e1ceba89-08-ev-arrow)"/>
+
+  <!-- ────────────────────────────────────────────
+       레이어 2: 화살표 라벨 (마스크 포함)
+  ──────────────────────────────────────────── -->
+
+  <!-- "명확히 실패" 라벨 (RB→F 경로, 상단 수평 구간 중앙) -->
+  <rect x="390" y="82" width="68" height="16" rx="2" fill="#f8fafb"/>
+  <text x="424" y="93" fill="#6c8188" font-size="10"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        font-weight="500" text-anchor="middle">Clear Fail</text>
+
+  <!-- "불확실" 라벨 (RB→LJ 경로, 하단 수평 구간 중앙) -->
+  <rect x="399" y="238" width="48" height="16" rx="2" fill="#f8fafb"/>
+  <text x="423" y="249" fill="#3f545c" font-size="10"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        font-weight="500" text-anchor="middle">Uncertain</text>
+
+  <!-- ────────────────────────────────────────────
+       레이어 3: 노드 박스
+  ──────────────────────────────────────────── -->
+
+  <!-- 노드 1: 모든 케이스 (input 스타일, 왼쪽) -->
+  <!-- x=60, y=152, w=144, h=56, cx=132, cy=180 -->
+  <rect x="60" y="152" width="144" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="60" y="152" width="144" height="56" rx="6"
+        fill="rgba(63,84,92,0.10)" stroke="#6c8188" stroke-width="1"/>
+  <!-- 태그 -->
+  <rect x="68" y="158" width="36" height="12" rx="2"
+        fill="transparent" stroke="rgba(108,129,136,0.40)" stroke-width="0.8"/>
+  <text x="86" y="167" fill="rgba(108,129,136,0.8)" font-size="8"
+        font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.08em">INPUT</text>
+  <!-- 이름 -->
+  <text x="132" y="185" fill="#122127" font-size="14"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        font-weight="600" text-anchor="middle">All Cases</text>
+
+  <!-- 노드 2: 규칙 기반 빠른 필터 (focal/accent 스타일) -->
+  <!-- x=276, y=144, w=160, h=72, cx=356, cy=180 -->
+  <rect x="276" y="144" width="160" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="276" y="144" width="160" height="72" rx="6"
+        fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <!-- 태그 -->
+  <rect x="284" y="150" width="36" height="12" rx="2"
+        fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="302" y="159" fill="rgba(13,87,99,0.8)" font-size="8"
+        font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.08em">FILTER</text>
+  <!-- 이름 (2줄) -->
+  <text x="356" y="178" fill="#122127" font-size="14"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        font-weight="600" text-anchor="middle">Rule-Based</text>
+  <text x="356" y="196" fill="#3f545c" font-size="11"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        font-weight="500" text-anchor="middle">Fast Filter</text>
+
+  <!-- 노드 3: 즉시 리포트 (store/sink 스타일) -->
+  <!-- x=528, y=72, w=144, h=48, cx=600, cy=96 -->
+  <rect x="528" y="72" width="144" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="528" y="72" width="144" height="48" rx="6"
+        fill="rgba(18,33,39,0.05)" stroke="#6c8188" stroke-width="1"
+        stroke-dasharray="4,3"/>
+  <!-- 태그 -->
+  <rect x="536" y="78" width="36" height="12" rx="2"
+        fill="transparent" stroke="rgba(108,129,136,0.40)" stroke-width="0.8"/>
+  <text x="554" y="87" fill="rgba(108,129,136,0.8)" font-size="8"
+        font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.08em">REPORT</text>
+  <!-- 이름 -->
+  <text x="600" y="101" fill="#122127" font-size="14"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        font-weight="600" text-anchor="middle">Instant Report</text>
+
+  <!-- 노드 4: LLM-as-Judge 정밀 평가 (backend 스타일) -->
+  <!-- x=528, y=256, w=144, h=56, cx=600, cy=284 -->
+  <rect x="528" y="256" width="144" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="528" y="256" width="144" height="56" rx="6"
+        fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <!-- 태그 -->
+  <rect x="536" y="262" width="52" height="12" rx="2"
+        fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="562" y="271" fill="rgba(18,33,39,0.8)" font-size="8"
+        font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.08em">LLM JUDGE</text>
+  <!-- 이름 (2줄) -->
+  <text x="600" y="286" fill="#122127" font-size="13"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        font-weight="600" text-anchor="middle">LLM-as-Judge</text>
+  <text x="600" y="302" fill="#3f545c" font-size="11"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        font-weight="500" text-anchor="middle">Precision Eval</text>
+
+  <!-- 노드 5: 점수 기록 (store 스타일) -->
+  <!-- x=744, y=260, w=144, h=48, cx=816, cy=284 -->
+  <rect x="744" y="260" width="144" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="744" y="260" width="144" height="48" rx="6"
+        fill="rgba(18,33,39,0.05)" stroke="#3f545c" stroke-width="1"/>
+  <!-- 태그 -->
+  <rect x="752" y="266" width="36" height="12" rx="2"
+        fill="transparent" stroke="rgba(63,84,92,0.40)" stroke-width="0.8"/>
+  <text x="770" y="275" fill="rgba(63,84,92,0.8)" font-size="8"
+        font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.08em">STORE</text>
+  <!-- 이름 -->
+  <text x="816" y="289" fill="#122127" font-size="14"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        font-weight="600" text-anchor="middle">Score Record</text>
+
+  <!-- ────────────────────────────────────────────
+       범례 (하단 수평 스트립)
+  ──────────────────────────────────────────── -->
+  <line x1="40" y1="327" x2="920" y2="327"
+        stroke="rgba(18,33,39,0.10)" stroke-width="0.8"/>
+
+  <!-- 범례 아이템 1: 입력 -->
+  <rect x="40" y="336" width="12" height="12" rx="2"
+        fill="rgba(63,84,92,0.10)" stroke="#6c8188" stroke-width="0.8"/>
+  <text x="58" y="346" fill="#6c8188" font-size="10"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        font-weight="500">Input</text>
+
+  <!-- 범례 아이템 2: 핵심 단계 -->
+  <rect x="108" y="336" width="12" height="12" rx="2"
+        fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="0.8"/>
+  <text x="126" y="346" fill="#6c8188" font-size="10"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        font-weight="500">Key Step</text>
+
+  <!-- 범례 아이템 3: 처리 단계 -->
+  <rect x="208" y="336" width="12" height="12" rx="2"
+        fill="#ffffff" stroke="#122127" stroke-width="0.8"/>
+  <text x="226" y="346" fill="#6c8188" font-size="10"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        font-weight="500">Process Step</text>
+
+  <!-- 범례 아이템 4: 종료/저장 -->
+  <rect x="308" y="336" width="12" height="12" rx="2"
+        fill="rgba(18,33,39,0.05)" stroke="#3f545c" stroke-width="0.8"/>
+  <text x="326" y="346" fill="#6c8188" font-size="10"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        font-weight="500">Store/End</text>
+
+  <!-- 범례 아이템 5: 선택 경로 -->
+  <line x1="408" y1="341" x2="428" y2="341"
+        stroke="#6c8188" stroke-width="1" stroke-dasharray="4,3"/>
+  <text x="434" y="346" fill="#6c8188" font-size="10"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        font-weight="500">Alt Path</text>
+
+</svg>
+</body>
+</html>

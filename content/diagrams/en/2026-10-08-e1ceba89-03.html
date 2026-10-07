@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trace Span Structure</title>
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; font-family: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; }
+  svg { display: block; max-width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 720 520"
+  role="img"
+  aria-labelledby="2026-10-08-e1ceba89-03-trace-title 2026-10-08-e1ceba89-03-trace-desc"
+  style="width:100%;height:auto;display:block;"
+>
+  <title id="2026-10-08-e1ceba89-03-trace-title">LLM Agent Trace Span Structure</title>
+  <desc id="2026-10-08-e1ceba89-03-trace-desc">A hierarchy where the root span (agent run) branches into two LLM call spans and one tool call span, with a sub-span (API request) connected beneath the tool call span.</desc>
+
+  <defs>
+    <!-- 기본 화살표 -->
+    <marker id="2026-10-08-e1ceba89-03-arr" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <!-- 서브용 화살표 -->
+    <marker id="2026-10-08-e1ceba89-03-arr-sub" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#6c8188"/>
+    </marker>
+  </defs>
+
+  <!-- 배경 -->
+  <rect width="720" height="520" fill="#f8fafb"/>
+
+  <!-- ── 커넥터 (노드보다 먼저) ── -->
+
+  <!-- R → L1 : 오른쪽-위 엘보 -->
+  <!-- R 하단 중앙 (360, 148) → 수직 하강 → 수평 이동 → L1 상단 (172, 212) -->
+  <path d="M 360 148 L 360 176 Q 360 184 352 184 L 180 184 Q 172 184 172 192 L 172 212"
+        fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-08-e1ceba89-03-arr)"/>
+
+  <!-- R → T1 : 수직 직선 (같은 x) -->
+  <path d="M 360 148 L 360 212"
+        fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-08-e1ceba89-03-arr)"/>
+
+  <!-- R → L2 : 오른쪽-아래 엘보 -->
+  <path d="M 360 148 L 360 176 Q 360 184 368 184 L 548 184 Q 556 184 556 192 L 556 212"
+        fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-08-e1ceba89-03-arr)"/>
+
+  <!-- T1 → S1 : 수직 직선 -->
+  <path d="M 360 268 L 360 332"
+        fill="none" stroke="#6c8188" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#2026-10-08-e1ceba89-03-arr-sub)"/>
+
+  <!-- ── 노드 ── -->
+
+  <!-- R: 루트 스팬 (focal – accent) -->
+  <rect x="264" y="52" width="192" height="96" rx="6" fill="#f8fafb"/>
+  <rect x="264" y="52" width="192" height="96" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.5"/>
+  <!-- type tag -->
+  <rect x="272" y="60" width="36" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="290" y="69" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">ROOT</text>
+  <!-- label -->
+  <text x="360" y="108" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Root Span</text>
+  <text x="360" y="128" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">Agent Run</text>
+
+  <!-- L1: LLM 호출 스팬 왼쪽 -->
+  <rect x="76" y="212" width="192" height="96" rx="6" fill="#f8fafb"/>
+  <rect x="76" y="212" width="192" height="96" rx="6" fill="rgba(13,87,99,0.06)" stroke="#0d5763" stroke-width="1"/>
+  <rect x="84" y="220" width="36" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.35)" stroke-width="0.8"/>
+  <text x="102" y="229" fill="rgba(13,87,99,0.75)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">LLM</text>
+  <text x="172" y="268" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">LLM Call Span</text>
+  <text x="172" y="288" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">Reasoning</text>
+
+  <!-- T1: 도구 호출 스팬 (accent, 강조) -->
+  <rect x="264" y="212" width="192" height="96" rx="6" fill="#f8fafb"/>
+  <rect x="264" y="212" width="192" height="96" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.5"/>
+  <rect x="272" y="220" width="36" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="290" y="229" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">TOOL</text>
+  <text x="360" y="268" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Tool Call Span</text>
+  <text x="360" y="288" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">Search Exec</text>
+
+  <!-- L2: LLM 호출 스팬 오른쪽 -->
+  <rect x="460" y="212" width="192" height="96" rx="6" fill="#f8fafb"/>
+  <rect x="460" y="212" width="192" height="96" rx="6" fill="rgba(13,87,99,0.06)" stroke="#0d5763" stroke-width="1"/>
+  <rect x="468" y="220" width="36" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.35)" stroke-width="0.8"/>
+  <text x="486" y="229" fill="rgba(13,87,99,0.75)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">LLM</text>
+  <text x="556" y="268" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">LLM Call Span</text>
+  <text x="556" y="288" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">Response Gen</text>
+
+  <!-- S1: 서브 스팬 (muted) -->
+  <rect x="264" y="332" width="192" height="96" rx="6" fill="#f8fafb"/>
+  <rect x="264" y="332" width="192" height="96" rx="6" fill="rgba(18,33,39,0.03)" stroke="#c3d0d4" stroke-width="1"/>
+  <rect x="272" y="340" width="36" height="12" rx="2" fill="transparent" stroke="rgba(99,111,120,0.35)" stroke-width="0.8"/>
+  <text x="290" y="349" fill="rgba(99,111,120,0.75)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">SUB</text>
+  <text x="360" y="388" fill="#3f545c" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Sub-Span</text>
+  <text x="360" y="408" fill="#6c8188" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">API Request</text>
+
+  <!-- ── 범례 ── -->
+  <line x1="40" y1="464" x2="680" y2="464" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+  <text x="40" y="477" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.14em">LEGEND</text>
+
+  <!-- focal -->
+  <rect x="112" y="468" width="12" height="12" rx="2" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.5"/>
+  <text x="130" y="479" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">Focal Span</text>
+
+  <!-- default -->
+  <rect x="228" y="468" width="12" height="12" rx="2" fill="rgba(13,87,99,0.06)" stroke="#0d5763" stroke-width="1"/>
+  <text x="246" y="479" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">LLM Span</text>
+
+  <!-- muted -->
+  <rect x="340" y="468" width="12" height="12" rx="2" fill="rgba(18,33,39,0.03)" stroke="#c3d0d4" stroke-width="1"/>
+  <text x="358" y="479" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">Sub-Span</text>
+
+  <!-- dashed arrow -->
+  <line x1="452" y1="474" x2="476" y2="474" stroke="#6c8188" stroke-width="1" stroke-dasharray="4,3"/>
+  <polygon points="476 471, 484 474, 476 477" fill="#6c8188"/>
+  <text x="492" y="479" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">Sub-call</text>
+
+  <!-- solid arrow -->
+  <line x1="564" y1="474" x2="588" y2="474" stroke="#3f545c" stroke-width="1"/>
+  <polygon points="588 471, 596 474, 588 477" fill="#3f545c"/>
+  <text x="604" y="479" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">Call</text>
+
+</svg>
+</body>
+</html>

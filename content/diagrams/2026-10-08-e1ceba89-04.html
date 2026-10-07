@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  body { margin: 0; padding: 0; background: #f8fafb; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 320" role="img" aria-labelledby="2026-10-08-e1ceba89-04-trace-title 2026-10-08-e1ceba89-04-trace-desc">
+  <title id="2026-10-08-e1ceba89-04-trace-title">트레이스 기반 Eval 파이프라인</title>
+  <desc id="2026-10-08-e1ceba89-04-trace-desc">에이전트 코드에서 계측 레이어를 통해 트레이스 수집기로 데이터가 흐르고, 수집기에서 LangSmith, Arize Phoenix, W&B Weave 세 플랫폼으로 분기되는 아키텍처를 보여줍니다.</desc>
+
+  <defs>
+    <!-- 기본 화살표 -->
+    <marker id="2026-10-08-e1ceba89-04-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <!-- 엑센트 화살표 -->
+    <marker id="2026-10-08-e1ceba89-04-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <!-- 링크 화살표 -->
+    <marker id="2026-10-08-e1ceba89-04-arrow-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3a548f"/>
+    </marker>
+  </defs>
+
+  <!-- 배경 -->
+  <rect width="960" height="320" fill="#f8fafb"/>
+
+  <!-- ───────────────────────────────────────────────
+       커넥터 (박스보다 먼저)
+  ─────────────────────────────────────────────── -->
+
+  <!-- A → C : 에이전트 코드 → 트레이스 수집기 -->
+  <!-- A 우측 중앙 (236,160) → C 좌측 중앙 (360,160) -->
+  <line x1="236" y1="160" x2="353" y2="160"
+        stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-10-08-e1ceba89-04-arrow-accent)"/>
+  <!-- 화살표 라벨 -->
+  <rect x="253" y="144" width="64" height="14" rx="2" fill="#f8fafb"/>
+  <text x="285" y="155" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.06em">계측 레이어</text>
+
+  <!-- C → LangSmith : 수집기 우측(564,140) → LangSmith 좌측(660,108) -->
+  <path d="M564,140 L612,140 L612,108 L653,108"
+        fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-08-e1ceba89-04-arrow)"/>
+
+  <!-- C → Arize Phoenix : 수집기 우측(564,160) → Phoenix 좌측(660,160) -->
+  <line x1="564" y1="160" x2="653" y2="160"
+        stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-08-e1ceba89-04-arrow)"/>
+
+  <!-- C → W&B Weave : 수집기 우측(564,180) → Weave 좌측(660,212) -->
+  <path d="M564,180 L612,180 L612,212 L653,212"
+        fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-08-e1ceba89-04-arrow)"/>
+
+  <!-- ───────────────────────────────────────────────
+       노드
+  ─────────────────────────────────────────────── -->
+
+  <!-- A : 에이전트 코드 (input 처리) -->
+  <rect x="84" y="128" width="152" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="84" y="128" width="152" height="64" rx="6"
+        fill="rgba(58,84,143,0.08)" stroke="#3a548f" stroke-width="1"/>
+  <rect x="92" y="136" width="28" height="12" rx="2"
+        fill="transparent" stroke="rgba(58,84,143,0.40)" stroke-width="0.8"/>
+  <text x="106" y="145" fill="rgba(58,84,143,0.8)" font-size="7"
+        font-family="'IBM Plex Mono', monospace" text-anchor="middle"
+        letter-spacing="0.08em">CODE</text>
+  <text x="160" y="165" fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">에이전트 코드</text>
+  <text x="160" y="182" fill="#6c8188" font-size="11"
+        font-family="'IBM Plex Mono', monospace" text-anchor="middle">LLM Agent</text>
+
+  <!-- C : 트레이스 수집기 (focal — accent) -->
+  <rect x="360" y="120" width="204" height="80" rx="6" fill="#f8fafb"/>
+  <rect x="360" y="120" width="204" height="80" rx="6"
+        fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="368" y="128" width="52" height="12" rx="2"
+        fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="394" y="137" fill="rgba(13,87,99,0.8)" font-size="7"
+        font-family="'IBM Plex Mono', monospace" text-anchor="middle"
+        letter-spacing="0.08em">COLLECTOR</text>
+  <text x="462" y="159" fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">트레이스 수집기</text>
+  <text x="462" y="178" fill="#6c8188" font-size="11"
+        font-family="'IBM Plex Mono', monospace" text-anchor="middle">OpenTelemetry</text>
+
+  <!-- LangSmith -->
+  <rect x="652" y="76" width="168" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="652" y="76" width="168" height="64" rx="6"
+        fill="rgba(40,109,80,0.06)" stroke="rgba(40,109,80,0.55)" stroke-width="1"/>
+  <rect x="660" y="84" width="72" height="12" rx="2"
+        fill="transparent" stroke="rgba(40,109,80,0.35)" stroke-width="0.8"/>
+  <text x="696" y="93" fill="rgba(40,109,80,0.75)" font-size="7"
+        font-family="'IBM Plex Mono', monospace" text-anchor="middle"
+        letter-spacing="0.08em">PLATFORM</text>
+  <text x="736" y="113" fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">LangSmith</text>
+  <text x="736" y="130" fill="#6c8188" font-size="11"
+        font-family="'IBM Plex Mono', monospace" text-anchor="middle">LangChain</text>
+
+  <!-- Arize Phoenix -->
+  <rect x="652" y="128" width="168" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="652" y="128" width="168" height="64" rx="6"
+        fill="rgba(40,109,80,0.06)" stroke="rgba(40,109,80,0.55)" stroke-width="1"/>
+  <rect x="660" y="136" width="72" height="12" rx="2"
+        fill="transparent" stroke="rgba(40,109,80,0.35)" stroke-width="0.8"/>
+  <text x="696" y="145" fill="rgba(40,109,80,0.75)" font-size="7"
+        font-family="'IBM Plex Mono', monospace" text-anchor="middle"
+        letter-spacing="0.08em">PLATFORM</text>
+  <text x="736" y="165" fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Arize Phoenix</text>
+  <text x="736" y="182" fill="#6c8188" font-size="11"
+        font-family="'IBM Plex Mono', monospace" text-anchor="middle">OSS / Cloud</text>
+
+  <!-- W&B Weave -->
+  <rect x="652" y="180" width="168" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="652" y="180" width="168" height="64" rx="6"
+        fill="rgba(40,109,80,0.06)" stroke="rgba(40,109,80,0.55)" stroke-width="1"/>
+  <rect x="660" y="188" width="72" height="12" rx="2"
+        fill="transparent" stroke="rgba(40,109,80,0.35)" stroke-width="0.8"/>
+  <text x="696" y="197" fill="rgba(40,109,80,0.75)" font-size="7"
+        font-family="'IBM Plex Mono', monospace" text-anchor="middle"
+        letter-spacing="0.08em">PLATFORM</text>
+  <text x="736" y="217" fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">W&amp;B Weave</text>
+  <text x="736" y="234" fill="#6c8188" font-size="11"
+        font-family="'IBM Plex Mono', monospace" text-anchor="middle">Weights &amp; Biases</text>
+
+  <!-- ───────────────────────────────────────────────
+       범례 (하단 수평 스트립)
+  ─────────────────────────────────────────────── -->
+  <line x1="40" y1="276" x2="920" y2="276"
+        stroke="rgba(18,33,39,0.10)" stroke-width="0.8"/>
+  <text x="40" y="290" fill="#6c8188" font-size="10"
+        font-family="'IBM Plex Mono', monospace" letter-spacing="0.14em">LEGEND</text>
+
+  <!-- focal 샘플 -->
+  <rect x="108" y="281" width="12" height="12" rx="2"
+        fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="126" y="291" fill="#3f545c" font-size="10"
+        font-family="'IBM Plex Sans KR', sans-serif">핵심 컴포넌트</text>
+
+  <!-- input 샘플 -->
+  <rect x="252" y="281" width="12" height="12" rx="2"
+        fill="rgba(58,84,143,0.08)" stroke="#3a548f" stroke-width="1"/>
+  <text x="270" y="291" fill="#3f545c" font-size="10"
+        font-family="'IBM Plex Sans KR', sans-serif">입력 / 에이전트</text>
+
+  <!-- platform 샘플 -->
+  <rect x="400" y="281" width="12" height="12" rx="2"
+        fill="rgba(40,109,80,0.06)" stroke="rgba(40,109,80,0.55)" stroke-width="1"/>
+  <text x="418" y="291" fill="#3f545c" font-size="10"
+        font-family="'IBM Plex Sans KR', sans-serif">Eval 플랫폼</text>
+
+  <!-- 화살표 샘플 -->
+  <line x1="536" y1="287" x2="556" y2="287"
+        stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-10-08-e1ceba89-04-arrow-accent)"/>
+  <text x="562" y="291" fill="#3f545c" font-size="10"
+        font-family="'IBM Plex Sans KR', sans-serif">트레이스 흐름</text>
+
+  <line x1="680" y1="287" x2="700" y2="287"
+        stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-08-e1ceba89-04-arrow)"/>
+  <text x="706" y="291" fill="#3f545c" font-size="10"
+        font-family="'IBM Plex Sans KR', sans-serif">데이터 전송</text>
+
+</svg>
+</body>
+</html>

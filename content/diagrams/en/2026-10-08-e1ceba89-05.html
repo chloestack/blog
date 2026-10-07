@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; display: flex; justify-content: center; padding: 0; }
+  .diagram-wrap { width: 100%; max-width: 960px; }
+  svg { width: 100%; height: auto; display: block; }
+</style>
+</head>
+<body>
+<div class="diagram-wrap">
+<svg viewBox="0 0 960 600" xmlns="http://www.w3.org/2000/svg"
+     role="img" aria-labelledby="2026-10-08-e1ceba89-05-eval-ds-title 2026-10-08-e1ceba89-05-eval-ds-desc">
+  <title id="2026-10-08-e1ceba89-05-eval-ds-title">Eval Dataset Construction Flow</title>
+  <desc id="2026-10-08-e1ceba89-05-eval-ds-desc">Three sources — golden cases, production samples, and auto-generated cases — converge into an eval dataset, which then flows into a version control system.</desc>
+
+  <defs>
+    <!-- 기본 화살표 -->
+    <marker id="2026-10-08-e1ceba89-05-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <!-- 액센트 화살표 -->
+    <marker id="2026-10-08-e1ceba89-05-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+  </defs>
+
+  <!-- 배경 -->
+  <rect width="960" height="600" fill="#f8fafb"/>
+
+  <!-- ──────────────────────────────────────────
+       커넥터 (박스보다 먼저 그림)
+       소스 3개 → 데이터셋: 각자 다른 attach point
+       데이터셋 → 버전 관리
+  ─────────────────────────────────────────── -->
+
+  <!-- 골든 케이스 (cx=200, cy=172) 하단 → 데이터셋 (cx=480, cy=320) 상단 왼쪽 -->
+  <!-- 골든 케이스 bottom: (200, 212) → 꺾어서 → 데이터셋 top-left attach (452, 296) -->
+  <path d="M 200 212 L 200 252 L 452 252 L 452 296"
+        fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-08-e1ceba89-05-arrow)"/>
+
+  <!-- 프로덕션 샘플 (cx=480, cy=172) 하단 → 데이터셋 상단 중앙 (480, 296) -->
+  <path d="M 480 212 L 480 296"
+        fill="none" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-10-08-e1ceba89-05-arrow-accent)"/>
+
+  <!-- 자동 생성 (cx=760, cy=172) 하단 → 데이터셋 상단 오른쪽 attach (508, 296) -->
+  <path d="M 760 212 L 760 252 L 508 252 L 508 296"
+        fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-08-e1ceba89-05-arrow)"/>
+
+  <!-- 데이터셋 (cx=480, cy=352) 하단 → 버전 관리 (cx=480, cy=468) 상단 -->
+  <path d="M 480 384 L 480 444"
+        fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-08-e1ceba89-05-arrow)"/>
+
+  <!-- ──────────────────────────────────────────
+       노드 박스
+  ─────────────────────────────────────────── -->
+
+  <!-- 골든 케이스 — 배경 마스크 -->
+  <rect x="108" y="128" width="184" height="84" rx="6" fill="#f8fafb"/>
+  <!-- 골든 케이스 — 스타일드 박스 (ok: 연두) -->
+  <rect x="108" y="128" width="184" height="84" rx="6"
+        fill="rgba(13,87,99,0.06)" stroke="#0d5763" stroke-width="1"/>
+  <!-- 태그 -->
+  <rect x="116" y="136" width="40" height="12" rx="2"
+        fill="transparent" stroke="rgba(13,87,99,0.4)" stroke-width="0.8"/>
+  <text x="136" y="145"
+        fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.08em">SOURCE</text>
+  <!-- 레이블 -->
+  <text x="200" y="175"
+        fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Golden Cases</text>
+  <text x="200" y="194"
+        fill="#3f545c" font-size="11"
+        font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle">Expert Review</text>
+
+  <!-- 프로덕션 샘플 — 배경 마스크 -->
+  <rect x="388" y="128" width="184" height="84" rx="6" fill="#f8fafb"/>
+  <!-- 프로덕션 샘플 — focal 박스 (accent) -->
+  <rect x="388" y="128" width="184" height="84" rx="6"
+        fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <!-- 태그 -->
+  <rect x="396" y="136" width="40" height="12" rx="2"
+        fill="transparent" stroke="rgba(13,87,99,0.5)" stroke-width="0.8"/>
+  <text x="416" y="145"
+        fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.08em">SOURCE</text>
+  <!-- 레이블 -->
+  <text x="480" y="172"
+        fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Production Samples</text>
+  <text x="480" y="191"
+        fill="#3f545c" font-size="11"
+        font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle">Real Traces</text>
+
+  <!-- 자동 생성 — 배경 마스크 -->
+  <rect x="668" y="128" width="184" height="84" rx="6" fill="#f8fafb"/>
+  <!-- 자동 생성 — 스타일드 박스 -->
+  <rect x="668" y="128" width="184" height="84" rx="6"
+        fill="rgba(18,33,39,0.03)" stroke="rgba(18,33,39,0.30)" stroke-width="1"/>
+  <!-- 태그 -->
+  <rect x="676" y="136" width="40" height="12" rx="2"
+        fill="transparent" stroke="rgba(18,33,39,0.25)" stroke-width="0.8"/>
+  <text x="696" y="145"
+        fill="rgba(18,33,39,0.55)" font-size="7" font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.08em">SOURCE</text>
+  <!-- 레이블 -->
+  <text x="760" y="172"
+        fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Auto-Generated</text>
+  <text x="760" y="191"
+        fill="#3f545c" font-size="11"
+        font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle">Edge Cases</text>
+
+  <!-- 평가 데이터셋 — 배경 마스크 -->
+  <rect x="344" y="296" width="272" height="88" rx="6" fill="#f8fafb"/>
+  <!-- 평가 데이터셋 — store 스타일 -->
+  <rect x="344" y="296" width="272" height="88" rx="6"
+        fill="rgba(58,84,143,0.06)" stroke="#3a548f" stroke-width="1.2"/>
+  <!-- 태그 -->
+  <rect x="352" y="304" width="52" height="12" rx="2"
+        fill="transparent" stroke="rgba(58,84,143,0.4)" stroke-width="0.8"/>
+  <text x="378" y="313"
+        fill="rgba(58,84,143,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.08em">DATASET</text>
+  <!-- 레이블 -->
+  <text x="480" y="344"
+        fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Eval Dataset</text>
+  <text x="480" y="363"
+        fill="#3f545c" font-size="11"
+        font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle">Curated test case collection</text>
+
+  <!-- 버전 관리 — 배경 마스크 -->
+  <rect x="368" y="444" width="224" height="80" rx="6" fill="#f8fafb"/>
+  <!-- 버전 관리 — muted store 스타일 -->
+  <rect x="368" y="444" width="224" height="80" rx="6"
+        fill="rgba(18,33,39,0.03)" stroke="#c3d0d4" stroke-width="1"/>
+  <!-- 태그 -->
+  <rect x="376" y="452" width="52" height="12" rx="2"
+        fill="transparent" stroke="rgba(18,33,39,0.20)" stroke-width="0.8"/>
+  <text x="402" y="461"
+        fill="#6c8188" font-size="7" font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.08em">REGISTRY</text>
+  <!-- 레이블 -->
+  <text x="480" y="490"
+        fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Version Control</text>
+  <text x="480" y="508"
+        fill="#6c8188" font-size="11"
+        font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle">git · registry</text>
+
+  <!-- ──────────────────────────────────────────
+       화살표 레이블
+  ─────────────────────────────────────────── -->
+  <!-- 골든 케이스 → 데이터셋 레이블 (수평 세그먼트 중간, y=252) -->
+  <rect x="292" y="240" width="36" height="12" rx="2" fill="#f8fafb"/>
+  <text x="310" y="249"
+        fill="#6c8188" font-size="8" font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.06em">MERGE</text>
+
+  <!-- 자동 생성 → 데이터셋 레이블 (수평 세그먼트 중간, y=252) -->
+  <rect x="628" y="240" width="36" height="12" rx="2" fill="#f8fafb"/>
+  <text x="646" y="249"
+        fill="#6c8188" font-size="8" font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.06em">MERGE</text>
+
+  <!-- 데이터셋 → 버전 관리 레이블 (수직 세그먼트 중간) -->
+  <rect x="456" y="404" width="48" height="12" rx="2" fill="#f8fafb"/>
+  <text x="480" y="413"
+        fill="#6c8188" font-size="8" font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.06em">COMMIT</text>
+
+  <!-- ──────────────────────────────────────────
+       범례 하단 스트립
+  ─────────────────────────────────────────── -->
+  <line x1="40" y1="555" x2="920" y2="555"
+        stroke="rgba(18,33,39,0.10)" stroke-width="0.8"/>
+
+  <text x="40" y="568"
+        fill="#6c8188" font-size="8" font-family="'IBM Plex Mono', monospace"
+        letter-spacing="0.14em">LEGEND</text>
+
+  <!-- focal: 프로덕션 샘플 -->
+  <rect x="120" y="558" width="10" height="10" rx="2"
+        fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="136" y="567"
+        fill="#3f545c" font-size="10"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">Primary Source</text>
+
+  <!-- general source -->
+  <rect x="260" y="558" width="10" height="10" rx="2"
+        fill="rgba(13,87,99,0.06)" stroke="#0d5763" stroke-width="1"/>
+  <text x="276" y="567"
+        fill="#3f545c" font-size="10"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">Secondary Source</text>
+
+  <!-- dataset -->
+  <rect x="400" y="558" width="10" height="10" rx="2"
+        fill="rgba(58,84,143,0.06)" stroke="#3a548f" stroke-width="1.2"/>
+  <text x="416" y="567"
+        fill="#3f545c" font-size="10"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">Dataset</text>
+
+  <!-- registry -->
+  <rect x="520" y="558" width="10" height="10" rx="2"
+        fill="rgba(18,33,39,0.03)" stroke="#c3d0d4" stroke-width="1"/>
+  <text x="536" y="567"
+        fill="#3f545c" font-size="10"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">Registry</text>
+
+</svg>
+</div>
+</body>
+</html>

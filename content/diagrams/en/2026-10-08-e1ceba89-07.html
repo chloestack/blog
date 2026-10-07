@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LLM Judge Order Bias Correction Flow</title>
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; font-family: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; }
+  .diagram-wrap { display: block; width: 100%; max-width: 960px; margin: 0 auto; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<div class="diagram-wrap">
+<svg viewBox="0 0 960 380" xmlns="http://www.w3.org/2000/svg"
+     role="img" aria-labelledby="2026-10-08-e1ceba89-07-flow-bias-title 2026-10-08-e1ceba89-07-flow-bias-desc">
+  <title id="2026-10-08-e1ceba89-07-flow-bias-title">LLM Judge Order Bias Correction Flow</title>
+  <desc id="2026-10-08-e1ceba89-07-flow-bias-desc">Agent responses pass through an LLM Judge to determine order bias; if bias is detected, the A·B order is swapped for re-evaluation, and scores are averaged to produce the final score.</desc>
+
+  <defs>
+    <!-- 기본 화살표 -->
+    <marker id="2026-10-08-e1ceba89-07-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <!-- accent 화살표 -->
+    <marker id="2026-10-08-e1ceba89-07-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+  </defs>
+
+  <!-- 배경 -->
+  <rect width="960" height="380" fill="#f8fafb"/>
+
+  <!-- ─────────────────────────────────────────
+       Z-ORDER: 화살표 먼저, 노드 나중
+  ──────────────────────────────────────────── -->
+
+  <!-- 화살표 1: 에이전트 응답 → LLM 평가자 -->
+  <!-- R 오른쪽 (x=224, y=148) → J 왼쪽 (x=280, y=148) -->
+  <line x1="224" y1="148" x2="276" y2="148"
+        stroke="#3f545c" stroke-width="1.2" marker-end="url(#2026-10-08-e1ceba89-07-arrow)"/>
+
+  <!-- 화살표 2: LLM 평가자 → 순서 편향 다이아몬드 -->
+  <!-- J 오른쪽 (x=400, y=148) → B 왼쪽 꼭짓점 (x=456, y=148) -->
+  <line x1="400" y1="148" x2="452" y2="148"
+        stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-10-08-e1ceba89-07-arrow-accent)"/>
+
+  <!-- 화살표 3: B 아니오 → AV -->
+  <!-- B 오른쪽 꼭짓점 (x=572, y=148) → AV 왼쪽 (x=640, y=148) -->
+  <line x1="572" y1="148" x2="636" y2="148"
+        stroke="#3f545c" stroke-width="1.2" marker-end="url(#2026-10-08-e1ceba89-07-arrow)"/>
+
+  <!-- 화살표 4: B 예 → SW (아래로 내려갔다가 오른쪽) -->
+  <!-- B 아래 꼭짓점 (x=512, y=196) → 수직으로 내려가서 → SW 왼쪽 -->
+  <!-- SW: x=436, y=244, w=152, h=52 → 왼쪽 중앙 (436, 270) -->
+  <path d="M512,196 L512,244 L512,270 L432,270"
+        fill="none" stroke="#3f545c" stroke-width="1.2"
+        marker-end="url(#2026-10-08-e1ceba89-07-arrow)"/>
+
+  <!-- 화살표 5: SW → AV (아래 경로 → 위로 올라가며 AV 아래로) -->
+  <!-- SW 오른쪽 (x=588, y=270) → 수평으로 → AV 아래쪽 중앙 (x=712, y=196) -->
+  <path d="M588,270 L700,270 L700,196"
+        fill="none" stroke="#3f545c" stroke-width="1.2"
+        marker-end="url(#2026-10-08-e1ceba89-07-arrow)"/>
+
+  <!-- 화살표 6: AV → SC -->
+  <!-- AV 오른쪽 (x=784, y=148) → SC 왼쪽 (x=820, y=148) -->
+  <line x1="784" y1="148" x2="816" y2="148"
+        stroke="#3f545c" stroke-width="1.2" marker-end="url(#2026-10-08-e1ceba89-07-arrow)"/>
+
+  <!-- ─────────────────────────────────────────
+       노드
+  ──────────────────────────────────────────── -->
+
+  <!-- 노드 1: 에이전트 응답 (input 타입 — oval) -->
+  <!-- 중앙 x=148, y=148. w=152, h=52 → rx/ry=26 타원 -->
+  <!-- 종이 마스크 -->
+  <rect x="72" y="122" width="152" height="52" rx="26" fill="#f8fafb"/>
+  <!-- 채워진 타원 -->
+  <ellipse cx="148" cy="148" rx="76" ry="26"
+           fill="rgba(63,84,92,0.10)" stroke="#6c8188" stroke-width="1"/>
+  <!-- 라벨 -->
+  <text x="148" y="145" fill="#122127" font-size="13" font-weight="600"
+        font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Agent</text>
+  <text x="148" y="161" fill="#122127" font-size="13" font-weight="600"
+        font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Response</text>
+
+  <!-- 노드 2: LLM 평가자 Judge (focal) -->
+  <!-- x=280, y=122, w=120, h=52 -->
+  <rect x="280" y="122" width="120" height="52" rx="6" fill="#f8fafb"/>
+  <rect x="280" y="122" width="120" height="52" rx="6"
+        fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <!-- 태그 -->
+  <rect x="288" y="128" width="36" height="12" rx="2"
+        fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="306" y="137" fill="rgba(13,87,99,0.8)" font-size="7"
+        font-family="'IBM Plex Mono', monospace" text-anchor="middle"
+        letter-spacing="0.08em">JUDGE</text>
+  <!-- 라벨 -->
+  <text x="340" y="153" fill="#122127" font-size="13" font-weight="600"
+        font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">LLM Evaluator</text>
+  <text x="340" y="167" fill="#3f545c" font-size="10"
+        font-family="'IBM Plex Mono', monospace" text-anchor="middle">Judge</text>
+
+  <!-- 노드 3: 순서 편향 다이아몬드 (decision) -->
+  <!-- 중앙 (512, 148), 가로폭 116, 세로폭 96 -->
+  <polygon points="512,100 568,148 512,196 456,148"
+           fill="#f8fafb"/>
+  <polygon points="512,100 568,148 512,196 456,148"
+           fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="512" y="144" fill="#122127" font-size="12" font-weight="600"
+        font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Order Bias</text>
+  <text x="512" y="160" fill="#122127" font-size="12" font-weight="600"
+        font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Detected?</text>
+
+  <!-- 화살표 라벨: 아니오 (B → AV) -->
+  <rect x="587" y="132" width="40" height="13" rx="2" fill="#f8fafb"/>
+  <text x="607" y="142" fill="#6c8188" font-size="10" font-weight="500"
+        font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">No</text>
+
+  <!-- 화살표 라벨: 예 (B → SW) — 수직 세그먼트 옆에 -->
+  <rect x="516" y="202" width="20" height="13" rx="2" fill="#f8fafb"/>
+  <text x="526" y="212" fill="#6c8188" font-size="10" font-weight="500"
+        font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Yes</text>
+
+  <!-- 노드 4: A·B 순서 교체 재평가 (warn — 주황 계열) -->
+  <!-- x=436, y=244, w=152, h=52 -->
+  <rect x="436" y="244" width="152" height="52" rx="6" fill="#f8fafb"/>
+  <rect x="436" y="244" width="152" height="52" rx="6"
+        fill="rgba(169,106,8,0.06)" stroke="rgba(169,106,8,0.55)" stroke-width="1"/>
+  <!-- 태그 -->
+  <rect x="444" y="250" width="44" height="12" rx="2"
+        fill="transparent" stroke="rgba(169,106,8,0.40)" stroke-width="0.8"/>
+  <text x="466" y="259" fill="rgba(169,106,8,0.8)" font-size="7"
+        font-family="'IBM Plex Mono', monospace" text-anchor="middle"
+        letter-spacing="0.08em">RETRY</text>
+  <!-- 라벨 -->
+  <text x="512" y="276" fill="#122127" font-size="12" font-weight="600"
+        font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Swap A·B Order</text>
+  <text x="512" y="290" fill="#122127" font-size="12" font-weight="600"
+        font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Re-evaluate</text>
+
+  <!-- 노드 5: 점수 평균 (backend — store/state) -->
+  <!-- x=640, y=122, w=144, h=52 -->
+  <rect x="640" y="122" width="144" height="52" rx="6" fill="#f8fafb"/>
+  <rect x="640" y="122" width="144" height="52" rx="6"
+        fill="rgba(122,131,153,0.05)" stroke="#6c8188" stroke-width="1"/>
+  <!-- 태그 -->
+  <rect x="648" y="128" width="44" height="12" rx="2"
+        fill="transparent" stroke="rgba(108,129,136,0.40)" stroke-width="0.8"/>
+  <text x="670" y="137" fill="rgba(108,129,136,0.8)" font-size="7"
+        font-family="'IBM Plex Mono', monospace" text-anchor="middle"
+        letter-spacing="0.08em">MERGE</text>
+  <!-- 라벨 -->
+  <text x="712" y="153" fill="#122127" font-size="13" font-weight="600"
+        font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Score Average</text>
+  <text x="712" y="167" fill="#3f545c" font-size="10"
+        font-family="'IBM Plex Mono', monospace" text-anchor="middle">avg(s₁, s₂)</text>
+
+  <!-- 노드 6: 최종 점수 (focal — accent) -->
+  <!-- x=820, y=122, w=108, h=52 — oval 처리 -->
+  <rect x="820" y="122" width="108" height="52" rx="26" fill="#f8fafb"/>
+  <ellipse cx="874" cy="148" rx="54" ry="26"
+           fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.5"/>
+  <text x="874" y="144" fill="#122127" font-size="13" font-weight="600"
+        font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Final</text>
+  <text x="874" y="160" fill="#122127" font-size="13" font-weight="600"
+        font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Score</text>
+
+  <!-- ─────────────────────────────────────────
+       범례 (하단 수평 스트립)
+  ──────────────────────────────────────────── -->
+  <line x1="32" y1="332" x2="928" y2="332"
+        stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+
+  <!-- 범례 항목 1: 입력 -->
+  <ellipse cx="52" cy="348" rx="14" ry="9"
+           fill="rgba(63,84,92,0.10)" stroke="#6c8188" stroke-width="0.8"/>
+  <text x="72" y="352" fill="#3f545c" font-size="10"
+        font-family="'IBM Plex Sans KR', sans-serif">Input / Output</text>
+
+  <!-- 범례 항목 2: Focal (LLM 평가자, 최종 점수) -->
+  <rect x="160" y="339" width="28" height="16" rx="3"
+        fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="194" y="352" fill="#3f545c" font-size="10"
+        font-family="'IBM Plex Sans KR', sans-serif">Key Step</text>
+
+  <!-- 범례 항목 3: 재평가 (warn) -->
+  <rect x="296" y="339" width="28" height="16" rx="3"
+        fill="rgba(169,106,8,0.06)" stroke="rgba(169,106,8,0.55)" stroke-width="1"/>
+  <text x="330" y="352" fill="#3f545c" font-size="10"
+        font-family="'IBM Plex Sans KR', sans-serif">Bias Correction</text>
+
+  <!-- 범례 항목 4: 일반 단계 -->
+  <rect x="428" y="339" width="28" height="16" rx="3"
+        fill="rgba(122,131,153,0.05)" stroke="#6c8188" stroke-width="1"/>
+  <text x="462" y="352" fill="#3f545c" font-size="10"
+        font-family="'IBM Plex Sans KR', sans-serif">General Step</text>
+
+  <!-- LEGEND 텍스트 라벨 -->
+  <text x="600" y="352" fill="#6c8188" font-size="8"
+        font-family="'IBM Plex Mono', monospace"
+        letter-spacing="0.14em">LEGEND</text>
+
+</svg>
+</div>
+</body>
+</html>

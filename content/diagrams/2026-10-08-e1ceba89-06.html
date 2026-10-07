@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+  svg { display: block; width: 100%; height: auto; max-width: 960px; }
+</style>
+</head>
+<body>
+<svg viewBox="0 0 960 320" xmlns="http://www.w3.org/2000/svg"
+     role="img" aria-labelledby="2026-10-08-e1ceba89-06-eval-ci-title 2026-10-08-e1ceba89-06-eval-ci-desc">
+  <title id="2026-10-08-e1ceba89-06-eval-ci-title">Eval CI 파이프라인</title>
+  <desc id="2026-10-08-e1ceba89-06-eval-ci-desc">새 코드 배포 후 Eval을 실행하고 기준선 대비 점수 하락 여부에 따라 알림·병합 차단 또는 기준선 갱신·배포 승인으로 분기하는 CI 자동화 흐름.</desc>
+
+  <defs>
+    <!-- arrow markers -->
+    <marker id="2026-10-08-e1ceba89-06-ev-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-10-08-e1ceba89-06-ev-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <marker id="2026-10-08-e1ceba89-06-ev-arrow-stop" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#94382b"/>
+    </marker>
+    <marker id="2026-10-08-e1ceba89-06-ev-arrow-ok" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#286d50"/>
+    </marker>
+  </defs>
+
+  <!-- background -->
+  <rect width="960" height="320" fill="#f8fafb"/>
+
+  <!-- ── CONNECTORS (drawn before boxes) ──────────────────────────── -->
+
+  <!-- N → E : horizontal straight -->
+  <line x1="204" y1="136" x2="280" y2="136" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-08-e1ceba89-06-ev-arrow)"/>
+
+  <!-- E → C : horizontal straight -->
+  <line x1="424" y1="136" x2="508" y2="136" stroke="#0d5763" stroke-width="1" marker-end="url(#2026-10-08-e1ceba89-06-ev-arrow-accent)"/>
+
+  <!-- C → AL : upward elbow — exit top of diamond, turn left-up -->
+  <!-- Diamond center: 572,136. Top vertex: 572,96. AL center: 740,68 -->
+  <path d="M 572 96 L 572 68 L 704 68" fill="none" stroke="#94382b" stroke-width="1" marker-end="url(#2026-10-08-e1ceba89-06-ev-arrow-stop)"/>
+
+  <!-- C → AP : downward elbow — exit bottom of diamond, go down then right -->
+  <!-- Diamond center: 572,136. Bottom vertex: 572,176. AP center: 740,200 -->
+  <path d="M 572 176 L 572 204 L 704 204" fill="none" stroke="#286d50" stroke-width="1" marker-end="url(#2026-10-08-e1ceba89-06-ev-arrow-ok)"/>
+
+  <!-- ── ARROW LABELS ─────────────────────────────────────────────── -->
+
+  <!-- "예" label on upward branch — sits above the horizontal segment at y=68 -->
+  <rect x="618" y="52" width="20" height="12" rx="2" fill="#f8fafb"/>
+  <text x="628" y="62" fill="#94382b" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500" text-anchor="middle">예</text>
+
+  <!-- "아니오" label on downward branch — sits below horizontal segment at y=204 -->
+  <rect x="608" y="216" width="44" height="12" rx="2" fill="#f8fafb"/>
+  <text x="630" y="226" fill="#286d50" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500" text-anchor="middle">아니오</text>
+
+  <!-- ── NODE: 새 코드 배포 (input type) ─────────────────────────── -->
+  <!-- box: x=60 y=108 w=144 h=56 cx=132 cy=136 -->
+  <rect x="60" y="108" width="144" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="60" y="108" width="144" height="56" rx="6" fill="rgba(58,84,143,0.08)" stroke="#3a548f" stroke-width="1"/>
+  <rect x="68" y="116" width="32" height="12" rx="2" fill="transparent" stroke="rgba(58,84,143,0.40)" stroke-width="0.8"/>
+  <text x="84" y="125" fill="rgba(58,84,143,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">DEPLOY</text>
+  <text x="132" y="142" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">새 코드 배포</text>
+
+  <!-- ── NODE: Eval 실행 (focal / accent) ────────────────────────── -->
+  <!-- box: x=280 y=104 w=144 h=64 cx=352 cy=136 -->
+  <rect x="280" y="104" width="144" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="280" y="104" width="144" height="64" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="288" y="112" width="24" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="300" y="121" fill="rgba(13,87,99,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">EVAL</text>
+  <text x="352" y="138" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Eval 실행</text>
+  <text x="352" y="154" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">CI pipeline</text>
+
+  <!-- ── NODE: 기준선 대비 점수 하락? (diamond decision) ────────── -->
+  <!-- Diamond center: 572,136; half-w=64 half-h=40 -->
+  <!-- vertices: top(572,96) right(636,136) bottom(572,176) left(508,136) -->
+  <polygon points="572,93 639,136 572,179 505,136" fill="#f8fafb"/>
+  <polygon points="572,93 639,136 572,179 505,136" fill="rgba(13,87,99,0.06)" stroke="#0d5763" stroke-width="1"/>
+  <text x="572" y="130" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">점수 하락?</text>
+  <text x="572" y="148" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">기준선 대비</text>
+
+  <!-- ── NODE: 알림 발송 / 병합 차단 (stop) ──────────────────────── -->
+  <!-- box: x=704 y=40 w=168 h=56 cx=788 cy=68 -->
+  <rect x="704" y="40" width="168" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="704" y="40" width="168" height="56" rx="6" fill="rgba(148,56,43,0.06)" stroke="#94382b" stroke-width="1"/>
+  <rect x="712" y="48" width="28" height="12" rx="2" fill="transparent" stroke="rgba(148,56,43,0.40)" stroke-width="0.8"/>
+  <text x="726" y="57" fill="rgba(148,56,43,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">BLOCK</text>
+  <text x="788" y="70" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">알림 발송</text>
+  <text x="788" y="86" fill="#6c8188" font-size="11" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">병합 차단</text>
+
+  <!-- ── NODE: 기준선 갱신 / 배포 승인 (ok) ──────────────────────── -->
+  <!-- box: x=704 y=176 w=168 h=56 cx=788 cy=204 -->
+  <rect x="704" y="176" width="168" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="704" y="176" width="168" height="56" rx="6" fill="rgba(40,109,80,0.08)" stroke="#286d50" stroke-width="1"/>
+  <rect x="712" y="184" width="28" height="12" rx="2" fill="transparent" stroke="rgba(40,109,80,0.40)" stroke-width="0.8"/>
+  <text x="726" y="193" fill="rgba(40,109,80,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">MERGE</text>
+  <text x="788" y="206" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">기준선 갱신</text>
+  <text x="788" y="222" fill="#6c8188" font-size="11" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">배포 승인</text>
+
+  <!-- ── LEGEND ───────────────────────────────────────────────────── -->
+  <line x1="40" y1="272" x2="920" y2="272" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+  <text x="40" y="284" fill="#6c8188" font-size="8" font-family="'IBM Plex Mono', monospace" letter-spacing="0.14em">LEGEND</text>
+
+  <!-- legend: Eval 실행 -->
+  <rect x="112" y="276" width="12" height="12" rx="2" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="130" y="286" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="start">Eval 실행 (핵심 단계)</text>
+
+  <!-- legend: 병합 차단 -->
+  <rect x="292" y="276" width="12" height="12" rx="2" fill="rgba(148,56,43,0.06)" stroke="#94382b" stroke-width="1"/>
+  <text x="310" y="286" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="start">병합 차단</text>
+
+  <!-- legend: 배포 승인 -->
+  <rect x="412" y="276" width="12" height="12" rx="2" fill="rgba(40,109,80,0.08)" stroke="#286d50" stroke-width="1"/>
+  <text x="430" y="286" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="start">배포 승인</text>
+
+</svg>
+</body>
+</html>
