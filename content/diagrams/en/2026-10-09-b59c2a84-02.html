@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quantization Pipeline</title>
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: #f8fafb; }
+  body { display: flex; justify-content: center; align-items: flex-start; padding: 0; }
+  .diagram-wrap { width: 100%; max-width: 960px; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<div class="diagram-wrap">
+<svg viewBox="0 0 960 600" xmlns="http://www.w3.org/2000/svg"
+     role="img" aria-labelledby="2026-10-09-b59c2a84-02-quant-title 2026-10-09-b59c2a84-02-quant-desc">
+  <title id="2026-10-09-b59c2a84-02-quant-title">LLM Quantization Pipeline</title>
+  <desc id="2026-10-09-b59c2a84-02-quant-desc">A 5-step flow starting from original FP32/FP16 weight matrices through group splitting, scale calculation, INT4/INT8 integer conversion, and bit packing, ending with the final quantized model file.</desc>
+
+  <defs>
+    <!-- 기본 화살표 -->
+    <marker id="2026-10-09-b59c2a84-02-q-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <!-- 강조 화살표 -->
+    <marker id="2026-10-09-b59c2a84-02-q-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+  </defs>
+
+  <!-- 배경 -->
+  <rect width="960" height="600" fill="#f8fafb"/>
+
+  <!-- ───────────────────────────────────────────
+       레이아웃: 5개 노드 가로 배치
+       노드 cx: 88, 248, 408, 648, 828
+       노드 너비: 144px, 높이: 72px
+       노드 y 상단: 224 (중앙 y=260)
+  ─────────────────────────────────────────── -->
+
+  <!-- ── 커넥터 (노드보다 먼저) ── -->
+
+  <!-- W → G -->
+  <line x1="160" y1="260" x2="172" y2="260"
+        stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-09-b59c2a84-02-q-arrow)"/>
+
+  <!-- G → S -->
+  <line x1="320" y1="260" x2="332" y2="260"
+        stroke="#0d5763" stroke-width="1" marker-end="url(#2026-10-09-b59c2a84-02-q-arrow-accent)"/>
+
+  <!-- S → QW -->
+  <line x1="480" y1="260" x2="492" y2="260"
+        stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-10-09-b59c2a84-02-q-arrow-accent)"/>
+
+  <!-- QW → P -->
+  <line x1="640" y1="260" x2="652" y2="260"
+        stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-09-b59c2a84-02-q-arrow)"/>
+
+  <!-- P → M -->
+  <line x1="800" y1="260" x2="812" y2="260"
+        stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-09-b59c2a84-02-q-arrow)"/>
+
+  <!-- ── 노드 1: 원본 가중치 (Input) ── -->
+  <!-- x=16, y=224, w=144, h=72 -->
+  <rect x="16" y="224" width="144" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="16" y="224" width="144" height="72" rx="6"
+        fill="rgba(58,84,143,0.06)" stroke="rgba(18,33,39,0.30)" stroke-width="1"/>
+  <!-- 타입 태그 -->
+  <rect x="24" y="232" width="36" height="12" rx="2"
+        fill="transparent" stroke="rgba(18,33,39,0.25)" stroke-width="0.8"/>
+  <text x="42" y="241"
+        fill="rgba(18,33,39,0.60)" font-size="7"
+        font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.08em">INPUT</text>
+  <!-- 노드 이름 -->
+  <text x="88" y="265"
+        fill="#122127" font-size="13" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Orig. Weights</text>
+  <!-- 기술 서브레이블 -->
+  <text x="88" y="283"
+        fill="#6c8188" font-size="10"
+        font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle">FP32 / FP16</text>
+
+  <!-- ── 노드 2: 그룹 분할 (Accent) ── -->
+  <!-- x=176, y=224, w=144, h=72 -->
+  <rect x="176" y="224" width="144" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="176" y="224" width="144" height="72" rx="6"
+        fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <rect x="184" y="232" width="36" height="12" rx="2"
+        fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="202" y="241"
+        fill="rgba(13,87,99,0.80)" font-size="7"
+        font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.08em">STEP</text>
+  <text x="248" y="261"
+        fill="#122127" font-size="13" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Group Split</text>
+  <text x="248" y="279"
+        fill="#6c8188" font-size="10"
+        font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle">group_size=128</text>
+
+  <!-- ── 노드 3: 스케일·제로포인트 계산 (Accent / Focal) ── -->
+  <!-- x=336, y=224, w=144, h=72 -->
+  <rect x="336" y="224" width="144" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="336" y="224" width="144" height="72" rx="6"
+        fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="344" y="232" width="36" height="12" rx="2"
+        fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="362" y="241"
+        fill="rgba(13,87,99,0.80)" font-size="7"
+        font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.08em">KEY</text>
+  <text x="408" y="257"
+        fill="#122127" font-size="13" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Scale Calc.</text>
+  <text x="408" y="275"
+        fill="#6c8188" font-size="10"
+        font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle">scale · zero_point</text>
+
+  <!-- ── 노드 4: 정수 변환 (Backend) ── -->
+  <!-- x=496, y=208, w=148, h=104 — 강조 노드 세로 확장 -->
+  <!-- 실제로는 표준 크기, 강조는 accent stroke -->
+  <!-- x=496, y=224, w=144, h=72 -->
+  <rect x="496" y="224" width="144" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="496" y="224" width="144" height="72" rx="6"
+        fill="#ffffff" stroke="#122127" stroke-width="1.2"/>
+  <rect x="504" y="232" width="36" height="12" rx="2"
+        fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="522" y="241"
+        fill="rgba(18,33,39,0.70)" font-size="7"
+        font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.08em">QUANT</text>
+  <text x="568" y="261"
+        fill="#122127" font-size="13" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Int Convert</text>
+  <text x="568" y="279"
+        fill="#6c8188" font-size="10"
+        font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle">INT4 / INT8</text>
+
+  <!-- ── 노드 5: 패킹 (Backend) ── -->
+  <!-- x=656, y=224, w=144, h=72 -->
+  <rect x="656" y="224" width="144" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="656" y="224" width="144" height="72" rx="6"
+        fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="664" y="232" width="36" height="12" rx="2"
+        fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="682" y="241"
+        fill="rgba(18,33,39,0.70)" font-size="7"
+        font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.08em">PACK</text>
+  <text x="728" y="261"
+        fill="#122127" font-size="13" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Packing</text>
+  <text x="728" y="279"
+        fill="#6c8188" font-size="10"
+        font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle">Bit-pack Store</text>
+
+  <!-- ── 노드 6: 양자화 모델 (Store — 마지막 출력) ── -->
+  <!-- x=816, y=224, w=144, h=72 -->
+  <rect x="816" y="224" width="144" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="816" y="224" width="144" height="72" rx="6"
+        fill="rgba(18,33,39,0.05)" stroke="#3f545c" stroke-width="1"/>
+  <rect x="824" y="232" width="44" height="12" rx="2"
+        fill="transparent" stroke="rgba(63,84,92,0.40)" stroke-width="0.8"/>
+  <text x="846" y="241"
+        fill="rgba(63,84,92,0.80)" font-size="7"
+        font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.08em">OUTPUT</text>
+  <text x="888" y="261"
+        fill="#122127" font-size="13" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Quant. Model</text>
+  <text x="888" y="279"
+        fill="#6c8188" font-size="10"
+        font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle">GGUF / AWQ / GPTQ</text>
+
+  <!-- ── 단계 번호 라벨 (화살표 위, 마스크 포함) ── -->
+
+  <!-- W→G 사이 라벨 -->
+  <rect x="154" y="240" width="24" height="12" rx="2" fill="#f8fafb"/>
+  <text x="166" y="249"
+        fill="#6c8188" font-size="8"
+        font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.06em">①</text>
+
+  <!-- G→S 사이 라벨 -->
+  <rect x="314" y="240" width="24" height="12" rx="2" fill="#f8fafb"/>
+  <text x="326" y="249"
+        fill="#6c8188" font-size="8"
+        font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.06em">②</text>
+
+  <!-- S→QW 사이 라벨 -->
+  <rect x="474" y="240" width="24" height="12" rx="2" fill="#f8fafb"/>
+  <text x="486" y="249"
+        fill="#6c8188" font-size="8"
+        font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.06em">③</text>
+
+  <!-- QW→P 사이 라벨 -->
+  <rect x="634" y="240" width="24" height="12" rx="2" fill="#f8fafb"/>
+  <text x="646" y="249"
+        fill="#6c8188" font-size="8"
+        font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.06em">④</text>
+
+  <!-- P→M 사이 라벨 -->
+  <rect x="794" y="240" width="24" height="12" rx="2" fill="#f8fafb"/>
+  <text x="806" y="249"
+        fill="#6c8188" font-size="8"
+        font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.06em">⑤</text>
+
+  <!-- ── 페이지 타이틀 영역 ── -->
+  <text x="480" y="88"
+        fill="#122127" font-size="22" font-weight="800"
+        font-family="'Gothic A1', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">LLM Quantization Pipeline</text>
+  <text x="480" y="116"
+        fill="#6c8188" font-size="12"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Weights → Group Split → Scale Calc. → Int Convert → Packing → File Save</text>
+
+  <!-- ── 범례 구분선 ── -->
+  <line x1="32" y1="528" x2="928" y2="528"
+        stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+
+  <!-- 범례 텍스트 -->
+  <text x="32" y="544"
+        fill="#3f545c" font-size="8"
+        font-family="'IBM Plex Mono', monospace"
+        letter-spacing="0.14em">LEGEND</text>
+
+  <!-- 범례 항목 1: Input -->
+  <rect x="108" y="534" width="16" height="12" rx="3"
+        fill="rgba(58,84,143,0.06)" stroke="rgba(18,33,39,0.30)" stroke-width="0.8"/>
+  <text x="132" y="544"
+        fill="#3f545c" font-size="9"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">Input</text>
+
+  <!-- 범례 항목 2: 핵심 단계 (accent) -->
+  <rect x="188" y="534" width="16" height="12" rx="3"
+        fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="212" y="544"
+        fill="#3f545c" font-size="9"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">Key Step</text>
+
+  <!-- 범례 항목 3: 처리 단계 -->
+  <rect x="296" y="534" width="16" height="12" rx="3"
+        fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <text x="320" y="544"
+        fill="#3f545c" font-size="9"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">Process Step</text>
+
+  <!-- 범례 항목 4: 출력 -->
+  <rect x="400" y="534" width="16" height="12" rx="3"
+        fill="rgba(18,33,39,0.05)" stroke="#3f545c" stroke-width="1"/>
+  <text x="424" y="544"
+        fill="#3f545c" font-size="9"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">Output File</text>
+
+</svg>
+</div>
+</body>
+</html>

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LLM 양자화 흐름</title>
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: #f8fafb; }
+  body { display: flex; justify-content: center; align-items: flex-start; padding: 0; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg"
+     viewBox="0 0 960 600"
+     role="img"
+     aria-labelledby="2026-10-09-b59c2a84-04-quant-title 2026-10-09-b59c2a84-04-quant-desc">
+
+  <title id="2026-10-09-b59c2a84-04-quant-title">LLM 양자화 방법별 추론 엔진 흐름</title>
+  <desc id="2026-10-09-b59c2a84-04-quant-desc">사전 학습된 FP16 모델에서 GPTQ·AWQ·GGUF 세 가지 양자화 경로가 분기되어 각각 ExLlamaV2/vLLM, vLLM/AutoAWQ, Ollama/llama.cpp 추론 엔진으로 이어지는 흐름을 보여 준다.</desc>
+
+  <defs>
+    <!-- 기본 화살표 (muted) -->
+    <marker id="2026-10-09-b59c2a84-04-q-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <!-- 악센트 화살표 -->
+    <marker id="2026-10-09-b59c2a84-04-q-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+  </defs>
+
+  <!-- 배경 -->
+  <rect width="960" height="600" fill="#f8fafb"/>
+
+  <!-- ─────────────────────────────────────────
+       화살표 (박스보다 먼저 그림)
+       BASE(480,88) → G1(228,236) / G2(480,236) / G3(732,236)
+       G1(228,296) → E1(228,420)
+       G2(480,296) → E2(480,420)
+       G3(732,296) → E3(732,420)
+  ───────────────────────────────────────── -->
+
+  <!-- BASE → G1 (우측 출발→좌측 도착: 직각 엘보) -->
+  <path d="M 480,136 L 480,176 Q 480,184 472,184 L 284,184 Q 276,184 276,192 L 276,236"
+        fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-09-b59c2a84-04-q-arrow)"/>
+
+  <!-- BASE → G2 (직선 하행) -->
+  <path d="M 480,136 L 480,236"
+        fill="none" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-10-09-b59c2a84-04-q-arrow-accent)"/>
+
+  <!-- BASE → G3 (우측 방향 직각 엘보) -->
+  <path d="M 480,136 L 480,176 Q 480,184 488,184 L 676,184 Q 684,184 684,192 L 684,236"
+        fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-09-b59c2a84-04-q-arrow)"/>
+
+  <!-- G1 → E1 -->
+  <path d="M 276,296 L 276,420"
+        fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-09-b59c2a84-04-q-arrow)"/>
+
+  <!-- G2 → E2 -->
+  <path d="M 480,296 L 480,420"
+        fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-09-b59c2a84-04-q-arrow)"/>
+
+  <!-- G3 → E3 -->
+  <path d="M 684,296 L 684,420"
+        fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-09-b59c2a84-04-q-arrow)"/>
+
+  <!-- ─────────────────────────────────────────
+       노드 박스
+  ───────────────────────────────────────── -->
+
+  <!-- BASE — focal: 사전 학습 모델 FP16 (cx=480, y=76, w=200, h=60) -->
+  <rect x="380" y="76" width="200" height="60" rx="6" fill="#f8fafb"/>
+  <rect x="380" y="76" width="200" height="60" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="388" y="82" width="40" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.4)" stroke-width="0.8"/>
+  <text x="408" y="91" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">BASE</text>
+  <text x="480" y="108" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">사전 학습 모델</text>
+  <text x="480" y="124" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">FP16</text>
+
+  <!-- G1 — GPTQ (cx=276, y=236, w=184, h=60) -->
+  <rect x="184" y="236" width="184" height="60" rx="6" fill="#f8fafb"/>
+  <rect x="184" y="236" width="184" height="60" rx="6" fill="rgba(13,87,99,0.04)" stroke="#0d5763" stroke-width="1"/>
+  <rect x="192" y="242" width="36" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.35)" stroke-width="0.8"/>
+  <text x="210" y="251" fill="rgba(13,87,99,0.75)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">GPTQ</text>
+  <text x="276" y="268" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">GPTQ</text>
+  <text x="276" y="284" fill="#6c8188" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">레이어별 최적화</text>
+
+  <!-- G2 — AWQ (cx=480, y=236, w=184, h=60) — focal -->
+  <rect x="388" y="236" width="184" height="60" rx="6" fill="#f8fafb"/>
+  <rect x="388" y="236" width="184" height="60" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="396" y="242" width="32" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.4)" stroke-width="0.8"/>
+  <text x="412" y="251" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">AWQ</text>
+  <text x="480" y="268" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">AWQ</text>
+  <text x="480" y="284" fill="#6c8188" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">활성화 인식</text>
+
+  <!-- G3 — GGUF (cx=684, y=236, w=184, h=60) -->
+  <rect x="592" y="236" width="184" height="60" rx="6" fill="#f8fafb"/>
+  <rect x="592" y="236" width="184" height="60" rx="6" fill="rgba(13,87,99,0.04)" stroke="#0d5763" stroke-width="1"/>
+  <rect x="600" y="242" width="36" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.35)" stroke-width="0.8"/>
+  <text x="618" y="251" fill="rgba(13,87,99,0.75)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">GGUF</text>
+  <text x="684" y="268" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">GGUF 변환</text>
+  <text x="684" y="284" fill="#6c8188" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">llama.cpp</text>
+
+  <!-- E1 — ExLlamaV2 / vLLM (cx=276, y=420, w=184, h=60) -->
+  <rect x="184" y="420" width="184" height="60" rx="6" fill="#f8fafb"/>
+  <rect x="184" y="420" width="184" height="60" rx="6" fill="rgba(18,33,39,0.04)" stroke="#3f545c" stroke-width="1"/>
+  <rect x="192" y="426" width="36" height="12" rx="2" fill="transparent" stroke="rgba(63,84,92,0.35)" stroke-width="0.8"/>
+  <text x="210" y="435" fill="rgba(63,84,92,0.75)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">GPU</text>
+  <text x="276" y="452" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">ExLlamaV2</text>
+  <text x="276" y="468" fill="#6c8188" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">vLLM</text>
+
+  <!-- E2 — vLLM / AutoAWQ (cx=480, y=420, w=184, h=60) -->
+  <rect x="388" y="420" width="184" height="60" rx="6" fill="#f8fafb"/>
+  <rect x="388" y="420" width="184" height="60" rx="6" fill="rgba(18,33,39,0.04)" stroke="#3f545c" stroke-width="1"/>
+  <rect x="396" y="426" width="36" height="12" rx="2" fill="transparent" stroke="rgba(63,84,92,0.35)" stroke-width="0.8"/>
+  <text x="414" y="435" fill="rgba(63,84,92,0.75)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">GPU</text>
+  <text x="480" y="452" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Mono', monospace" text-anchor="middle">vLLM</text>
+  <text x="480" y="468" fill="#6c8188" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">AutoAWQ</text>
+
+  <!-- E3 — Ollama / llama.cpp (cx=684, y=420, w=184, h=60) -->
+  <rect x="592" y="420" width="184" height="60" rx="6" fill="#f8fafb"/>
+  <rect x="592" y="420" width="184" height="60" rx="6" fill="rgba(18,33,39,0.04)" stroke="#3f545c" stroke-width="1"/>
+  <rect x="600" y="426" width="36" height="12" rx="2" fill="transparent" stroke="rgba(63,84,92,0.35)" stroke-width="0.8"/>
+  <text x="618" y="435" fill="rgba(63,84,92,0.75)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">CPU</text>
+  <text x="684" y="452" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Mono', monospace" text-anchor="middle">Ollama</text>
+  <text x="684" y="468" fill="#6c8188" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">llama.cpp</text>
+
+  <!-- ─────────────────────────────────────────
+       레전드 (하단 구분선 + 수평 스트립)
+  ───────────────────────────────────────── -->
+  <line x1="40" y1="524" x2="920" y2="524" stroke="rgba(18,33,39,0.10)" stroke-width="0.8"/>
+
+  <!-- 레전드 라벨 -->
+  <text x="40" y="536" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.14em">LEGEND</text>
+
+  <!-- focal -->
+  <rect x="116" y="526" width="14" height="14" rx="3" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="136" y="537" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif">원본 / 양자화 방법</text>
+
+  <!-- backend -->
+  <rect x="284" y="526" width="14" height="14" rx="3" fill="rgba(18,33,39,0.04)" stroke="#3f545c" stroke-width="1"/>
+  <text x="304" y="537" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif">추론 엔진</text>
+
+  <!-- accent arrow -->
+  <line x1="400" y1="533" x2="432" y2="533" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-10-09-b59c2a84-04-q-arrow-accent)"/>
+  <text x="444" y="537" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif">주요 경로</text>
+
+  <!-- muted arrow -->
+  <line x1="536" y1="533" x2="568" y2="533" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-09-b59c2a84-04-q-arrow)"/>
+  <text x="580" y="537" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif">변환 흐름</text>
+
+</svg>
+</body>
+</html>

@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LLM 양자화 실행 환경 선택 가이드</title>
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; font-family: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; }
+  .diagram-wrap { display: block; width: 100%; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<div class="diagram-wrap">
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 960 600"
+  role="img"
+  aria-labelledby="2026-10-09-b59c2a84-05-quant-title 2026-10-09-b59c2a84-05-quant-desc"
+>
+<title id="2026-10-09-b59c2a84-05-quant-title">LLM 양자화 실행 환경 선택 가이드</title>
+<desc id="2026-10-09-b59c2a84-05-quant-desc">GPU VRAM 용량에 따라 70B Q4·13B FP16·7B FP16·CPU llama.cpp 중 하나를 선택하고, 각 경로에 맞는 서빙 도구(vLLM+AWQ, vLLM+GPTQ, llama.cpp/Ollama)로 연결되는 의사결정 흐름도.</desc>
+
+<defs>
+  <!-- 기본 화살표 -->
+  <marker id="2026-10-09-b59c2a84-05-q-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+    <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+  </marker>
+  <!-- 악센트 화살표 -->
+  <marker id="2026-10-09-b59c2a84-05-q-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+    <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+  </marker>
+</defs>
+
+<!-- 배경 -->
+<rect width="960" height="600" fill="#f8fafb"/>
+
+<!-- ============================================================
+     화살표 레이어 (박스보다 먼저)
+     ============================================================ -->
+
+<!-- 실행 환경 → 결정 다이아몬드 (수직) -->
+<path d="M 480,88 L 480,148" stroke="#3f545c" stroke-width="1" fill="none" marker-end="url(#2026-10-09-b59c2a84-05-q-arrow)"/>
+
+<!-- 다이아몬드 → A : 24GB 이상 (왼쪽 위 방향, 오른쪽 꺾임) -->
+<!-- 다이아몬드 중심 480,200, 왼쪽 꼭짓점 404,200 -->
+<path d="M 404,200 L 180,200 L 180,260" stroke="#3f545c" stroke-width="1" fill="none" marker-end="url(#2026-10-09-b59c2a84-05-q-arrow)"/>
+
+<!-- 다이아몬드 → B : 12~16GB (왼쪽 아래) -->
+<!-- 다이아몬드 왼쪽 꼭짓점 404,200 → B 박스 중간 경유 -->
+<path d="M 404,208 L 340,208 L 340,260" stroke="#3f545c" stroke-width="1" fill="none" marker-end="url(#2026-10-09-b59c2a84-05-q-arrow)"/>
+
+<!-- 다이아몬드 → C : 8~12GB (오른쪽 아래) -->
+<path d="M 556,208 L 620,208 L 620,260" stroke="#3f545c" stroke-width="1" fill="none" marker-end="url(#2026-10-09-b59c2a84-05-q-arrow)"/>
+
+<!-- 다이아몬드 → D : GPU 없음 (오른쪽 위) -->
+<path d="M 556,200 L 780,200 L 780,260" stroke="#3f545c" stroke-width="1" fill="none" marker-end="url(#2026-10-09-b59c2a84-05-q-arrow)"/>
+
+<!-- A → E (수직) -->
+<path d="M 180,332 L 180,392" stroke="#0d5763" stroke-width="1" fill="none" marker-end="url(#2026-10-09-b59c2a84-05-q-arrow-accent)"/>
+
+<!-- B → F (수직) -->
+<path d="M 340,332 L 340,392" stroke="#3f545c" stroke-width="1" fill="none" marker-end="url(#2026-10-09-b59c2a84-05-q-arrow)"/>
+
+<!-- C → G (수직) -->
+<path d="M 620,332 L 620,392" stroke="#3f545c" stroke-width="1" fill="none" marker-end="url(#2026-10-09-b59c2a84-05-q-arrow)"/>
+
+<!-- D → G (오른쪽에서 내려와 G로 연결) -->
+<path d="M 780,332 L 780,380 L 700,380 L 700,408 L 684,408" stroke="#3f545c" stroke-width="1" fill="none" stroke-dasharray="5,4" marker-end="url(#2026-10-09-b59c2a84-05-q-arrow)"/>
+
+<!-- ============================================================
+     노드 레이어
+     ============================================================ -->
+
+<!-- [실행 환경] 진입 노드 — input 타입 -->
+<!-- 중심 480, y=44, w=160, h=44 -->
+<rect x="400" y="44" width="160" height="44" rx="6" fill="#f8fafb"/>
+<rect x="400" y="44" width="160" height="44" rx="6" fill="rgba(63,84,92,0.10)" stroke="#6c8188" stroke-width="1"/>
+<text x="480" y="61" fill="#122127" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.12em" font-weight="500">ENTRY</text>
+<text x="480" y="77" fill="#122127" font-size="14" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" font-weight="600" text-anchor="middle">실행 환경</text>
+
+<!-- [GPU VRAM?] 결정 다이아몬드 — 악센트 포컬 -->
+<!-- 중심 480,200, 너비 152, 높이 60 → 꼭짓점: top(480,170), right(556,200), bottom(480,230), left(404,200) -->
+<polygon points="480,170 556,200 480,230 404,200" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+<text x="480" y="197" fill="#122127" font-size="13" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" font-weight="600" text-anchor="middle">GPU VRAM</text>
+<text x="480" y="214" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">용량 확인</text>
+
+<!-- 화살표 라벨들 (마스크 포함) -->
+<!-- 24GB 이상 -->
+<rect x="220" y="182" width="60" height="14" rx="2" fill="#f8fafb"/>
+<text x="250" y="192" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500" text-anchor="middle">24GB 이상</text>
+
+<!-- 12~16GB -->
+<rect x="290" y="182" width="56" height="14" rx="2" fill="#f8fafb"/>
+<text x="318" y="192" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500" text-anchor="middle">12~16GB</text>
+
+<!-- 8~12GB -->
+<rect x="564" y="182" width="52" height="14" rx="2" fill="#f8fafb"/>
+<text x="590" y="192" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500" text-anchor="middle">8~12GB</text>
+
+<!-- GPU 없음 -->
+<rect x="700" y="182" width="56" height="14" rx="2" fill="#f8fafb"/>
+<text x="728" y="192" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500" text-anchor="middle">GPU 없음</text>
+
+<!-- [A] 70B Q4 / 34B FP16 — backend (권장) -->
+<rect x="100" y="260" width="160" height="72" rx="6" fill="#f8fafb"/>
+<rect x="100" y="260" width="160" height="72" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+<rect x="108" y="268" width="32" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+<text x="124" y="277" fill="rgba(18,33,39,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">HIGH</text>
+<text x="180" y="296" fill="#122127" font-size="13" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" font-weight="600" text-anchor="middle">70B Q4</text>
+<text x="180" y="316" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">또는 34B FP16</text>
+
+<!-- [B] 13B FP16 / 70B Q3 — backend -->
+<rect x="260" y="260" width="160" height="72" rx="6" fill="#f8fafb"/>
+<rect x="260" y="260" width="160" height="72" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+<rect x="268" y="268" width="24" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+<text x="280" y="277" fill="rgba(18,33,39,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">MID</text>
+<text x="340" y="296" fill="#122127" font-size="13" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" font-weight="600" text-anchor="middle">13B FP16</text>
+<text x="340" y="316" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">또는 70B Q3</text>
+
+<!-- [C] 7B FP16 / 13B Q4 — store/state (약한 GPU) -->
+<rect x="540" y="260" width="160" height="72" rx="6" fill="#f8fafb"/>
+<rect x="540" y="260" width="160" height="72" rx="6" fill="rgba(18,33,39,0.05)" stroke="#3f545c" stroke-width="1"/>
+<rect x="548" y="268" width="24" height="12" rx="2" fill="transparent" stroke="rgba(63,84,92,0.40)" stroke-width="0.8"/>
+<text x="560" y="277" fill="rgba(63,84,92,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">LOW</text>
+<text x="620" y="296" fill="#122127" font-size="13" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" font-weight="600" text-anchor="middle">7B FP16</text>
+<text x="620" y="316" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">또는 13B Q4</text>
+
+<!-- [D] CPU llama.cpp — external (제한적) -->
+<rect x="700" y="260" width="160" height="72" rx="6" fill="#f8fafb"/>
+<rect x="700" y="260" width="160" height="72" rx="6" fill="rgba(18,33,39,0.03)" stroke="rgba(18,33,39,0.30)" stroke-width="1"/>
+<rect x="708" y="268" width="24" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.30)" stroke-width="0.8"/>
+<text x="720" y="277" fill="rgba(18,33,39,0.60)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">CPU</text>
+<text x="780" y="296" fill="#122127" font-size="13" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" font-weight="600" text-anchor="middle">CPU 추론</text>
+<text x="780" y="316" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">llama.cpp · 7B Q4↓</text>
+
+<!-- [E] vLLM + AWQ — 포컬 서빙 (악센트) -->
+<rect x="100" y="392" width="160" height="72" rx="6" fill="#f8fafb"/>
+<rect x="100" y="392" width="160" height="72" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+<rect x="108" y="400" width="36" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+<text x="126" y="409" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">SERVE</text>
+<text x="180" y="432" fill="#122127" font-size="13" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" font-weight="600" text-anchor="middle">vLLM + AWQ</text>
+<text x="180" y="452" fill="#0d5763" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">서버 서빙</text>
+
+<!-- [F] vLLM + GPTQ / GGUF — backend -->
+<rect x="260" y="392" width="160" height="72" rx="6" fill="#f8fafb"/>
+<rect x="260" y="392" width="160" height="72" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+<rect x="268" y="400" width="36" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+<text x="286" y="409" fill="rgba(18,33,39,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">SERVE</text>
+<text x="340" y="432" fill="#122127" font-size="13" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" font-weight="600" text-anchor="middle">vLLM + GPTQ</text>
+<text x="340" y="452" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">또는 GGUF</text>
+
+<!-- [G] llama.cpp / Ollama — store (공용 경량 런타임) -->
+<rect x="540" y="392" width="160" height="72" rx="6" fill="#f8fafb"/>
+<rect x="540" y="392" width="160" height="72" rx="6" fill="rgba(18,33,39,0.05)" stroke="#3f545c" stroke-width="1"/>
+<rect x="548" y="400" width="36" height="12" rx="2" fill="transparent" stroke="rgba(63,84,92,0.40)" stroke-width="0.8"/>
+<text x="566" y="409" fill="rgba(63,84,92,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">RUNTIME</text>
+<text x="620" y="432" fill="#122127" font-size="13" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" font-weight="600" text-anchor="middle">llama.cpp</text>
+<text x="620" y="452" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">또는 Ollama</text>
+
+<!-- ============================================================
+     레전드 스트립
+     ============================================================ -->
+<line x1="40" y1="512" x2="920" y2="512" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+
+<text x="40" y="528" fill="#3f545c" font-size="8" font-family="'IBM Plex Mono', monospace" letter-spacing="0.14em">LEGEND</text>
+
+<!-- 레전드 아이템들 -->
+<!-- 포컬 -->
+<rect x="108" y="518" width="14" height="14" rx="3" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+<text x="128" y="529" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500">고사양 (권장 경로)</text>
+
+<!-- 일반 -->
+<rect x="268" y="518" width="14" height="14" rx="3" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+<text x="288" y="529" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500">중간 사양</text>
+
+<!-- store -->
+<rect x="388" y="518" width="14" height="14" rx="3" fill="rgba(18,33,39,0.05)" stroke="#3f545c" stroke-width="1"/>
+<text x="408" y="529" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500">저사양</text>
+
+<!-- external -->
+<rect x="488" y="518" width="14" height="14" rx="3" fill="rgba(18,33,39,0.03)" stroke="rgba(18,33,39,0.30)" stroke-width="1"/>
+<text x="508" y="529" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500">CPU 전용</text>
+
+<!-- 점선 화살표 -->
+<line x1="616" y1="525" x2="636" y2="525" stroke="#3f545c" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#2026-10-09-b59c2a84-05-q-arrow)"/>
+<text x="644" y="529" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500">대체 경로</text>
+
+</svg>
+</div>
+</body>
+</html>

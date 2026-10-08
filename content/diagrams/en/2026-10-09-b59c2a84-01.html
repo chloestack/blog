@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 24px; }
+  .diagram-wrap { width: 100%; max-width: 960px; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<div class="diagram-wrap">
+<svg viewBox="0 0 960 480" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="2026-10-09-b59c2a84-01-quant-title 2026-10-09-b59c2a84-01-quant-desc">
+  <title id="2026-10-09-b59c2a84-01-quant-title">LLM Quantization Method VRAM Requirements and Target Hardware</title>
+  <desc id="2026-10-09-b59c2a84-01-quant-desc">Flowchart showing how applying INT4 (GGUF/AWQ) and INT8 (GPTQ) quantization to an FP16 base model reduces VRAM and enables deployment on consumer and server GPUs respectively.</desc>
+
+  <defs>
+    <!-- arrow markers -->
+    <marker id="2026-10-09-b59c2a84-01-q-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-10-09-b59c2a84-01-q-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <marker id="2026-10-09-b59c2a84-01-q-arrow-muted" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#6c8188"/>
+    </marker>
+  </defs>
+
+  <!-- background -->
+  <rect width="960" height="480" fill="#f8fafb"/>
+
+  <!-- ===================== ARROWS (drawn before boxes) ===================== -->
+
+  <!-- FP16 → Quantization (horizontal) -->
+  <line x1="172" y1="200" x2="296" y2="200" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-10-09-b59c2a84-01-q-arrow-accent)"/>
+
+  <!-- Quantization → 4-bit model (elbow: right then up) -->
+  <!-- exit right of diamond at (436,200), turn up to y=132, go right to x=508 -->
+  <path d="M 436,200 L 472,200 L 472,132 L 508,132" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-09-b59c2a84-01-q-arrow)"/>
+  <!-- label: INT4 -->
+  <rect x="434" y="148" width="76" height="14" rx="2" fill="#f8fafb"/>
+  <text x="472" y="159" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.04em">INT4 (GGUF/AWQ)</text>
+
+  <!-- Quantization → 8-bit model (elbow: right then down) -->
+  <!-- exit right of diamond at (436,200), turn down to y=268, go right to x=508 -->
+  <path d="M 436,200 L 472,200 L 472,268 L 508,268" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-09-b59c2a84-01-q-arrow)"/>
+  <!-- label: INT8 -->
+  <rect x="434" y="238" width="72" height="14" rx="2" fill="#f8fafb"/>
+  <text x="472" y="249" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.04em">INT8 (GPTQ)</text>
+
+  <!-- 4-bit model → RTX 4090 (horizontal) -->
+  <line x1="644" y1="132" x2="752" y2="132" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-09-b59c2a84-01-q-arrow)"/>
+
+  <!-- 8-bit model → A10G (horizontal) -->
+  <line x1="644" y1="268" x2="752" y2="268" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-09-b59c2a84-01-q-arrow)"/>
+
+  <!-- FP16 → A100×2 (elbow: down then right) -->
+  <!-- exit bottom of FP16 box at (76,248), go down to y=340, go right to x=752 -->
+  <path d="M 76,248 L 76,340 L 752,340" fill="none" stroke="#6c8188" stroke-width="1" stroke-dasharray="5,4" marker-end="url(#2026-10-09-b59c2a84-01-q-arrow-muted)"/>
+
+  <!-- ===================== NODE BOXES ===================== -->
+
+  <!-- FP16 Model — "stop" style: subdued red-tinted (source class), treated as input here -->
+  <rect x="8" y="160" width="128" height="80" rx="6" fill="#f8fafb"/>
+  <rect x="8" y="160" width="128" height="80" rx="6" fill="rgba(18,33,39,0.04)" stroke="rgba(18,33,39,0.30)" stroke-width="1"/>
+  <rect x="16" y="168" width="36" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.30)" stroke-width="0.8"/>
+  <text x="34" y="177" fill="rgba(18,33,39,0.55)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">BASE</text>
+  <text x="72" y="207" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">FP16 Model</text>
+  <text x="72" y="225" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">140 GB VRAM</text>
+
+  <!-- Quantization — diamond (focal / accent) centered at (366, 200) -->
+  <!-- diamond: top(366,160) right(436,200) bottom(366,240) left(296,200) -->
+  <polygon points="366,156 440,200 366,244 292,200" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="366" y="196" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Apply</text>
+  <text x="366" y="212" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Quantization</text>
+
+  <!-- 4-bit model — "warn" style -->
+  <rect x="508" y="96" width="136" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="508" y="96" width="136" height="72" rx="6" fill="rgba(169,106,8,0.07)" stroke="rgba(169,106,8,0.55)" stroke-width="1"/>
+  <rect x="516" y="104" width="36" height="12" rx="2" fill="transparent" stroke="rgba(169,106,8,0.45)" stroke-width="0.8"/>
+  <text x="534" y="113" fill="rgba(169,106,8,0.80)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">INT4</text>
+  <text x="576" y="137" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">4-bit Model</text>
+  <text x="576" y="154" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">35 GB VRAM</text>
+
+  <!-- 8-bit model — "warn" style -->
+  <rect x="508" y="232" width="136" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="508" y="232" width="136" height="72" rx="6" fill="rgba(169,106,8,0.07)" stroke="rgba(169,106,8,0.55)" stroke-width="1"/>
+  <rect x="516" y="240" width="36" height="12" rx="2" fill="transparent" stroke="rgba(169,106,8,0.45)" stroke-width="0.8"/>
+  <text x="534" y="249" fill="rgba(169,106,8,0.80)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">INT8</text>
+  <text x="576" y="273" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">8-bit Model</text>
+  <text x="576" y="290" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">70 GB VRAM</text>
+
+  <!-- RTX 4090 — "ok" style -->
+  <rect x="752" y="96" width="140" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="752" y="96" width="140" height="72" rx="6" fill="rgba(40,109,80,0.07)" stroke="rgba(40,109,80,0.55)" stroke-width="1"/>
+  <rect x="760" y="104" width="48" height="12" rx="2" fill="transparent" stroke="rgba(40,109,80,0.45)" stroke-width="0.8"/>
+  <text x="784" y="113" fill="rgba(40,109,80,0.80)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.06em">Consumer GPU</text>
+  <text x="822" y="137" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">RTX 4090</text>
+  <text x="822" y="154" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">24 GB VRAM</text>
+
+  <!-- A10G — "ok" style -->
+  <rect x="752" y="232" width="140" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="752" y="232" width="140" height="72" rx="6" fill="rgba(40,109,80,0.07)" stroke="rgba(40,109,80,0.55)" stroke-width="1"/>
+  <rect x="760" y="240" width="44" height="12" rx="2" fill="transparent" stroke="rgba(40,109,80,0.45)" stroke-width="0.8"/>
+  <text x="782" y="249" fill="rgba(40,109,80,0.80)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.06em">Server GPU</text>
+  <text x="822" y="273" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">A10G</text>
+  <text x="822" y="290" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">24 GB VRAM</text>
+
+  <!-- A100×2 — "mute" style (enterprise) -->
+  <rect x="752" y="304" width="140" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="752" y="304" width="140" height="72" rx="6" fill="#eef2f4" stroke="#c3d0d4" stroke-width="1"/>
+  <rect x="760" y="312" width="56" height="12" rx="2" fill="transparent" stroke="rgba(195,208,212,0.80)" stroke-width="0.8"/>
+  <text x="788" y="321" fill="#6c8188" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.06em">Enterprise</text>
+  <text x="822" y="345" fill="#3f545c" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">A100 × 2</text>
+  <text x="822" y="362" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">140 GB+ VRAM</text>
+
+  <!-- ===================== LEGEND ===================== -->
+  <line x1="32" y1="414" x2="928" y2="414" stroke="rgba(18,33,39,0.10)" stroke-width="0.8"/>
+  <text x="32" y="428" fill="#3f545c" font-size="8" font-family="'IBM Plex Mono', monospace" letter-spacing="0.14em">LEGEND</text>
+
+  <!-- Quantization path (accent) -->
+  <rect x="100" y="420" width="32" height="12" rx="3" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="140" y="430" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">Quantization</text>
+
+  <!-- Compressed model (warn) -->
+  <rect x="256" y="420" width="32" height="12" rx="3" fill="rgba(169,106,8,0.07)" stroke="rgba(169,106,8,0.55)" stroke-width="1"/>
+  <text x="296" y="430" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">Compressed Model</text>
+
+  <!-- Runnable GPU (ok) -->
+  <rect x="400" y="420" width="32" height="12" rx="3" fill="rgba(40,109,80,0.07)" stroke="rgba(40,109,80,0.55)" stroke-width="1"/>
+  <text x="440" y="430" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">Supported GPU</text>
+
+  <!-- Enterprise only (mute) -->
+  <rect x="568" y="420" width="32" height="12" rx="3" fill="#eef2f4" stroke="#c3d0d4" stroke-width="1"/>
+  <text x="608" y="430" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">Enterprise Only</text>
+
+  <!-- Direct path dashed -->
+  <line x1="760" y1="426" x2="792" y2="426" stroke="#6c8188" stroke-width="1" stroke-dasharray="5,4"/>
+  <text x="800" y="430" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">Direct (No Quant)</text>
+
+</svg>
+</div>
+</body>
+</html>
