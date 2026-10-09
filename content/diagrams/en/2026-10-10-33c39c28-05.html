@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; display: flex; justify-content: center; padding: 0; }
+  svg { display: block; width: 100%; max-width: 960px; height: auto; }
+</style>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 480" role="img" aria-labelledby="2026-10-10-33c39c28-05-filter-pipeline-title 2026-10-10-33c39c28-05-filter-pipeline-desc">
+  <title id="2026-10-10-33c39c28-05-filter-pipeline-title">Synthetic Data Quality Filtering Pipeline</title>
+  <desc id="2026-10-10-33c39c28-05-filter-pipeline-desc">Generated samples pass through auto-filters; if the LLM Judge score is 3 or above they are added to the final dataset, otherwise they are retried or discarded based on regenerability.</desc>
+
+  <defs>
+    <!-- Arrow markers -->
+    <marker id="2026-10-10-33c39c28-05-fp-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-10-10-33c39c28-05-fp-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <marker id="2026-10-10-33c39c28-05-fp-arrow-muted" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#6c8188"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="960" height="480" fill="#f8fafb"/>
+
+  <!-- ─────────────────────────────────────────
+       DRAW ARROWS FIRST (behind nodes)
+       Layout (LR):
+         생성된 샘플  x=60  cx=140
+         자동 필터    x=240 cx=320
+         LLM Judge   x=440 cx=520  (diamond, cy=200)
+         최종 데이터셋 x=660 cx=740
+         재생성 가능? x=440 cx=520  (diamond, cy=340)
+         폐기         x=660 cx=740  cy=340
+       ───────────────────────────────────────── -->
+
+  <!-- 1. 생성된 샘플 → 자동 필터 -->
+  <line x1="200" y1="200" x2="236" y2="200" stroke="#3f545c" stroke-width="1.2" marker-end="url(#2026-10-10-33c39c28-05-fp-arrow)"/>
+
+  <!-- 2. 자동 필터 → LLM Judge -->
+  <line x1="400" y1="200" x2="436" y2="200" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-10-10-33c39c28-05-fp-arrow-accent)"/>
+
+  <!-- 3. LLM Judge → 최종 데이터셋 (예) -->
+  <line x1="568" y1="200" x2="656" y2="200" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-10-10-33c39c28-05-fp-arrow-accent)"/>
+  <!-- label: 예 -->
+  <rect x="590" y="182" width="24" height="12" rx="2" fill="#f8fafb"/>
+  <text x="602" y="191" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="500">Yes</text>
+
+  <!-- 4. LLM Judge → 재생성 가능? (아니오, downward) -->
+  <path d="M520,240 Q520,260 520,276" fill="none" stroke="#3f545c" stroke-width="1.2" marker-end="url(#2026-10-10-33c39c28-05-fp-arrow)"/>
+  <!-- label: 아니오 -->
+  <rect x="486" y="252" width="48" height="12" rx="2" fill="#f8fafb"/>
+  <text x="510" y="261" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="500">No</text>
+
+  <!-- 5. 재생성 가능? → 폐기 (아니오, rightward) -->
+  <line x1="568" y1="340" x2="656" y2="340" stroke="#6c8188" stroke-width="1.2" stroke-dasharray="5,4" marker-end="url(#2026-10-10-33c39c28-05-fp-arrow-muted)"/>
+  <!-- label: 아니오 -->
+  <rect x="586" y="322" width="48" height="12" rx="2" fill="#f8fafb"/>
+  <text x="610" y="331" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="500">No</text>
+
+  <!-- 6. 재생성 가능? → 생성된 샘플 (예, loop back upward-left)
+       Route: from left vertex of diamond (x=472,y=340) → go left to x=140 → up to y=248 -->
+  <path d="M472,340 Q452,340 440,340 L100,340 Q80,340 80,320 L80,252" fill="none" stroke="#3f545c" stroke-width="1.2" marker-end="url(#2026-10-10-33c39c28-05-fp-arrow)"/>
+  <!-- label: 예 (near left segment, clear of nodes) -->
+  <rect x="186" y="322" width="24" height="12" rx="2" fill="#f8fafb"/>
+  <text x="198" y="331" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="500">Yes</text>
+
+  <!-- ─────────────────────────────────────────
+       NODES
+       ───────────────────────────────────────── -->
+
+  <!-- 생성된 샘플 (input style) cx=140, cy=200, w=140, h=52 -->
+  <rect x="60" y="172" width="140" height="52" rx="6" fill="#f8fafb"/>
+  <rect x="60" y="172" width="140" height="52" rx="6" fill="rgba(62,84,92,0.10)" stroke="#6c8188" stroke-width="1"/>
+  <rect x="68" y="178" width="36" height="12" rx="2" fill="transparent" stroke="rgba(108,129,136,0.40)" stroke-width="0.8"/>
+  <text x="86" y="187" fill="rgba(108,129,136,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">INPUT</text>
+  <text x="130" y="205" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Generated Sample</text>
+
+  <!-- 자동 필터 (focal/accent) cx=320, cy=200, w=160, h=52 -->
+  <rect x="240" y="172" width="160" height="52" rx="6" fill="#f8fafb"/>
+  <rect x="240" y="172" width="160" height="52" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <rect x="248" y="178" width="36" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="266" y="187" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">FILTER</text>
+  <text x="320" y="202" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Auto Filter</text>
+  <text x="320" y="216" fill="#3f545c" font-size="9" font-family="'IBM Plex Mono', monospace" text-anchor="middle">format · length · dedup</text>
+
+  <!-- LLM Judge (decision diamond) cx=520, cy=200, half-w=52, half-h=40 -->
+  <!-- Paper mask -->
+  <polygon points="520,160 572,200 520,240 468,200" fill="#f8fafb"/>
+  <!-- Styled diamond (focal) -->
+  <polygon points="520,160 572,200 520,240 468,200" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="520" y="196" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">LLM Judge</text>
+  <text x="520" y="210" fill="#3f545c" font-size="9" font-family="'IBM Plex Mono', monospace" text-anchor="middle">score &gt;= 3?</text>
+
+  <!-- 최종 데이터셋 (store/ok style) cx=740, cy=200, w=160, h=52 -->
+  <rect x="656" y="172" width="160" height="52" rx="6" fill="#f8fafb"/>
+  <rect x="656" y="172" width="160" height="52" rx="6" fill="rgba(13,87,99,0.05)" stroke="#3f545c" stroke-width="1"/>
+  <rect x="664" y="178" width="36" height="12" rx="2" fill="transparent" stroke="rgba(63,84,92,0.40)" stroke-width="0.8"/>
+  <text x="682" y="187" fill="rgba(63,84,92,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">OUTPUT</text>
+  <text x="736" y="205" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Final Dataset</text>
+
+  <!-- 재생성 가능? (decision diamond) cx=520, cy=340, half-w=48, half-h=36 -->
+  <polygon points="520,304 568,340 520,376 472,340" fill="#f8fafb"/>
+  <polygon points="520,304 568,340 520,376 472,340" fill="rgba(18,33,39,0.03)" stroke="rgba(18,33,39,0.30)" stroke-width="1"/>
+  <text x="520" y="336" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Regen</text>
+  <text x="520" y="350" fill="#3f545c" font-size="10" font-weight="500" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">possible?</text>
+
+  <!-- 폐기 (optional/muted) cx=740, cy=340, w=140, h=48 -->
+  <rect x="660" y="316" width="140" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="660" y="316" width="140" height="48" rx="6" fill="rgba(18,33,39,0.02)" stroke="rgba(18,33,39,0.20)" stroke-width="1" stroke-dasharray="4,3"/>
+  <text x="730" y="344" fill="#6c8188" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Discard</text>
+
+  <!-- ─────────────────────────────────────────
+       LEGEND STRIP
+       ───────────────────────────────────────── -->
+  <line x1="40" y1="420" x2="920" y2="420" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+  <text x="40" y="434" fill="#3f545c" font-size="8" font-family="'IBM Plex Mono', monospace" letter-spacing="0.14em">LEGEND</text>
+
+  <!-- focal node swatch -->
+  <rect x="108" y="424" width="16" height="10" rx="2" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="130" y="433" fill="#3f545c" font-size="9" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500">Process Step</text>
+
+  <!-- diamond swatch -->
+  <polygon points="168,429 178,424 188,429 178,434" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="196" y="433" fill="#3f545c" font-size="9" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500">Decision</text>
+
+  <!-- muted node swatch -->
+  <rect x="256" y="424" width="16" height="10" rx="2" fill="rgba(18,33,39,0.02)" stroke="rgba(18,33,39,0.20)" stroke-width="1" stroke-dasharray="4,3"/>
+  <text x="278" y="433" fill="#3f545c" font-size="9" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500">Excluded (Discard)</text>
+
+  <!-- accent arrow swatch -->
+  <line x1="348" y1="429" x2="368" y2="429" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-10-10-33c39c28-05-fp-arrow-accent)"/>
+  <text x="376" y="433" fill="#3f545c" font-size="9" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500">Pass Flow</text>
+
+  <!-- dashed arrow swatch -->
+  <line x1="444" y1="429" x2="464" y2="429" stroke="#6c8188" stroke-width="1.2" stroke-dasharray="5,4" marker-end="url(#2026-10-10-33c39c28-05-fp-arrow-muted)"/>
+  <text x="472" y="433" fill="#3f545c" font-size="9" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500">Inactive Path</text>
+
+</svg>
+</body>
+</html>

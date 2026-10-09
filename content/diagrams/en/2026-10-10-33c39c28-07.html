@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<svg viewBox="0 0 960 480" xmlns="http://www.w3.org/2000/svg"
+     role="img" aria-labelledby="2026-10-10-33c39c28-07-pipe-title 2026-10-10-33c39c28-07-pipe-desc">
+  <title id="2026-10-10-33c39c28-07-pipe-title">Small Pipeline → Distributed Architecture Migration</title>
+  <desc id="2026-10-10-33c39c28-07-pipe-desc">Shows how a synthetic data pipeline transitions from sequential processing to a queue-based parallel distributed architecture when throughput needs exceed 10×, with multiple workers passing through a checkpoint to produce the final dataset.</desc>
+
+  <defs>
+    <!-- Arrow markers -->
+    <marker id="2026-10-10-33c39c28-07-arr" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-10-10-33c39c28-07-arr-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <marker id="2026-10-10-33c39c28-07-arr-ok" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#286d50"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="960" height="480" fill="#f8fafb"/>
+
+  <!-- =========================================================
+       ARROWS — drawn before boxes
+  ========================================================== -->
+
+  <!-- SMALL → LARGE (horizontal) -->
+  <line x1="224" y1="240" x2="296" y2="240" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-10-33c39c28-07-arr)"/>
+  <!-- arrow label mask + text -->
+  <rect x="224" y="218" width="72" height="14" rx="2" fill="#f8fafb"/>
+  <text x="260" y="229" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">10× or more</text>
+
+  <!-- LARGE → W1 (up-right orthogonal elbow) -->
+  <!-- from LARGE right edge (x=440, y=240) → W1 left edge (x=520, y=140) -->
+  <!-- route: right from x=440 to x=480, then up to y=140, then right to x=520 -->
+  <path d="M440,240 L480,240 L480,140 L520,140" fill="none" stroke="#0d5763" stroke-width="1" marker-end="url(#2026-10-10-33c39c28-07-arr-accent)"/>
+
+  <!-- LARGE → W2 (straight horizontal) -->
+  <line x1="440" y1="240" x2="520" y2="240" stroke="#0d5763" stroke-width="1" marker-end="url(#2026-10-10-33c39c28-07-arr-accent)"/>
+
+  <!-- LARGE → W3 (down-right orthogonal elbow) -->
+  <!-- route: right from x=440 to x=480, then down to y=340, then right to x=520 -->
+  <path d="M440,240 L480,240 L480,340 L520,340" fill="none" stroke="#0d5763" stroke-width="1" marker-end="url(#2026-10-10-33c39c28-07-arr-accent)"/>
+
+  <!-- W1 → CHK (right then down to CHK at y=240) -->
+  <!-- W1 right=680, y=140; CHK left=760, y=240 -->
+  <path d="M680,140 L720,140 L720,240 L760,240" fill="none" stroke="#286d50" stroke-width="1" marker-end="url(#2026-10-10-33c39c28-07-arr-ok)"/>
+
+  <!-- W2 → CHK straight -->
+  <line x1="680" y1="240" x2="760" y2="240" stroke="#286d50" stroke-width="1" marker-end="url(#2026-10-10-33c39c28-07-arr-ok)"/>
+
+  <!-- W3 → CHK (right then up to CHK at y=240) -->
+  <path d="M680,340 L720,340 L720,240 L760,240" fill="none" stroke="#286d50" stroke-width="1" marker-end="url(#2026-10-10-33c39c28-07-arr-ok)"/>
+
+  <!-- CHK → DS straight -->
+  <line x1="880" y1="240" x2="896" y2="240" stroke="#286d50" stroke-width="1" marker-end="url(#2026-10-10-33c39c28-07-arr-ok)"/>
+
+  <!-- =========================================================
+       NODES
+  ========================================================== -->
+
+  <!-- SMALL — Small Pipeline (warn style) -->
+  <!-- x=64, y=200, w=160, h=80 -->
+  <rect x="64" y="200" width="160" height="80" rx="6" fill="#f8fafb"/>
+  <rect x="64" y="200" width="160" height="80" rx="6" fill="rgba(169,106,8,0.08)" stroke="#a96a08" stroke-width="1"/>
+  <!-- type tag -->
+  <rect x="72" y="208" width="44" height="12" rx="2" fill="transparent" stroke="rgba(169,106,8,0.40)" stroke-width="0.8"/>
+  <text x="94" y="217" fill="rgba(169,106,8,0.8)" font-size="7" font-family="'IBM Plex Mono',monospace" text-anchor="middle" letter-spacing="0.08em">BEFORE</text>
+  <!-- label -->
+  <text x="144" y="248" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">Small Pipeline</text>
+  <text x="144" y="264" fill="#6c8188" font-size="11" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">Sequential</text>
+
+  <!-- LARGE — Distributed Arch (focal / accent) -->
+  <!-- x=296, y=192, w=144, h=96 -->
+  <rect x="296" y="192" width="144" height="96" rx="6" fill="#f8fafb"/>
+  <rect x="296" y="192" width="144" height="96" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="304" y="200" width="36" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="322" y="209" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono',monospace" text-anchor="middle" letter-spacing="0.08em">AFTER</text>
+  <text x="368" y="248" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">Distributed Arch</text>
+  <text x="368" y="264" fill="#6c8188" font-size="11" font-family="'IBM Plex Mono',monospace" text-anchor="middle">Queue-based</text>
+
+  <!-- W1 — Worker 1 -->
+  <!-- x=520, y=108, w=160, h=64 -->
+  <rect x="520" y="108" width="160" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="520" y="108" width="160" height="64" rx="6" fill="rgba(13,87,99,0.06)" stroke="#0d5763" stroke-width="1"/>
+  <rect x="528" y="116" width="40" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.35)" stroke-width="0.8"/>
+  <text x="548" y="125" fill="rgba(13,87,99,0.75)" font-size="7" font-family="'IBM Plex Mono',monospace" text-anchor="middle" letter-spacing="0.08em">WORKER</text>
+  <text x="600" y="148" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">Worker 1</text>
+
+  <!-- W2 — Worker 2 -->
+  <!-- x=520, y=208, w=160, h=64 -->
+  <rect x="520" y="208" width="160" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="520" y="208" width="160" height="64" rx="6" fill="rgba(13,87,99,0.06)" stroke="#0d5763" stroke-width="1"/>
+  <rect x="528" y="216" width="40" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.35)" stroke-width="0.8"/>
+  <text x="548" y="225" fill="rgba(13,87,99,0.75)" font-size="7" font-family="'IBM Plex Mono',monospace" text-anchor="middle" letter-spacing="0.08em">WORKER</text>
+  <text x="600" y="248" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">Worker 2</text>
+
+  <!-- W3 — Worker N -->
+  <!-- x=520, y=308, w=160, h=64 -->
+  <rect x="520" y="308" width="160" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="520" y="308" width="160" height="64" rx="6" fill="rgba(13,87,99,0.06)" stroke="#0d5763" stroke-width="1"/>
+  <rect x="528" y="316" width="40" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.35)" stroke-width="0.8"/>
+  <text x="548" y="325" fill="rgba(13,87,99,0.75)" font-size="7" font-family="'IBM Plex Mono',monospace" text-anchor="middle" letter-spacing="0.08em">WORKER</text>
+  <text x="600" y="348" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">Worker N</text>
+
+  <!-- CHK — Checkpoint (store/state) -->
+  <!-- x=760, y=200, w=120, h=80 -->
+  <rect x="760" y="200" width="120" height="80" rx="6" fill="#f8fafb"/>
+  <rect x="760" y="200" width="120" height="80" rx="6" fill="rgba(40,109,80,0.08)" stroke="#286d50" stroke-width="1"/>
+  <rect x="768" y="208" width="36" height="12" rx="2" fill="transparent" stroke="rgba(40,109,80,0.40)" stroke-width="0.8"/>
+  <text x="786" y="217" fill="rgba(40,109,80,0.8)" font-size="7" font-family="'IBM Plex Mono',monospace" text-anchor="middle" letter-spacing="0.08em">GATE</text>
+  <text x="820" y="248" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">Checkpoint</text>
+  <text x="820" y="264" fill="#6c8188" font-size="11" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">Dedup Guard</text>
+
+  <!-- DS — Final Dataset (focal) -->
+  <!-- x=896, y=208, w=44, h=64 — tight terminal node -->
+  <!-- Use a small oval-ish node as end terminal -->
+  <!-- Actually: rect terminal node at right end -->
+  <!-- Reposition DS to fit: x=904, y=212, w=44, h=56 — but arrow ends at 896 -->
+  <!-- Let's make DS a proper box: x=896, y=204, w=52, h=72 but viewBox is 960 -->
+  <!-- DS box: x=896, y=204, w=52, h=72 → right edge at 948 which fits in 960 -->
+  <!-- Recheck arrow: CHK right=880, DS left must be > 880. Use x=892. -->
+  <!-- Let's settle: CHK x=760,w=120 → right=880; gap 12 → DS x=892, w=56, h=72 → right=948 ✓ -->
+  <rect x="892" y="204" width="56" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="892" y="204" width="56" height="72" rx="6" fill="rgba(40,109,80,0.10)" stroke="#286d50" stroke-width="1.2"/>
+  <text x="920" y="236" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">Final</text>
+  <text x="920" y="252" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">Dataset</text>
+
+  <!-- =========================================================
+       LEGEND STRIP
+  ========================================================== -->
+  <line x1="32" y1="420" x2="928" y2="420" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+  <text x="32" y="434" fill="#6c8188" font-size="8" font-family="'IBM Plex Mono',monospace" letter-spacing="0.14em">LEGEND</text>
+
+  <!-- legend item 1: before (warn) -->
+  <rect x="100" y="424" width="12" height="12" rx="2" fill="rgba(169,106,8,0.08)" stroke="#a96a08" stroke-width="1"/>
+  <text x="118" y="434" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif">Before</text>
+
+  <!-- legend item 2: after (accent) -->
+  <rect x="188" y="424" width="12" height="12" rx="2" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="206" y="434" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif">Distributed</text>
+
+  <!-- legend item 3: gate (ok) -->
+  <rect x="288" y="424" width="12" height="12" rx="2" fill="rgba(40,109,80,0.08)" stroke="#286d50" stroke-width="1"/>
+  <text x="306" y="434" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif">Quality Gate</text>
+
+</svg>
+</body>
+</html>

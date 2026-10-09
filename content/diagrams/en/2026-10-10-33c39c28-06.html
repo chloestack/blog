@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Synthetic Data Adoption Strategy</title>
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; font-family: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; }
+  .diagram-wrap { display: block; width: 100%; max-width: 960px; margin: 0 auto; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<div class="diagram-wrap">
+<svg viewBox="0 0 960 600" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="2026-10-10-33c39c28-06-synth-title 2026-10-10-33c39c28-06-synth-desc">
+  <title id="2026-10-10-33c39c28-06-synth-title">Synthetic Data Adoption Strategy</title>
+  <desc id="2026-10-10-33c39c28-06-synth-desc">Decision flow for synthetic data fine-tuning: real data mix ratio and scale strategy lead to balanced training or cost/quality risks.</desc>
+
+  <defs>
+    <!-- Arrow markers -->
+    <marker id="2026-10-10-33c39c28-06-synth-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-10-10-33c39c28-06-synth-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <marker id="2026-10-10-33c39c28-06-synth-arrow-ok" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#286d50"/>
+    </marker>
+    <marker id="2026-10-10-33c39c28-06-synth-arrow-stop" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#94382b"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="960" height="600" fill="#f8fafb"/>
+
+  <!-- ============================================================
+       CONNECTORS (drawn before boxes)
+  ============================================================ -->
+
+  <!-- START → Q1 (left branch, orthogonal: down then left) -->
+  <!-- START center: x=480, bottom=152. Q1 center: x=260, top=220 -->
+  <path d="M 480 152 L 480 180 L 260 180 L 260 220" fill="none" stroke="#3f545c" stroke-width="1.2" marker-end="url(#2026-10-10-33c39c28-06-synth-arrow)"/>
+
+  <!-- START → Q2 (right branch, orthogonal: down then right) -->
+  <!-- Q2 center: x=700, top=220 -->
+  <path d="M 480 152 L 480 180 L 700 180 L 700 220" fill="none" stroke="#3f545c" stroke-width="1.2" marker-end="url(#2026-10-10-33c39c28-06-synth-arrow)"/>
+
+  <!-- Q1 → RISK (left exit, label: 0% synth only) -->
+  <!-- Q1 diamond tip-left: x=196, y=260. RISK right edge: x=144+120=264... RISK center x=152, top=340 -->
+  <!-- Q1 left tip: (196,260), RISK top center: (184,340) -->
+  <path d="M 196 260 L 152 260 L 152 340" fill="none" stroke="#94382b" stroke-width="1" stroke-dasharray="0" marker-end="url(#2026-10-10-33c39c28-06-synth-arrow-stop)"/>
+
+  <!-- Q1 → SAFE (right exit, label: 20~30% real data) -->
+  <!-- Q1 right tip: (324,260). SAFE center x=360, top=340 -->
+  <path d="M 324 260 L 360 260 L 360 340" fill="none" stroke="#286d50" stroke-width="1.2" marker-end="url(#2026-10-10-33c39c28-06-synth-arrow-ok)"/>
+
+  <!-- Q2 → COST (left exit, label: bulk first) -->
+  <!-- Q2 left tip: (636,260). COST center x=600, top=340 -->
+  <path d="M 636 260 L 600 260 L 600 340" fill="none" stroke="#94382b" stroke-width="1" marker-end="url(#2026-10-10-33c39c28-06-synth-arrow-stop)"/>
+
+  <!-- Q2 → EFF (right exit, label: small-scale validate first) -->
+  <!-- Q2 right tip: (764,260). EFF center x=808, top=340 -->
+  <path d="M 764 260 L 808 260 L 808 340" fill="none" stroke="#286d50" stroke-width="1.2" marker-end="url(#2026-10-10-33c39c28-06-synth-arrow-ok)"/>
+
+  <!-- Arrow labels -->
+  <!-- START→Q1 label (on vertical segment x=480→down to 180, then horizontal) — place near junction -->
+  <!-- No label on trunk arrows per minimal style -->
+
+  <!-- Q1→RISK label: "0% only" on horizontal seg y=260, x 152..196 midpoint x=174 -->
+  <rect x="100" y="234" width="52" height="20" rx="2" fill="#f8fafb"/>
+  <text x="126" y="248" fill="#94382b" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500" text-anchor="middle">0% only</text>
+
+  <!-- Q1→SAFE label: "20~30% mix" on horizontal seg y=260, x 324..360 midpoint x=342 -->
+  <rect x="302" y="234" width="76" height="20" rx="2" fill="#f8fafb"/>
+  <text x="340" y="248" fill="#286d50" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500" text-anchor="middle">20~30% mix</text>
+
+  <!-- Q2→COST label: "bulk first" on horizontal seg y=260, x 600..636 midpoint x=618 -->
+  <rect x="572" y="234" width="60" height="20" rx="2" fill="#f8fafb"/>
+  <text x="602" y="248" fill="#94382b" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500" text-anchor="middle">bulk first</text>
+
+  <!-- Q2→EFF label: "small-scale first" on horizontal seg y=260, x 764..808 midpoint x=786 -->
+  <rect x="742" y="234" width="88" height="20" rx="2" fill="#f8fafb"/>
+  <text x="786" y="248" fill="#286d50" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500" text-anchor="middle">small-scale first</text>
+
+  <!-- ============================================================
+       NODES
+  ============================================================ -->
+
+  <!-- START node — focal (accent) oval, center x=480, y=108 -->
+  <rect x="344" y="84" width="272" height="68" rx="6" fill="#f8fafb"/>
+  <rect x="344" y="84" width="272" height="68" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.5"/>
+  <!-- eyebrow tag -->
+  <rect x="352" y="92" width="36" height="13" rx="2" fill="transparent" stroke="rgba(13,87,99,0.4)" stroke-width="0.8"/>
+  <text x="370" y="102" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">START</text>
+  <!-- label -->
+  <text x="480" y="128" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Synthetic Data Adoption</text>
+
+  <!-- Q1 diamond — real data mix ratio, center x=260, y=260 -->
+  <!-- diamond: half-width=64, half-height=40 -->
+  <rect x="200" y="222" width="120" height="76" rx="0" fill="#f8fafb" stroke="none"/>
+  <polygon points="260,222 324,260 260,298 196,260" fill="rgba(13,87,99,0.06)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="260" y="255" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Mix Ratio</text>
+  <text x="260" y="270" fill="#3f545c" font-size="9" font-family="'IBM Plex Mono', monospace" text-anchor="middle">real data share</text>
+
+  <!-- Q2 diamond — scale strategy, center x=700, y=260 -->
+  <rect x="640" y="222" width="120" height="76" rx="0" fill="#f8fafb" stroke="none"/>
+  <polygon points="700,222 764,260 700,298 636,260" fill="rgba(13,87,99,0.06)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="700" y="255" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Scale Strategy</text>
+  <text x="700" y="270" fill="#3f545c" font-size="9" font-family="'IBM Plex Mono', monospace" text-anchor="middle">gen. order</text>
+
+  <!-- RISK node — center x=152, y=388, 136×80 -->
+  <rect x="84" y="340" width="136" height="80" rx="6" fill="#f8fafb"/>
+  <rect x="84" y="340" width="136" height="80" rx="6" fill="#f1d9d4" stroke="#94382b" stroke-width="1.2"/>
+  <rect x="92" y="348" width="36" height="13" rx="2" fill="transparent" stroke="rgba(148,56,43,0.4)" stroke-width="0.8"/>
+  <text x="110" y="358" fill="rgba(148,56,43,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">RISK</text>
+  <text x="152" y="386" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Vulnerable to</text>
+  <text x="152" y="403" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Bad Inputs</text>
+
+  <!-- SAFE node — center x=360, y=388, 152×80 -->
+  <rect x="284" y="340" width="152" height="80" rx="6" fill="#f8fafb"/>
+  <rect x="284" y="340" width="152" height="80" rx="6" fill="#d6e9de" stroke="#286d50" stroke-width="1.5"/>
+  <rect x="292" y="348" width="36" height="13" rx="2" fill="transparent" stroke="rgba(40,109,80,0.4)" stroke-width="0.8"/>
+  <text x="310" y="358" fill="rgba(40,109,80,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">GOOD</text>
+  <text x="360" y="386" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Balanced</text>
+  <text x="360" y="403" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Training Data</text>
+
+  <!-- COST node — center x=600, y=388, 144×80 -->
+  <rect x="528" y="340" width="144" height="80" rx="6" fill="#f8fafb"/>
+  <rect x="528" y="340" width="144" height="80" rx="6" fill="#f1d9d4" stroke="#94382b" stroke-width="1.2"/>
+  <rect x="536" y="348" width="36" height="13" rx="2" fill="transparent" stroke="rgba(148,56,43,0.4)" stroke-width="0.8"/>
+  <text x="554" y="358" fill="rgba(148,56,43,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">COST</text>
+  <text x="600" y="386" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">API Cost</text>
+  <text x="600" y="403" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Waste Risk</text>
+
+  <!-- EFF node — center x=808, y=388, 152×80 -->
+  <rect x="732" y="340" width="152" height="80" rx="6" fill="#f8fafb"/>
+  <rect x="732" y="340" width="152" height="80" rx="6" fill="#d6e9de" stroke="#286d50" stroke-width="1.5"/>
+  <rect x="740" y="348" width="36" height="13" rx="2" fill="transparent" stroke="rgba(40,109,80,0.4)" stroke-width="0.8"/>
+  <text x="758" y="358" fill="rgba(40,109,80,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">GOOD</text>
+  <text x="808" y="386" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Efficient</text>
+  <text x="808" y="403" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Cost Control</text>
+
+  <!-- ============================================================
+       LEGEND
+  ============================================================ -->
+  <line x1="40" y1="492" x2="920" y2="492" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+  <text x="40" y="510" fill="#6c8188" font-size="8" font-family="'IBM Plex Mono', monospace" letter-spacing="0.14em">LEGEND</text>
+
+  <!-- Legend item: Start point (accent) -->
+  <rect x="108" y="500" width="16" height="12" rx="3" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="130" y="510" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">Start point</text>
+
+  <!-- Legend item: Decision (diamond) -->
+  <polygon points="182,506 190,502 198,506 190,510" fill="rgba(13,87,99,0.06)" stroke="#0d5763" stroke-width="1"/>
+  <text x="206" y="510" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">Decision</text>
+
+  <!-- Legend item: Recommended path -->
+  <rect x="292" y="500" width="16" height="12" rx="3" fill="#d6e9de" stroke="#286d50" stroke-width="1.2"/>
+  <text x="314" y="510" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">Recommended</text>
+
+  <!-- Legend item: Caution required -->
+  <rect x="400" y="500" width="16" height="12" rx="3" fill="#f1d9d4" stroke="#94382b" stroke-width="1.2"/>
+  <text x="422" y="510" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">Caution</text>
+
+</svg>
+</div>
+</body>
+</html>

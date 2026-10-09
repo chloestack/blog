@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LLM 파인튜닝 데이터 포맷 흐름</title>
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: #f8fafb; }
+  body { display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 0; }
+  svg { display: block; width: 100%; height: auto; max-width: 960px; }
+</style>
+</head>
+<body>
+<svg viewBox="0 0 960 600" xmlns="http://www.w3.org/2000/svg"
+     role="img" aria-labelledby="2026-10-10-33c39c28-03-ft-title 2026-10-10-33c39c28-03-ft-desc">
+  <title id="2026-10-10-33c39c28-03-ft-title">LLM 파인튜닝 데이터 포맷 흐름</title>
+  <desc id="2026-10-10-33c39c28-03-ft-desc">지시문에서 SFT 포맷과 DPO 포맷 두 경로로 분기되어 각각 행동 학습·도메인 적응과 선호도 정렬·안전성·품질 결과로 이어지는 합성 데이터 파이프라인 흐름도.</desc>
+
+  <defs>
+    <!-- Arrow markers -->
+    <marker id="2026-10-10-33c39c28-03-ft-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-10-10-33c39c28-03-ft-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="100%" height="100%" fill="#f8fafb"/>
+
+  <!-- ── ARROWS (drawn before boxes) ── -->
+
+  <!-- 지시문 → SFT (upper path) -->
+  <!-- from right edge of 지시문 box (x=280, y=220) to left edge of SFT box (x=440, y=184) -->
+  <!-- route: right from (280,220) → (360,220) → up to (360,204) → right to (440,204) -->
+  <path d="M 280,220 L 360,220 Q 368,220 368,212 L 368,204 Q 368,196 376,196 L 440,196"
+        fill="none" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-10-10-33c39c28-03-ft-arrow-accent)"/>
+
+  <!-- 지시문 → DPO (lower path) -->
+  <!-- from right edge of 지시문 box (x=280, y=240) to left edge of DPO box (x=440, y=376) -->
+  <!-- route: right from (280,240) → (360,240) → down to (360,396) → right to (440,396) -->
+  <path d="M 280,240 L 360,240 Q 368,240 368,248 L 368,396 Q 368,404 376,404 L 440,404"
+        fill="none" stroke="#3f545c" stroke-width="1.2" marker-end="url(#2026-10-10-33c39c28-03-ft-arrow)"/>
+
+  <!-- SFT → 행동 학습 -->
+  <!-- from right edge of SFT box (x=620, y=196) to left edge of 행동학습 box (x=752, y=196) -->
+  <path d="M 620,196 L 752,196"
+        fill="none" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-10-10-33c39c28-03-ft-arrow-accent)"/>
+
+  <!-- DPO → 선호도 정렬 -->
+  <!-- from right edge of DPO box (x=620, y=404) to left edge of 선호도정렬 box (x=752, y=404) -->
+  <path d="M 620,404 L 752,404"
+        fill="none" stroke="#3f545c" stroke-width="1.2" marker-end="url(#2026-10-10-33c39c28-03-ft-arrow)"/>
+
+
+  <!-- ── NODES ── -->
+
+  <!-- 지시문 (Input node) — center ~(192, 230) -->
+  <!-- box: x=112, y=196, w=168, h=68 -->
+  <rect x="112" y="196" width="168" height="68" rx="6" fill="#f8fafb"/>
+  <rect x="112" y="196" width="168" height="68" rx="6" fill="rgba(58,84,143,0.06)" stroke="#3a548f" stroke-width="1"/>
+  <!-- tag -->
+  <rect x="120" y="204" width="28" height="12" rx="2" fill="transparent" stroke="rgba(58,84,143,0.4)" stroke-width="0.8"/>
+  <text x="134" y="213" fill="rgba(58,84,143,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.08em">INPUT</text>
+  <!-- label -->
+  <text x="196" y="238" fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif"
+        text-anchor="middle">지시문</text>
+  <text x="196" y="254" fill="#6c8188" font-size="11"
+        font-family="'IBM Plex Mono', monospace" text-anchor="middle">Instruction</text>
+
+
+  <!-- SFT 포맷 (Accent / Focal node) — center ~(530, 196) -->
+  <!-- box: x=440, y=160, w=180, h=72 -->
+  <rect x="440" y="160" width="180" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="440" y="160" width="180" height="72" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <!-- tag -->
+  <rect x="448" y="168" width="24" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.4)" stroke-width="0.8"/>
+  <text x="460" y="177" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.08em">SFT</text>
+  <!-- label -->
+  <text x="530" y="192" fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif"
+        text-anchor="middle">SFT 포맷</text>
+  <text x="530" y="208" fill="#3f545c" font-size="11"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif"
+        text-anchor="middle">지시·응답 쌍</text>
+
+
+  <!-- DPO 포맷 (Accent / Focal node) — center ~(530, 404) -->
+  <!-- box: x=440, y=368, w=180, h=72 -->
+  <rect x="440" y="368" width="180" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="440" y="368" width="180" height="72" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <!-- tag -->
+  <rect x="448" y="376" width="24" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.4)" stroke-width="0.8"/>
+  <text x="460" y="385" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.08em">DPO</text>
+  <!-- label -->
+  <text x="530" y="400" fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif"
+        text-anchor="middle">DPO 포맷</text>
+  <text x="530" y="416" fill="#3f545c" font-size="11"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif"
+        text-anchor="middle">선호도 쌍</text>
+
+
+  <!-- 행동 학습 / 도메인 적응 (Backend node) — center ~(844, 196) -->
+  <!-- box: x=752, y=156, w=180, h=80 -->
+  <rect x="752" y="156" width="180" height="80" rx="6" fill="#f8fafb"/>
+  <rect x="752" y="156" width="180" height="80" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <!-- tag -->
+  <rect x="760" y="164" width="32" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.35)" stroke-width="0.8"/>
+  <text x="776" y="173" fill="rgba(18,33,39,0.7)" font-size="7" font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.08em">OUTPUT</text>
+  <!-- label -->
+  <text x="842" y="194" fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif"
+        text-anchor="middle">행동 학습</text>
+  <text x="842" y="212" fill="#3f545c" font-size="12"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif"
+        text-anchor="middle">도메인 적응</text>
+
+
+  <!-- 선호도 정렬 / 안전성·품질 (Backend node) — center ~(844, 404) -->
+  <!-- box: x=752, y=364, w=180, h=80 -->
+  <rect x="752" y="364" width="180" height="80" rx="6" fill="#f8fafb"/>
+  <rect x="752" y="364" width="180" height="80" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <!-- tag -->
+  <rect x="760" y="372" width="32" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.35)" stroke-width="0.8"/>
+  <text x="776" y="381" fill="rgba(18,33,39,0.7)" font-size="7" font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.08em">OUTPUT</text>
+  <!-- label -->
+  <text x="842" y="402" fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif"
+        text-anchor="middle">선호도 정렬</text>
+  <text x="842" y="420" fill="#3f545c" font-size="12"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif"
+        text-anchor="middle">안전성 · 품질</text>
+
+
+  <!-- ── LEGEND ── -->
+  <line x1="40" y1="532" x2="920" y2="532" stroke="rgba(18,33,39,0.10)" stroke-width="0.8"/>
+  <text x="40" y="548" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace"
+        letter-spacing="0.14em">LEGEND</text>
+
+  <!-- Input swatch -->
+  <rect x="116" y="538" width="16" height="16" rx="4" fill="rgba(58,84,143,0.06)" stroke="#3a548f" stroke-width="1"/>
+  <text x="140" y="550" fill="#3f545c" font-size="11"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif">입력</text>
+
+  <!-- Focal / Accent swatch -->
+  <rect x="216" y="538" width="16" height="16" rx="4" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="240" y="550" fill="#3f545c" font-size="11"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif">포맷 분기 (핵심)</text>
+
+  <!-- Output swatch -->
+  <rect x="384" y="538" width="16" height="16" rx="4" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <text x="408" y="550" fill="#3f545c" font-size="11"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif">학습 결과</text>
+
+  <!-- Arrow accent swatch -->
+  <line x1="516" y1="546" x2="544" y2="546" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-10-10-33c39c28-03-ft-arrow-accent)"/>
+  <text x="552" y="550" fill="#3f545c" font-size="11"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif">주 경로</text>
+
+  <!-- Arrow default swatch -->
+  <line x1="636" y1="546" x2="664" y2="546" stroke="#3f545c" stroke-width="1.2" marker-end="url(#2026-10-10-33c39c28-03-ft-arrow)"/>
+  <text x="672" y="550" fill="#3f545c" font-size="11"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif">일반 경로</text>
+
+</svg>
+</body>
+</html>

@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>합성 데이터 파인튜닝 파이프라인</title>
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; font-family: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; }
+  .diagram-wrap { display: block; width: 100%; max-width: 960px; margin: 0 auto; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<div class="diagram-wrap">
+<svg viewBox="0 0 960 600" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="2026-10-10-33c39c28-02-pipeline-title 2026-10-10-33c39c28-02-pipeline-desc">
+  <title id="2026-10-10-33c39c28-02-pipeline-title">합성 데이터 LLM 파인튜닝 파이프라인</title>
+  <desc id="2026-10-10-33c39c28-02-pipeline-desc">시드 데이터에서 출발해 Teacher LLM API 호출과 품질 검증을 거쳐 JSONL 학습 데이터셋을 생성하는 7단계 합성 데이터 파이프라인 흐름도.</desc>
+
+  <defs>
+    <!-- 화살표 마커 -->
+    <marker id="2026-10-10-33c39c28-02-pl-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-10-10-33c39c28-02-pl-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <marker id="2026-10-10-33c39c28-02-pl-arrow-muted" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#6c8188"/>
+    </marker>
+  </defs>
+
+  <!-- 배경 -->
+  <rect width="960" height="600" fill="#f8fafb"/>
+
+  <!-- ============================================================
+       커넥터 (박스보다 먼저)
+       레이아웃: 중앙 x=480 기준 수직 흐름
+       S(480,56) → P(480,152) → L(480,248) → R(480,344) → Q(480,420) → F(640,500)/D(320,500) → DS(640,572 only F→DS)
+       실제 노드 크기 및 y 좌표:
+         S : cx=480 cy=68  h=48
+         P : cx=480 cy=164 h=48
+         L : cx=480 cy=260 h=48
+         R : cx=480 cy=356 h=48
+         Q : cx=480 cy=444 (다이아몬드 h=52 → top=418 bottom=470)
+         F : cx=660 cy=520 h=48
+         D : cx=300 cy=520 h=48
+         DS: cx=660 cy=572 … 아래 조정 필요
+       
+       노드 y 정리 (4px 그리드):
+         S  : y=44,  h=48, cx=480, cy=68,  bottom=92
+         P  : y=140, h=48, cx=480, cy=164, bottom=188
+         L  : y=236, h=48, cx=480, cy=260, bottom=284
+         R  : y=332, h=48, cx=480, cy=356, bottom=380
+         Q  : diamond center=(480,432), half=28 → top=404 bottom=460 left=452 right=508
+         F  : y=488, h=48, cx=660, cy=512, bottom=536
+         D  : y=488, h=48, cx=300, cy=512, bottom=536
+         DS : y=556, h=48, cx=660, cy=580, bottom=604 → 뷰박스 600 초과. 재조정
+       
+       재조정 (뷰박스 0 0 960 600):
+         S  : y=32,  h=48, cy=56
+         P  : y=112, h=48, cy=136
+         L  : y=192, h=48, cy=216
+         R  : y=272, h=48, cy=296
+         Q  : diamond center=(480,372), half=28 → top=344 bottom=400
+         F  : y=428, h=48, cx=660, cy=452
+         D  : y=428, h=48, cx=300, cy=452
+         DS : y=508, h=48, cx=660, cy=532
+         Legend: y=560 (legend strip)
+  ============================================================ -->
+
+  <!-- S → P (수직, 중앙 x=480) -->
+  <path d="M480,80 L480,112" stroke="#3f545c" stroke-width="1" fill="none" marker-end="url(#2026-10-10-33c39c28-02-pl-arrow)"/>
+
+  <!-- P → L -->
+  <path d="M480,160 L480,192" stroke="#0d5763" stroke-width="1" fill="none" marker-end="url(#2026-10-10-33c39c28-02-pl-arrow-accent)"/>
+
+  <!-- L → R -->
+  <path d="M480,240 L480,272" stroke="#0d5763" stroke-width="1" fill="none" marker-end="url(#2026-10-10-33c39c28-02-pl-arrow-accent)"/>
+
+  <!-- R → Q -->
+  <path d="M480,320 L480,344" stroke="#3f545c" stroke-width="1" fill="none" marker-end="url(#2026-10-10-33c39c28-02-pl-arrow)"/>
+
+  <!-- Q → F (예: 오른쪽으로 나가 아래) 
+       Q right = (508,372), F left = (620,452)
+       elbow: x=508→660, 수평 후 하강 -->
+  <path d="M508,372 Q516,372 516,380 L516,444 Q516,452 524,452 L620,452" stroke="#0d5763" stroke-width="1" fill="none" marker-end="url(#2026-10-10-33c39c28-02-pl-arrow-accent)"/>
+
+  <!-- "예" 라벨 -->
+  <rect x="520" y="400" width="24" height="14" rx="2" fill="#f8fafb"/>
+  <text x="532" y="411" fill="#0d5763" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500" text-anchor="middle">예</text>
+
+  <!-- Q → D (아니오: 왼쪽으로 나가 아래)
+       Q left = (452,372), D right = (340,452) -->
+  <path d="M452,372 Q444,372 444,380 L444,444 Q444,452 436,452 L340,452" stroke="#6c8188" stroke-width="1" fill="none" marker-end="url(#2026-10-10-33c39c28-02-pl-arrow-muted)" stroke-dasharray="5,4"/>
+
+  <!-- "아니오" 라벨 -->
+  <rect x="396" y="400" width="44" height="14" rx="2" fill="#f8fafb"/>
+  <text x="418" y="411" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500" text-anchor="middle">아니오</text>
+
+  <!-- F → DS (수직) -->
+  <path d="M660,476 L660,508" stroke="#3f545c" stroke-width="1" fill="none" marker-end="url(#2026-10-10-33c39c28-02-pl-arrow)"/>
+
+  <!-- ============================================================
+       노드 박스들
+  ============================================================ -->
+
+  <!-- S: 시드 데이터 (input 처리: muted@0.10 fill, soft stroke) -->
+  <rect x="400" y="32" width="160" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="400" y="32" width="160" height="48" rx="6" fill="rgba(63,84,92,0.10)" stroke="#6c8188" stroke-width="1"/>
+  <rect x="408" y="38" width="28" height="12" rx="2" fill="transparent" stroke="rgba(108,129,136,0.40)" stroke-width="0.8"/>
+  <text x="422" y="47" fill="rgba(108,129,136,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">INPUT</text>
+  <text x="480" y="60" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">시드 데이터</text>
+  <text x="480" y="74" fill="#3f545c" font-size="9" font-family="'IBM Plex Mono', monospace" text-anchor="middle">100–1000건</text>
+
+  <!-- P: 프롬프트 템플릿 구성 (focal: accent-tint) -->
+  <rect x="396" y="112" width="168" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="396" y="112" width="168" height="48" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <rect x="404" y="118" width="44" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="426" y="127" fill="rgba(13,87,99,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">PROMPT</text>
+  <text x="480" y="140" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">프롬프트 템플릿 구성</text>
+  <text x="480" y="154" fill="#3f545c" font-size="9" font-family="'IBM Plex Mono', monospace" text-anchor="middle">template · few-shot</text>
+
+  <!-- L: Teacher LLM (focal: accent-tint) — 가장 중요한 노드 -->
+  <rect x="388" y="192" width="184" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="388" y="192" width="184" height="48" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="396" y="198" width="20" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="406" y="207" fill="rgba(13,87,99,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">LLM</text>
+  <text x="480" y="220" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Teacher LLM API 호출</text>
+  <text x="480" y="234" fill="#3f545c" font-size="9" font-family="'IBM Plex Mono', monospace" text-anchor="middle">GPT-4o · Claude · Gemini</text>
+
+  <!-- R: 응답 파싱 (backend/step) -->
+  <rect x="396" y="272" width="168" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="396" y="272" width="168" height="48" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="404" y="278" width="28" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="418" y="287" fill="rgba(18,33,39,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">PARSE</text>
+  <text x="480" y="300" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">응답 파싱</text>
+  <text x="480" y="314" fill="#3f545c" font-size="9" font-family="'IBM Plex Mono', monospace" text-anchor="middle">JSON 추출</text>
+
+  <!-- Q: 품질 기준 통과? (다이아몬드) -->
+  <!-- center (480, 372), half-width=52, half-height=28 -->
+  <polygon points="480,344 532,372 480,400 428,372" fill="#f8fafb"/>
+  <polygon points="480,344 532,372 480,400 428,372" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="480" y="368" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">품질 기준</text>
+  <text x="480" y="383" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">통과?</text>
+
+  <!-- F: 포맷 변환 (backend/step) -->
+  <rect x="580" y="428" width="160" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="580" y="428" width="160" height="48" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="588" y="434" width="40" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="608" y="443" fill="rgba(18,33,39,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">FORMAT</text>
+  <text x="660" y="456" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">포맷 변환</text>
+  <text x="660" y="470" fill="#3f545c" font-size="9" font-family="'IBM Plex Mono', monospace" text-anchor="middle">JSONL</text>
+
+  <!-- D: 재생성 또는 폐기 (optional/async: dashed, 연한) -->
+  <rect x="220" y="428" width="160" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="220" y="428" width="160" height="48" rx="6" fill="rgba(18,33,39,0.02)" stroke="rgba(18,33,39,0.20)" stroke-width="1" stroke-dasharray="4,3"/>
+  <rect x="228" y="434" width="28" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.20)" stroke-width="0.8"/>
+  <text x="242" y="443" fill="rgba(18,33,39,0.5)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">SKIP</text>
+  <text x="300" y="456" fill="#3f545c" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">재생성 또는 폐기</text>
+  <text x="300" y="470" fill="#6c8188" font-size="9" font-family="'IBM Plex Mono', monospace" text-anchor="middle">retry · discard</text>
+
+  <!-- DS: 학습 데이터셋 저장 (store: ink@0.05 fill, muted stroke) -->
+  <rect x="580" y="508" width="160" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="580" y="508" width="160" height="48" rx="6" fill="rgba(18,33,39,0.05)" stroke="#3f545c" stroke-width="1"/>
+  <rect x="588" y="514" width="32" height="12" rx="2" fill="transparent" stroke="rgba(63,84,92,0.40)" stroke-width="0.8"/>
+  <text x="604" y="523" fill="rgba(63,84,92,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">STORE</text>
+  <text x="660" y="536" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">학습 데이터셋 저장</text>
+  <text x="660" y="550" fill="#3f545c" font-size="9" font-family="'IBM Plex Mono', monospace" text-anchor="middle">.jsonl · HuggingFace</text>
+
+  <!-- ============================================================
+       레전드 (하단 수평 스트립)
+  ============================================================ -->
+  <line x1="32" y1="568" x2="928" y2="568" stroke="rgba(18,33,39,0.10)" stroke-width="0.8"/>
+
+  <!-- 범례: INPUT -->
+  <rect x="32" y="576" width="12" height="12" rx="2" fill="rgba(63,84,92,0.10)" stroke="#6c8188" stroke-width="0.8"/>
+  <text x="50" y="586" fill="#3f545c" font-size="9" font-family="'IBM Plex Mono', monospace" letter-spacing="0.08em">INPUT</text>
+
+  <!-- 범례: FOCAL -->
+  <rect x="120" y="576" width="12" height="12" rx="2" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="0.8"/>
+  <text x="138" y="586" fill="#3f545c" font-size="9" font-family="'IBM Plex Mono', monospace" letter-spacing="0.08em">FOCAL</text>
+
+  <!-- 범례: STEP -->
+  <rect x="210" y="576" width="12" height="12" rx="2" fill="#ffffff" stroke="#122127" stroke-width="0.8"/>
+  <text x="228" y="586" fill="#3f545c" font-size="9" font-family="'IBM Plex Mono', monospace" letter-spacing="0.08em">STEP</text>
+
+  <!-- 범례: 다이아몬드 = 판단 -->
+  <polygon points="290,582 298,576 306,582 298,588" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="0.8"/>
+  <text x="312" y="586" fill="#3f545c" font-size="9" font-family="'IBM Plex Mono', monospace" letter-spacing="0.08em">DECISION</text>
+
+  <!-- 범례: SKIP (dashed) -->
+  <rect x="406" y="576" width="12" height="12" rx="2" fill="rgba(18,33,39,0.02)" stroke="rgba(18,33,39,0.20)" stroke-width="0.8" stroke-dasharray="3,2"/>
+  <text x="424" y="586" fill="#3f545c" font-size="9" font-family="'IBM Plex Mono', monospace" letter-spacing="0.08em">SKIP</text>
+
+  <!-- 범례: STORE -->
+  <rect x="490" y="576" width="12" height="12" rx="2" fill="rgba(18,33,39,0.05)" stroke="#3f545c" stroke-width="0.8"/>
+  <text x="508" y="586" fill="#3f545c" font-size="9" font-family="'IBM Plex Mono', monospace" letter-spacing="0.08em">STORE</text>
+
+</svg>
+</div>
+</body>
+</html>

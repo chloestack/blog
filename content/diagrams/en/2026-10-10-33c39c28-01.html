@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Synthetic Data Pipeline</title>
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; font-family: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; }
+  .diagram-wrap { width: 100%; max-width: 960px; margin: 0 auto; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<div class="diagram-wrap">
+<svg viewBox="0 0 960 420" xmlns="http://www.w3.org/2000/svg"
+     role="img" aria-labelledby="2026-10-10-33c39c28-01-pipe-title 2026-10-10-33c39c28-01-pipe-desc">
+  <title id="2026-10-10-33c39c28-01-pipe-title">Building an LLM Fine-Tuning Dataset with Synthetic Data</title>
+  <desc id="2026-10-10-33c39c28-01-pipe-desc">Flowchart showing three data collection paths (operational logs, expert annotation, synthetic generation), where the synthetic generation path leads through a Teacher LLM to Student fine-tuning.</desc>
+
+  <defs>
+    <!-- 기본 화살표 (muted) -->
+    <marker id="2026-10-10-33c39c28-01-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <!-- 강조 화살표 (accent) -->
+    <marker id="2026-10-10-33c39c28-01-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <!-- 흐린 화살표 (soft) -->
+    <marker id="2026-10-10-33c39c28-01-arrow-soft" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#6c8188"/>
+    </marker>
+  </defs>
+
+  <!-- 배경 -->
+  <rect width="960" height="420" fill="#f8fafb"/>
+
+  <!-- ===================== 화살표 (박스보다 먼저) ===================== -->
+
+  <!-- A → Q1: 수집 방식 결정 -->
+  <path d="M 196,168 L 268,168" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-10-33c39c28-01-arrow)"/>
+
+  <!-- Q1 → B (운영 로그 위쪽): 다이아몬드 상단(268,168)에서 위 출구 → B 중앙 -->
+  <!-- Q1 상단 꼭짓점: (352, 124) → 오른쪽으로 B (440,88) -->
+  <path d="M 352,124 L 352,88 L 432,88" fill="none" stroke="#6c8188" stroke-width="1" stroke-dasharray="5,3" marker-end="url(#2026-10-10-33c39c28-01-arrow-soft)"/>
+
+  <!-- Q1 → C (전문가 수작업 가운데): 다이아몬드 오른 꼭짓점(436,168) → C (440,168) -->
+  <path d="M 436,168 L 432,168" fill="none" stroke="#6c8188" stroke-width="1" stroke-dasharray="5,3" marker-end="url(#2026-10-10-33c39c28-01-arrow-soft)"/>
+
+  <!-- Q1 → D (합성 생성 아래): 다이아몬드 하단 꼭짓점(352,212) → D (440,248) -->
+  <path d="M 352,212 L 352,248 L 432,248" fill="none" stroke="#0d5763" stroke-width="1.5" marker-end="url(#2026-10-10-33c39c28-01-arrow-accent)"/>
+
+  <!-- D → E -->
+  <path d="M 584,248 L 620,248" fill="none" stroke="#0d5763" stroke-width="1.5" marker-end="url(#2026-10-10-33c39c28-01-arrow-accent)"/>
+
+  <!-- E → F -->
+  <path d="M 744,248 L 780,248" fill="none" stroke="#0d5763" stroke-width="1.5" marker-end="url(#2026-10-10-33c39c28-01-arrow-accent)"/>
+
+  <!-- ===================== 노드 ===================== -->
+
+  <!-- A: 데이터 필요 (input/user 스타일) -->
+  <rect x="60" y="144" width="136" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="60" y="144" width="136" height="48" rx="6" fill="rgba(63,84,92,0.10)" stroke="#6c8188" stroke-width="1"/>
+  <text x="128" y="165" fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Data Needed</text>
+  <text x="128" y="182" fill="#3f545c" font-size="11"
+        font-family="'IBM Plex Mono', ui-monospace, monospace"
+        text-anchor="middle">start</text>
+
+  <!-- Q1: 수집 방식 결정 다이아몬드 (focal/accent) -->
+  <!-- 중심: (352, 168), 반폭 84, 반높이 44 -->
+  <polygon points="352,124 436,168 352,212 268,168" fill="#f8fafb"/>
+  <polygon points="352,124 436,168 352,212 268,168"
+           fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.5"/>
+  <text x="352" y="163" fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Collection</text>
+  <text x="352" y="180" fill="#0d5763" font-size="11" font-weight="500"
+        font-family="'IBM Plex Mono', ui-monospace, monospace"
+        text-anchor="middle">method</text>
+
+  <!-- 엣지 라벨: 운영 로그 -->
+  <rect x="330" y="94" width="52" height="16" rx="2" fill="#f8fafb"/>
+  <text x="356" y="106" fill="#6c8188" font-size="11" font-weight="500"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Op. Logs</text>
+
+  <!-- 엣지 라벨: 전문가 작성 -->
+  <rect x="437" y="148" width="60" height="16" rx="2" fill="#f8fafb"/>
+  <text x="467" y="160" fill="#6c8188" font-size="11" font-weight="500"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Expert Label</text>
+
+  <!-- 엣지 라벨: 합성 생성 -->
+  <rect x="326" y="218" width="56" height="16" rx="2" fill="#f8fafb"/>
+  <text x="354" y="230" fill="#0d5763" font-size="11" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Synthetic</text>
+
+  <!-- B: 실 데이터 / 개인정보 위험 (비권장 경로) -->
+  <rect x="432" y="60" width="148" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="432" y="60" width="148" height="56" rx="6"
+        fill="rgba(148,56,43,0.06)" stroke="rgba(148,56,43,0.45)" stroke-width="1" stroke-dasharray="4,3"/>
+  <!-- 태그 -->
+  <rect x="440" y="67" width="36" height="12" rx="2" fill="transparent" stroke="rgba(148,56,43,0.35)" stroke-width="0.8"/>
+  <text x="458" y="76" fill="rgba(148,56,43,0.75)" font-size="8"
+        font-family="'IBM Plex Mono', ui-monospace, monospace"
+        text-anchor="middle" letter-spacing="0.08em">RISK</text>
+  <text x="506" y="88" fill="#122127" font-size="13" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Real Data</text>
+  <text x="506" y="106" fill="#6c8188" font-size="11"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Privacy risk</text>
+
+  <!-- C: 수작업 / 속도·비용 한계 (비권장 경로) -->
+  <rect x="432" y="144" width="148" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="432" y="144" width="148" height="48" rx="6"
+        fill="rgba(148,56,43,0.06)" stroke="rgba(148,56,43,0.45)" stroke-width="1" stroke-dasharray="4,3"/>
+  <!-- 태그 -->
+  <rect x="440" y="151" width="36" height="12" rx="2" fill="transparent" stroke="rgba(148,56,43,0.35)" stroke-width="0.8"/>
+  <text x="458" y="160" fill="rgba(148,56,43,0.75)" font-size="8"
+        font-family="'IBM Plex Mono', ui-monospace, monospace"
+        text-anchor="middle" letter-spacing="0.08em">LIMIT</text>
+  <text x="506" y="165" fill="#122127" font-size="13" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Manual Label</text>
+  <text x="506" y="182" fill="#6c8188" font-size="11"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Speed &amp; cost limits</text>
+
+  <!-- D: Teacher LLM (focal) -->
+  <rect x="432" y="224" width="152" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="432" y="224" width="152" height="48" rx="6"
+        fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.5"/>
+  <!-- 태그 -->
+  <rect x="440" y="231" width="40" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="460" y="240" fill="#0d5763" font-size="8"
+        font-family="'IBM Plex Mono', ui-monospace, monospace"
+        text-anchor="middle" letter-spacing="0.08em">LLM</text>
+  <text x="508" y="256" fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Teacher LLM</text>
+  <text x="508" y="272" fill="#0d5763" font-size="11"
+        font-family="'IBM Plex Mono', ui-monospace, monospace"
+        text-anchor="middle">data generation</text>
+
+  <!-- E → F 사이 라벨: 파인튜닝용 -->
+  <rect x="750" y="228" width="28" height="16" rx="2" fill="#f8fafb"/>
+  <text x="764" y="240" fill="#3f545c" font-size="10" font-weight="500"
+        font-family="'IBM Plex Mono', ui-monospace, monospace"
+        text-anchor="middle">train</text>
+
+  <!-- E: 다양한 합성 데이터 -->
+  <rect x="620" y="224" width="124" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="620" y="224" width="124" height="48" rx="6"
+        fill="rgba(13,87,99,0.05)" stroke="#3f545c" stroke-width="1"/>
+  <!-- 태그 -->
+  <rect x="628" y="231" width="48" height="12" rx="2" fill="transparent" stroke="rgba(63,84,92,0.40)" stroke-width="0.8"/>
+  <text x="652" y="240" fill="#3f545c" font-size="8"
+        font-family="'IBM Plex Mono', ui-monospace, monospace"
+        text-anchor="middle" letter-spacing="0.08em">DATASET</text>
+  <text x="682" y="257" fill="#122127" font-size="13" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Synth. Data</text>
+  <text x="682" y="272" fill="#3f545c" font-size="11"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Diversity ensured</text>
+
+  <!-- F: Student 파인튜닝 -->
+  <rect x="780" y="224" width="144" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="780" y="224" width="144" height="48" rx="6"
+        fill="rgba(13,87,99,0.05)" stroke="#3f545c" stroke-width="1"/>
+  <!-- 태그 -->
+  <rect x="788" y="231" width="56" height="12" rx="2" fill="transparent" stroke="rgba(63,84,92,0.40)" stroke-width="0.8"/>
+  <text x="816" y="240" fill="#3f545c" font-size="8"
+        font-family="'IBM Plex Mono', ui-monospace, monospace"
+        text-anchor="middle" letter-spacing="0.08em">FINE-TUNE</text>
+  <text x="852" y="256" fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Student Fine-Tune</text>
+  <text x="852" y="272" fill="#3f545c" font-size="11"
+        font-family="'IBM Plex Mono', ui-monospace, monospace"
+        text-anchor="middle">model training</text>
+
+  <!-- ===================== 범례 구분선 ===================== -->
+  <line x1="40" y1="344" x2="920" y2="344" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+
+  <!-- 범례 레이블 -->
+  <text x="40" y="360" fill="#3f545c" font-size="10"
+        font-family="'IBM Plex Mono', ui-monospace, monospace"
+        letter-spacing="0.14em">LEGEND</text>
+
+  <!-- 범례 항목 1: 권장 경로 -->
+  <line x1="120" y1="358" x2="148" y2="358" stroke="#0d5763" stroke-width="1.5" marker-end="url(#2026-10-10-33c39c28-01-arrow-accent)"/>
+  <text x="156" y="362" fill="#122127" font-size="11" font-weight="500"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">Recommended (synthetic)</text>
+
+  <!-- 범례 항목 2: 비권장 경로 -->
+  <line x1="340" y1="358" x2="368" y2="358" stroke="#6c8188" stroke-width="1" stroke-dasharray="5,3" marker-end="url(#2026-10-10-33c39c28-01-arrow-soft)"/>
+  <text x="376" y="362" fill="#122127" font-size="11" font-weight="500"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">Not recommended (risk/limit)</text>
+
+  <!-- 범례 항목 3: Teacher LLM (focal) -->
+  <rect x="556" y="350" width="16" height="16" rx="4"
+        fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.5"/>
+  <text x="580" y="362" fill="#122127" font-size="11" font-weight="500"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">Key node</text>
+
+  <!-- 범례 항목 4: 제한 노드 -->
+  <rect x="668" y="350" width="16" height="16" rx="4"
+        fill="rgba(148,56,43,0.06)" stroke="rgba(148,56,43,0.45)" stroke-width="1" stroke-dasharray="4,3"/>
+  <text x="692" y="362" fill="#122127" font-size="11" font-weight="500"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">Limiting factor</text>
+
+</svg>
+</div>
+</body>
+</html>

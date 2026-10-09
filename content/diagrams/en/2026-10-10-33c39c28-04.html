@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Synthetic Data Diversity Validation Flow</title>
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; display: flex; justify-content: center; padding: 0; }
+  .diagram-wrap { width: 100%; max-width: 720px; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<div class="diagram-wrap">
+<svg viewBox="0 0 720 660" xmlns="http://www.w3.org/2000/svg"
+     role="img" aria-labelledby="2026-10-10-33c39c28-04-synth-title 2026-10-10-33c39c28-04-synth-desc">
+  <title id="2026-10-10-33c39c28-04-synth-title">Synthetic Data Diversity Validation Flow</title>
+  <desc id="2026-10-10-33c39c28-04-synth-desc">From seed data, three augmentation techniques (Paraphrase, Context Aug, Persona) produce a synthetic dataset. Diversity is validated by Self-BLEU; if the criterion is met the flow ends, otherwise temperature and seed are re-adjusted.</desc>
+
+  <defs>
+    <!-- 기본 화살표 (muted) -->
+    <marker id="2026-10-10-33c39c28-04-arr" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <!-- accent 화살표 -->
+    <marker id="2026-10-10-33c39c28-04-arr-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <!-- ok 화살표 (녹색) -->
+    <marker id="2026-10-10-33c39c28-04-arr-ok" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#286d50"/>
+    </marker>
+    <!-- warn 화살표 (주황) -->
+    <marker id="2026-10-10-33c39c28-04-arr-warn" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#a96a08"/>
+    </marker>
+  </defs>
+
+  <!-- 배경 -->
+  <rect width="720" height="660" fill="#f8fafb"/>
+
+  <!-- ═══════════════════════════════
+       ARROWS (drawn before boxes)
+  ════════════════════════════════ -->
+
+  <!-- 시드 데이터 → Paraphrase (SD 하단 → PH 상단, 왼쪽 경로) -->
+  <!-- SD center-x=360, bottom=148. PH center-x=176, top=196 -->
+  <!-- elbow: 수직 아래 148→172, 수평 왼쪽 360→176, 수직 아래 172→196 -->
+  <path d="M 360,148 L 360,172 Q 360,180 352,180 L 184,180 Q 176,180 176,188 L 176,196"
+        fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-10-33c39c28-04-arr)"/>
+
+  <!-- 시드 데이터 → Context Aug (직선 하향) -->
+  <!-- SD bottom=148 → CA top=196, 같은 x=360 -->
+  <path d="M 360,148 L 360,196"
+        fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-10-33c39c28-04-arr)"/>
+
+  <!-- 시드 데이터 → Persona (오른쪽 경로) -->
+  <!-- SD center-x=360, bottom=148. PV center-x=544, top=196 -->
+  <path d="M 360,148 L 360,172 Q 360,180 368,180 L 536,180 Q 544,180 544,188 L 544,196"
+        fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-10-33c39c28-04-arr)"/>
+
+  <!-- Paraphrase → 혼합 데이터셋 -->
+  <!-- PH center-x=176, bottom=248. MX top=320, center-x=360 -->
+  <path d="M 176,248 L 176,284 Q 176,292 184,292 L 352,292 Q 360,292 360,300 L 360,320"
+        fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-10-33c39c28-04-arr)"/>
+
+  <!-- Context Aug → 혼합 데이터셋 (직선) -->
+  <!-- CA bottom=248. MX top=320. 같은 x=360 -->
+  <path d="M 360,248 L 360,320"
+        fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-10-33c39c28-04-arr)"/>
+
+  <!-- Persona → 혼합 데이터셋 -->
+  <!-- PV center-x=544, bottom=248. MX top=320, center-x=360 -->
+  <path d="M 544,248 L 544,284 Q 544,292 536,292 L 368,292 Q 360,292 360,300 L 360,320"
+        fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-10-33c39c28-04-arr)"/>
+
+  <!-- 혼합 데이터셋 → Self-BLEU 결정 (직선) -->
+  <!-- MX bottom=372. SB top=420 -->
+  <path d="M 360,372 L 360,420"
+        fill="none" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-10-10-33c39c28-04-arr-accent)"/>
+
+  <!-- Self-BLEU → 다양성 충족 (예 / 오른쪽) -->
+  <!-- SB right point: x=436, y=456. OK left=472, center-y=524 -->
+  <path d="M 436,456 L 456,456 Q 464,456 464,464 L 464,516 Q 464,524 472,524 L 472,524"
+        fill="none" stroke="#286d50" stroke-width="1.2" marker-end="url(#2026-10-10-33c39c28-04-arr-ok)"/>
+
+  <!-- Self-BLEU → 온도·시드 조정 (아니오 / 왼쪽) -->
+  <!-- SB left point: x=284, y=456. FIX right=248, center-y=524 -->
+  <path d="M 284,456 L 264,456 Q 256,456 256,464 L 256,516 Q 256,524 248,524 L 248,524"
+        fill="none" stroke="#a96a08" stroke-width="1.2" marker-end="url(#2026-10-10-33c39c28-04-arr-warn)"/>
+
+  <!-- ═══════════════════════════════
+       ARROW LABELS
+  ════════════════════════════════ -->
+
+  <!-- "예" 라벨 (SB → OK 경로, y=456 선분) -->
+  <rect x="439" y="445" width="20" height="14" rx="2" fill="#f8fafb"/>
+  <text x="449" y="455" fill="#286d50" font-size="10" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Yes</text>
+
+  <!-- "아니오" 라벨 (SB → FIX 경로, y=456 선분) -->
+  <rect x="247" y="445" width="36" height="14" rx="2" fill="#f8fafb"/>
+  <text x="265" y="455" fill="#a96a08" font-size="10" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">No</text>
+
+  <!-- ═══════════════════════════════
+       NODES
+  ════════════════════════════════ -->
+
+  <!-- 시드 데이터 (input 처리 — link 색 계열, 상단 중앙) -->
+  <!-- x=280, y=80, w=160, h=68, cx=360, cy=114 -->
+  <rect x="280" y="80" width="160" height="68" rx="6" fill="#f8fafb"/>
+  <rect x="280" y="80" width="160" height="68" rx="6"
+        fill="rgba(58,84,143,0.07)" stroke="#3a548f" stroke-width="1.2"/>
+  <!-- tag -->
+  <rect x="288" y="88" width="36" height="12" rx="2"
+        fill="transparent" stroke="rgba(58,84,143,0.40)" stroke-width="0.8"/>
+  <text x="306" y="97" fill="rgba(58,84,143,0.8)" font-size="8"
+        font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.08em">INPUT</text>
+  <!-- label -->
+  <text x="360" y="122" fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Seed Data</text>
+
+  <!-- Paraphrase (accent 처리) -->
+  <!-- x=96, y=196, w=160, h=52, cx=176, cy=222 -->
+  <rect x="96" y="196" width="160" height="52" rx="6" fill="#f8fafb"/>
+  <rect x="96" y="196" width="160" height="52" rx="6"
+        fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="104" y="204" width="36" height="12" rx="2"
+        fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="122" y="213" fill="rgba(13,87,99,0.8)" font-size="8"
+        font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.08em">AUG</text>
+  <text x="176" y="228" fill="#122127" font-size="13" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Paraphrase</text>
+  <text x="176" y="242" fill="#3f545c" font-size="10"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Rephrase</text>
+
+  <!-- Context Aug (accent 처리) -->
+  <!-- x=280, y=196, w=160, h=52, cx=360, cy=222 -->
+  <rect x="280" y="196" width="160" height="52" rx="6" fill="#f8fafb"/>
+  <rect x="280" y="196" width="160" height="52" rx="6"
+        fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="288" y="204" width="36" height="12" rx="2"
+        fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="306" y="213" fill="rgba(13,87,99,0.8)" font-size="8"
+        font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.08em">AUG</text>
+  <text x="360" y="228" fill="#122127" font-size="13" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Context Aug</text>
+  <text x="360" y="242" fill="#3f545c" font-size="10"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Add/Remove Context</text>
+
+  <!-- Persona (accent 처리) -->
+  <!-- x=464, y=196, w=160, h=52, cx=544, cy=222 -->
+  <rect x="464" y="196" width="160" height="52" rx="6" fill="#f8fafb"/>
+  <rect x="464" y="196" width="160" height="52" rx="6"
+        fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="472" y="204" width="36" height="12" rx="2"
+        fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="490" y="213" fill="rgba(13,87,99,0.8)" font-size="8"
+        font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.08em">AUG</text>
+  <text x="544" y="228" fill="#122127" font-size="13" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Persona</text>
+  <text x="544" y="242" fill="#3f545c" font-size="10"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Switch Persona</text>
+
+  <!-- 혼합 데이터셋 (focal — accent) -->
+  <!-- x=256, y=320, w=208, h=52, cx=360, cy=346 -->
+  <rect x="256" y="320" width="208" height="52" rx="6" fill="#f8fafb"/>
+  <rect x="256" y="320" width="208" height="52" rx="6"
+        fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.8"/>
+  <rect x="264" y="328" width="40" height="12" rx="2"
+        fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="284" y="337" fill="rgba(13,87,99,0.8)" font-size="8"
+        font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.08em">MERGE</text>
+  <text x="360" y="354" fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Mixed Dataset</text>
+
+  <!-- Self-BLEU 결정 다이아몬드 -->
+  <!-- center: 360,456. half-w=76, half-h=36 -->
+  <!-- points: top(360,420) right(436,456) bottom(360,492) left(284,456) -->
+  <polygon points="360,420 436,456 360,492 284,456"
+           fill="#f8fafb"/>
+  <polygon points="360,420 436,456 360,492 284,456"
+           fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="360" y="452" fill="#122127" font-size="12" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Self-BLEU</text>
+  <text x="360" y="467" fill="#3f545c" font-size="10"
+        font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle">&lt; 0.5?</text>
+
+  <!-- 다양성 충족 (ok — 녹색) -->
+  <!-- x=472, y=500, w=160, h=52, cx=552, cy=526 -->
+  <rect x="472" y="500" width="160" height="52" rx="6" fill="#f8fafb"/>
+  <rect x="472" y="500" width="160" height="52" rx="6"
+        fill="rgba(40,109,80,0.08)" stroke="#286d50" stroke-width="1.2"/>
+  <rect x="480" y="508" width="40" height="12" rx="2"
+        fill="transparent" stroke="rgba(40,109,80,0.40)" stroke-width="0.8"/>
+  <text x="500" y="517" fill="rgba(40,109,80,0.8)" font-size="8"
+        font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.08em">PASS</text>
+  <text x="552" y="534" fill="#122127" font-size="13" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Diversity Met</text>
+
+  <!-- 온도·시드 조정 (warn — 주황) -->
+  <!-- x=88, y=500, w=160, h=52, cx=168, cy=526 -->
+  <rect x="88" y="500" width="160" height="52" rx="6" fill="#f8fafb"/>
+  <rect x="88" y="500" width="160" height="52" rx="6"
+        fill="rgba(169,106,8,0.08)" stroke="#a96a08" stroke-width="1.2"/>
+  <rect x="96" y="508" width="40" height="12" rx="2"
+        fill="transparent" stroke="rgba(169,106,8,0.40)" stroke-width="0.8"/>
+  <text x="116" y="517" fill="rgba(169,106,8,0.8)" font-size="8"
+        font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.08em">RETRY</text>
+  <text x="168" y="534" fill="#122127" font-size="13" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Adjust Temp/Seed</text>
+
+  <!-- ═══════════════════════════════
+       LEGEND STRIP
+  ════════════════════════════════ -->
+  <line x1="32" y1="596" x2="688" y2="596"
+        stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+
+  <!-- INPUT -->
+  <rect x="32" y="608" width="12" height="12" rx="2"
+        fill="rgba(58,84,143,0.07)" stroke="#3a548f" stroke-width="1"/>
+  <text x="50" y="618" fill="#3f545c" font-size="10"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">Input</text>
+
+  <!-- AUG -->
+  <rect x="100" y="608" width="12" height="12" rx="2"
+        fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="118" y="618" fill="#3f545c" font-size="10"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">Aug / Merge</text>
+
+  <!-- PASS -->
+  <rect x="240" y="608" width="12" height="12" rx="2"
+        fill="rgba(40,109,80,0.08)" stroke="#286d50" stroke-width="1"/>
+  <text x="258" y="618" fill="#3f545c" font-size="10"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">Criterion Met</text>
+
+  <!-- RETRY -->
+  <rect x="348" y="608" width="12" height="12" rx="2"
+        fill="rgba(169,106,8,0.08)" stroke="#a96a08" stroke-width="1"/>
+  <text x="366" y="618" fill="#3f545c" font-size="10"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">Needs Retry</text>
+
+  <!-- DECISION -->
+  <polygon points="458,614 466,608 474,614 466,620"
+           fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="482" y="618" fill="#3f545c" font-size="10"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">Decision</text>
+
+</svg>
+</div>
+</body>
+</html>
