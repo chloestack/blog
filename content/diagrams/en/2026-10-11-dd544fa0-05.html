@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Domain Knowledge → Cursor Rules Mapping</title>
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<svg viewBox="0 0 960 600" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="2026-10-11-dd544fa0-05-cursor-rules-title 2026-10-11-dd544fa0-05-cursor-rules-desc">
+  <title id="2026-10-11-dd544fa0-05-cursor-rules-title">Mapping from Domain Knowledge to Cursor Rules Files</title>
+  <desc id="2026-10-11-dd544fa0-05-cursor-rules-desc">Domain knowledge is divided into three categories (State Transition Rules, Business Calculations, External Contracts), each connected to a corresponding .mdc rule file.</desc>
+
+  <defs>
+    <!-- 화살표 마커 -->
+    <marker id="2026-10-11-dd544fa0-05-cr-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-10-11-dd544fa0-05-cr-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+  </defs>
+
+  <!-- 배경 -->
+  <rect width="960" height="600" fill="#f8fafb"/>
+
+  <!-- ───────────────────────────────────────
+       레이어 1: 화살표 (nodes 전에 그림)
+  ─────────────────────────────────────────── -->
+
+  <!-- 도메인 지식 → 상태 전이 규칙 (좌측) -->
+  <!-- 도메인 지식 bottom-center (480,212) → 상태 전이 top (300,260) -->
+  <!-- 경로: (480,212) → (480,236) → (300,236) → (300,260) -->
+  <path d="M 480 212 L 480 236 L 300 236 L 300 260"
+        fill="none" stroke="#0d5763" stroke-width="1.5"
+        marker-end="url(#2026-10-11-dd544fa0-05-cr-arrow-accent)"/>
+
+  <!-- 도메인 지식 → 비즈니스 계산 (중앙) -->
+  <!-- 도메인 지식 bottom-center (480,212) → 비즈니스 계산 top (480,260) -->
+  <path d="M 480 212 L 480 260"
+        fill="none" stroke="#0d5763" stroke-width="1.5"
+        marker-end="url(#2026-10-11-dd544fa0-05-cr-arrow-accent)"/>
+
+  <!-- 도메인 지식 → 외부 계약 (우측) -->
+  <!-- 도메인 지식 bottom-center (480,212) → 외부 계약 top (660,260) -->
+  <!-- 경로: (480,212) → (480,236) → (660,236) → (660,260) -->
+  <path d="M 480 212 L 480 236 L 660 236 L 660 260"
+        fill="none" stroke="#0d5763" stroke-width="1.5"
+        marker-end="url(#2026-10-11-dd544fa0-05-cr-arrow-accent)"/>
+
+  <!-- 상태 전이 규칙 → order_rules.mdc -->
+  <!-- 상태 전이 bottom (300,332) → order_rules top (300,396) -->
+  <path d="M 300 332 L 300 396"
+        fill="none" stroke="#3f545c" stroke-width="1"
+        marker-end="url(#2026-10-11-dd544fa0-05-cr-arrow)"/>
+
+  <!-- 비즈니스 계산 → pricing_rules.mdc -->
+  <!-- 비즈니스 계산 bottom (480,332) → pricing_rules top (480,396) -->
+  <path d="M 480 332 L 480 396"
+        fill="none" stroke="#3f545c" stroke-width="1"
+        marker-end="url(#2026-10-11-dd544fa0-05-cr-arrow)"/>
+
+  <!-- 외부 계약 → integration_rules.mdc -->
+  <!-- 외부 계약 bottom (660,332) → integration_rules top (660,396) -->
+  <path d="M 660 332 L 660 396"
+        fill="none" stroke="#3f545c" stroke-width="1"
+        marker-end="url(#2026-10-11-dd544fa0-05-cr-arrow)"/>
+
+  <!-- ───────────────────────────────────────
+       레이어 2: 노드
+  ─────────────────────────────────────────── -->
+
+  <!-- ── 도메인 지식 (focal / accent) ── -->
+  <!-- center (480, 172), w=200, h=60, top-left (380,142) -->
+  <rect x="380" y="142" width="200" height="60" rx="6" fill="#f8fafb"/>
+  <rect x="380" y="142" width="200" height="60" rx="6"
+        fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.5"/>
+  <!-- 태그 박스 -->
+  <rect x="388" y="150" width="36" height="12" rx="2"
+        fill="transparent" stroke="rgba(13,87,99,0.4)" stroke-width="0.8"/>
+  <text x="406" y="159"
+        font-family="'IBM Plex Mono', ui-monospace, monospace"
+        font-size="8" fill="rgba(13,87,99,0.8)"
+        text-anchor="middle" letter-spacing="0.08em">INPUT</text>
+  <!-- 노드 이름 -->
+  <text x="480" y="182"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif"
+        font-size="14" font-weight="600" fill="#122127"
+        text-anchor="middle">Domain Knowledge</text>
+
+  <!-- ── 상태 전이 규칙 (accent) ── -->
+  <!-- center (300, 296), w=200, h=72, top-left (200,260) -->
+  <rect x="200" y="260" width="200" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="200" y="260" width="200" height="72" rx="6"
+        fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="208" y="268" width="36" height="12" rx="2"
+        fill="transparent" stroke="rgba(13,87,99,0.4)" stroke-width="0.8"/>
+  <text x="226" y="277"
+        font-family="'IBM Plex Mono', ui-monospace, monospace"
+        font-size="8" fill="rgba(13,87,99,0.8)"
+        text-anchor="middle" letter-spacing="0.08em">STATE</text>
+  <text x="300" y="301"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif"
+        font-size="14" font-weight="600" fill="#122127"
+        text-anchor="middle">State Transition Rules</text>
+  <text x="300" y="320"
+        font-family="'IBM Plex Mono', ui-monospace, monospace"
+        font-size="11" fill="#3f545c"
+        text-anchor="middle">Order · Delivery</text>
+
+  <!-- ── 비즈니스 계산 (accent) ── -->
+  <!-- center (480, 296), w=200, h=72, top-left (380,260) -->
+  <rect x="380" y="260" width="200" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="380" y="260" width="200" height="72" rx="6"
+        fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="388" y="268" width="36" height="12" rx="2"
+        fill="transparent" stroke="rgba(13,87,99,0.4)" stroke-width="0.8"/>
+  <text x="406" y="277"
+        font-family="'IBM Plex Mono', ui-monospace, monospace"
+        font-size="8" fill="rgba(13,87,99,0.8)"
+        text-anchor="middle" letter-spacing="0.08em">CALC</text>
+  <text x="480" y="301"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif"
+        font-size="14" font-weight="600" fill="#122127"
+        text-anchor="middle">Business Calculations</text>
+  <text x="480" y="320"
+        font-family="'IBM Plex Mono', ui-monospace, monospace"
+        font-size="11" fill="#3f545c"
+        text-anchor="middle">Discount · Fee</text>
+
+  <!-- ── 외부 계약 (accent) ── -->
+  <!-- center (660, 296), w=200, h=72, top-left (560,260) -->
+  <rect x="560" y="260" width="200" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="560" y="260" width="200" height="72" rx="6"
+        fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="568" y="268" width="36" height="12" rx="2"
+        fill="transparent" stroke="rgba(13,87,99,0.4)" stroke-width="0.8"/>
+  <text x="586" y="277"
+        font-family="'IBM Plex Mono', ui-monospace, monospace"
+        font-size="8" fill="rgba(13,87,99,0.8)"
+        text-anchor="middle" letter-spacing="0.08em">EXT</text>
+  <text x="660" y="301"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif"
+        font-size="14" font-weight="600" fill="#122127"
+        text-anchor="middle">External Contracts</text>
+  <text x="660" y="320"
+        font-family="'IBM Plex Mono', ui-monospace, monospace"
+        font-size="11" fill="#3f545c"
+        text-anchor="middle">Payment · Logistics</text>
+
+  <!-- ── order_rules.mdc (store/file) ── -->
+  <!-- center (300, 436), w=220, h=56, top-left (190,396) -->
+  <rect x="190" y="396" width="220" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="190" y="396" width="220" height="56" rx="6"
+        fill="rgba(18,33,39,0.05)" stroke="#6c8188" stroke-width="1"/>
+  <rect x="198" y="404" width="28" height="12" rx="2"
+        fill="transparent" stroke="rgba(108,129,136,0.5)" stroke-width="0.8"/>
+  <text x="212" y="413"
+        font-family="'IBM Plex Mono', ui-monospace, monospace"
+        font-size="8" fill="rgba(108,129,136,0.9)"
+        text-anchor="middle" letter-spacing="0.08em">MDC</text>
+  <text x="300" y="432"
+        font-family="'IBM Plex Mono', ui-monospace, monospace"
+        font-size="12" font-weight="500" fill="#122127"
+        text-anchor="middle">order_rules.mdc</text>
+
+  <!-- ── pricing_rules.mdc (store/file) ── -->
+  <!-- center (480, 436), w=220, h=56, top-left (370,396) -->
+  <rect x="370" y="396" width="220" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="370" y="396" width="220" height="56" rx="6"
+        fill="rgba(18,33,39,0.05)" stroke="#6c8188" stroke-width="1"/>
+  <rect x="378" y="404" width="28" height="12" rx="2"
+        fill="transparent" stroke="rgba(108,129,136,0.5)" stroke-width="0.8"/>
+  <text x="392" y="413"
+        font-family="'IBM Plex Mono', ui-monospace, monospace"
+        font-size="8" fill="rgba(108,129,136,0.9)"
+        text-anchor="middle" letter-spacing="0.08em">MDC</text>
+  <text x="480" y="432"
+        font-family="'IBM Plex Mono', ui-monospace, monospace"
+        font-size="12" font-weight="500" fill="#122127"
+        text-anchor="middle">pricing_rules.mdc</text>
+
+  <!-- ── integration_rules.mdc (store/file) ── -->
+  <!-- center (660, 436), w=220, h=56, top-left (550,396) -->
+  <rect x="550" y="396" width="220" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="550" y="396" width="220" height="56" rx="6"
+        fill="rgba(18,33,39,0.05)" stroke="#6c8188" stroke-width="1"/>
+  <rect x="558" y="404" width="28" height="12" rx="2"
+        fill="transparent" stroke="rgba(108,129,136,0.5)" stroke-width="0.8"/>
+  <text x="572" y="413"
+        font-family="'IBM Plex Mono', ui-monospace, monospace"
+        font-size="8" fill="rgba(108,129,136,0.9)"
+        text-anchor="middle" letter-spacing="0.08em">MDC</text>
+  <text x="660" y="432"
+        font-family="'IBM Plex Mono', ui-monospace, monospace"
+        font-size="12" font-weight="500" fill="#122127"
+        text-anchor="middle">integration_rules.mdc</text>
+
+  <!-- ───────────────────────────────────────
+       레전드
+  ─────────────────────────────────────────── -->
+  <line x1="30" y1="524" x2="930" y2="524"
+        stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+
+  <!-- 레전드 레이블 -->
+  <text x="30" y="540"
+        font-family="'IBM Plex Mono', ui-monospace, monospace"
+        font-size="10" fill="#3f545c" letter-spacing="0.14em">LEGEND</text>
+
+  <!-- 도메인 범주 스와치 -->
+  <rect x="104" y="530" width="16" height="12" rx="3"
+        fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="126" y="540"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif"
+        font-size="11" fill="#3f545c">Domain Category</text>
+
+  <!-- 규칙 파일 스와치 -->
+  <rect x="260" y="530" width="16" height="12" rx="3"
+        fill="rgba(18,33,39,0.05)" stroke="#6c8188" stroke-width="1"/>
+  <text x="282" y="540"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif"
+        font-size="11" fill="#3f545c">Cursor Rules File (.mdc)</text>
+
+  <!-- 화살표 범례 -->
+  <line x1="460" y1="536" x2="476" y2="536"
+        stroke="#0d5763" stroke-width="1.5" marker-end="url(#2026-10-11-dd544fa0-05-cr-arrow-accent)"/>
+  <text x="484" y="540"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif"
+        font-size="11" fill="#3f545c">Classification</text>
+
+  <line x1="580" y1="536" x2="596" y2="536"
+        stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-11-dd544fa0-05-cr-arrow)"/>
+  <text x="604" y="540"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif"
+        font-size="11" fill="#3f545c">Rule Mapping</text>
+
+</svg>
+</body>
+</html>

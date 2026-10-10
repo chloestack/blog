@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cursor Rules Improvement Cycle</title>
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; font-family: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; }
+  .diagram-wrap { display: block; width: 100%; max-width: 960px; margin: 0 auto; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<div class="diagram-wrap">
+<svg
+  viewBox="0 0 960 600"
+  xmlns="http://www.w3.org/2000/svg"
+  role="img"
+  aria-labelledby="2026-10-11-dd544fa0-08-cycle-title 2026-10-11-dd544fa0-08-cycle-desc"
+>
+  <title id="2026-10-11-dd544fa0-08-cycle-title">Cursor Rules Improvement Cycle</title>
+  <desc id="2026-10-11-dd544fa0-08-cycle-desc">A 5-stage cycle starting from code review, through pattern extraction, rules drafting, repository commit, and AI code quality monitoring, then back to code review.</desc>
+
+  <defs>
+    <!-- 기본 화살표 -->
+    <marker id="2026-10-11-dd544fa0-08-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <!-- 강조 화살표 -->
+    <marker id="2026-10-11-dd544fa0-08-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <!-- 복귀 화살표 -->
+    <marker id="2026-10-11-dd544fa0-08-arrow-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3a548f"/>
+    </marker>
+  </defs>
+
+  <!-- 배경 -->
+  <rect width="960" height="600" fill="#f8fafb"/>
+
+  <!-- ────────────────────────────────────────────
+       레이아웃 설계 (top-down, 중앙 정렬)
+       노드 순서: Review(top) → Extract → Draft → Apply → Monitor
+       x 중앙: 480, 노드 w=200, h=64
+       y 간격: Review=60, Extract=168, Draft=276, Apply=384, Monitor=492
+       사이클 복귀선: Monitor → Review (왼쪽 우회)
+  ──────────────────────────────────────────── -->
+
+  <!-- ── 화살표 (노드보다 먼저 그림) ── -->
+
+  <!-- Review → Extract -->
+  <line x1="480" y1="124" x2="480" y2="160" stroke="#3f545c" stroke-width="1.2" marker-end="url(#2026-10-11-dd544fa0-08-arrow)"/>
+
+  <!-- Extract → Draft -->
+  <line x1="480" y1="232" x2="480" y2="268" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-10-11-dd544fa0-08-arrow-accent)"/>
+
+  <!-- Draft → Apply -->
+  <line x1="480" y1="340" x2="480" y2="376" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-10-11-dd544fa0-08-arrow-accent)"/>
+
+  <!-- Apply → Monitor -->
+  <line x1="480" y1="448" x2="480" y2="484" stroke="#3f545c" stroke-width="1.2" marker-end="url(#2026-10-11-dd544fa0-08-arrow)"/>
+
+  <!-- Monitor → Review (사이클 복귀: 왼쪽 우회 직교 경로) -->
+  <!-- Monitor 왼쪽 중앙(380,524) → 왼쪽(200,524) → 위(200,92) → Review 왼쪽(380,92) -->
+  <path d="M 380,524 L 200,524 L 200,92 L 380,92"
+        fill="none" stroke="#3a548f" stroke-width="1.2" stroke-dasharray="5,4"
+        marker-end="url(#2026-10-11-dd544fa0-08-arrow-link)"/>
+
+  <!-- 복귀 화살표 레이블 마스크+텍스트 (왼쪽 세그먼트 중간, 수직 선 왼쪽에 배치) -->
+  <rect x="112" y="292" width="72" height="16" rx="2" fill="#f8fafb"/>
+  <text x="148" y="303" fill="#3a548f" font-size="10" font-family="'IBM Plex Sans KR', sans-serif"
+        text-anchor="middle" font-weight="500">Cycle Repeat</text>
+
+  <!-- ── 노드 ── -->
+
+  <!-- 1. 코드 리뷰 (input 처리 — 시작점, link 톤) -->
+  <rect x="380" y="60" width="200" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="380" y="60" width="200" height="64" rx="6" fill="rgba(58,84,143,0.07)" stroke="#3a548f" stroke-width="1"/>
+  <!-- 태그 -->
+  <rect x="388" y="68" width="36" height="12" rx="2" fill="transparent" stroke="rgba(58,84,143,0.40)" stroke-width="0.8"/>
+  <text x="406" y="77" fill="rgba(58,84,143,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.08em">START</text>
+  <!-- 이름 -->
+  <text x="480" y="97" fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Code Review</text>
+  <!-- 서브레이블 -->
+  <text x="480" y="114" fill="#3f545c" font-size="11"
+        font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Collect recurring patterns</text>
+
+  <!-- 2. 패턴 추출 (focal) -->
+  <rect x="380" y="168" width="200" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="380" y="168" width="200" height="64" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <rect x="388" y="176" width="44" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="410" y="185" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.08em">EXTRACT</text>
+  <text x="480" y="205" fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Pattern Extraction</text>
+  <text x="480" y="222" fill="#3f545c" font-size="11"
+        font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Identify rule candidates</text>
+
+  <!-- 3. Rules 초안 (focal) -->
+  <rect x="380" y="276" width="200" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="380" y="276" width="200" height="64" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <rect x="388" y="284" width="36" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="406" y="293" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.08em">DRAFT</text>
+  <text x="480" y="313" fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Rules Draft</text>
+  <text x="480" y="330" fill="#3f545c" font-size="11"
+        font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Write · Team Review</text>
+
+  <!-- 4. 규칙 반영 (backend/ok) -->
+  <rect x="380" y="384" width="200" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="380" y="384" width="200" height="64" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="388" y="392" width="36" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="406" y="401" fill="rgba(18,33,39,0.7)" font-size="7" font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.08em">COMMIT</text>
+  <text x="480" y="421" fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Apply Rules</text>
+  <text x="480" y="438" fill="#3f545c" font-size="11"
+        font-family="'IBM Plex Mono', monospace" text-anchor="middle">Repo Commit</text>
+
+  <!-- 5. AI 코드 품질 관찰 (store/muted) -->
+  <rect x="380" y="492" width="200" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="380" y="492" width="200" height="64" rx="6" fill="rgba(18,33,39,0.04)" stroke="#c3d0d4" stroke-width="1"/>
+  <rect x="388" y="500" width="44" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.25)" stroke-width="0.8"/>
+  <text x="410" y="509" fill="rgba(18,33,39,0.5)" font-size="7" font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.08em">MONITOR</text>
+  <text x="480" y="529" fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">AI Code Quality Watch</text>
+  <text x="480" y="546" fill="#6c8188" font-size="11"
+        font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Verify improvement</text>
+
+  <!-- ── 범례 구분선 + 범례 ── -->
+  <line x1="30" y1="582" x2="930" y2="582" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+
+  <!-- 범례 항목들 -->
+  <!-- 강조 노드 (focal) -->
+  <rect x="30" y="588" width="10" height="10" rx="2" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="46" y="597" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.08em">Key Step</text>
+
+  <!-- 시작점 -->
+  <rect x="160" y="588" width="10" height="10" rx="2" fill="rgba(58,84,143,0.07)" stroke="#3a548f" stroke-width="1"/>
+  <text x="176" y="597" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.08em">Start</text>
+
+  <!-- 실선 화살표 -->
+  <line x1="260" y1="593" x2="284" y2="593" stroke="#3f545c" stroke-width="1.2" marker-end="url(#2026-10-11-dd544fa0-08-arrow)"/>
+  <text x="292" y="597" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.08em">Step Flow</text>
+
+  <!-- 점선 화살표 -->
+  <line x1="400" y1="593" x2="424" y2="593" stroke="#3a548f" stroke-width="1.2" stroke-dasharray="5,4" marker-end="url(#2026-10-11-dd544fa0-08-arrow-link)"/>
+  <text x="432" y="597" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.08em">Cycle Return</text>
+
+</svg>
+</div>
+</body>
+</html>

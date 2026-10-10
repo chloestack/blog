@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; display: flex; justify-content: center; padding: 0; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<svg viewBox="0 0 960 340" xmlns="http://www.w3.org/2000/svg"
+     role="img" aria-labelledby="2026-10-11-dd544fa0-04-flow-title 2026-10-11-dd544fa0-04-flow-desc">
+  <title id="2026-10-11-dd544fa0-04-flow-title">global.mdc 적용 여부에 따른 AI 코드 생성 분기</title>
+  <desc id="2026-10-11-dd544fa0-04-flow-desc">AI 코드 생성 요청이 global.mdc 규칙 적용 여부에 따라 두 경로로 분기된다. 규칙이 적용된 경우 포트 경유 Hexagonal 아키텍처를 준수하고, 적용되지 않은 경우 직접 JPA 주입으로 레이어 경계를 위반한다.</desc>
+
+  <defs>
+    <!-- 기본 화살표 -->
+    <marker id="2026-10-11-dd544fa0-04-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <!-- 예(OK) 화살표 -->
+    <marker id="2026-10-11-dd544fa0-04-arrow-ok" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#286d50"/>
+    </marker>
+    <!-- 아니오(stop) 화살표 -->
+    <marker id="2026-10-11-dd544fa0-04-arrow-stop" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#94382b"/>
+    </marker>
+  </defs>
+
+  <!-- 배경 -->
+  <rect width="960" height="340" fill="#f8fafb"/>
+
+  <!-- ── 화살표를 박스보다 먼저 그린다 ── -->
+
+  <!-- Req → Q (수평) -->
+  <line x1="220" y1="170" x2="330" y2="170"
+        stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-11-dd544fa0-04-arrow)"/>
+
+  <!-- Q → HEX (위 방향, 오른쪽 중앙에서 위로 꺾어 HEX 왼쪽 중앙으로) -->
+  <!-- Q 오른쪽: x=450, y=170 → 오른쪽으로 잠깐 → 위로 올라감 → HEX 왼쪽: x=560, y=96 -->
+  <path d="M450,170 L520,170 L520,96 L560,96"
+        fill="none" stroke="#286d50" stroke-width="1"
+        marker-end="url(#2026-10-11-dd544fa0-04-arrow-ok)"/>
+
+  <!-- Q → DIRECT (아래 방향, Q 오른쪽에서 아래로 꺾어 DIRECT 왼쪽으로) -->
+  <!-- Q 오른쪽: x=450, y=170 → 오른쪽으로 → 아래로 → DIRECT 왼쪽: x=560, y=244 -->
+  <path d="M450,170 L520,170 L520,244 L560,244"
+        fill="none" stroke="#94382b" stroke-width="1"
+        marker-end="url(#2026-10-11-dd544fa0-04-arrow-stop)"/>
+
+  <!-- 화살표 라벨: 예 -->
+  <rect x="494" y="120" width="24" height="16" rx="2" fill="#f8fafb"/>
+  <text x="506" y="131" fill="#286d50" font-size="12" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">예</text>
+
+  <!-- 화살표 라벨: 아니오 -->
+  <rect x="482" y="204" width="48" height="16" rx="2" fill="#f8fafb"/>
+  <text x="506" y="215" fill="#94382b" font-size="12" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">아니오</text>
+
+  <!-- ── 노드 박스 ── -->
+
+  <!-- 1. Req: AI 코드 생성 (input 스타일) -->
+  <rect x="60" y="140" width="160" height="60" rx="6" fill="#f8fafb"/>
+  <rect x="60" y="140" width="160" height="60" rx="6"
+        fill="rgba(58,84,143,0.08)" stroke="#3a548f" stroke-width="1"/>
+  <!-- 타입 태그 -->
+  <rect x="68" y="146" width="32" height="12" rx="2"
+        fill="transparent" stroke="rgba(58,84,143,0.40)" stroke-width="0.8"/>
+  <text x="84" y="155" fill="rgba(58,84,143,0.8)" font-size="7"
+        font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.08em">INPUT</text>
+  <!-- 노드 이름 -->
+  <text x="140" y="176" fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">AI 코드 생성</text>
+
+  <!-- 2. Q: global.mdc 적용됐나 (diamond, focal) -->
+  <!-- 다이아몬드: 중심(390, 170), 가로 60, 세로 52 -->
+  <polygon points="390,118 450,170 390,222 330,170"
+           fill="#f8fafb"/>
+  <polygon points="390,118 450,170 390,222 330,170"
+           fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="390" y="165" fill="#122127" font-size="12" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">global.mdc</text>
+  <text x="390" y="181" fill="#122127" font-size="12" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">적용됐나?</text>
+
+  <!-- 3. HEX: 포트 경유 Hexagonal 준수 (ok / backend 스타일) -->
+  <rect x="560" y="64" width="200" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="560" y="64" width="200" height="64" rx="6"
+        fill="#d6e9de" stroke="#286d50" stroke-width="1"/>
+  <!-- 타입 태그 -->
+  <rect x="568" y="70" width="24" height="12" rx="2"
+        fill="transparent" stroke="rgba(40,109,80,0.40)" stroke-width="0.8"/>
+  <text x="580" y="79" fill="rgba(40,109,80,0.8)" font-size="7"
+        font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.08em">OK</text>
+  <!-- 노드 이름 -->
+  <text x="660" y="92" fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">포트 경유</text>
+  <!-- 서브라벨 -->
+  <text x="660" y="112" fill="#3f545c" font-size="11"
+        font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle">Hexagonal 준수</text>
+
+  <!-- 4. DIRECT: 직접 JPA 주입 (stop 스타일) -->
+  <rect x="560" y="212" width="200" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="560" y="212" width="200" height="64" rx="6"
+        fill="#f1d9d4" stroke="#94382b" stroke-width="1"/>
+  <!-- 타입 태그 -->
+  <rect x="568" y="218" width="32" height="12" rx="2"
+        fill="transparent" stroke="rgba(148,56,43,0.40)" stroke-width="0.8"/>
+  <text x="584" y="227" fill="rgba(148,56,43,0.8)" font-size="7"
+        font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.08em">WARN</text>
+  <!-- 노드 이름 -->
+  <text x="660" y="240" fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">직접 JPA 주입</text>
+  <!-- 서브라벨 -->
+  <text x="660" y="260" fill="#3f545c" font-size="11"
+        font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle">레이어 경계 위반</text>
+
+  <!-- ── 범례 구분선 + 범례 ── -->
+  <line x1="40" y1="300" x2="920" y2="300"
+        stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+
+  <text x="40" y="316" fill="#3f545c" font-size="10"
+        font-family="'IBM Plex Mono', monospace"
+        letter-spacing="0.14em">LEGEND</text>
+
+  <!-- 범례 항목 1: 입력 -->
+  <rect x="116" y="308" width="12" height="12" rx="2"
+        fill="rgba(58,84,143,0.08)" stroke="#3a548f" stroke-width="0.8"/>
+  <text x="134" y="319" fill="#3f545c" font-size="10"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">입력</text>
+
+  <!-- 범례 항목 2: 분기 조건 -->
+  <polygon points="184,320 196,308 208,320 196,332"
+           fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="0.8"/>
+  <text x="216" y="319" fill="#3f545c" font-size="10"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">분기 조건</text>
+
+  <!-- 범례 항목 3: 준수 -->
+  <rect x="292" y="308" width="12" height="12" rx="2"
+        fill="#d6e9de" stroke="#286d50" stroke-width="0.8"/>
+  <text x="310" y="319" fill="#3f545c" font-size="10"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">아키텍처 준수</text>
+
+  <!-- 범례 항목 4: 위반 -->
+  <rect x="420" y="308" width="12" height="12" rx="2"
+        fill="#f1d9d4" stroke="#94382b" stroke-width="0.8"/>
+  <text x="438" y="319" fill="#3f545c" font-size="10"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">규칙 위반</text>
+
+</svg>
+</body>
+</html>

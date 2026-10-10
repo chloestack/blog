@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 480" role="img" aria-labelledby="2026-10-11-dd544fa0-03-cursor-rules-title 2026-10-11-dd544fa0-03-cursor-rules-desc">
+  <title id="2026-10-11-dd544fa0-03-cursor-rules-title">Cursor Rules 적용 범위</title>
+  <desc id="2026-10-11-dd544fa0-03-cursor-rules-desc">글로벌 규칙은 모든 AI 요청에 적용되고, 도메인·인프라·API 규칙은 각 경로의 파일 작업에만 적용된다는 계층 구조를 보여주는 플로우차트.</desc>
+
+  <defs>
+    <!-- Arrow markers -->
+    <marker id="2026-10-11-dd544fa0-03-cr-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-10-11-dd544fa0-03-cr-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+  </defs>
+
+  <!-- Page background -->
+  <rect width="960" height="480" fill="#f8fafb"/>
+
+  <!-- ─── SECTION LABELS ─── -->
+  <text x="48" y="52" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.14em" font-weight="500">규칙 (RULE)</text>
+  <text x="576" y="52" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.14em" font-weight="500">적용 대상 (TARGET)</text>
+
+  <!-- divider between sections -->
+  <line x1="480" y1="68" x2="480" y2="420" stroke="rgba(18,33,39,0.08)" stroke-width="1" stroke-dasharray="4,4"/>
+
+  <!-- ═══════════════════════════════════════
+       ROW 1 — 글로벌 규칙
+  ═══════════════════════════════════════ -->
+
+  <!-- Arrow: 글로벌 → 모든 AI 요청 (horizontal) -->
+  <line x1="292" y1="124" x2="520" y2="124" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-10-11-dd544fa0-03-cr-arrow-accent)"/>
+
+  <!-- 글로벌 규칙 (accent / focal) -->
+  <rect x="48" y="96" width="244" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="48" y="96" width="244" height="56" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <!-- type tag -->
+  <rect x="56" y="102" width="44" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="78" y="111" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">GLOBAL</text>
+  <!-- label -->
+  <text x="170" y="125" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">글로벌 규칙</text>
+  <text x="170" y="143" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">Always</text>
+
+  <!-- 모든 AI 요청 -->
+  <rect x="520" y="96" width="244" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="520" y="96" width="244" height="56" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="528" y="102" width="36" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="546" y="111" fill="rgba(18,33,39,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">TARGET</text>
+  <text x="642" y="125" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">모든 AI 요청</text>
+  <text x="642" y="143" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">all requests</text>
+
+  <!-- ═══════════════════════════════════════
+       ROW 2 — 도메인 규칙
+  ═══════════════════════════════════════ -->
+
+  <!-- Arrow: 도메인 → 도메인 파일 작업 -->
+  <line x1="292" y1="228" x2="520" y2="228" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-11-dd544fa0-03-cr-arrow)"/>
+
+  <!-- 도메인 규칙 -->
+  <rect x="48" y="200" width="244" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="48" y="200" width="244" height="56" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="56" y="206" width="44" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="78" y="215" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">DOMAIN</text>
+  <text x="170" y="229" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">도메인 규칙</text>
+  <text x="170" y="247" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">src/domain/**</text>
+
+  <!-- 도메인 파일 작업 -->
+  <rect x="520" y="200" width="244" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="520" y="200" width="244" height="56" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="528" y="206" width="36" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="546" y="215" fill="rgba(18,33,39,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">TARGET</text>
+  <text x="642" y="229" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">도메인 파일 작업</text>
+  <text x="642" y="247" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">domain file tasks</text>
+
+  <!-- ═══════════════════════════════════════
+       ROW 3 — 인프라 규칙
+  ═══════════════════════════════════════ -->
+
+  <!-- Arrow: 인프라 → 인프라 파일 작업 -->
+  <line x1="292" y1="308" x2="520" y2="308" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-11-dd544fa0-03-cr-arrow)"/>
+
+  <!-- 인프라 규칙 -->
+  <rect x="48" y="280" width="244" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="48" y="280" width="244" height="56" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="56" y="286" width="36" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="74" y="295" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">INFRA</text>
+  <text x="170" y="309" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">인프라 규칙</text>
+  <text x="170" y="327" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">src/infra/**</text>
+
+  <!-- 인프라 파일 작업 -->
+  <rect x="520" y="280" width="244" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="520" y="280" width="244" height="56" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="528" y="286" width="36" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="546" y="295" fill="rgba(18,33,39,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">TARGET</text>
+  <text x="642" y="309" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">인프라 파일 작업</text>
+  <text x="642" y="327" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">infra file tasks</text>
+
+  <!-- ═══════════════════════════════════════
+       ROW 4 — API 규칙
+  ═══════════════════════════════════════ -->
+
+  <!-- Arrow: API → API 파일 작업 -->
+  <line x1="292" y1="388" x2="520" y2="388" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-11-dd544fa0-03-cr-arrow)"/>
+
+  <!-- API 규칙 -->
+  <rect x="48" y="360" width="244" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="48" y="360" width="244" height="56" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="56" y="366" width="28" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="70" y="375" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">API</text>
+  <text x="170" y="389" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">API 규칙</text>
+  <text x="170" y="407" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">src/api/**</text>
+
+  <!-- API 파일 작업 -->
+  <rect x="520" y="360" width="244" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="520" y="360" width="244" height="56" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="528" y="366" width="36" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="546" y="375" fill="rgba(18,33,39,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">TARGET</text>
+  <text x="642" y="389" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">API 파일 작업</text>
+  <text x="642" y="407" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">api file tasks</text>
+
+  <!-- ─── LEGEND ─── -->
+  <line x1="48" y1="440" x2="912" y2="440" stroke="rgba(18,33,39,0.10)" stroke-width="0.8"/>
+  <text x="48" y="456" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.14em">LEGEND</text>
+
+  <!-- legend item 1: accent box -->
+  <rect x="120" y="446" width="16" height="12" rx="3" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="142" y="456" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">규칙 파일</text>
+
+  <!-- legend item 2: white box -->
+  <rect x="248" y="446" width="16" height="12" rx="3" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <text x="270" y="456" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">적용 대상</text>
+
+  <!-- legend item 3: accent arrow -->
+  <line x1="376" y1="452" x2="404" y2="452" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-10-11-dd544fa0-03-cr-arrow-accent)"/>
+  <text x="412" y="456" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">글로벌 적용</text>
+
+  <!-- legend item 4: muted arrow -->
+  <line x1="536" y1="452" x2="564" y2="452" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-11-dd544fa0-03-cr-arrow)"/>
+  <text x="572" y="456" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">경로 한정 적용</text>
+
+</svg>
+</body>
+</html>

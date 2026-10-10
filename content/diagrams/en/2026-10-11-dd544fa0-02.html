@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+  .wrap { width: 100%; max-width: 960px; padding: 0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+<svg viewBox="0 0 960 600" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="2026-10-11-dd544fa0-02-cursor-rules-title 2026-10-11-dd544fa0-02-cursor-rules-desc" style="width:100%;height:auto;display:block;">
+  <title id="2026-10-11-dd544fa0-02-cursor-rules-title">Cursor Rules Activation Flow</title>
+  <desc id="2026-10-11-dd544fa0-02-cursor-rules-desc">Diagram showing how four rule types in the .cursor/rules folder (Always, Auto Attached, Agent Requested, Manual) flow through the system prompt to produce an AI response.</desc>
+
+  <defs>
+    <!-- 기본 화살표 -->
+    <marker id="2026-10-11-dd544fa0-02-arr" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0,8 3,0 6" fill="#3f545c"/>
+    </marker>
+    <!-- 포커스 화살표 -->
+    <marker id="2026-10-11-dd544fa0-02-arr-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0,8 3,0 6" fill="#0d5763"/>
+    </marker>
+    <!-- 시스템 프롬프트 화살표 -->
+    <marker id="2026-10-11-dd544fa0-02-arr-sp" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0,8 3,0 6" fill="#3a548f"/>
+    </marker>
+  </defs>
+
+  <!-- 배경 -->
+  <rect width="960" height="600" fill="#f8fafb"/>
+
+  <!-- ─────────────────────────────────────────
+       커넥터 레이어 (노드보다 먼저)
+  ───────────────────────────────────────── -->
+
+  <!-- Rules → A (Always) -->
+  <path d="M 240 132 L 240 168 Q 240 176 232 176 L 200 176 Q 192 176 192 184 L 192 212" fill="none" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-10-11-dd544fa0-02-arr-accent)"/>
+
+  <!-- Rules → B (Auto Attached) -->
+  <path d="M 300 132 L 300 156 Q 300 164 300 172 L 300 212" fill="none" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-10-11-dd544fa0-02-arr-accent)"/>
+
+  <!-- Rules → C (Agent Requested) -->
+  <path d="M 360 132 L 360 168 Q 360 176 368 176 L 440 176 Q 448 176 448 184 L 448 212" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-11-dd544fa0-02-arr)"/>
+
+  <!-- Rules → D (Manual) -->
+  <path d="M 380 132 L 380 156 Q 380 164 396 164 L 556 164 Q 564 164 564 172 L 564 212" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-11-dd544fa0-02-arr)"/>
+
+  <!-- A → SP -->
+  <path d="M 192 280 L 192 316 Q 192 324 200 324 L 356 324 Q 364 324 364 332 L 364 356" fill="none" stroke="#0d5763" stroke-width="1.2" stroke-dasharray="5,3" marker-end="url(#2026-10-11-dd544fa0-02-arr-accent)"/>
+
+  <!-- B → SP -->
+  <path d="M 300 280 L 300 316 Q 300 324 308 324 L 356 324 Q 364 324 364 332 L 364 356" fill="none" stroke="#0d5763" stroke-width="1.2" stroke-dasharray="5,3" marker-end="url(#2026-10-11-dd544fa0-02-arr-accent)"/>
+
+  <!-- C → SP -->
+  <path d="M 448 280 L 448 316 Q 448 324 440 324 L 372 324 Q 364 324 364 332 L 364 356" fill="none" stroke="#3f545c" stroke-width="1" stroke-dasharray="5,3" marker-end="url(#2026-10-11-dd544fa0-02-arr)"/>
+
+  <!-- D → SP -->
+  <path d="M 564 280 L 564 316 Q 564 324 556 324 L 372 324 Q 364 324 364 332 L 364 356" fill="none" stroke="#3f545c" stroke-width="1" stroke-dasharray="5,3" marker-end="url(#2026-10-11-dd544fa0-02-arr)"/>
+
+  <!-- SP → AI -->
+  <path d="M 364 428 L 364 452 Q 364 460 364 468 L 364 488" fill="none" stroke="#3a548f" stroke-width="1.4" marker-end="url(#2026-10-11-dd544fa0-02-arr-sp)"/>
+
+  <!-- ─────────────────────────────────────────
+       노드 레이어
+  ───────────────────────────────────────── -->
+
+  <!-- Rules 노드 (focal) -->
+  <rect x="168" y="60" width="224" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="168" y="60" width="224" height="72" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <!-- 타입 태그 -->
+  <rect x="176" y="68" width="44" height="13" rx="2" fill="transparent" stroke="rgba(13,87,99,0.4)" stroke-width="0.8"/>
+  <text x="198" y="78" fill="rgba(13,87,99,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">RULES</text>
+  <!-- 노드 이름 -->
+  <text x="280" y="100" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">.cursor/rules/</text>
+  <text x="280" y="118" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">Rule File Directory</text>
+
+  <!-- A: Always 노드 (active) -->
+  <rect x="132" y="212" width="120" height="68" rx="6" fill="#f8fafb"/>
+  <rect x="132" y="212" width="120" height="68" rx="6" fill="rgba(13,87,99,0.07)" stroke="#0d5763" stroke-width="1"/>
+  <rect x="140" y="219" width="44" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.35)" stroke-width="0.8"/>
+  <text x="162" y="229" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">ALWAYS</text>
+  <text x="192" y="252" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">Always</text>
+  <text x="192" y="268" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">Always included</text>
+
+  <!-- B: Auto Attached 노드 (active) -->
+  <rect x="240" y="212" width="120" height="68" rx="6" fill="#f8fafb"/>
+  <rect x="240" y="212" width="120" height="68" rx="6" fill="rgba(13,87,99,0.07)" stroke="#0d5763" stroke-width="1"/>
+  <rect x="248" y="219" width="64" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.35)" stroke-width="0.8"/>
+  <text x="280" y="229" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">AUTO ATTACH</text>
+  <text x="300" y="250" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">Auto Attached</text>
+  <text x="300" y="266" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">On glob match</text>
+
+  <!-- C: Agent Requested 노드 (muted) -->
+  <rect x="388" y="212" width="120" height="68" rx="6" fill="#f8fafb"/>
+  <rect x="388" y="212" width="120" height="68" rx="6" fill="rgba(18,33,39,0.03)" stroke="#c3d0d4" stroke-width="1"/>
+  <rect x="396" y="219" width="56" height="12" rx="2" fill="transparent" stroke="rgba(63,84,92,0.30)" stroke-width="0.8"/>
+  <text x="424" y="229" fill="rgba(63,84,92,0.7)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">AGENT REQ</text>
+  <text x="448" y="250" fill="#3f545c" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">Agent Requested</text>
+  <text x="448" y="266" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">AI decides</text>
+
+  <!-- D: Manual 노드 (muted) -->
+  <rect x="504" y="212" width="120" height="68" rx="6" fill="#f8fafb"/>
+  <rect x="504" y="212" width="120" height="68" rx="6" fill="rgba(18,33,39,0.03)" stroke="#c3d0d4" stroke-width="1"/>
+  <rect x="512" y="219" width="44" height="12" rx="2" fill="transparent" stroke="rgba(63,84,92,0.30)" stroke-width="0.8"/>
+  <text x="534" y="229" fill="rgba(63,84,92,0.7)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">MANUAL</text>
+  <text x="564" y="252" fill="#3f545c" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">Manual</text>
+  <text x="564" y="268" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">Explicit call</text>
+
+  <!-- SP: 시스템 프롬프트 노드 (focal) -->
+  <rect x="264" y="356" width="200" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="264" y="356" width="200" height="72" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.4"/>
+  <rect x="272" y="364" width="52" height="13" rx="2" fill="transparent" stroke="rgba(13,87,99,0.4)" stroke-width="0.8"/>
+  <text x="298" y="374" fill="rgba(13,87,99,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">CONTEXT</text>
+  <text x="364" y="400" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">System Prompt</text>
+  <text x="364" y="416" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">System Prompt</text>
+
+  <!-- AI 응답 노드 -->
+  <rect x="284" y="488" width="160" height="60" rx="6" fill="#f8fafb"/>
+  <rect x="284" y="488" width="160" height="60" rx="6" fill="rgba(18,33,39,0.03)" stroke="#3a548f" stroke-width="1.2"/>
+  <rect x="292" y="496" width="44" height="12" rx="2" fill="transparent" stroke="rgba(58,84,143,0.40)" stroke-width="0.8"/>
+  <text x="314" y="506" fill="rgba(58,84,143,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">OUTPUT</text>
+  <text x="364" y="528" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">AI Response</text>
+
+  <!-- ─────────────────────────────────────────
+       화살표 레이블
+  ───────────────────────────────────────── -->
+
+  <!-- SP → AI 레이블 -->
+  <rect x="330" y="450" width="68" height="14" rx="2" fill="#f8fafb"/>
+  <text x="364" y="460" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">Generate</text>
+
+  <!-- ─────────────────────────────────────────
+       범례 스트립
+  ───────────────────────────────────────── -->
+  <line x1="40" y1="572" x2="920" y2="572" stroke="rgba(18,33,39,0.10)" stroke-width="0.8"/>
+
+  <!-- 범례 항목들 -->
+  <!-- 활성 규칙 -->
+  <rect x="40" y="582" width="12" height="12" rx="2" fill="rgba(13,87,99,0.07)" stroke="#0d5763" stroke-width="1"/>
+  <text x="58" y="592" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif">Active rule type</text>
+
+  <!-- 수동 규칙 -->
+  <rect x="180" y="582" width="12" height="12" rx="2" fill="rgba(18,33,39,0.03)" stroke="#c3d0d4" stroke-width="1"/>
+  <text x="198" y="592" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif">Manual rule type</text>
+
+  <!-- 포커스 -->
+  <rect x="340" y="582" width="12" height="12" rx="2" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.4"/>
+  <text x="358" y="592" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif">Key stage</text>
+
+  <!-- 화살표 실선 -->
+  <line x1="480" y1="588" x2="504" y2="588" stroke="#0d5763" stroke-width="1.2"/>
+  <polygon points="501,585 507,588 501,591" fill="#0d5763"/>
+  <text x="512" y="592" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif">Activation flow</text>
+
+  <!-- 화살표 점선 -->
+  <line x1="640" y1="588" x2="664" y2="588" stroke="#3f545c" stroke-width="1" stroke-dasharray="4,3"/>
+  <polygon points="661,585 667,588 661,591" fill="#3f545c"/>
+  <text x="672" y="592" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif">Context merge</text>
+
+</svg>
+</div>
+</body>
+</html>
