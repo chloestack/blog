@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<svg viewBox="0 0 960 600" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="2026-10-12-73776053-03-rag-chunk-title 2026-10-12-73776053-03-rag-chunk-desc">
+  <title id="2026-10-12-73776053-03-rag-chunk-title">Recursive Chunking 분할 흐름</title>
+  <desc id="2026-10-12-73776053-03-rag-chunk-desc">RAG Recursive Chunking 전략에서 청크 크기 초과 여부를 시작으로 단락·문장·단어·문자 경계 분할을 순차적으로 시도하는 의사결정 흐름을 보여주는 순서도.</desc>
+
+  <defs>
+    <!-- Arrow markers -->
+    <marker id="2026-10-12-73776053-03-arr" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0,8 3,0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-10-12-73776053-03-arr-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0,8 3,0 6" fill="#0d5763"/>
+    </marker>
+    <marker id="2026-10-12-73776053-03-arr-ok" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0,8 3,0 6" fill="#286d50"/>
+    </marker>
+    <marker id="2026-10-12-73776053-03-arr-warn" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0,8 3,0 6" fill="#a96a08"/>
+    </marker>
+    <marker id="2026-10-12-73776053-03-arr-stop" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0,8 3,0 6" fill="#94382b"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="960" height="600" fill="#f8fafb"/>
+
+  <!-- ===================== CONNECTORS (drawn before boxes) ===================== -->
+
+  <!-- S → 아니오 → KEEP (right) -->
+  <path d="M 480,108 L 676,108" fill="none" stroke="#286d50" stroke-width="1" marker-end="url(#2026-10-12-73776053-03-arr-ok)"/>
+  <!-- label: 아니오 -->
+  <rect x="544" y="93" width="52" height="14" rx="2" fill="#f8fafb"/>
+  <text x="570" y="103" fill="#286d50" font-size="10" font-family="'IBM Plex Sans KR',sans-serif" text-anchor="middle" font-weight="500">아니오</text>
+
+  <!-- S → 예 → D1 (down) -->
+  <path d="M 400,120 L 400,180" fill="none" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-10-12-73776053-03-arr-accent)"/>
+  <!-- label: 예 -->
+  <rect x="378" y="142" width="24" height="14" rx="2" fill="#f8fafb"/>
+  <text x="390" y="152" fill="#0d5763" font-size="10" font-family="'IBM Plex Sans KR',sans-serif" text-anchor="middle" font-weight="500">예</text>
+
+  <!-- D1 → 예 → P (right) -->
+  <path d="M 480,216 L 676,216" fill="none" stroke="#286d50" stroke-width="1" marker-end="url(#2026-10-12-73776053-03-arr-ok)"/>
+  <!-- label: 예 -->
+  <rect x="548" y="201" width="24" height="14" rx="2" fill="#f8fafb"/>
+  <text x="560" y="211" fill="#286d50" font-size="10" font-family="'IBM Plex Sans KR',sans-serif" text-anchor="middle" font-weight="500">예</text>
+
+  <!-- D1 → 아니오 → D2 (down) -->
+  <path d="M 400,228 L 400,296" fill="none" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-10-12-73776053-03-arr-accent)"/>
+  <!-- label: 아니오 -->
+  <rect x="354" y="253" width="52" height="14" rx="2" fill="#f8fafb"/>
+  <text x="380" y="263" fill="#0d5763" font-size="10" font-family="'IBM Plex Sans KR',sans-serif" text-anchor="middle" font-weight="500">아니오</text>
+
+  <!-- D2 → 예 → L (right) -->
+  <path d="M 480,332 L 676,332" fill="none" stroke="#286d50" stroke-width="1" marker-end="url(#2026-10-12-73776053-03-arr-ok)"/>
+  <!-- label: 예 -->
+  <rect x="548" y="317" width="24" height="14" rx="2" fill="#f8fafb"/>
+  <text x="560" y="327" fill="#286d50" font-size="10" font-family="'IBM Plex Sans KR',sans-serif" text-anchor="middle" font-weight="500">예</text>
+
+  <!-- D2 → 아니오 → D3 (down) -->
+  <path d="M 400,344 L 400,412" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-12-73776053-03-arr)"/>
+  <!-- label: 아니오 -->
+  <rect x="354" y="369" width="52" height="14" rx="2" fill="#f8fafb"/>
+  <text x="380" y="379" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR',sans-serif" text-anchor="middle" font-weight="500">아니오</text>
+
+  <!-- D3 → 예 → W (right) -->
+  <path d="M 480,448 L 676,448" fill="none" stroke="#a96a08" stroke-width="1" marker-end="url(#2026-10-12-73776053-03-arr-warn)"/>
+  <!-- label: 예 -->
+  <rect x="548" y="433" width="24" height="14" rx="2" fill="#f8fafb"/>
+  <text x="560" y="443" fill="#a96a08" font-size="10" font-family="'IBM Plex Sans KR',sans-serif" text-anchor="middle" font-weight="500">예</text>
+
+  <!-- D3 → 아니오 → CHAR (down) -->
+  <path d="M 400,460 L 400,512" fill="none" stroke="#94382b" stroke-width="1" marker-end="url(#2026-10-12-73776053-03-arr-stop)"/>
+  <!-- label: 아니오 -->
+  <rect x="354" y="477" width="52" height="14" rx="2" fill="#f8fafb"/>
+  <text x="380" y="487" fill="#94382b" font-size="10" font-family="'IBM Plex Sans KR',sans-serif" text-anchor="middle" font-weight="500">아니오</text>
+
+  <!-- ===================== NODES ===================== -->
+
+  <!-- S: 청크 크기 초과하나? — diamond, accent (focal) -->
+  <!-- Diamond centered at (400, 96), half-w=80, half-h=24 -->
+  <rect x="320" y="72" width="160" height="48" rx="6" fill="#f8fafb"/>
+  <polygon points="400,72 480,96 400,120 320,96" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="400" y="90" fill="#122127" font-size="12" font-family="'IBM Plex Sans KR',sans-serif" font-weight="600" text-anchor="middle">청크 크기</text>
+  <text x="400" y="106" fill="#122127" font-size="12" font-family="'IBM Plex Sans KR',sans-serif" font-weight="600" text-anchor="middle">초과하나?</text>
+
+  <!-- KEEP: 현재 청크 유지 — rect, ok green -->
+  <rect x="676" y="80" width="144" height="32" rx="6" fill="#f8fafb"/>
+  <rect x="676" y="80" width="144" height="32" rx="6" fill="#d6e9de" stroke="#286d50" stroke-width="1"/>
+  <text x="748" y="100" fill="#122127" font-size="12" font-family="'IBM Plex Sans KR',sans-serif" font-weight="600" text-anchor="middle">현재 청크 유지</text>
+
+  <!-- D1: \n\n 분할 가능한가? — diamond, accent (focal) -->
+  <rect x="320" y="188" width="160" height="48" rx="6" fill="#f8fafb"/>
+  <polygon points="400,188 480,216 400,244 320,216" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="400" y="208" fill="#122127" font-size="12" font-family="'IBM Plex Sans KR',sans-serif" font-weight="600" text-anchor="middle">단락 구분자</text>
+  <text x="400" y="224" fill="#122127" font-size="11" font-family="'IBM Plex Mono',monospace" font-weight="400" text-anchor="middle">(\n\n) 있나?</text>
+
+  <!-- P: 단락 경계 분할 — rect, ok green -->
+  <rect x="676" y="196" width="144" height="32" rx="6" fill="#f8fafb"/>
+  <rect x="676" y="196" width="144" height="32" rx="6" fill="#d6e9de" stroke="#286d50" stroke-width="1"/>
+  <text x="748" y="216" fill="#122127" font-size="12" font-family="'IBM Plex Sans KR',sans-serif" font-weight="600" text-anchor="middle">단락 경계 분할</text>
+
+  <!-- D2: \n 분할 가능한가? — diamond, accent -->
+  <rect x="320" y="304" width="160" height="48" rx="6" fill="#f8fafb"/>
+  <polygon points="400,304 480,332 400,360 320,332" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="400" y="324" fill="#122127" font-size="12" font-family="'IBM Plex Sans KR',sans-serif" font-weight="600" text-anchor="middle">줄바꿈 문자</text>
+  <text x="400" y="340" fill="#122127" font-size="11" font-family="'IBM Plex Mono',monospace" font-weight="400" text-anchor="middle">(\n) 있나?</text>
+
+  <!-- L: 문장 경계 분할 — rect, ok green -->
+  <rect x="676" y="312" width="144" height="32" rx="6" fill="#f8fafb"/>
+  <rect x="676" y="312" width="144" height="32" rx="6" fill="#d6e9de" stroke="#286d50" stroke-width="1"/>
+  <text x="748" y="332" fill="#122127" font-size="12" font-family="'IBM Plex Sans KR',sans-serif" font-weight="600" text-anchor="middle">문장 경계 분할</text>
+
+  <!-- D3: 공백 분할 가능한가? — diamond, muted -->
+  <rect x="320" y="420" width="160" height="48" rx="6" fill="#f8fafb"/>
+  <polygon points="400,420 480,448 400,476 320,448" fill="rgba(13,87,99,0.04)" stroke="#3f545c" stroke-width="1"/>
+  <text x="400" y="440" fill="#122127" font-size="12" font-family="'IBM Plex Sans KR',sans-serif" font-weight="600" text-anchor="middle">공백 문자</text>
+  <text x="400" y="456" fill="#122127" font-size="12" font-family="'IBM Plex Sans KR',sans-serif" font-weight="600" text-anchor="middle">있나?</text>
+
+  <!-- W: 단어 경계 분할 — rect, warn yellow -->
+  <rect x="676" y="428" width="144" height="32" rx="6" fill="#f8fafb"/>
+  <rect x="676" y="428" width="144" height="32" rx="6" fill="#f5e8cc" stroke="#a96a08" stroke-width="1"/>
+  <text x="748" y="448" fill="#122127" font-size="12" font-family="'IBM Plex Sans KR',sans-serif" font-weight="600" text-anchor="middle">단어 경계 분할</text>
+
+  <!-- CHAR: 문자 단위 분할 — rect, stop red -->
+  <rect x="320" y="512" width="160" height="32" rx="6" fill="#f8fafb"/>
+  <rect x="320" y="512" width="160" height="32" rx="6" fill="#f1d9d4" stroke="#94382b" stroke-width="1"/>
+  <text x="400" y="532" fill="#122127" font-size="12" font-family="'IBM Plex Sans KR',sans-serif" font-weight="600" text-anchor="middle">문자 단위 분할</text>
+
+  <!-- ===================== LEGEND ===================== -->
+  <line x1="40" y1="572" x2="920" y2="572" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+
+  <text x="40" y="584" fill="#3f545c" font-size="8" font-family="'IBM Plex Mono',monospace" letter-spacing="0.14em">LEGEND</text>
+
+  <!-- legend items -->
+  <!-- decision -->
+  <polygon points="100,587 112,581 124,587 112,593" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="130" y="591" fill="#3f545c" font-size="9" font-family="'IBM Plex Sans KR',sans-serif">의사결정</text>
+
+  <!-- ok -->
+  <rect x="212" y="581" width="16" height="12" rx="2" fill="#d6e9de" stroke="#286d50" stroke-width="1"/>
+  <text x="234" y="591" fill="#3f545c" font-size="9" font-family="'IBM Plex Sans KR',sans-serif">우선 분할</text>
+
+  <!-- warn -->
+  <rect x="320" y="581" width="16" height="12" rx="2" fill="#f5e8cc" stroke="#a96a08" stroke-width="1"/>
+  <text x="342" y="591" fill="#3f545c" font-size="9" font-family="'IBM Plex Sans KR',sans-serif">차선 분할</text>
+
+  <!-- stop -->
+  <rect x="428" y="581" width="16" height="12" rx="2" fill="#f1d9d4" stroke="#94382b" stroke-width="1"/>
+  <text x="450" y="591" fill="#3f545c" font-size="9" font-family="'IBM Plex Sans KR',sans-serif">최후 수단</text>
+
+</svg>
+</body>
+</html>

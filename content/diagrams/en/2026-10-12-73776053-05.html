@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; display: flex; justify-content: center; padding: 0; }
+  .diagram-wrap { width: 100%; max-width: 960px; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<div class="diagram-wrap">
+<svg viewBox="0 0 960 380" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="2026-10-12-73776053-05-rag-chunk-title 2026-10-12-73776053-05-rag-chunk-desc">
+  <title id="2026-10-12-73776053-05-rag-chunk-title">RAG Chunking Strategy Selection Flow</title>
+  <desc id="2026-10-12-73776053-05-rag-chunk-desc">Decision flowchart for selecting the appropriate RAG chunking strategy — Fixed-Size, Semantic, or Recursive — based on document structure and importance of semantic boundaries.</desc>
+
+  <defs>
+    <!-- arrow markers -->
+    <marker id="2026-10-12-73776053-05-rc-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-10-12-73776053-05-rc-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <marker id="2026-10-12-73776053-05-rc-arrow-ok" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#286d50"/>
+    </marker>
+    <marker id="2026-10-12-73776053-05-rc-arrow-warn" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#a96a08"/>
+    </marker>
+  </defs>
+
+  <!-- background -->
+  <rect width="960" height="380" fill="#f8fafb"/>
+
+  <!-- ============================================================
+       ARROWS — drawn before boxes
+  ============================================================ -->
+
+  <!-- Q → R (예, top branch) -->
+  <!-- Q right edge: x=248, y=100 center. R left edge: x=368, y=80 center -->
+  <!-- orthogonal: Q right (248,96) → right bend at x=308 → up to y=80 → R left (368,80) -->
+  <path d="M 248,96 L 308,96 L 308,80 L 368,80"
+        fill="none" stroke="#0d5763" stroke-width="1.2"
+        marker-end="url(#2026-10-12-73776053-05-rc-arrow-accent)"/>
+  <!-- label Yes -->
+  <rect x="264" y="74" width="20" height="14" rx="2" fill="#f8fafb"/>
+  <text x="274" y="84" fill="#0d5763" font-size="10" font-family="'IBM Plex Sans KR', sans-serif"
+        font-weight="600" text-anchor="middle">Yes</text>
+
+  <!-- Q → S (아니오, bottom branch) -->
+  <!-- Q right edge: x=248, y=116. S left edge: x=368, y=192 center -->
+  <path d="M 248,116 L 308,116 L 308,192 L 368,192"
+        fill="none" stroke="#0d5763" stroke-width="1.2"
+        marker-end="url(#2026-10-12-73776053-05-rc-arrow-accent)"/>
+  <!-- label No -->
+  <rect x="252" y="125" width="44" height="14" rx="2" fill="#f8fafb"/>
+  <text x="274" y="135" fill="#0d5763" font-size="10" font-family="'IBM Plex Sans KR', sans-serif"
+        font-weight="600" text-anchor="middle">No</text>
+
+  <!-- R → REC (예, top) -->
+  <!-- R right edge: x=512, y=68. REC left edge: x=640, y=60 center -->
+  <path d="M 512,68 L 576,68 L 576,60 L 640,60"
+        fill="none" stroke="#286d50" stroke-width="1.2"
+        marker-end="url(#2026-10-12-73776053-05-rc-arrow-ok)"/>
+  <!-- label Yes -->
+  <rect x="528" y="54" width="20" height="14" rx="2" fill="#f8fafb"/>
+  <text x="538" y="64" fill="#286d50" font-size="10" font-family="'IBM Plex Sans KR', sans-serif"
+        font-weight="600" text-anchor="middle">Yes</text>
+
+  <!-- R → FIX1 (아니오, bottom) -->
+  <!-- R right edge: x=512, y=92. FIX1 left edge: x=640, y=104 center -->
+  <path d="M 512,92 L 576,92 L 576,104 L 640,104"
+        fill="none" stroke="#a96a08" stroke-width="1.2"
+        marker-end="url(#2026-10-12-73776053-05-rc-arrow-warn)"/>
+  <!-- label No -->
+  <rect x="516" y="97" width="44" height="14" rx="2" fill="#f8fafb"/>
+  <text x="538" y="107" fill="#a96a08" font-size="10" font-family="'IBM Plex Sans KR', sans-serif"
+        font-weight="600" text-anchor="middle">No</text>
+
+  <!-- S → SEM (예, top) -->
+  <!-- S right edge: x=512, y=180. SEM left edge: x=640, y=172 center -->
+  <path d="M 512,180 L 576,180 L 576,172 L 640,172"
+        fill="none" stroke="#286d50" stroke-width="1.2"
+        marker-end="url(#2026-10-12-73776053-05-rc-arrow-ok)"/>
+  <!-- label Yes -->
+  <rect x="528" y="166" width="20" height="14" rx="2" fill="#f8fafb"/>
+  <text x="538" y="176" fill="#286d50" font-size="10" font-family="'IBM Plex Sans KR', sans-serif"
+        font-weight="600" text-anchor="middle">Yes</text>
+
+  <!-- S → FIX2 (아니오, bottom) -->
+  <!-- S right edge: x=512, y=204. FIX2 left edge: x=640, y=216 center -->
+  <path d="M 512,204 L 576,204 L 576,216 L 640,216"
+        fill="none" stroke="#a96a08" stroke-width="1.2"
+        marker-end="url(#2026-10-12-73776053-05-rc-arrow-warn)"/>
+  <!-- label No -->
+  <rect x="516" y="209" width="44" height="14" rx="2" fill="#f8fafb"/>
+  <text x="538" y="219" fill="#a96a08" font-size="10" font-family="'IBM Plex Sans KR', sans-serif"
+        font-weight="600" text-anchor="middle">No</text>
+
+  <!-- ============================================================
+       NODES — drawn after arrows
+  ============================================================ -->
+
+  <!-- ── Q: 문서 구조가 명확한가 (diamond, focal) ── -->
+  <!-- diamond center: (144, 108), half-w=104, half-h=52 -->
+  <rect x="40" y="56" width="208" height="104" rx="6" fill="#f8fafb"/>
+  <polygon points="144,56 248,108 144,160 40,108"
+           fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="144" y="101" fill="#122127" font-size="13" font-weight="600"
+        font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Is document</text>
+  <text x="144" y="118" fill="#122127" font-size="13" font-weight="600"
+        font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">well-structured?</text>
+
+  <!-- ── R: Markdown·코드인가 (diamond, focal) ── -->
+  <!-- diamond center: (440, 80), half-w=72, half-h=40 -->
+  <rect x="368" y="40" width="144" height="80" rx="6" fill="#f8fafb"/>
+  <polygon points="440,40 512,80 440,120 368,80"
+           fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="440" y="74" fill="#122127" font-size="12" font-weight="600"
+        font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Markdown or</text>
+  <text x="440" y="90" fill="#122127" font-size="12" font-weight="600"
+        font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">code?</text>
+
+  <!-- ── S: 의미 경계가 핵심인가 (diamond, focal) ── -->
+  <!-- diamond center: (440, 192), half-w=72, half-h=40 -->
+  <rect x="368" y="152" width="144" height="80" rx="6" fill="#f8fafb"/>
+  <polygon points="440,152 512,192 440,232 368,192"
+           fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="440" y="186" fill="#122127" font-size="12" font-weight="600"
+        font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Semantic boundary</text>
+  <text x="440" y="202" fill="#122127" font-size="12" font-weight="600"
+        font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">critical?</text>
+
+  <!-- ── REC: Recursive 청킹 (ok / recommended) ── -->
+  <!-- box: x=640, y=32, w=196, h=56, center (738,60) -->
+  <rect x="640" y="32" width="196" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="640" y="32" width="196" height="56" rx="6" fill="#d6e9de" stroke="#286d50" stroke-width="1.2"/>
+  <!-- tag -->
+  <rect x="648" y="39" width="52" height="13" rx="2" fill="transparent" stroke="rgba(40,109,80,0.4)" stroke-width="0.8"/>
+  <text x="674" y="49" fill="#286d50" font-size="8" font-family="'IBM Plex Mono', monospace"
+        letter-spacing="0.08em" text-anchor="middle">RECURSIVE</text>
+  <text x="738" y="68" fill="#122127" font-size="13" font-weight="600"
+        font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Recursive Chunking</text>
+
+  <!-- ── FIX1: Fixed-Size (warn) ── -->
+  <!-- box: x=640, y=80, w=196, h=48, center (738,104) -->
+  <rect x="640" y="80" width="196" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="640" y="80" width="196" height="48" rx="6" fill="#f5e8cc" stroke="#a96a08" stroke-width="1.2"/>
+  <!-- tag -->
+  <rect x="648" y="87" width="48" height="13" rx="2" fill="transparent" stroke="rgba(169,106,8,0.4)" stroke-width="0.8"/>
+  <text x="672" y="97" fill="#a96a08" font-size="8" font-family="'IBM Plex Mono', monospace"
+        letter-spacing="0.08em" text-anchor="middle">FIXED</text>
+  <text x="738" y="112" fill="#122127" font-size="13" font-weight="600"
+        font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Fixed-Size Chunking</text>
+
+  <!-- ── SEM: Semantic 청킹 (ok / recommended) ── -->
+  <!-- box: x=640, y=144, w=196, h=56, center (738,172) -->
+  <rect x="640" y="144" width="196" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="640" y="144" width="196" height="56" rx="6" fill="#d6e9de" stroke="#286d50" stroke-width="1.2"/>
+  <!-- tag -->
+  <rect x="648" y="151" width="52" height="13" rx="2" fill="transparent" stroke="rgba(40,109,80,0.4)" stroke-width="0.8"/>
+  <text x="674" y="161" fill="#286d50" font-size="8" font-family="'IBM Plex Mono', monospace"
+        letter-spacing="0.08em" text-anchor="middle">SEMANTIC</text>
+  <text x="738" y="180" fill="#122127" font-size="13" font-weight="600"
+        font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Semantic Chunking</text>
+
+  <!-- ── FIX2: Fixed-Size (warn) ── -->
+  <!-- box: x=640, y=192, w=196, h=48, center (738,216) -->
+  <rect x="640" y="192" width="196" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="640" y="192" width="196" height="48" rx="6" fill="#f5e8cc" stroke="#a96a08" stroke-width="1.2"/>
+  <!-- tag -->
+  <rect x="648" y="199" width="48" height="13" rx="2" fill="transparent" stroke="rgba(169,106,8,0.4)" stroke-width="0.8"/>
+  <text x="672" y="209" fill="#a96a08" font-size="8" font-family="'IBM Plex Mono', monospace"
+        letter-spacing="0.08em" text-anchor="middle">FIXED</text>
+  <text x="738" y="224" fill="#122127" font-size="13" font-weight="600"
+        font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Fixed-Size Chunking</text>
+
+  <!-- ============================================================
+       LEGEND
+  ============================================================ -->
+  <line x1="40" y1="302" x2="920" y2="302" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+
+  <!-- legend label -->
+  <text x="40" y="318" fill="#3f545c" font-size="9" font-family="'IBM Plex Mono', monospace"
+        letter-spacing="0.14em">LEGEND</text>
+
+  <!-- item 1: Decision -->
+  <polygon points="120,324 132,318 144,324 132,330" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="150" y="328" fill="#3f545c" font-size="11"
+        font-family="'IBM Plex Sans KR', sans-serif">Decision</text>
+
+  <!-- item 2: Recommended strategy -->
+  <rect x="212" y="315" width="16" height="16" rx="4" fill="#d6e9de" stroke="#286d50" stroke-width="1"/>
+  <text x="234" y="328" fill="#3f545c" font-size="11"
+        font-family="'IBM Plex Sans KR', sans-serif">Recommended</text>
+
+  <!-- item 3: Fallback strategy -->
+  <rect x="340" y="315" width="16" height="16" rx="4" fill="#f5e8cc" stroke="#a96a08" stroke-width="1"/>
+  <text x="362" y="328" fill="#3f545c" font-size="11"
+        font-family="'IBM Plex Sans KR', sans-serif">Fallback</text>
+
+</svg>
+</div>
+</body>
+</html>

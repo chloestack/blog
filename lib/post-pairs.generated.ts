@@ -36,5 +36,6 @@ export const POST_PAIRS: Record<string, string> = {
   "2026-10-08-LLM-에이전트-Evals-설계-—-트레이스-기반-평가와-자동화-파이프라인": "2026-10-08-llm-agent-evals-trace-based-evaluation-automated-pipelines",
   "2026-10-09-LLM-양자화(GGUF·AWQ·GPTQ)로-오픈소스-모델-로컬-추론-최적화": "2026-10-09-llm-quantization-gguf-awq-gptq-local-inference",
   "2026-10-10-합성-데이터로-LLM-파인튜닝-데이터셋-구축하기": "2026-10-10-building-llm-fine-tuning-datasets-synthetic-data",
-  "2026-10-11-Cursor-Rules-설계로-AI-코딩-에이전트에-컨텍스트-전달하기": "2026-10-11-cursor-rules-ai-coding-agent-context"
+  "2026-10-11-Cursor-Rules-설계로-AI-코딩-에이전트에-컨텍스트-전달하기": "2026-10-11-cursor-rules-ai-coding-agent-context",
+  "2026-10-12-RAG-청킹-전략-—-Fixed·Semantic·Recursive-비교": "2026-10-12-rag-chunking-strategies-fixed-semantic-recursive"
 };

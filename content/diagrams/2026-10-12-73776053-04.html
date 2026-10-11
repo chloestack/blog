@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; }
+  .diagram-wrap { width: 100%; max-width: 960px; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<div class="diagram-wrap">
+<svg viewBox="0 0 960 600" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="2026-10-12-73776053-04-rag-semantic-title 2026-10-12-73776053-04-rag-semantic-desc">
+  <title id="2026-10-12-73776053-04-rag-semantic-title">Semantic 청킹 처리 흐름</title>
+  <desc id="2026-10-12-73776053-04-rag-semantic-desc">문서 입력에서 시작해 문장 임베딩·유사도 계산·임계값 판단을 거쳐 의미 단위 청크를 생성하는 Semantic 청킹 알고리즘의 단계별 흐름도.</desc>
+
+  <defs>
+    <!-- Arrow markers -->
+    <marker id="2026-10-12-73776053-04-arr" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-10-12-73776053-04-arr-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <marker id="2026-10-12-73776053-04-arr-yes" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3a548f"/>
+    </marker>
+    <marker id="2026-10-12-73776053-04-arr-no" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#6c8188"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="960" height="600" fill="#f8fafb"/>
+
+  <!-- ===================== CONNECTORS (drawn before boxes) ===================== -->
+
+  <!-- DOC → SEG (straight vertical) -->
+  <line x1="480" y1="100" x2="480" y2="132" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-12-73776053-04-arr)"/>
+
+  <!-- SEG → EMB (straight vertical) -->
+  <line x1="480" y1="180" x2="480" y2="212" stroke="#0d5763" stroke-width="1" marker-end="url(#2026-10-12-73776053-04-arr-accent)"/>
+
+  <!-- EMB → SIM (straight vertical) -->
+  <line x1="480" y1="264" x2="480" y2="296" stroke="#0d5763" stroke-width="1" marker-end="url(#2026-10-12-73776053-04-arr-accent)"/>
+
+  <!-- SIM → THR (straight vertical) -->
+  <line x1="480" y1="348" x2="480" y2="380" stroke="#0d5763" stroke-width="1" marker-end="url(#2026-10-12-73776053-04-arr-accent)"/>
+
+  <!-- THR → BREAK: 예  (right branch, orthogonal elbow) -->
+  <!-- From THR right tip (632,408) → right elbow → down to BREAK top (680,432) -->
+  <path d="M 608,408 H 680 V 432" stroke="#3a548f" stroke-width="1" fill="none" marker-end="url(#2026-10-12-73776053-04-arr-yes)"/>
+
+  <!-- THR → CONT: 아니오 (left branch, orthogonal elbow) -->
+  <!-- From THR left tip (352,408) → left elbow → down to CONT top (280,432) -->
+  <path d="M 352,408 H 280 V 432" stroke="#6c8188" stroke-width="1" fill="none" marker-end="url(#2026-10-12-73776053-04-arr-no)"/>
+
+  <!-- BREAK → MERGE (elbow: from BREAK bottom 680,484 → down to y=524 → left to MERGE right 572,524) -->
+  <path d="M 680,484 V 524 Q 680,532 672,532 H 572" stroke="#3f545c" stroke-width="1" fill="none" marker-end="url(#2026-10-12-73776053-04-arr)"/>
+
+  <!-- CONT → MERGE (elbow: from CONT bottom 280,484 → down to y=524 → right to MERGE left 388,524) -->
+  <path d="M 280,484 V 524 Q 280,532 288,532 H 388" stroke="#3f545c" stroke-width="1" fill="none" marker-end="url(#2026-10-12-73776053-04-arr)"/>
+
+  <!-- MERGE → OUT (straight vertical) -->
+  <line x1="480" y1="544" x2="480" y2="560" stroke="#0d5763" stroke-width="1" marker-end="url(#2026-10-12-73776053-04-arr-accent)"/>
+
+  <!-- ===================== NODES ===================== -->
+
+  <!-- DOC: 문서 입력 — input treatment -->
+  <rect x="392" y="52" width="176" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="392" y="52" width="176" height="48" rx="6" fill="rgba(63,84,92,0.10)" stroke="#6c8188" stroke-width="1"/>
+  <rect x="400" y="58" width="28" height="12" rx="2" fill="transparent" stroke="rgba(108,129,136,0.40)" stroke-width="0.8"/>
+  <text x="414" y="67" fill="rgba(108,129,136,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">INPUT</text>
+  <text x="480" y="83" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">문서 입력</text>
+
+  <!-- SEG: 문장 단위 분리 — backend -->
+  <rect x="372" y="132" width="216" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="372" y="132" width="216" height="48" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="380" y="138" width="28" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="394" y="147" fill="rgba(18,33,39,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">STEP</text>
+  <text x="480" y="163" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">문장 단위 분리</text>
+
+  <!-- EMB: 각 문장 임베딩 생성 — focal -->
+  <rect x="356" y="212" width="248" height="52" rx="6" fill="#f8fafb"/>
+  <rect x="356" y="212" width="248" height="52" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <rect x="364" y="218" width="52" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="390" y="227" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">EMBEDDING</text>
+  <text x="480" y="245" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">각 문장 임베딩 생성</text>
+
+  <!-- SIM: 인접 문장 간 유사도 계산 — focal -->
+  <rect x="344" y="296" width="272" height="52" rx="6" fill="#f8fafb"/>
+  <rect x="344" y="296" width="272" height="52" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <rect x="352" y="302" width="60" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="382" y="311" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">SIMILARITY</text>
+  <text x="480" y="329" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">인접 문장 간 유사도 계산</text>
+
+  <!-- THR: 유사도가 임계값 이하? — diamond decision -->
+  <!-- Diamond centered at (480,408), half-w=128, half-h=28 -->
+  <polygon points="480,380 608,408 480,436 352,408" fill="#f8fafb"/>
+  <polygon points="480,380 608,408 480,436 352,408" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="480" y="412" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">유사도 &lt; 임계값?</text>
+
+  <!-- Arrow label: 예 -->
+  <rect x="624" y="404" width="28" height="16" rx="2" fill="#f8fafb"/>
+  <text x="638" y="415" fill="#3a548f" font-size="12" font-weight="500" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">예</text>
+
+  <!-- Arrow label: 아니오 -->
+  <rect x="232" y="404" width="48" height="16" rx="2" fill="#f8fafb"/>
+  <text x="256" y="415" fill="#6c8188" font-size="12" font-weight="500" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">아니오</text>
+
+  <!-- BREAK: 분할 경계 표시 — backend (blue tint) -->
+  <rect x="612" y="432" width="136" height="52" rx="6" fill="#f8fafb"/>
+  <rect x="612" y="432" width="136" height="52" rx="6" fill="rgba(58,84,143,0.07)" stroke="#3a548f" stroke-width="1"/>
+  <rect x="620" y="438" width="36" height="12" rx="2" fill="transparent" stroke="rgba(58,84,143,0.40)" stroke-width="0.8"/>
+  <text x="638" y="447" fill="rgba(58,84,143,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">SPLIT</text>
+  <text x="680" y="463" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">분할 경계 표시</text>
+
+  <!-- CONT: 같은 청크 유지 — store -->
+  <rect x="212" y="432" width="136" height="52" rx="6" fill="#f8fafb"/>
+  <rect x="212" y="432" width="136" height="52" rx="6" fill="rgba(18,33,39,0.05)" stroke="#3f545c" stroke-width="1"/>
+  <rect x="220" y="438" width="36" height="12" rx="2" fill="transparent" stroke="rgba(63,84,92,0.40)" stroke-width="0.8"/>
+  <text x="238" y="447" fill="rgba(63,84,92,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">KEEP</text>
+  <text x="280" y="463" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">같은 청크 유지</text>
+
+  <!-- MERGE: 크기 조정 및 청크 병합 — backend -->
+  <rect x="388" y="508" width="184" height="36" rx="6" fill="#f8fafb"/>
+  <rect x="388" y="508" width="184" height="36" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="396" y="514" width="36" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="414" y="523" fill="rgba(18,33,39,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">MERGE</text>
+  <text x="480" y="531" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">크기 조정 및 청크 병합</text>
+
+  <!-- OUT: 의미 단위 청크 — focal output -->
+  <rect x="392" y="560" width="176" height="0" rx="6" fill="none"/>
+  <!-- OUT oval (end terminal) -->
+  <rect x="392" y="560" width="176" height="24" rx="12" fill="#f8fafb"/>
+  <rect x="392" y="560" width="176" height="24" rx="12" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="480" y="576" fill="#0d5763" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">의미 단위 청크</text>
+
+  <!-- ===================== LEGEND ===================== -->
+  <line x1="40" y1="592" x2="920" y2="592" stroke="rgba(18,33,39,0.10)" stroke-width="0.8"/>
+  <text x="40" y="596" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.14em" dominant-baseline="hanging">LEGEND</text>
+
+  <!-- focal -->
+  <rect x="120" y="594" width="12" height="12" rx="2" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="136" y="596" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" dominant-baseline="hanging">핵심 단계</text>
+
+  <!-- step -->
+  <rect x="232" y="594" width="12" height="12" rx="2" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <text x="248" y="596" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" dominant-baseline="hanging">처리 단계</text>
+
+  <!-- split -->
+  <rect x="344" y="594" width="12" height="12" rx="2" fill="rgba(58,84,143,0.07)" stroke="#3a548f" stroke-width="1"/>
+  <text x="360" y="596" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" dominant-baseline="hanging">분기 결과</text>
+
+  <!-- store -->
+  <rect x="456" y="594" width="12" height="12" rx="2" fill="rgba(18,33,39,0.05)" stroke="#3f545c" stroke-width="1"/>
+  <text x="472" y="596" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" dominant-baseline="hanging">상태 유지</text>
+
+  <!-- decision diamond mini -->
+  <polygon points="580,600 592,594 604,600 592,606" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="608" y="596" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" dominant-baseline="hanging">판단</text>
+
+</svg>
+</div>
+</body>
+</html>

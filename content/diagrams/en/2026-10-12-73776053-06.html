@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Parent-Child Chunking Strategy</title>
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; font-family: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 960 600"
+  role="img"
+  aria-labelledby="2026-10-12-73776053-06-rag-chunk-title 2026-10-12-73776053-06-rag-chunk-desc"
+>
+  <title id="2026-10-12-73776053-06-rag-chunk-title">Parent-Child Chunking Strategy — RAG Pipeline</title>
+  <desc id="2026-10-12-73776053-06-rag-chunk-desc">The source document is split into a large Parent chunk, which is further divided into three small Child chunks. The Child chunks are embedded in a Vector DB for retrieval; on a search hit, the original Parent chunk is passed to the LLM prompt.</desc>
+
+  <defs>
+    <!-- 배경 도트 패턴 생략, clean paper -->
+
+    <!-- 화살표 마커 -->
+    <marker id="2026-10-12-73776053-06-rc-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-10-12-73776053-06-rc-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <marker id="2026-10-12-73776053-06-rc-arrow-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3a548f"/>
+    </marker>
+  </defs>
+
+  <!-- 배경 -->
+  <rect width="960" height="600" fill="#f8fafb"/>
+
+  <!-- ============================================================
+       ARROWS (drawn before boxes for z-order)
+       ============================================================ -->
+
+  <!-- DOC → PARENT (수직 직선) -->
+  <line x1="480" y1="120" x2="480" y2="156"
+        stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-12-73776053-06-rc-arrow)"/>
+
+  <!-- PARENT → C1 (왼쪽 child): 아래로 내려서 왼쪽으로 꺾기 -->
+  <!-- PARENT bottom = 232. C1 top = 288. C1 center x = 220 -->
+  <path d="M 340,232 L 340,260 Q 340,268 332,268 L 228,268 Q 220,268 220,276 L 220,288"
+        fill="none" stroke="#6c8188" stroke-width="1" marker-end="url(#2026-10-12-73776053-06-rc-arrow)"/>
+
+  <!-- PARENT → C2 (가운데 child): 수직 직선 -->
+  <line x1="480" y1="232" x2="480" y2="288"
+        stroke="#6c8188" stroke-width="1" marker-end="url(#2026-10-12-73776053-06-rc-arrow)"/>
+
+  <!-- PARENT → C3 (오른쪽 child): 아래로 내려서 오른쪽으로 꺾기 -->
+  <path d="M 620,232 L 620,260 Q 620,268 628,268 L 732,268 Q 740,268 740,276 L 740,288"
+        fill="none" stroke="#6c8188" stroke-width="1" marker-end="url(#2026-10-12-73776053-06-rc-arrow)"/>
+
+  <!-- C1 → IDX: 아래로 내려서 오른쪽으로 꺾어 IDX로 -->
+  <!-- C1 bottom=364, IDX center y=432, IDX left x=664 -->
+  <path d="M 220,364 L 220,396 Q 220,404 228,404 L 656,404 Q 664,404 664,412 L 664,420"
+        fill="none" stroke="#3a548f" stroke-width="1" marker-end="url(#2026-10-12-73776053-06-rc-arrow-link)"/>
+
+  <!-- C2 → IDX: 아래로 내려서 오른쪽으로 꺾기 -->
+  <path d="M 480,364 L 480,396 Q 480,404 488,404 L 656,404 Q 664,404 664,412 L 664,420"
+        fill="none" stroke="#3a548f" stroke-width="1" marker-end="url(#2026-10-12-73776053-06-rc-arrow-link)"/>
+
+  <!-- C3 → IDX: 수직 직선 -->
+  <line x1="740" y1="364" x2="740" y2="396"
+        stroke="#3a548f" stroke-width="1" marker-end="url(#2026-10-12-73776053-06-rc-arrow-link)"/>
+  <!-- C3 → IDX 꺾기 -->
+  <path d="M 740,396 Q 740,404 732,404 L 672,404 Q 664,404 664,412 L 664,420"
+        fill="none" stroke="#3a548f" stroke-width="1"/>
+
+  <!-- 벡터 검색 라벨 (C2→IDX 경로 위, 열린 캔버스 영역) -->
+  <rect x="510" y="393" width="64" height="14" rx="2" fill="#f8fafb"/>
+  <text x="542" y="403" fill="#3a548f" font-size="9" font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.06em">Vec Search</text>
+
+  <!-- IDX → PARENT: 왼쪽으로 꺾어 올라가기 -->
+  <!-- IDX left = 636, PARENT bottom=232, 경로: IDX 왼쪽 → 위로 올라가 PARENT 오른쪽 -->
+  <path d="M 636,444 Q 628,444 620,444 L 596,444 Q 588,444 588,436 L 588,240 Q 588,232 596,232 L 616,232"
+        fill="none" stroke="#0d5763" stroke-width="1.2" stroke-dasharray="5,4" marker-end="url(#2026-10-12-73776053-06-rc-arrow-accent)"/>
+
+  <!-- 검색 히트 라벨 -->
+  <rect x="589" y="335" width="56" height="14" rx="2" fill="#f8fafb"/>
+  <text x="617" y="345" fill="#0d5763" font-size="9" font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.06em">Search Hit</text>
+
+  <!-- PARENT → LLM (수직 직선, PARENT right → LLM) -->
+  <!-- PARENT: x=344,y=192,w=272 → right edge=616. LLM은 오른쪽에 배치 -->
+  <!-- LLM 위치: x=804,y=176,w=120,h=52 — PARENT right에서 오른쪽으로 꺾어 LLM으로 -->
+  <path d="M 616,204 L 640,204 Q 648,204 648,204 L 796,204"
+        fill="none" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-10-12-73776053-06-rc-arrow-accent)"/>
+
+  <!-- LLM 전달 라벨 -->
+  <rect x="688" y="193" width="56" height="14" rx="2" fill="#f8fafb"/>
+  <text x="716" y="203" fill="#0d5763" font-size="9" font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.06em">To LLM</text>
+
+  <!-- ============================================================
+       NODES
+       ============================================================ -->
+
+  <!-- DOC: 원본 문서 — input 처리 -->
+  <!-- 위치: center x=480, y=68, w=160, h=52 -->
+  <rect x="400" y="68" width="160" height="52" rx="6" fill="#f8fafb"/>
+  <rect x="400" y="68" width="160" height="52" rx="6"
+        fill="rgba(58,84,143,0.07)" stroke="rgba(58,84,143,0.40)" stroke-width="1"/>
+  <rect x="408" y="74" width="32" height="12" rx="2"
+        fill="transparent" stroke="rgba(58,84,143,0.40)" stroke-width="0.8"/>
+  <text x="424" y="83" fill="rgba(58,84,143,0.80)" font-size="7"
+        font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.08em">DOC</text>
+  <text x="480" y="100" fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Source Doc</text>
+
+  <!-- PARENT: 큰 청크 — focal -->
+  <!-- 위치: center x=480, y=180, w=272, h=52 -->
+  <rect x="344" y="180" width="272" height="52" rx="6" fill="#f8fafb"/>
+  <rect x="344" y="180" width="272" height="52" rx="6"
+        fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="352" y="186" width="48" height="12" rx="2"
+        fill="transparent" stroke="rgba(13,87,99,0.50)" stroke-width="0.8"/>
+  <text x="376" y="195" fill="rgba(13,87,99,0.90)" font-size="7"
+        font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.08em">PARENT</text>
+  <text x="480" y="211" fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Large Chunk (Parent)</text>
+
+  <!-- C1: 작은 청크 1 -->
+  <!-- 위치: center x=220, y=288, w=160, h=76 -->
+  <rect x="140" y="288" width="160" height="76" rx="6" fill="#f8fafb"/>
+  <rect x="140" y="288" width="160" height="76" rx="6"
+        fill="#eef2f4" stroke="#c3d0d4" stroke-width="1"/>
+  <rect x="148" y="294" width="40" height="12" rx="2"
+        fill="transparent" stroke="rgba(99,129,136,0.40)" stroke-width="0.8"/>
+  <text x="168" y="303" fill="#6c8188" font-size="7"
+        font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.08em">CHILD</text>
+  <text x="220" y="334" fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Small Chunk 1</text>
+  <text x="220" y="352" fill="#6c8188" font-size="11"
+        font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle">(Child)</text>
+
+  <!-- C2: 작은 청크 2 -->
+  <!-- 위치: center x=480, y=288, w=160, h=76 -->
+  <rect x="400" y="288" width="160" height="76" rx="6" fill="#f8fafb"/>
+  <rect x="400" y="288" width="160" height="76" rx="6"
+        fill="#eef2f4" stroke="#c3d0d4" stroke-width="1"/>
+  <rect x="408" y="294" width="40" height="12" rx="2"
+        fill="transparent" stroke="rgba(99,129,136,0.40)" stroke-width="0.8"/>
+  <text x="428" y="303" fill="#6c8188" font-size="7"
+        font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.08em">CHILD</text>
+  <text x="480" y="334" fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Small Chunk 2</text>
+  <text x="480" y="352" fill="#6c8188" font-size="11"
+        font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle">(Child)</text>
+
+  <!-- C3: 작은 청크 3 -->
+  <!-- 위치: center x=740, y=288, w=160, h=76 -->
+  <rect x="660" y="288" width="160" height="76" rx="6" fill="#f8fafb"/>
+  <rect x="660" y="288" width="160" height="76" rx="6"
+        fill="#eef2f4" stroke="#c3d0d4" stroke-width="1"/>
+  <rect x="668" y="294" width="40" height="12" rx="2"
+        fill="transparent" stroke="rgba(99,129,136,0.40)" stroke-width="0.8"/>
+  <text x="688" y="303" fill="#6c8188" font-size="7"
+        font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.08em">CHILD</text>
+  <text x="740" y="334" fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Small Chunk 3</text>
+  <text x="740" y="352" fill="#6c8188" font-size="11"
+        font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle">(Child)</text>
+
+  <!-- IDX: 벡터 DB — store 처리 -->
+  <!-- 위치: center x=700, y=444, w=144, h=52 -->
+  <!-- IDX: center x=700으로 C3와 가까운 오른쪽 영역에 배치 -->
+  <rect x="628" y="420" width="144" height="52" rx="6" fill="#f8fafb"/>
+  <rect x="628" y="420" width="144" height="52" rx="6"
+        fill="rgba(18,33,39,0.05)" stroke="#3f545c" stroke-width="1"/>
+  <rect x="636" y="426" width="52" height="12" rx="2"
+        fill="transparent" stroke="rgba(63,84,92,0.40)" stroke-width="0.8"/>
+  <text x="662" y="435" fill="rgba(63,84,92,0.80)" font-size="7"
+        font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.08em">VECTOR DB</text>
+  <text x="700" y="455" fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Vector DB</text>
+
+  <!-- LLM: LLM 프롬프트 — backend -->
+  <!-- 위치: center x=864, y=204, w=136, h=52 -->
+  <rect x="796" y="180" width="136" height="52" rx="6" fill="#f8fafb"/>
+  <rect x="796" y="180" width="136" height="52" rx="6"
+        fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="804" y="186" width="48" height="12" rx="2"
+        fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="828" y="195" fill="rgba(18,33,39,0.80)" font-size="7"
+        font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.08em">PROMPT</text>
+  <text x="864" y="211" fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">LLM Prompt</text>
+
+  <!-- ============================================================
+       LEGEND STRIP
+       ============================================================ -->
+  <line x1="40" y1="532" x2="920" y2="532"
+        stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+
+  <!-- 범례 항목들 -->
+  <!-- 1. Parent 청크 -->
+  <rect x="40" y="546" width="14" height="14" rx="3"
+        fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="60" y="557" fill="#3f545c" font-size="10"
+        font-family="'IBM Plex Sans KR', sans-serif">Parent Chunk</text>
+
+  <!-- 2. Child 청크 -->
+  <rect x="172" y="546" width="14" height="14" rx="3"
+        fill="#eef2f4" stroke="#c3d0d4" stroke-width="1"/>
+  <text x="192" y="557" fill="#3f545c" font-size="10"
+        font-family="'IBM Plex Sans KR', sans-serif">Child Chunk</text>
+
+  <!-- 3. 벡터 DB -->
+  <rect x="300" y="546" width="14" height="14" rx="3"
+        fill="rgba(18,33,39,0.05)" stroke="#3f545c" stroke-width="1"/>
+  <text x="320" y="557" fill="#3f545c" font-size="10"
+        font-family="'IBM Plex Sans KR', sans-serif">Vector DB (Store)</text>
+
+  <!-- 4. 벡터 검색 화살표 -->
+  <line x1="472" y1="553" x2="494" y2="553"
+        stroke="#3a548f" stroke-width="1" marker-end="url(#2026-10-12-73776053-06-rc-arrow-link)"/>
+  <text x="500" y="557" fill="#3f545c" font-size="10"
+        font-family="'IBM Plex Sans KR', sans-serif">Vec Search</text>
+
+  <!-- 5. 검색 히트 / LLM 전달 -->
+  <line x1="600" y1="553" x2="622" y2="553"
+        stroke="#0d5763" stroke-width="1.2" stroke-dasharray="5,4" marker-end="url(#2026-10-12-73776053-06-rc-arrow-accent)"/>
+  <text x="628" y="557" fill="#3f545c" font-size="10"
+        font-family="'IBM Plex Sans KR', sans-serif">Search Hit / To LLM</text>
+
+</svg>
+</body>
+</html>
