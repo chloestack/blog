@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<svg viewBox="0 0 960 400" xmlns="http://www.w3.org/2000/svg"
+     role="img" aria-labelledby="2026-10-13-b98ce030-03-ctx-filter-title 2026-10-13-b98ce030-03-ctx-filter-desc">
+  <title id="2026-10-13-b98ce030-03-ctx-filter-title">컨텍스트 필터링 파이프라인</title>
+  <desc id="2026-10-13-b98ce030-03-ctx-filter-desc">원시 데이터가 관련성·신선도·중복성 세 단계 체크를 순서대로 통과하면 컨텍스트에 삽입되고, 각 단계에서 탈락하면 제외 또는 갱신 처리되는 필터링 흐름을 보여주는 순서도.</desc>
+
+  <defs>
+    <!-- 기본 화살표 -->
+    <marker id="2026-10-13-b98ce030-03-arr" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0,8 3,0 6" fill="#3f545c"/>
+    </marker>
+    <!-- accent 화살표 -->
+    <marker id="2026-10-13-b98ce030-03-arr-acc" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0,8 3,0 6" fill="#0d5763"/>
+    </marker>
+    <!-- 제외(stop) 화살표 -->
+    <marker id="2026-10-13-b98ce030-03-arr-stop" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0,8 3,0 6" fill="#94382b"/>
+    </marker>
+  </defs>
+
+  <!-- 배경 -->
+  <rect width="960" height="400" fill="#f8fafb"/>
+
+  <!-- ===================== ARROWS (z-order: 화살표 먼저) ===================== -->
+
+  <!-- RAW → F1 (관련성 체크) -->
+  <line x1="172" y1="200" x2="248" y2="200" stroke="#3f545c" stroke-width="1.2" marker-end="url(#2026-10-13-b98ce030-03-arr)"/>
+
+  <!-- F1 → F2 (관련 있음 — 오른쪽) -->
+  <line x1="348" y1="200" x2="424" y2="200" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-10-13-b98ce030-03-arr-acc)"/>
+  <!-- F1 관련 있음 라벨 -->
+  <rect x="354" y="180" width="64" height="14" rx="2" fill="#f8fafb"/>
+  <text x="386" y="191" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">관련 있음</text>
+
+  <!-- F1 → X1 (무관함 — 아래) -->
+  <path d="M298 228 Q298 284 224 284" stroke="#94382b" stroke-width="1" stroke-dasharray="4,3" fill="none" marker-end="url(#2026-10-13-b98ce030-03-arr-stop)"/>
+  <!-- F1 무관함 라벨 -->
+  <rect x="242" y="248" width="48" height="14" rx="2" fill="#f8fafb"/>
+  <text x="266" y="259" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">무관함</text>
+
+  <!-- F2 → F3 (최신 — 오른쪽) -->
+  <line x1="524" y1="200" x2="600" y2="200" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-10-13-b98ce030-03-arr-acc)"/>
+  <!-- F2 최신 라벨 -->
+  <rect x="530" y="180" width="40" height="14" rx="2" fill="#f8fafb"/>
+  <text x="550" y="191" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">최신</text>
+
+  <!-- F2 → X2 (오래됨 — 아래) -->
+  <path d="M474 228 Q474 308 400 308" stroke="#94382b" stroke-width="1" stroke-dasharray="4,3" fill="none" marker-end="url(#2026-10-13-b98ce030-03-arr-stop)"/>
+  <!-- F2 오래됨 라벨 -->
+  <rect x="416" y="268" width="64" height="14" rx="2" fill="#f8fafb"/>
+  <text x="448" y="279" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">오래됨</text>
+
+  <!-- F3 → CTX (고유함 — 오른쪽) -->
+  <line x1="700" y1="200" x2="776" y2="200" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-10-13-b98ce030-03-arr-acc)"/>
+  <!-- F3 고유함 라벨 -->
+  <rect x="706" y="180" width="48" height="14" rx="2" fill="#f8fafb"/>
+  <text x="730" y="191" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">고유함</text>
+
+  <!-- F3 → X3 (중복 — 아래) -->
+  <path d="M650 228 Q650 332 576 332" stroke="#94382b" stroke-width="1" stroke-dasharray="4,3" fill="none" marker-end="url(#2026-10-13-b98ce030-03-arr-stop)"/>
+  <!-- F3 중복 라벨 -->
+  <rect x="594" y="288" width="40" height="14" rx="2" fill="#f8fafb"/>
+  <text x="614" y="299" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">중복</text>
+
+  <!-- ===================== NODES ===================== -->
+
+  <!-- RAW: 원시 데이터 (input 처리 — link blue 계열) -->
+  <rect x="60" y="164" width="112" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="60" y="164" width="112" height="72" rx="6" fill="rgba(58,84,143,0.06)" stroke="#3a548f" stroke-width="1"/>
+  <rect x="68" y="172" width="40" height="12" rx="2" fill="transparent" stroke="rgba(58,84,143,0.40)" stroke-width="0.8"/>
+  <text x="88" y="181" fill="rgba(58,84,143,0.8)" font-size="7" font-family="'IBM Plex Mono',monospace" text-anchor="middle" letter-spacing="0.08em">INPUT</text>
+  <text x="116" y="205" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">원시 데이터</text>
+  <text x="116" y="222" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">전체 레코드</text>
+
+  <!-- F1: 관련성 체크 (decision diamond, accent) -->
+  <!-- diamond center: 298,200 half=50 -->
+  <polygon points="298,152 348,200 298,248 248,200" fill="#f8fafb"/>
+  <polygon points="298,152 348,200 298,248 248,200" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="298" y="196" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">관련성</text>
+  <text x="298" y="212" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">체크</text>
+
+  <!-- F2: 신선도 체크 (decision diamond, accent) -->
+  <!-- diamond center: 474,200 -->
+  <polygon points="474,152 524,200 474,248 424,200" fill="#f8fafb"/>
+  <polygon points="474,152 524,200 474,248 424,200" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="474" y="196" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">신선도</text>
+  <text x="474" y="212" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">체크</text>
+
+  <!-- F3: 중복성 체크 (decision diamond, accent) -->
+  <!-- diamond center: 650,200 -->
+  <polygon points="650,152 700,200 650,248 600,200" fill="#f8fafb"/>
+  <polygon points="650,152 700,200 650,248 600,200" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="650" y="196" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">중복성</text>
+  <text x="650" y="212" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">체크</text>
+
+  <!-- CTX: 컨텍스트 삽입 (focal — accent) -->
+  <rect x="776" y="164" width="120" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="776" y="164" width="120" height="72" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.5"/>
+  <rect x="784" y="172" width="40" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="804" y="181" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono',monospace" text-anchor="middle" letter-spacing="0.08em">OUTPUT</text>
+  <text x="836" y="205" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">컨텍스트</text>
+  <text x="836" y="222" fill="#0d5763" font-size="10" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">삽입</text>
+
+  <!-- X1: 제외 (아래, F1 exit) -->
+  <rect x="168" y="264" width="112" height="40" rx="6" fill="#f8fafb"/>
+  <rect x="168" y="264" width="112" height="40" rx="6" fill="rgba(148,56,43,0.06)" stroke="#94382b" stroke-width="1" stroke-dasharray="4,3"/>
+  <text x="224" y="289" fill="#94382b" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">제외</text>
+
+  <!-- X2: 갱신 또는 제외 (아래, F2 exit) -->
+  <rect x="336" y="288" width="128" height="40" rx="6" fill="#f8fafb"/>
+  <rect x="336" y="288" width="128" height="40" rx="6" fill="rgba(148,56,43,0.06)" stroke="#94382b" stroke-width="1" stroke-dasharray="4,3"/>
+  <text x="400" y="313" fill="#94382b" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">갱신 또는 제외</text>
+
+  <!-- X3: 제외 (아래, F3 exit) -->
+  <rect x="520" y="312" width="112" height="40" rx="6" fill="#f8fafb"/>
+  <rect x="520" y="312" width="112" height="40" rx="6" fill="rgba(148,56,43,0.06)" stroke="#94382b" stroke-width="1" stroke-dasharray="4,3"/>
+  <text x="576" y="337" fill="#94382b" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">제외</text>
+
+  <!-- ===================== LEGEND ===================== -->
+  <line x1="32" y1="373" x2="928" y2="373" stroke="rgba(18,33,39,0.10)" stroke-width="0.8"/>
+
+  <!-- legend: 체크 단계 -->
+  <polygon points="48,386 54,380 60,386 54,392" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="68" y="390" fill="#3f545c" font-size="8" font-family="'IBM Plex Mono',monospace" letter-spacing="0.10em">체크 단계</text>
+
+  <!-- legend: 진행 -->
+  <line x1="160" y1="386" x2="184" y2="386" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-10-13-b98ce030-03-arr-acc)"/>
+  <text x="192" y="390" fill="#3f545c" font-size="8" font-family="'IBM Plex Mono',monospace" letter-spacing="0.10em">진행</text>
+
+  <!-- legend: 제외 -->
+  <line x1="256" y1="386" x2="280" y2="386" stroke="#94382b" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#2026-10-13-b98ce030-03-arr-stop)"/>
+  <text x="288" y="390" fill="#3f545c" font-size="8" font-family="'IBM Plex Mono',monospace" letter-spacing="0.10em">제외</text>
+
+  <!-- legend: 컨텍스트 삽입 -->
+  <rect x="352" y="380" width="12" height="12" rx="2" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="372" y="390" fill="#3f545c" font-size="8" font-family="'IBM Plex Mono',monospace" letter-spacing="0.10em">컨텍스트 삽입</text>
+
+</svg>
+</body>
+</html>

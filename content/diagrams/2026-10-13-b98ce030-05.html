@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; display: flex; justify-content: center; padding: 0; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 420" role="img" aria-labelledby="2026-10-13-b98ce030-05-orch-title 2026-10-13-b98ce030-05-orch-desc">
+  <title id="2026-10-13-b98ce030-05-orch-title">멀티에이전트 컨텍스트 분리 구조</title>
+  <desc id="2026-10-13-b98ce030-05-orch-desc">오케스트레이터가 두 서브에이전트에 작업을 할당하고, 서브에이전트는 구조화 요약만 반환하여 컨텍스트 폭발을 방지하는 흐름을 보여 주는 도식.</desc>
+
+  <defs>
+    <!-- arrow: muted default -->
+    <marker id="2026-10-13-b98ce030-05-arr" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <!-- arrow: accent -->
+    <marker id="2026-10-13-b98ce030-05-arr-acc" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <!-- arrow: warning/stop dashed -->
+    <marker id="2026-10-13-b98ce030-05-arr-stop" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#94382b"/>
+    </marker>
+  </defs>
+
+  <!-- page background -->
+  <rect width="960" height="420" fill="#f8fafb"/>
+
+  <!-- ── ARROWS drawn before boxes ───────────────────────────────────────── -->
+
+  <!-- ORC → A1 (작업 할당, top path) -->
+  <!-- ORC right edge: x=388, y=152. A1 left edge: x=568, y=136 -->
+  <!-- orthogonal: right from ORC to mid, then up to A1 -->
+  <path d="M388,152 L478,152 L478,136 L568,136" fill="none" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-10-13-b98ce030-05-arr-acc)"/>
+  <!-- label mask + text -->
+  <rect x="409" y="130" width="52" height="14" rx="2" fill="#f8fafb"/>
+  <text x="435" y="141" fill="#0d5763" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500" text-anchor="middle">작업 할당</text>
+
+  <!-- ORC → A2 (작업 할당, bottom path) -->
+  <!-- ORC right edge: x=388, y=188. A2 left edge: x=568, y=244 -->
+  <path d="M388,188 L478,188 L478,244 L568,244" fill="none" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-10-13-b98ce030-05-arr-acc)"/>
+  <!-- label mask + text -->
+  <rect x="409" y="198" width="52" height="14" rx="2" fill="#f8fafb"/>
+  <text x="435" y="209" fill="#0d5763" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500" text-anchor="middle">작업 할당</text>
+
+  <!-- A1 → ORC (구조화 요약만, top return) -->
+  <!-- A1 left edge: x=568, y=124. ORC right edge: x=388, y=164 -->
+  <!-- offset slightly from outgoing: exit A1 left at y=124, enter ORC right at y=164 -->
+  <path d="M568,124 L500,124 L500,164 L388,164" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-13-b98ce030-05-arr)"/>
+  <!-- label mask + text -->
+  <rect x="415" y="108" width="72" height="14" rx="2" fill="#f8fafb"/>
+  <text x="451" y="119" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500" text-anchor="middle">구조화 요약만</text>
+
+  <!-- A2 → ORC (구조화 요약만, bottom return) -->
+  <!-- A2 left edge: x=568, y=256. ORC right edge: x=388, y=176 -->
+  <path d="M568,256 L508,256 L508,176 L388,176" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-13-b98ce030-05-arr)"/>
+  <!-- label mask + text -->
+  <rect x="415" y="260" width="72" height="14" rx="2" fill="#f8fafb"/>
+  <text x="451" y="271" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500" text-anchor="middle">구조화 요약만</text>
+
+  <!-- A1 -.-> STOP1 (전체 전달 금지, dashed) -->
+  <!-- A1 right edge: x=716, y=136. STOP1 left edge: x=780, y=200 -->
+  <path d="M716,136 L748,136 L748,200 L780,200" fill="none" stroke="#94382b" stroke-width="1" stroke-dasharray="5,4" marker-end="url(#2026-10-13-b98ce030-05-arr-stop)"/>
+  <!-- label mask + text -->
+  <rect x="717" y="152" width="72" height="14" rx="2" fill="#f8fafb"/>
+  <text x="753" y="163" fill="#94382b" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500" text-anchor="middle">전체 전달 금지</text>
+
+  <!-- ── BOXES ────────────────────────────────────────────────────────────── -->
+
+  <!-- ORC — focal (오케스트레이터 컨텍스트) -->
+  <!-- x=208, y=128, w=180, h=80, cx=298 -->
+  <rect x="208" y="128" width="180" height="80" rx="6" fill="#f8fafb"/>
+  <rect x="208" y="128" width="180" height="80" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <!-- tag -->
+  <rect x="216" y="136" width="44" height="13" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="238" y="146" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">ORCH</text>
+  <!-- name -->
+  <text x="298" y="166" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">오케스트레이터</text>
+  <text x="298" y="184" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">컨텍스트</text>
+
+  <!-- A1 — backend (서브에이전트 A) -->
+  <!-- x=568, y=100, w=148, h=72, cx=642 -->
+  <rect x="568" y="100" width="148" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="568" y="100" width="148" height="72" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <!-- tag -->
+  <rect x="576" y="108" width="36" height="13" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="594" y="118" fill="rgba(18,33,39,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">AGENT</text>
+  <!-- name -->
+  <text x="642" y="140" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">서브에이전트 A</text>
+  <text x="642" y="158" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">독립 컨텍스트</text>
+
+  <!-- A2 — backend (서브에이전트 B) -->
+  <!-- x=568, y=208, w=148, h=72, cx=642 -->
+  <rect x="568" y="208" width="148" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="568" y="208" width="148" height="72" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <!-- tag -->
+  <rect x="576" y="216" width="36" height="13" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="594" y="226" fill="rgba(18,33,39,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">AGENT</text>
+  <!-- name -->
+  <text x="642" y="248" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">서브에이전트 B</text>
+  <text x="642" y="266" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">독립 컨텍스트</text>
+
+  <!-- STOP1 — warning node (컨텍스트 폭발 방지) -->
+  <!-- x=780, y=168, w=148, h=64, cx=854 -->
+  <rect x="780" y="168" width="148" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="780" y="168" width="148" height="64" rx="6" fill="rgba(148,56,43,0.06)" stroke="rgba(148,56,43,0.60)" stroke-width="1" stroke-dasharray="4,4"/>
+  <!-- tag -->
+  <rect x="788" y="176" width="36" height="13" rx="2" fill="transparent" stroke="rgba(148,56,43,0.40)" stroke-width="0.8"/>
+  <text x="806" y="186" fill="rgba(148,56,43,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">RISK</text>
+  <!-- name -->
+  <text x="854" y="206" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">컨텍스트 폭발</text>
+  <text x="854" y="222" fill="#94382b" font-size="11" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">방지</text>
+
+  <!-- ── LEGEND ────────────────────────────────────────────────────────────── -->
+  <line x1="32" y1="360" x2="928" y2="360" stroke="rgba(18,33,39,0.10)" stroke-width="0.8"/>
+  <text x="32" y="374" fill="#6c8188" font-size="8" font-family="'IBM Plex Mono', monospace" letter-spacing="0.14em">LEGEND</text>
+
+  <!-- focal swatch -->
+  <rect x="104" y="364" width="16" height="12" rx="2" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="126" y="374" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="start">오케스트레이터</text>
+
+  <!-- agent swatch -->
+  <rect x="260" y="364" width="16" height="12" rx="2" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <text x="282" y="374" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="start">서브에이전트</text>
+
+  <!-- stop swatch -->
+  <rect x="400" y="364" width="16" height="12" rx="2" fill="rgba(148,56,43,0.06)" stroke="rgba(148,56,43,0.60)" stroke-width="1" stroke-dasharray="4,4"/>
+  <text x="422" y="374" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="start">방지 경계</text>
+
+  <!-- dashed arrow swatch -->
+  <line x1="528" y1="370" x2="556" y2="370" stroke="#94382b" stroke-width="1" stroke-dasharray="5,4" marker-end="url(#2026-10-13-b98ce030-05-arr-stop)"/>
+  <text x="566" y="374" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="start">전달 금지</text>
+
+  <!-- solid arrow swatch -->
+  <line x1="668" y1="370" x2="696" y2="370" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-13-b98ce030-05-arr)"/>
+  <text x="706" y="374" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="start">데이터 흐름</text>
+
+</svg>
+</body>
+</html>

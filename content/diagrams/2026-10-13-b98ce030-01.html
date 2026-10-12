@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LLM Context Engineering 흐름도</title>
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: #f8fafb; }
+  body { display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 0; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg"
+     viewBox="0 0 960 280"
+     role="img"
+     aria-labelledby="2026-10-13-b98ce030-01-ctx-eng-title 2026-10-13-b98ce030-01-ctx-eng-desc">
+
+  <title id="2026-10-13-b98ce030-01-ctx-eng-title">LLM Context Engineering — 에이전트 성능을 결정하는 흐름</title>
+  <desc id="2026-10-13-b98ce030-01-ctx-eng-desc">프롬프트 엔지니어링에서 시작해 복잡한 워크플로우로 확장되면, 컨텍스트 오염과 성능 저하가 발생하고, 이를 해결하기 위해 컨텍스트 엔지니어링이라는 설계 체계가 필요함을 보여주는 흐름도.</desc>
+
+  <defs>
+    <!-- 기본 화살표 (muted) -->
+    <marker id="2026-10-13-b98ce030-01-arrow-muted" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <!-- 강조 화살표 (accent) -->
+    <marker id="2026-10-13-b98ce030-01-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+  </defs>
+
+  <!-- 배경 -->
+  <rect width="960" height="280" fill="#f8fafb"/>
+
+  <!-- ══════════════════════════════════════════
+       화살표를 먼저 그림 (z-order: 선 → 박스)
+       ══════════════════════════════════════════ -->
+
+  <!-- 화살표 1: 프롬프트 엔지니어링 → 복잡한 워크플로우 (정렬된 중심선 y=120) -->
+  <!-- 라벨 "에이전트로 확장" 위에 마스크 + 텍스트 -->
+  <line x1="228" y1="120" x2="328" y2="120"
+        stroke="#3f545c" stroke-width="1.2"
+        marker-end="url(#2026-10-13-b98ce030-01-arrow-muted)"/>
+  <!-- 라벨 마스크 (화살표 중간) -->
+  <rect x="239" y="102" width="80" height="14" rx="2" fill="#f8fafb"/>
+  <text x="279" y="113"
+        fill="#6c8188" font-size="10" font-weight="500"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">에이전트로 확장</text>
+
+  <!-- 화살표 2: 복잡한 워크플로우 → 컨텍스트 오염 -->
+  <line x1="488" y1="120" x2="572" y2="120"
+        stroke="#3f545c" stroke-width="1.2"
+        marker-end="url(#2026-10-13-b98ce030-01-arrow-muted)"/>
+
+  <!-- 화살표 3: 컨텍스트 오염 → 컨텍스트 엔지니어링 (accent) -->
+  <line x1="732" y1="120" x2="812" y2="120"
+        stroke="#0d5763" stroke-width="1.4"
+        marker-end="url(#2026-10-13-b98ce030-01-arrow-accent)"/>
+
+  <!-- ══════════════════════════════════════════
+       노드 박스 (z-order: 박스가 선 위에)
+       ══════════════════════════════════════════ -->
+
+  <!-- 노드 1: 프롬프트 엔지니어링 (muted / input 타입) -->
+  <!-- x=28, y=72, w=200, h=96, cx=128 -->
+  <rect x="28" y="72" width="200" height="96" rx="6" fill="#f8fafb"/>
+  <rect x="28" y="72" width="200" height="96" rx="6"
+        fill="rgba(195,208,212,0.25)" stroke="#c3d0d4" stroke-width="1"/>
+  <!-- 타입 태그 -->
+  <rect x="36" y="80" width="40" height="12" rx="2"
+        fill="transparent" stroke="rgba(195,208,212,0.6)" stroke-width="0.8"/>
+  <text x="56" y="89"
+        fill="#6c8188" font-size="9" font-weight="500"
+        font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.08em">BEFORE</text>
+  <!-- 노드 이름 -->
+  <text x="128" y="116"
+        fill="#3f545c" font-size="13" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">프롬프트 엔지니어링</text>
+  <!-- 서브라벨 -->
+  <text x="128" y="134"
+        fill="#6c8188" font-size="11" font-weight="400"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">단일 입력 최적화</text>
+
+  <!-- 노드 2: 복잡한 워크플로우 (warn / backend 타입) -->
+  <!-- x=328, y=72, w=160, h=96, cx=408 -->
+  <rect x="328" y="72" width="160" height="96" rx="6" fill="#f8fafb"/>
+  <rect x="328" y="72" width="160" height="96" rx="6"
+        fill="rgba(245,232,204,0.6)" stroke="#a96a08" stroke-width="1"/>
+  <rect x="336" y="80" width="36" height="12" rx="2"
+        fill="transparent" stroke="rgba(169,106,8,0.40)" stroke-width="0.8"/>
+  <text x="354" y="89"
+        fill="rgba(169,106,8,0.9)" font-size="9" font-weight="500"
+        font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.08em">AGENT</text>
+  <text x="408" y="111"
+        fill="#122127" font-size="13" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">복잡한 워크플로우</text>
+  <text x="408" y="129"
+        fill="#3f545c" font-size="11" font-weight="400"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">도구 · 다단계 추론</text>
+
+  <!-- 노드 3: 컨텍스트 오염 (stop / 경고 타입) -->
+  <!-- x=572, y=72, w=160, h=96, cx=652 -->
+  <rect x="572" y="72" width="160" height="96" rx="6" fill="#f8fafb"/>
+  <rect x="572" y="72" width="160" height="96" rx="6"
+        fill="rgba(241,217,212,0.6)" stroke="#94382b" stroke-width="1"/>
+  <rect x="580" y="80" width="36" height="12" rx="2"
+        fill="transparent" stroke="rgba(148,56,43,0.40)" stroke-width="0.8"/>
+  <text x="598" y="89"
+        fill="rgba(148,56,43,0.9)" font-size="9" font-weight="500"
+        font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.08em">ISSUE</text>
+  <text x="652" y="111"
+        fill="#122127" font-size="13" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">컨텍스트 오염</text>
+  <text x="652" y="129"
+        fill="#3f545c" font-size="11" font-weight="400"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">성능 저하</text>
+
+  <!-- 노드 4: 컨텍스트 엔지니어링 (focal / accent) -->
+  <!-- x=812, y=60, w=120, h=120, cx=872 -->
+  <rect x="812" y="60" width="120" height="120" rx="6" fill="#f8fafb"/>
+  <rect x="812" y="60" width="120" height="120" rx="6"
+        fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.4"/>
+  <rect x="820" y="68" width="44" height="12" rx="2"
+        fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="842" y="77"
+        fill="rgba(13,87,99,0.9)" font-size="9" font-weight="500"
+        font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.08em">SOLUTION</text>
+  <text x="872" y="113"
+        fill="#122127" font-size="13" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">컨텍스트</text>
+  <text x="872" y="131"
+        fill="#122127" font-size="13" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">엔지니어링</text>
+  <text x="872" y="152"
+        fill="#3f545c" font-size="11" font-weight="400"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">설계 체계 필요</text>
+
+  <!-- ══════════════════════════════════════════
+       범례 (하단 수평 스트립)
+       ══════════════════════════════════════════ -->
+  <line x1="28" y1="212" x2="932" y2="212"
+        stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+
+  <!-- 범례 라벨 -->
+  <text x="28" y="228"
+        fill="#6c8188" font-size="9" font-weight="500"
+        font-family="'IBM Plex Mono', monospace"
+        letter-spacing="0.14em">LEGEND</text>
+
+  <!-- 범례 아이템 1: 이전 접근 -->
+  <rect x="96" y="220" width="12" height="12" rx="2"
+        fill="rgba(195,208,212,0.25)" stroke="#c3d0d4" stroke-width="0.8"/>
+  <text x="114" y="230"
+        fill="#6c8188" font-size="10" font-weight="400"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">이전 접근</text>
+
+  <!-- 범례 아이템 2: 워크플로우 확장 -->
+  <rect x="228" y="220" width="12" height="12" rx="2"
+        fill="rgba(245,232,204,0.6)" stroke="#a96a08" stroke-width="0.8"/>
+  <text x="246" y="230"
+        fill="#6c8188" font-size="10" font-weight="400"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">워크플로우 확장</text>
+
+  <!-- 범례 아이템 3: 문제 발생 -->
+  <rect x="384" y="220" width="12" height="12" rx="2"
+        fill="rgba(241,217,212,0.6)" stroke="#94382b" stroke-width="0.8"/>
+  <text x="402" y="230"
+        fill="#6c8188" font-size="10" font-weight="400"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">문제 발생</text>
+
+  <!-- 범례 아이템 4: 핵심 해결책 -->
+  <rect x="516" y="220" width="12" height="12" rx="2"
+        fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="534" y="230"
+        fill="#6c8188" font-size="10" font-weight="400"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">핵심 해결책</text>
+
+</svg>
+</body>
+</html>

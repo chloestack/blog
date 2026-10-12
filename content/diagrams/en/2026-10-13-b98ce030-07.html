@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<svg viewBox="0 0 960 440" xmlns="http://www.w3.org/2000/svg"
+     role="img" aria-labelledby="2026-10-13-b98ce030-07-ctx-title 2026-10-13-b98ce030-07-ctx-desc">
+  <title id="2026-10-13-b98ce030-07-ctx-title">Context Window Design: Anti-patterns vs. Solutions</title>
+  <desc id="2026-10-13-b98ce030-07-ctx-desc">Three context anti-patterns (infinite history accumulation, indiscriminate error message inclusion, bloated system prompt) lead to agent performance degradation, while three solution strategies (sliding window & periodic summarisation, error compression with resolution info, keeping only essential system prompt content) converge to a stable agent.</desc>
+
+  <defs>
+    <!-- Arrow markers -->
+    <marker id="2026-10-13-b98ce030-07-arrow-bad" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#94382b"/>
+    </marker>
+    <marker id="2026-10-13-b98ce030-07-arrow-good" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="960" height="440" fill="#f8fafb"/>
+
+  <!-- ── 안티패턴 구역 라벨 ── -->
+  <text x="44" y="32" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace"
+        font-weight="500" letter-spacing="0.14em">ANTI-PATTERN</text>
+  <line x1="40" y1="38" x2="340" y2="38" stroke="rgba(18,33,39,0.10)" stroke-width="0.8"/>
+
+  <!-- 해결 전략 구역 라벨 -->
+  <text x="524" y="32" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace"
+        font-weight="500" letter-spacing="0.14em">SOLUTION</text>
+  <line x1="520" y1="38" x2="820" y2="38" stroke="rgba(18,33,39,0.10)" stroke-width="0.8"/>
+
+  <!-- ═══════════════════════════════════════════
+       ARROWS — drawn before boxes
+  ════════════════════════════════════════════ -->
+
+  <!-- AP1 → FAIL : exits right edge of AP1 (x=232, y=100), enters left of FAIL (x=368, y=220) -->
+  <!-- orthogonal: right from AP1 to x=300, then down to y=220, then right to FAIL -->
+  <path d="M 232,100 H 300 V 220 H 368"
+        fill="none" stroke="#94382b" stroke-width="1" stroke-opacity="0.7"
+        marker-end="url(#2026-10-13-b98ce030-07-arrow-bad)"/>
+
+  <!-- AP2 → FAIL : AP2 right edge (232,220) → FAIL left (368,220) straight -->
+  <path d="M 232,220 H 368"
+        fill="none" stroke="#94382b" stroke-width="1" stroke-opacity="0.7"
+        marker-end="url(#2026-10-13-b98ce030-07-arrow-bad)"/>
+
+  <!-- AP3 → FAIL : exits right of AP3 (x=232, y=340), goes to x=300, up to y=240, right to FAIL -->
+  <path d="M 232,340 H 300 V 240 H 368"
+        fill="none" stroke="#94382b" stroke-width="1" stroke-opacity="0.7"
+        marker-end="url(#2026-10-13-b98ce030-07-arrow-bad)"/>
+
+  <!-- FIX1 → GOOD : FIX1 right (728,100) → x=800, down to 220, right to GOOD left (836,220) -->
+  <path d="M 728,100 H 800 V 220 H 836"
+        fill="none" stroke="#0d5763" stroke-width="1.2" stroke-opacity="0.8"
+        marker-end="url(#2026-10-13-b98ce030-07-arrow-good)"/>
+
+  <!-- FIX2 → GOOD : straight right (728,220) → GOOD left (836,220) -->
+  <path d="M 728,220 H 836"
+        fill="none" stroke="#0d5763" stroke-width="1.2" stroke-opacity="0.8"
+        marker-end="url(#2026-10-13-b98ce030-07-arrow-good)"/>
+
+  <!-- FIX3 → GOOD : FIX3 right (728,340) → x=800, up to 240, right to GOOD left (836,240) -->
+  <path d="M 728,340 H 800 V 240 H 836"
+        fill="none" stroke="#0d5763" stroke-width="1.2" stroke-opacity="0.8"
+        marker-end="url(#2026-10-13-b98ce030-07-arrow-good)"/>
+
+  <!-- ═══════════════════════════════════════════
+       NODES — drawn after arrows
+  ════════════════════════════════════════════ -->
+
+  <!-- AP1: 무한 히스토리 누적 — x=40,y=60, w=192,h=80 -->
+  <rect x="40" y="60" width="192" height="80" rx="6" fill="#f8fafb"/>
+  <rect x="40" y="60" width="192" height="80" rx="6" fill="rgba(148,56,43,0.06)" stroke="#94382b" stroke-width="1" stroke-dasharray="4,3"/>
+  <text x="136" y="96" fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Infinite History</text>
+  <text x="136" y="116" fill="#3f545c" font-size="14" font-weight="400"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Accumulation</text>
+
+  <!-- AP2: 에러 메시지 무분별 포함 — x=40,y=180, w=192,h=80 -->
+  <rect x="40" y="180" width="192" height="80" rx="6" fill="#f8fafb"/>
+  <rect x="40" y="180" width="192" height="80" rx="6" fill="rgba(148,56,43,0.06)" stroke="#94382b" stroke-width="1" stroke-dasharray="4,3"/>
+  <text x="136" y="216" fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Error Messages</text>
+  <text x="136" y="236" fill="#3f545c" font-size="14" font-weight="400"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Indiscriminately Added</text>
+
+  <!-- AP3: 시스템 프롬프트 비대화 — x=40,y=300, w=192,h=80 -->
+  <rect x="40" y="300" width="192" height="80" rx="6" fill="#f8fafb"/>
+  <rect x="40" y="300" width="192" height="80" rx="6" fill="rgba(148,56,43,0.06)" stroke="#94382b" stroke-width="1" stroke-dasharray="4,3"/>
+  <text x="136" y="336" fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">System Prompt</text>
+  <text x="136" y="356" fill="#3f545c" font-size="14" font-weight="400"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Bloat</text>
+
+  <!-- FAIL: 에이전트 성능 저하 — focal accent-bad — x=368,y=176, w=152,h=88 -->
+  <rect x="368" y="176" width="152" height="88" rx="6" fill="#f8fafb"/>
+  <rect x="368" y="176" width="152" height="88" rx="6" fill="rgba(148,56,43,0.10)" stroke="#94382b" stroke-width="1.5"/>
+  <rect x="376" y="184" width="36" height="14" rx="2" fill="transparent" stroke="rgba(148,56,43,0.40)" stroke-width="0.8"/>
+  <text x="394" y="194" fill="rgba(148,56,43,0.80)" font-size="7" font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.08em" font-weight="500">result</text>
+  <text x="444" y="216" fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Agent</text>
+  <text x="444" y="236" fill="#3f545c" font-size="14" font-weight="400"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Performance Degraded</text>
+
+  <!-- FIX1: 슬라이딩 윈도우 주기적 요약 — x=528,y=60, w=200,h=80 -->
+  <rect x="528" y="60" width="200" height="80" rx="6" fill="#f8fafb"/>
+  <rect x="528" y="60" width="200" height="80" rx="6" fill="rgba(13,87,99,0.06)" stroke="#0d5763" stroke-width="1"/>
+  <text x="628" y="96" fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Sliding Window</text>
+  <text x="628" y="116" fill="#3f545c" font-size="14" font-weight="400"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Periodic Summary</text>
+
+  <!-- FIX2: 에러 압축 해결 정보 포함 — x=528,y=180, w=200,h=80 -->
+  <rect x="528" y="180" width="200" height="80" rx="6" fill="#f8fafb"/>
+  <rect x="528" y="180" width="200" height="80" rx="6" fill="rgba(13,87,99,0.06)" stroke="#0d5763" stroke-width="1"/>
+  <text x="628" y="216" fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Error Compression</text>
+  <text x="628" y="236" fill="#3f545c" font-size="14" font-weight="400"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Include Resolution Info</text>
+
+  <!-- FIX3: 시스템 프롬프트 핵심만 유지 — x=528,y=300, w=200,h=80 -->
+  <rect x="528" y="300" width="200" height="80" rx="6" fill="#f8fafb"/>
+  <rect x="528" y="300" width="200" height="80" rx="6" fill="rgba(13,87,99,0.06)" stroke="#0d5763" stroke-width="1"/>
+  <text x="628" y="336" fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">System Prompt</text>
+  <text x="628" y="356" fill="#3f545c" font-size="14" font-weight="400"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Essentials Only</text>
+
+  <!-- GOOD: 안정적 에이전트 — focal accent — x=836,y=176, w=100,h=88 -->
+  <rect x="836" y="176" width="100" height="88" rx="6" fill="#f8fafb"/>
+  <rect x="836" y="176" width="100" height="88" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.5"/>
+  <rect x="844" y="184" width="36" height="14" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="862" y="194" fill="rgba(13,87,99,0.80)" font-size="7" font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.08em" font-weight="500">result</text>
+  <text x="886" y="216" fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Stable</text>
+  <text x="886" y="236" fill="#3f545c" font-size="14" font-weight="400"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Agent</text>
+
+  <!-- ═══════════════════════════════════════════
+       LEGEND STRIP
+  ════════════════════════════════════════════ -->
+  <line x1="40" y1="400" x2="920" y2="400" stroke="rgba(18,33,39,0.10)" stroke-width="0.8"/>
+
+  <!-- legend: 안티패턴 -->
+  <rect x="40" y="412" width="14" height="14" rx="2" fill="rgba(148,56,43,0.06)" stroke="#94382b" stroke-width="1" stroke-dasharray="4,3"/>
+  <text x="60" y="423" fill="#6c8188" font-size="11" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        font-weight="500">Anti-pattern</text>
+
+  <!-- legend: 해결 전략 -->
+  <rect x="160" y="412" width="14" height="14" rx="2" fill="rgba(13,87,99,0.06)" stroke="#0d5763" stroke-width="1"/>
+  <text x="180" y="423" fill="#6c8188" font-size="11" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        font-weight="500">Solution</text>
+
+  <!-- legend: 결과 노드 -->
+  <rect x="280" y="412" width="14" height="14" rx="2" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.5"/>
+  <text x="300" y="423" fill="#6c8188" font-size="11" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        font-weight="500">Result (focal)</text>
+</svg>
+</body>
+</html>

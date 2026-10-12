@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Context Window Position Effect</title>
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #f8fafb; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<svg
+  viewBox="0 0 960 600"
+  xmlns="http://www.w3.org/2000/svg"
+  role="img"
+  aria-labelledby="2026-10-13-b98ce030-02-ctx-title 2026-10-13-b98ce030-02-ctx-desc"
+>
+  <title id="2026-10-13-b98ce030-02-ctx-title">Context Window Position Effect</title>
+  <desc id="2026-10-13-b98ce030-02-ctx-desc">Diagram dividing an LLM context window into beginning, middle, and end sections, showing memory retention strength and recommended placement strategy for each position. The beginning and end are well remembered; the middle suffers from attention loss.</desc>
+
+  <defs>
+    <!-- 기본 화살표 -->
+    <marker id="2026-10-13-b98ce030-02-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <!-- 강조 화살표 (accent) -->
+    <marker id="2026-10-13-b98ce030-02-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <!-- 경고 화살표 -->
+    <marker id="2026-10-13-b98ce030-02-arrow-warn" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+  </defs>
+
+  <!-- 배경 -->
+  <rect width="960" height="600" fill="#f8fafb"/>
+
+  <!-- ══════════════════════════════════════
+       ARROWS (drawn before boxes)
+  ══════════════════════════════════════ -->
+
+  <!-- TOP → MID (수직 아래) -->
+  <line x1="240" y1="172" x2="240" y2="256" stroke="#3f545c" stroke-width="1.2" marker-end="url(#2026-10-13-b98ce030-02-arrow)"/>
+
+  <!-- MID → BOT (수직 아래) -->
+  <line x1="240" y1="332" x2="240" y2="416" stroke="#3f545c" stroke-width="1.2" marker-end="url(#2026-10-13-b98ce030-02-arrow)"/>
+
+  <!-- TOP → R1 (오른쪽으로 직각 경로: 오른쪽 엣지 → 수평 이동 → R1 왼쪽 엣지) -->
+  <!-- TOP right edge: x=360, y=136. R1 left edge: x=520, y=136 -->
+  <path d="M 360 136 L 520 136" fill="none" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-10-13-b98ce030-02-arrow-accent)"/>
+
+  <!-- BOT → R2 (오른쪽으로 직각 경로) -->
+  <!-- BOT right edge: x=360, y=460. R2 left edge: x=520, y=460 -->
+  <path d="M 360 460 L 520 460" fill="none" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-10-13-b98ce030-02-arrow-accent)"/>
+
+  <!-- MID → W1 (왼쪽으로 직각 경로) -->
+  <!-- MID left edge: x=120, y=296. W1 right edge: x=88, y=296 → W1은 왼쪽에 -->
+  <!-- W1 right edge: x=88, W1 center y=296 -->
+  <path d="M 120 296 L 88 296" fill="none" stroke="#3f545c" stroke-width="1.2" stroke-dasharray="5,4" marker-end="url(#2026-10-13-b98ce030-02-arrow-warn)"/>
+
+  <!-- ══════════════════════════════════════
+       NODES
+  ══════════════════════════════════════ -->
+
+  <!-- ── 시작부 (TOP) — focal / "잘 기억됨" 녹색 계열 → accent 처리 -->
+  <!-- center: 240, 136 / width:240, height:72 / x=120, y=100 -->
+  <rect x="120" y="100" width="240" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="120" y="100" width="240" height="72" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <!-- 태그 -->
+  <rect x="128" y="108" width="44" height="13" rx="2" fill="transparent" stroke="rgba(13,87,99,0.4)" stroke-width="0.8"/>
+  <text x="150" y="117.5" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">START</text>
+  <!-- 노드명 -->
+  <text x="240" y="154" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Beginning</text>
+  <text x="240" y="172" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Well Remembered</text>
+
+  <!-- ── 중간부 (MID) — 경고/위험 빨간 계열 → muted 처리 + 경고색 border -->
+  <!-- center: 240, 296 / width:240, height:72 / x=120, y=260 -->
+  <rect x="120" y="260" width="240" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="120" y="260" width="240" height="72" rx="6" fill="rgba(148,56,43,0.06)" stroke="rgba(148,56,43,0.5)" stroke-width="1.2"/>
+  <!-- 태그 -->
+  <rect x="128" y="268" width="36" height="13" rx="2" fill="transparent" stroke="rgba(148,56,43,0.4)" stroke-width="0.8"/>
+  <text x="146" y="277.5" fill="rgba(148,56,43,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">MID</text>
+  <!-- 노드명 -->
+  <text x="240" y="314" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Middle</text>
+  <text x="240" y="332" fill="#6c8188" font-size="11" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Attention Loss · Overlooked</text>
+
+  <!-- ── 끝부분 (BOT) — focal / "잘 기억됨" accent 처리 -->
+  <!-- center: 240, 460 / width:240, height:72 / x=120, y=424 -->
+  <rect x="120" y="424" width="240" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="120" y="424" width="240" height="72" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <!-- 태그 -->
+  <rect x="128" y="432" width="32" height="13" rx="2" fill="transparent" stroke="rgba(13,87,99,0.4)" stroke-width="0.8"/>
+  <text x="144" y="441.5" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">END</text>
+  <!-- 노드명 -->
+  <text x="240" y="478" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">End</text>
+  <text x="240" y="496" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Well Remembered</text>
+
+  <!-- ── R1: 시스템 프롬프트 배치 권장 -->
+  <!-- center: 720, 136 / width:280, height:72 / x=580, y=100 -->
+  <rect x="580" y="100" width="280" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="580" y="100" width="280" height="72" rx="6" fill="rgba(13,87,99,0.05)" stroke="rgba(13,87,99,0.35)" stroke-width="1"/>
+  <!-- 태그 -->
+  <rect x="588" y="108" width="52" height="13" rx="2" fill="transparent" stroke="rgba(13,87,99,0.35)" stroke-width="0.8"/>
+  <text x="614" y="117.5" fill="rgba(13,87,99,0.7)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">STRATEGY</text>
+  <!-- 노드명 -->
+  <text x="720" y="150" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">System Prompt</text>
+  <text x="720" y="168" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Place Core Rules Here</text>
+
+  <!-- ── R2: 마지막 사용자 메시지 배치 권장 -->
+  <!-- center: 720, 460 / width:280, height:72 / x=580, y=424 -->
+  <rect x="580" y="424" width="280" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="580" y="424" width="280" height="72" rx="6" fill="rgba(13,87,99,0.05)" stroke="rgba(13,87,99,0.35)" stroke-width="1"/>
+  <!-- 태그 -->
+  <rect x="588" y="432" width="52" height="13" rx="2" fill="transparent" stroke="rgba(13,87,99,0.35)" stroke-width="0.8"/>
+  <text x="614" y="441.5" fill="rgba(13,87,99,0.7)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">STRATEGY</text>
+  <!-- 노드명 -->
+  <text x="720" y="470" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Last User Message</text>
+  <text x="720" y="488" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Place Specific Instructions</text>
+
+  <!-- ── W1: 도구 결과 누적 경고 (왼쪽) -->
+  <!-- center: 28, 296 → 너무 좁으므로 더 넓게: center 52, 296 / width:96, height:72 / x=-44… -->
+  <!-- 조정: 왼쪽 여백 확보. MID left=120. W1 right edge at x=88. W1 width=180, x=32 안전하게 -->
+  <!-- W1: x=24, y=260, width=80, height=72 → 너무 좁음. width=92로 -->
+  <!-- MID arrow goes from x=120 leftward. W1 right edge = x+width. -->
+  <!-- W1: x=20, y=260, width=92, height=72, center=(66, 296) -->
+  <rect x="20" y="260" width="92" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="20" y="260" width="92" height="72" rx="6" fill="rgba(169,106,8,0.07)" stroke="rgba(169,106,8,0.45)" stroke-width="1" stroke-dasharray="4,3"/>
+  <!-- 태그 -->
+  <rect x="28" y="268" width="36" height="13" rx="2" fill="transparent" stroke="rgba(169,106,8,0.4)" stroke-width="0.8"/>
+  <text x="46" y="277.5" fill="rgba(169,106,8,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">WARN</text>
+  <!-- 노드명 — 두 줄로 분리 -->
+  <text x="66" y="302" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Tool Results</text>
+  <text x="66" y="317" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Risk if Stacked</text>
+
+  <!-- 화살표 라벨: TOP→R1 -->
+  <rect x="424" y="120" width="52" height="14" rx="2" fill="#f8fafb"/>
+  <text x="450" y="130" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Recommended</text>
+
+  <!-- 화살표 라벨: BOT→R2 -->
+  <rect x="424" y="444" width="52" height="14" rx="2" fill="#f8fafb"/>
+  <text x="450" y="454" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Recommended</text>
+
+  <!-- 화살표 라벨: MID→W1 -->
+  <rect x="94" y="278" width="28" height="14" rx="2" fill="#f8fafb"/>
+  <text x="108" y="288" fill="#6c8188" font-size="9" font-family="'IBM Plex Mono', monospace" text-anchor="middle">risk</text>
+
+  <!-- ══════════════════════════════════════
+       LEGEND STRIP
+  ══════════════════════════════════════ -->
+  <line x1="30" y1="542" x2="930" y2="542" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+  <text x="30" y="556" fill="#6c8188" font-size="8" font-family="'IBM Plex Mono', monospace" letter-spacing="0.14em">LEGEND</text>
+
+  <!-- 범례 아이템 1: 잘 기억됨 -->
+  <rect x="100" y="548" width="12" height="12" rx="2" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="118" y="558" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">Well Remembered (Start·End)</text>
+
+  <!-- 범례 아이템 2: 주의 분산 -->
+  <rect x="280" y="548" width="12" height="12" rx="2" fill="rgba(148,56,43,0.06)" stroke="rgba(148,56,43,0.5)" stroke-width="1"/>
+  <text x="298" y="558" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">Attention Loss (Middle)</text>
+
+  <!-- 범례 아이템 3: 배치 전략 -->
+  <rect x="460" y="548" width="12" height="12" rx="2" fill="rgba(13,87,99,0.05)" stroke="rgba(13,87,99,0.35)" stroke-width="1"/>
+  <text x="478" y="558" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">Placement Strategy</text>
+
+  <!-- 범례 아이템 4: 누적 위험 -->
+  <rect x="600" y="548" width="12" height="12" rx="2" fill="rgba(169,106,8,0.07)" stroke="rgba(169,106,8,0.45)" stroke-width="1" stroke-dasharray="3,2"/>
+  <text x="618" y="558" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">Accumulation Risk Zone</text>
+
+</svg>
+</body>
+</html>
