@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<svg viewBox="0 0 960 400" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="2026-10-14-71367d11-03-qdrant-diag-title 2026-10-14-71367d11-03-qdrant-diag-desc">
+  <title id="2026-10-14-71367d11-03-qdrant-diag-title">Qdrant Slow Search — Root Cause Diagnosis Flow</title>
+  <desc id="2026-10-14-71367d11-03-qdrant-diag-desc">A decision flowchart that checks hnsw_ef settings, index build status, and payload index presence in order when search is slow, and guides the appropriate action for each situation.</desc>
+
+  <defs>
+    <!-- Arrow markers -->
+    <marker id="2026-10-14-71367d11-03-q-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-10-14-71367d11-03-q-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="960" height="400" fill="#f8fafb"/>
+
+  <!-- ===================== ARROWS (drawn before boxes) ===================== -->
+
+  <!-- SLOW → C1 -->
+  <path d="M 196,148 L 248,148" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-14-71367d11-03-q-arrow)"/>
+
+  <!-- C1 → FIX1 (예 / Yes → up) -->
+  <path d="M 320,124 L 320,100 L 440,100 L 440,112" fill="none" stroke="#0d5763" stroke-width="1" marker-end="url(#2026-10-14-71367d11-03-q-arrow-accent)"/>
+  <!-- label 예 -->
+  <rect x="346" y="89" width="20" height="12" rx="2" fill="#f8fafb"/>
+  <text x="356" y="98" fill="#0d5763" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="600">Yes</text>
+
+  <!-- C1 → C2 (아니오 → right) -->
+  <path d="M 392,148 L 440,148" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-14-71367d11-03-q-arrow)"/>
+  <!-- label 아니오 -->
+  <rect x="400" y="137" width="36" height="12" rx="2" fill="#f8fafb"/>
+  <text x="418" y="146" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">No</text>
+
+  <!-- C2 → FIX2 (예 / Yes → up) -->
+  <path d="M 512,124 L 512,100 L 628,100 L 628,112" fill="none" stroke="#0d5763" stroke-width="1" marker-end="url(#2026-10-14-71367d11-03-q-arrow-accent)"/>
+  <!-- label 예 -->
+  <rect x="534" y="89" width="20" height="12" rx="2" fill="#f8fafb"/>
+  <text x="544" y="98" fill="#0d5763" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="600">Yes</text>
+
+  <!-- C2 → C3 (아니오 → right) -->
+  <path d="M 576,148 L 624,148" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-14-71367d11-03-q-arrow)"/>
+  <!-- label 아니오 -->
+  <rect x="582" y="137" width="36" height="12" rx="2" fill="#f8fafb"/>
+  <text x="600" y="146" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">No</text>
+
+  <!-- C3 → FIX3 (예 / Yes → up) -->
+  <path d="M 696,124 L 696,100 L 808,100 L 808,112" fill="none" stroke="#0d5763" stroke-width="1" marker-end="url(#2026-10-14-71367d11-03-q-arrow-accent)"/>
+  <!-- label 예 -->
+  <rect x="718" y="89" width="20" height="12" rx="2" fill="#f8fafb"/>
+  <text x="728" y="98" fill="#0d5763" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="600">Yes</text>
+
+  <!-- C3 → FIX4 (아니오 → down) -->
+  <path d="M 696,172 L 696,212 L 808,212 L 808,208" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-14-71367d11-03-q-arrow)"/>
+  <!-- label 아니오 -->
+  <rect x="718" y="183" width="36" height="12" rx="2" fill="#f8fafb"/>
+  <text x="736" y="192" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">No</text>
+
+  <!-- ===================== NODES ===================== -->
+
+  <!-- SLOW — Entry / focal -->
+  <!-- paper mask -->
+  <rect x="56" y="116" width="140" height="64" rx="6" fill="#f8fafb"/>
+  <!-- box -->
+  <rect x="56" y="116" width="140" height="64" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <!-- tag -->
+  <rect x="64" y="122" width="36" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.4)" stroke-width="0.8"/>
+  <text x="82" y="131" fill="rgba(13,87,99,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">START</text>
+  <!-- name -->
+  <text x="126" y="155" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Slow Search</text>
+
+  <!-- C1 — Decision diamond -->
+  <rect x="248" y="112" width="144" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="248" y="112" width="144" height="72" rx="6" fill="rgba(18,33,39,0.04)" stroke="#6c8188" stroke-width="1"/>
+  <!-- diamond shape -->
+  <polygon points="320,116 388,148 320,180 252,148" fill="rgba(13,87,99,0.06)" stroke="#0d5763" stroke-width="1"/>
+  <text x="320" y="144" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">hnsw_ef &lt; limit?</text>
+
+  <!-- C2 — Decision diamond -->
+  <rect x="440" y="112" width="136" height="72" rx="6" fill="#f8fafb"/>
+  <polygon points="508,116 572,148 508,180 444,148" fill="rgba(13,87,99,0.06)" stroke="#0d5763" stroke-width="1"/>
+  <text x="508" y="140" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Index</text>
+  <text x="508" y="156" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Building?</text>
+
+  <!-- C3 — Decision diamond -->
+  <rect x="624" y="112" width="144" height="72" rx="6" fill="#f8fafb"/>
+  <polygon points="696,116 764,148 696,180 628,148" fill="rgba(13,87,99,0.06)" stroke="#0d5763" stroke-width="1"/>
+  <text x="696" y="140" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Filter Index</text>
+  <text x="696" y="156" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Missing?</text>
+
+  <!-- FIX1 — Action box (상단, C1 위) -->
+  <rect x="400" y="56" width="180" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="400" y="56" width="180" height="56" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="408" y="62" width="36" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.3)" stroke-width="0.8"/>
+  <text x="426" y="71" fill="rgba(18,33,39,0.7)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">ACTION</text>
+  <text x="490" y="90" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Increase hnsw_ef</text>
+
+  <!-- FIX2 — Action box (상단, C2 위) -->
+  <rect x="576" y="56" width="204" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="576" y="56" width="204" height="56" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="584" y="62" width="36" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.3)" stroke-width="0.8"/>
+  <text x="602" y="71" fill="rgba(18,33,39,0.7)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">ACTION</text>
+  <text x="678" y="90" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Wait for optimizer</text>
+
+  <!-- FIX3 — Action box (상단, C3 위) -->
+  <rect x="756" y="56" width="176" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="756" y="56" width="176" height="56" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="764" y="62" width="36" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.3)" stroke-width="0.8"/>
+  <text x="782" y="71" fill="rgba(18,33,39,0.7)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">ACTION</text>
+  <text x="844" y="90" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Add Payload Index</text>
+
+  <!-- FIX4 — Action box (하단, C3 아래) -->
+  <rect x="756" y="208" width="176" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="756" y="208" width="176" height="56" rx="6" fill="rgba(18,33,39,0.03)" stroke="rgba(18,33,39,0.30)" stroke-width="1"/>
+  <rect x="764" y="214" width="36" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.25)" stroke-width="0.8"/>
+  <text x="782" y="223" fill="rgba(18,33,39,0.55)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">REVIEW</text>
+  <text x="844" y="243" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Consider Add Shard</text>
+
+  <!-- ===================== LEGEND STRIP ===================== -->
+  <line x1="40" y1="332" x2="920" y2="332" stroke="rgba(18,33,39,0.10)" stroke-width="0.8"/>
+
+  <!-- Legend label -->
+  <text x="40" y="350" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.14em">LEGEND</text>
+
+  <!-- Legend item: 진단 분기 -->
+  <polygon points="142,356 154,348 166,356 154,364" fill="rgba(13,87,99,0.06)" stroke="#0d5763" stroke-width="1"/>
+  <text x="174" y="358" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">Decision</text>
+
+  <!-- Legend item: 조치 항목 -->
+  <rect x="280" y="347" width="16" height="16" rx="4" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <text x="304" y="358" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">Action</text>
+
+  <!-- Legend item: 추가 검토 -->
+  <rect x="420" y="347" width="16" height="16" rx="4" fill="rgba(18,33,39,0.03)" stroke="rgba(18,33,39,0.30)" stroke-width="1"/>
+  <text x="444" y="358" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">Review</text>
+
+  <!-- Legend item: 진입점 -->
+  <rect x="560" y="347" width="16" height="16" rx="4" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="584" y="358" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">Entry</text>
+
+</svg>
+</body>
+</html>

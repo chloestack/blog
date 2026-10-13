@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; display: flex; justify-content: center; padding: 0; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 600" role="img" aria-labelledby="2026-10-14-71367d11-02-qdrant-cluster-title 2026-10-14-71367d11-02-qdrant-cluster-desc">
+  <title id="2026-10-14-71367d11-02-qdrant-cluster-title">Qdrant Cluster Deployment Architecture</title>
+  <desc id="2026-10-14-71367d11-02-qdrant-cluster-desc">A load balancer distributes traffic to a write node (leader shard) and two read nodes (replicas), and the write node replicates data to both read nodes.</desc>
+
+  <defs>
+    <!-- default arrow: muted -->
+    <marker id="2026-10-14-71367d11-02-arrow-muted" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <!-- accent arrow: teal -->
+    <marker id="2026-10-14-71367d11-02-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <!-- link arrow: blue -->
+    <marker id="2026-10-14-71367d11-02-arrow-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3a548f"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="960" height="600" fill="#f8fafb"/>
+
+  <!-- ─────────────────────────────────────────
+       ARROWS (drawn before boxes)
+  ───────────────────────────────────────── -->
+
+  <!-- LB → 쓰기 노드 (left branch, orthogonal elbow) -->
+  <!-- LB center: 480,152  쓰기 노드 center: 280,340 -->
+  <!-- path: down from LB bottom (480,188) → bend at y=236 → left to x=280 → down to 쓰기 노드 top (280,304) -->
+  <path d="M480,188 L480,236 L280,236 L280,304"
+        fill="none" stroke="#3a548f" stroke-width="1.2"
+        marker-end="url(#2026-10-14-71367d11-02-arrow-link)"/>
+
+  <!-- LB → 읽기 노드 1 (right-ish branch, orthogonal elbow) -->
+  <!-- 읽기 노드1 center: 680,340 -->
+  <path d="M480,188 L480,236 L680,236 L680,304"
+        fill="none" stroke="#3f545c" stroke-width="1.2"
+        marker-end="url(#2026-10-14-71367d11-02-arrow-muted)"/>
+
+  <!-- LB → 읽기 노드 2 (far right branch) -->
+  <!-- 읽기 노드2 center: 860,340  — but we only have two read nodes; let me replan layout -->
+  <!-- Actually: 3 destination nodes. Let's plan:
+       LB: x=360..600 (center 480), y=120..188
+       쓰기 노드: x=168..392 (center 280), y=304..400
+       읽기 노드1: x=484..708 (center 596), y=304..400  — wait, let me recalculate symmetrically
+       
+       Better layout (symmetric):
+       LB center: 480, 152  (width=240, height=64, x=360, y=120)
+       쓰기 노드 center: 240, 352  (width=180, height=76, x=150, y=316) — focal
+       읽기 노드1 center: 520, 352  (width=180, height=76, x=430, y=316)
+       읽기 노드2 center: 800, 352  (width=180, height=76, x=710, y=316)
+       
+       Hmm, 3 nodes might be better as:
+       LB: center 480, y=128 (width=200, height=56, x=380, y=100)
+       쓰기: center 240, y=344 (width=180, height=72, x=150, y=308) — accent/focal
+       읽기1: center 520, y=344 (width=180, height=72, x=430, y=308)
+       읽기2: center 800, y=344  — too wide for 960. Let me compress.
+       
+       Final layout:
+       LB: center 480, 124 (width=200, height=56, x=380, y=96)
+       쓰기: center 220, 332 (width=196, height=72, x=122, y=296) — focal accent
+       읽기1: center 520, 332 (width=180, height=72, x=430, y=296)
+       읽기2: center 784, 332 (width=180, height=72, x=694, y=296)
+
+       Routing row y = 208
+
+       LB bottom: y=152
+       node tops: y=296
+  -->
+
+  <!-- REDRAWN ARROWS with corrected coordinates -->
+  <!-- LB → 쓰기 노드 (left) -->
+  <path d="M480,152 L480,208 L220,208 L220,296"
+        fill="none" stroke="#3a548f" stroke-width="1.2"
+        marker-end="url(#2026-10-14-71367d11-02-arrow-link)"/>
+
+  <!-- LB → 읽기 노드 1 (center-right) -->
+  <path d="M480,152 L480,208 L520,208 L520,296"
+        fill="none" stroke="#3f545c" stroke-width="1.2"
+        marker-end="url(#2026-10-14-71367d11-02-arrow-muted)"/>
+
+  <!-- LB → 읽기 노드 2 (far right) -->
+  <path d="M480,152 L480,208 L784,208 L784,296"
+        fill="none" stroke="#3f545c" stroke-width="1.2"
+        marker-end="url(#2026-10-14-71367d11-02-arrow-muted)"/>
+
+  <!-- 쓰기 노드 → 읽기 노드 1 (복제) -->
+  <!-- 쓰기 right: x=318, y=332  읽기1 left: x=430, y=332 -->
+  <path d="M318,344 L430,344"
+        fill="none" stroke="#0d5763" stroke-width="1.2" stroke-dasharray="5,3"
+        marker-end="url(#2026-10-14-71367d11-02-arrow-accent)"/>
+
+  <!-- 쓰기 노드 → 읽기 노드 2 (복제) -->
+  <!-- 쓰기 right: x=318, y=332  읽기2 left: x=694, y=332 -->
+  <!-- Route: exit right at y=360 (below 읽기1), go across, enter 읽기2 at y=360 -->
+  <path d="M318,360 L610,360 L610,380 L694,380 L694,360"
+        fill="none" stroke="#0d5763" stroke-width="1.2" stroke-dasharray="5,3"
+        marker-end="url(#2026-10-14-71367d11-02-arrow-accent)"/>
+
+  <!-- ─────────────────────────────────────────
+       NODES
+  ───────────────────────────────────────── -->
+
+  <!-- LB: Load Balancer — input type (center 480, 124; w=200, h=56, x=380, y=96) -->
+  <rect x="380" y="96" width="200" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="380" y="96" width="200" height="56" rx="6" fill="rgba(63,84,92,0.10)" stroke="#6c8188" stroke-width="1"/>
+  <!-- type tag -->
+  <rect x="388" y="104" width="44" height="12" rx="2" fill="transparent" stroke="rgba(108,129,136,0.40)" stroke-width="0.8"/>
+  <text x="410" y="113" fill="rgba(108,129,136,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">INGRESS</text>
+  <!-- label -->
+  <text x="480" y="136" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Load Balancer</text>
+
+  <!-- Write Node — focal accent (center 220, 344; w=196, h=76, x=122, y=308) -->
+  <rect x="122" y="308" width="196" height="76" rx="6" fill="#f8fafb"/>
+  <rect x="122" y="308" width="196" height="76" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <!-- type tag -->
+  <rect x="130" y="316" width="36" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="148" y="325" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">WRITE</text>
+  <!-- node name -->
+  <text x="220" y="348" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Write Node</text>
+  <!-- sublabel -->
+  <text x="220" y="368" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">Leader Shard</text>
+
+  <!-- Read Node 1 — backend (center 520, 344; w=180, h=76, x=430, y=308) -->
+  <rect x="430" y="308" width="180" height="76" rx="6" fill="#f8fafb"/>
+  <rect x="430" y="308" width="180" height="76" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <!-- type tag -->
+  <rect x="438" y="316" width="28" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="452" y="325" fill="rgba(18,33,39,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">READ</text>
+  <!-- node name -->
+  <text x="520" y="348" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Read Node 1</text>
+  <!-- sublabel -->
+  <text x="520" y="368" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">Replica</text>
+
+  <!-- Read Node 2 — backend (center 784, 344; w=180, h=76, x=694, y=308) -->
+  <rect x="694" y="308" width="180" height="76" rx="6" fill="#f8fafb"/>
+  <rect x="694" y="308" width="180" height="76" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <!-- type tag -->
+  <rect x="702" y="316" width="28" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="716" y="325" fill="rgba(18,33,39,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">READ</text>
+  <!-- node name -->
+  <text x="784" y="348" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Read Node 2</text>
+  <!-- sublabel -->
+  <text x="784" y="368" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">Replica</text>
+
+  <!-- ─────────────────────────────────────────
+       ARROW LABELS (drawn after boxes, on open canvas)
+  ───────────────────────────────────────── -->
+
+  <!-- LB → Write label: on segment x=480→220 at y=208 -->
+  <!-- midpoint of horizontal segment: x=(480+220)/2=350, y=208 -->
+  <rect x="316" y="192" width="68" height="12" rx="2" fill="#f8fafb"/>
+  <text x="350" y="201" fill="#6c8188" font-size="10" font-weight="500" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Write Req.</text>
+
+  <!-- LB → Read1 label: on segment x=480→520 at y=208 — too short. Put on vertical segment midpoint -->
+  <!-- vertical segment: x=520, y=208→296, midpoint y=252 -->
+  <rect x="528" y="240" width="52" height="12" rx="2" fill="#f8fafb"/>
+  <text x="554" y="249" fill="#6c8188" font-size="10" font-weight="500" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Read Req.</text>
+
+  <!-- Write→Read1 replication label: midpoint x=(318+430)/2=374, y=344 -->
+  <rect x="340" y="328" width="36" height="12" rx="2" fill="#f8fafb"/>
+  <text x="358" y="337" fill="#0d5763" font-size="10" font-weight="500" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Replicate</text>
+
+  <!-- Write→Read2 replication label: on segment y=360, midpoint x between 318 and 610: ~(318+610)/2=464 -->
+  <rect x="440" y="348" width="36" height="12" rx="2" fill="#f8fafb"/>
+  <text x="458" y="357" fill="#0d5763" font-size="10" font-weight="500" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Replicate</text>
+
+  <!-- ─────────────────────────────────────────
+       LEGEND
+  ───────────────────────────────────────── -->
+  <line x1="40" y1="500" x2="920" y2="500" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+
+  <!-- legend label -->
+  <text x="40" y="516" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.14em">LEGEND</text>
+
+  <!-- focal accent swatch -->
+  <rect x="120" y="508" width="16" height="12" rx="2" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="142" y="518" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">Write (Leader)</text>
+
+  <!-- backend swatch -->
+  <rect x="260" y="508" width="16" height="12" rx="2" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <text x="282" y="518" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">Read (Replica)</text>
+
+  <!-- input swatch -->
+  <rect x="408" y="508" width="16" height="12" rx="2" fill="rgba(63,84,92,0.10)" stroke="#6c8188" stroke-width="1"/>
+  <text x="430" y="518" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">Ingress (Load Balancer)</text>
+
+  <!-- dashed line swatch -->
+  <line x1="600" y1="514" x2="628" y2="514" stroke="#0d5763" stroke-width="1.2" stroke-dasharray="5,3" marker-end="url(#2026-10-14-71367d11-02-arrow-accent)"/>
+  <text x="638" y="518" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">Replication (Async)</text>
+
+</svg>
+</body>
+</html>
