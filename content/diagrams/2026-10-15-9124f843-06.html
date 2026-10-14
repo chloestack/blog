@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LLM 레드팀 방어 루프</title>
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; font-family: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; }
+  .diagram-wrap { max-width: 960px; margin: 0 auto; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<div class="diagram-wrap">
+<svg viewBox="0 0 960 560" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="2026-10-15-9124f843-06-redteam-loop-title 2026-10-15-9124f843-06-redteam-loop-desc">
+  <title id="2026-10-15-9124f843-06-redteam-loop-title">LLM 레드팀 방어 루프</title>
+  <desc id="2026-10-15-9124f843-06-redteam-loop-desc">공격 라이브러리에서 자동 레드팀 CI/CD를 거쳐 방어 통과 여부를 판단하고, 실패 시 취약점 리포트와 프롬프트 개선을 통해 다시 공격 라이브러리로 피드백되는 지속적 방어 루프 도식.</desc>
+
+  <defs>
+    <!-- Arrow markers -->
+    <marker id="2026-10-15-9124f843-06-arr-muted" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-10-15-9124f843-06-arr-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <marker id="2026-10-15-9124f843-06-arr-fail" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#94382b"/>
+    </marker>
+    <marker id="2026-10-15-9124f843-06-arr-ok" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#286d50"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="960" height="560" fill="#f8fafb"/>
+
+  <!-- ─────────────────────────────────────────────
+       CONNECTORS  (drawn before nodes)
+       Layout (approx cx):
+         A  cx=100  y=200  w=144 h=64
+         B  cx=272  y=200  w=144 h=64
+         C  cx=452  y=200  (diamond 68×68)
+         D  cx=632  y=120  w=144 h=64  (fail branch, upper)
+         E  cx=632  y=280  w=144 h=64  (pass branch, lower)
+         F  cx=452  y=380  w=144 h=64  (improve)
+         G  cx=272  y=380  w=144 h=64  (monitor)
+       ──────────────────────────────────────────── -->
+
+  <!-- A → B  (horizontal, same y=232) -->
+  <line x1="172" y1="232" x2="200" y2="232" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-15-9124f843-06-arr-muted)"/>
+
+  <!-- B → C  (horizontal, same y=232) -->
+  <line x1="344" y1="232" x2="384" y2="232" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-10-15-9124f843-06-arr-accent)"/>
+
+  <!-- C → D  (diamond top-right → D left)  fail branch
+       Diamond center (452,232). Top-right corner (486,198). D left edge (560,152).
+       Elbow: right from diamond to x=520, then up to y=152, then right to D -->
+  <path d="M 486 198 L 520 198 L 520 152 L 560 152" fill="none" stroke="#94382b" stroke-width="1" marker-end="url(#2026-10-15-9124f843-06-arr-fail)"/>
+  <!-- label "실패" -->
+  <rect x="486" y="170" width="28" height="16" rx="2" fill="#f8fafb"/>
+  <text x="500" y="181" fill="#94382b" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500" text-anchor="middle">실패</text>
+
+  <!-- C → E  (diamond bottom-right → E left)  pass branch
+       Diamond center (452,232). Bottom-right corner (486,266). E left edge (560,312).
+       Elbow: right to x=520, down to y=312, right to E -->
+  <path d="M 486 266 L 520 266 L 520 312 L 560 312" fill="none" stroke="#286d50" stroke-width="1" marker-end="url(#2026-10-15-9124f843-06-arr-ok)"/>
+  <!-- label "통과" -->
+  <rect x="486" y="270" width="28" height="16" rx="2" fill="#f8fafb"/>
+  <text x="500" y="281" fill="#286d50" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500" text-anchor="middle">통과</text>
+
+  <!-- D → F  (D bottom → F right, feedback path)
+       D bottom (632,184). F right (524,412).
+       Elbow: down to y=220, left to x=524, down to F -->
+  <path d="M 632 184 L 632 220 L 524 220 L 524 380" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-15-9124f843-06-arr-muted)"/>
+
+  <!-- F → A  (F bottom → A bottom, loop back)
+       F bottom (452,444). A bottom (100,264).
+       Elbow: down to y=480, left to x=100, up to A bottom -->
+  <path d="M 452 444 L 452 480 L 100 480 L 100 264" fill="none" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-10-15-9124f843-06-arr-accent)"/>
+
+  <!-- E → G  (E bottom → G right)
+       E bottom (632,344). G right (344,412).
+       Elbow: down to y=412, left to G right -->
+  <path d="M 632 344 L 632 412 L 344 412" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-15-9124f843-06-arr-muted)"/>
+
+  <!-- G → D  (G top → D bottom, upward)
+       G top (272,380). D bottom (632,184).
+       Elbow: up to y=340, right to x=632, up to D -->
+  <path d="M 272 380 L 272 340 L 632 340 L 632 184" fill="none" stroke="#94382b" stroke-width="1" marker-end="url(#2026-10-15-9124f843-06-arr-fail)"/>
+
+  <!-- ─────────────────────────────────────────────
+       NODES
+       ──────────────────────────────────────────── -->
+
+  <!-- A: 공격 라이브러리  cx=100, cy=232, w=144, h=64 → x=28, y=200 -->
+  <rect x="28" y="200" width="144" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="28" y="200" width="144" height="64" rx="6" fill="rgba(58,84,143,0.07)" stroke="#3a548f" stroke-width="1"/>
+  <rect x="36" y="208" width="36" height="12" rx="2" fill="transparent" stroke="rgba(58,84,143,0.40)" stroke-width="0.8"/>
+  <text x="54" y="217" fill="rgba(58,84,143,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">INPUT</text>
+  <text x="100" y="238" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">공격 라이브러리</text>
+  <text x="100" y="254" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">신규 패턴 추가</text>
+
+  <!-- B: 자동 레드팀  cx=272, cy=232, w=144, h=64 → x=200, y=200  FOCAL -->
+  <rect x="200" y="200" width="144" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="200" y="200" width="144" height="64" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="208" y="208" width="36" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="226" y="217" fill="rgba(13,87,99,0.85)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">CI/CD</text>
+  <text x="272" y="238" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">자동 레드팀</text>
+  <text x="272" y="254" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">CI/CD 통합</text>
+
+  <!-- C: 방어 통과? — diamond  cx=452, cy=232, half=34 -->
+  <polygon points="452,198 486,232 452,266 418,232" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="452" y="228" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">방어</text>
+  <text x="452" y="242" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">통과?</text>
+
+  <!-- D: 취약점 리포트  cx=632, cy=152, w=144, h=64 → x=560, y=120 -->
+  <rect x="560" y="120" width="144" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="560" y="120" width="144" height="64" rx="6" fill="rgba(148,56,43,0.06)" stroke="#94382b" stroke-width="1"/>
+  <rect x="568" y="128" width="36" height="12" rx="2" fill="transparent" stroke="rgba(148,56,43,0.40)" stroke-width="0.8"/>
+  <text x="586" y="137" fill="rgba(148,56,43,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">VULN</text>
+  <text x="632" y="158" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">취약점 리포트</text>
+  <text x="632" y="174" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">심각도 분류</text>
+
+  <!-- E: 로그·지표 수집  cx=632, cy=312, w=144, h=64 → x=560, y=280 -->
+  <rect x="560" y="280" width="144" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="560" y="280" width="144" height="64" rx="6" fill="rgba(18,33,39,0.04)" stroke="#c3d0d4" stroke-width="1"/>
+  <rect x="568" y="288" width="36" height="12" rx="2" fill="transparent" stroke="rgba(63,84,92,0.35)" stroke-width="0.8"/>
+  <text x="586" y="297" fill="rgba(63,84,92,0.75)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">LOG</text>
+  <text x="632" y="318" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">로그·지표 수집</text>
+  <text x="632" y="334" fill="#6c8188" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">모니터링 원천</text>
+
+  <!-- F: 프롬프트·필터 개선  cx=452, cy=412, w=144, h=64 → x=380, y=380  FOCAL -->
+  <rect x="380" y="380" width="144" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="380" y="380" width="144" height="64" rx="6" fill="rgba(40,109,80,0.07)" stroke="#286d50" stroke-width="1.2"/>
+  <rect x="388" y="388" width="36" height="12" rx="2" fill="transparent" stroke="rgba(40,109,80,0.40)" stroke-width="0.8"/>
+  <text x="406" y="397" fill="rgba(40,109,80,0.85)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">FIX</text>
+  <text x="452" y="418" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">프롬프트·필터</text>
+  <text x="452" y="434" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">개선</text>
+
+  <!-- G: 이상 감지 모니터링  cx=272, cy=412, w=144, h=64 → x=200, y=380 -->
+  <rect x="200" y="380" width="144" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="200" y="380" width="144" height="64" rx="6" fill="rgba(169,106,8,0.06)" stroke="#a96a08" stroke-width="1"/>
+  <rect x="208" y="388" width="36" height="12" rx="2" fill="transparent" stroke="rgba(169,106,8,0.40)" stroke-width="0.8"/>
+  <text x="226" y="397" fill="rgba(169,106,8,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">ALERT</text>
+  <text x="272" y="418" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">이상 감지</text>
+  <text x="272" y="434" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">모니터링</text>
+
+  <!-- ─────────────────────────────────────────────
+       LEGEND STRIP
+       ──────────────────────────────────────────── -->
+  <line x1="28" y1="504" x2="932" y2="504" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+  <text x="28" y="516" fill="#6c8188" font-size="8" font-family="'IBM Plex Mono', monospace" letter-spacing="0.14em">LEGEND</text>
+
+  <!-- focal -->
+  <rect x="96" y="508" width="10" height="10" rx="2" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="110" y="517" fill="#3f545c" font-size="9" font-family="'IBM Plex Sans KR', sans-serif">핵심 단계</text>
+
+  <!-- fail -->
+  <rect x="200" y="508" width="10" height="10" rx="2" fill="rgba(148,56,43,0.06)" stroke="#94382b" stroke-width="1"/>
+  <text x="214" y="517" fill="#3f545c" font-size="9" font-family="'IBM Plex Sans KR', sans-serif">취약점·경고</text>
+
+  <!-- ok -->
+  <rect x="312" y="508" width="10" height="10" rx="2" fill="rgba(40,109,80,0.07)" stroke="#286d50" stroke-width="1"/>
+  <text x="326" y="517" fill="#3f545c" font-size="9" font-family="'IBM Plex Sans KR', sans-serif">개선·통과</text>
+
+  <!-- muted -->
+  <rect x="412" y="508" width="10" height="10" rx="2" fill="rgba(18,33,39,0.04)" stroke="#c3d0d4" stroke-width="1"/>
+  <text x="426" y="517" fill="#3f545c" font-size="9" font-family="'IBM Plex Sans KR', sans-serif">수집·관측</text>
+
+  <!-- fail arrow -->
+  <line x1="516" y1="513" x2="540" y2="513" stroke="#94382b" stroke-width="1" marker-end="url(#2026-10-15-9124f843-06-arr-fail)"/>
+  <text x="548" y="517" fill="#3f545c" font-size="9" font-family="'IBM Plex Sans KR', sans-serif">실패 경로</text>
+
+  <!-- accent arrow -->
+  <line x1="624" y1="513" x2="648" y2="513" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-10-15-9124f843-06-arr-accent)"/>
+  <text x="656" y="517" fill="#3f545c" font-size="9" font-family="'IBM Plex Sans KR', sans-serif">주요 흐름</text>
+</svg>
+</div>
+</body>
+</html>

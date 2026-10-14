@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LLM Attack Surface Classification</title>
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; font-family: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif; }
+  .diagram-wrap { max-width: 960px; margin: 0 auto; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<div class="diagram-wrap">
+<svg viewBox="0 0 960 600" xmlns="http://www.w3.org/2000/svg"
+     role="img" aria-labelledby="2026-10-15-9124f843-01-atk-title 2026-10-15-9124f843-01-atk-desc">
+  <title id="2026-10-15-9124f843-01-atk-title">LLM Attack Surface Classification</title>
+  <desc id="2026-10-15-9124f843-01-atk-desc">A flowchart showing how three input/output layers of an LLM system form attack surfaces, and how attacks from each layer converge toward three objectives: system prompt extraction, forbidden content generation, and agent behavior manipulation.</desc>
+
+  <defs>
+    <!-- Arrow markers -->
+    <marker id="2026-10-15-9124f843-01-atk-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-10-15-9124f843-01-atk-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <marker id="2026-10-15-9124f843-01-atk-arrow-muted" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#6c8188"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="100%" height="100%" fill="#f8fafb"/>
+
+  <!-- ─────────────────────────────────────────
+       ARROWS (drawn before boxes)
+  ───────────────────────────────────────── -->
+
+  <!-- A → B (Attack Surface → Input Layer) -->
+  <!-- A center: 480,72  B center: 200,188 -->
+  <!-- elbow: down from A to y=144, left to x=200, down to B top -->
+  <path d="M480,96 L480,144 L200,144 L200,164"
+        fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-15-9124f843-01-atk-arrow)"/>
+
+  <!-- A → C (Attack Surface → Context Layer) -->
+  <!-- C center: 480,188 — straight down -->
+  <path d="M480,96 L480,164"
+        fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-15-9124f843-01-atk-arrow)"/>
+
+  <!-- A → D (Attack Surface → Output Layer) -->
+  <!-- D center: 760,188 -->
+  <path d="M480,96 L480,144 L760,144 L760,164"
+        fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-15-9124f843-01-atk-arrow)"/>
+
+  <!-- B → E (Input Layer → Attack Objective) -->
+  <!-- B center: 200,212  E center: 480,324 -->
+  <path d="M200,236 L200,288 L480,288 L480,300"
+        fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-15-9124f843-01-atk-arrow)"/>
+
+  <!-- C → E (Context Layer → Attack Objective) — straight down -->
+  <path d="M480,236 L480,300"
+        fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-15-9124f843-01-atk-arrow)"/>
+
+  <!-- D → E (Output Layer → Attack Objective) -->
+  <!-- D center: 760,212  E center: 480,324 -->
+  <path d="M760,236 L760,288 L480,288"
+        fill="none" stroke="#3f545c" stroke-width="1"/>
+  <!-- already joins the B→E path at 480,288 — use a dot merge -->
+
+  <!-- E → F (Info Extraction) -->
+  <!-- E diamond center: 480,336  F center: 148,468 -->
+  <path d="M444,336 L360,336 L360,444 L148,444 L148,444"
+        fill="none" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-10-15-9124f843-01-atk-arrow-accent)"/>
+
+  <!-- E → G (Constraint Bypass) — straight down -->
+  <!-- G center: 480,468 -->
+  <path d="M480,372 L480,444"
+        fill="none" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-10-15-9124f843-01-atk-arrow-accent)"/>
+
+  <!-- E → H (Goal Poisoning) -->
+  <!-- H center: 812,468 -->
+  <path d="M516,336 L600,336 L600,444 L812,444 L812,444"
+        fill="none" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-10-15-9124f843-01-atk-arrow-accent)"/>
+
+  <!-- ─────────────────────────────────────────
+       NODES
+  ───────────────────────────────────────── -->
+
+  <!-- A: Attack Surface — FOCAL -->
+  <!-- center 480,72 → rect: x=388, y=48, w=184, h=48 -->
+  <rect x="388" y="48" width="184" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="388" y="48" width="184" height="48" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="396" y="54" width="36" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.4)" stroke-width="0.8"/>
+  <text x="414" y="63" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">ROOT</text>
+  <text x="480" y="80" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Attack Surface</text>
+
+  <!-- B: Input Layer — INPUT/WARN -->
+  <!-- center 200,200 → rect: x=96, y=164, w=208, h=72 -->
+  <rect x="96" y="164" width="208" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="96" y="164" width="208" height="72" rx="6" fill="rgba(63,84,92,0.10)" stroke="#6c8188" stroke-width="1"/>
+  <rect x="104" y="170" width="28" height="12" rx="2" fill="transparent" stroke="rgba(108,129,136,0.4)" stroke-width="0.8"/>
+  <text x="118" y="179" fill="rgba(108,129,136,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">IN</text>
+  <text x="200" y="196" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Input Layer</text>
+  <text x="200" y="214" fill="#6c8188" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">User Message</text>
+
+  <!-- C: Context Layer — INPUT/WARN -->
+  <!-- center 480,200 → rect: x=360, y=164, w=240, h=72 -->
+  <rect x="360" y="164" width="240" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="360" y="164" width="240" height="72" rx="6" fill="rgba(63,84,92,0.10)" stroke="#6c8188" stroke-width="1"/>
+  <rect x="368" y="170" width="32" height="12" rx="2" fill="transparent" stroke="rgba(108,129,136,0.4)" stroke-width="0.8"/>
+  <text x="384" y="179" fill="rgba(108,129,136,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">CTX</text>
+  <text x="480" y="196" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Context Layer</text>
+  <text x="480" y="214" fill="#6c8188" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">System Prompt · RAG</text>
+
+  <!-- D: Output Layer — INPUT/WARN -->
+  <!-- center 760,200 → rect: x=648, y=164, w=224, h=72 -->
+  <rect x="648" y="164" width="224" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="648" y="164" width="224" height="72" rx="6" fill="rgba(63,84,92,0.10)" stroke="#6c8188" stroke-width="1"/>
+  <rect x="656" y="170" width="24" height="12" rx="2" fill="transparent" stroke="rgba(108,129,136,0.4)" stroke-width="0.8"/>
+  <text x="668" y="179" fill="rgba(108,129,136,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">OUT</text>
+  <text x="760" y="196" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Output Layer</text>
+  <text x="760" y="214" fill="#6c8188" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">Rendering · Downstream</text>
+
+  <!-- Merge dot at 480,288 -->
+  <circle cx="480" cy="288" r="4" fill="#3f545c"/>
+
+  <!-- E: Attack Objective — DECISION DIAMOND, accent -->
+  <!-- center 480,336, half-w=72, half-h=36 -->
+  <polygon points="480,300 552,336 480,372 408,336" fill="#f8fafb"/>
+  <polygon points="480,300 552,336 480,372 408,336" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="480" y="332" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Attack</text>
+  <text x="480" y="348" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Objective</text>
+
+  <!-- Arrow label: Info Extraction -->
+  <rect x="286" y="328" width="68" height="16" rx="2" fill="#f8fafb"/>
+  <text x="320" y="340" fill="#3f545c" font-size="12" font-weight="500" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Info Extract</text>
+
+  <!-- Arrow label: Constraint Bypass -->
+  <rect x="430" y="376" width="100" height="16" rx="2" fill="#f8fafb"/>
+  <text x="480" y="388" fill="#3f545c" font-size="12" font-weight="500" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Bypass Constraint</text>
+
+  <!-- Arrow label: Goal Poisoning -->
+  <rect x="544" y="328" width="68" height="16" rx="2" fill="#f8fafb"/>
+  <text x="578" y="340" fill="#3f545c" font-size="12" font-weight="500" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Goal Poison</text>
+
+  <!-- F: System Prompt Extraction — STORE/outcome -->
+  <!-- center 148,472 → rect: x=40, y=444, w=216, h=72 -->
+  <rect x="40" y="444" width="216" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="40" y="444" width="216" height="72" rx="6" fill="rgba(18,33,39,0.05)" stroke="#3f545c" stroke-width="1"/>
+  <rect x="48" y="450" width="28" height="12" rx="2" fill="transparent" stroke="rgba(63,84,92,0.4)" stroke-width="0.8"/>
+  <text x="62" y="459" fill="rgba(63,84,92,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">OUT</text>
+  <text x="148" y="476" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">System Prompt</text>
+  <text x="148" y="494" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Extraction</text>
+
+  <!-- G: Forbidden Content Generation — STORE/outcome -->
+  <!-- center 480,472 → rect: x=360, y=444, w=240, h=72 -->
+  <rect x="360" y="444" width="240" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="360" y="444" width="240" height="72" rx="6" fill="rgba(18,33,39,0.05)" stroke="#3f545c" stroke-width="1"/>
+  <rect x="368" y="450" width="28" height="12" rx="2" fill="transparent" stroke="rgba(63,84,92,0.4)" stroke-width="0.8"/>
+  <text x="382" y="459" fill="rgba(63,84,92,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">OUT</text>
+  <text x="480" y="476" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Forbidden Content</text>
+  <text x="480" y="494" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Generation</text>
+
+  <!-- H: Agent Behavior Manipulation — STORE/outcome -->
+  <!-- center 812,472 → rect: x=704, y=444, w=216, h=72 -->
+  <rect x="704" y="444" width="216" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="704" y="444" width="216" height="72" rx="6" fill="rgba(18,33,39,0.05)" stroke="#3f545c" stroke-width="1"/>
+  <rect x="712" y="450" width="28" height="12" rx="2" fill="transparent" stroke="rgba(63,84,92,0.4)" stroke-width="0.8"/>
+  <text x="726" y="459" fill="rgba(63,84,92,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">OUT</text>
+  <text x="812" y="476" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Agent Behavior</text>
+  <text x="812" y="494" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Manipulation</text>
+
+  <!-- ─────────────────────────────────────────
+       LEGEND STRIP
+  ───────────────────────────────────────── -->
+  <line x1="30" y1="544" x2="930" y2="544" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+  <text x="30" y="558" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.14em">LEGEND</text>
+
+  <!-- focal swatch -->
+  <rect x="110" y="548" width="16" height="12" rx="2" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="132" y="559" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif">Entry Point / Key Decision</text>
+
+  <!-- input swatch -->
+  <rect x="300" y="548" width="16" height="12" rx="2" fill="rgba(63,84,92,0.10)" stroke="#6c8188" stroke-width="1"/>
+  <text x="322" y="559" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif">Attack Layer</text>
+
+  <!-- store/outcome swatch -->
+  <rect x="460" y="548" width="16" height="12" rx="2" fill="rgba(18,33,39,0.05)" stroke="#3f545c" stroke-width="1"/>
+  <text x="482" y="559" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif">Attack Outcome</text>
+
+  <!-- merge dot legend -->
+  <circle cx="608" cy="554" r="4" fill="#3f545c"/>
+  <text x="620" y="559" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif">Path Merge</text>
+
+</svg>
+</div>
+</body>
+</html>

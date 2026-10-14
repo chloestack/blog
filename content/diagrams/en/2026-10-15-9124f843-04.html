@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jailbreak Attempt Flow</title>
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; display: flex; justify-content: center; padding: 0; }
+  svg { display: block; width: 100%; max-width: 960px; height: auto; }
+</style>
+</head>
+<body>
+<svg viewBox="0 0 960 420" xmlns="http://www.w3.org/2000/svg"
+     role="img" aria-labelledby="2026-10-15-9124f843-04-jailbreak-title 2026-10-15-9124f843-04-jailbreak-desc">
+  <title id="2026-10-15-9124f843-04-jailbreak-title">Jailbreak Attempt Flow Diagram</title>
+  <desc id="2026-10-15-9124f843-04-jailbreak-desc">A cyclic flow using roleplay as entry, probing boundaries, attempting to enter forbidden territory, then either generating prohibited content on success or reframing and looping back to the start on failure.</desc>
+
+  <defs>
+    <!-- Arrow markers -->
+    <marker id="2026-10-15-9124f843-04-arr" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0,8 3,0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-10-15-9124f843-04-arr-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0,8 3,0 6" fill="#0d5763"/>
+    </marker>
+    <marker id="2026-10-15-9124f843-04-arr-warn" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0,8 3,0 6" fill="#a96a08"/>
+    </marker>
+    <marker id="2026-10-15-9124f843-04-arr-stop" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0,8 3,0 6" fill="#94382b"/>
+    </marker>
+    <marker id="2026-10-15-9124f843-04-arr-muted" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0,8 3,0 6" fill="#6c8188"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="960" height="420" fill="#f8fafb"/>
+
+  <!-- ─────────────────── CONNECTORS (drawn before boxes) ─────────────────── -->
+
+  <!-- A → B (muted→warn): horizontal, y=180 -->
+  <path d="M 168,180 L 240,180" fill="none" stroke="#6c8188" stroke-width="1.2" marker-end="url(#2026-10-15-9124f843-04-arr-muted)"/>
+
+  <!-- B → C (warn→warn): horizontal, y=180 -->
+  <path d="M 368,180 L 440,180" fill="none" stroke="#a96a08" stroke-width="1.2" marker-end="url(#2026-10-15-9124f843-04-arr-warn)"/>
+
+  <!-- C → D (warn→stop): horizontal, y=180 -->
+  <path d="M 568,180 L 640,180" fill="none" stroke="#a96a08" stroke-width="1.2" marker-end="url(#2026-10-15-9124f843-04-arr-warn)"/>
+
+  <!-- D → Q diamond: horizontal, y=180 -->
+  <path d="M 768,180 L 820,180" fill="none" stroke="#3f545c" stroke-width="1.2" marker-end="url(#2026-10-15-9124f843-04-arr)"/>
+
+  <!-- Q → E (성공, goes right-down): from diamond right point (900,180) → E at (840,300) -->
+  <!-- Route: right from diamond bottom point (860,216) → down to y=300 → left to E -->
+  <path d="M 860,216 L 860,268 Q 860,276 852,276 L 808,276" fill="none" stroke="#94382b" stroke-width="1.2" marker-end="url(#2026-10-15-9124f843-04-arr-stop)"/>
+
+  <!-- Q → F (실패, goes left-down): from diamond bottom point (860,216) already used; use left point (820,180)? -->
+  <!-- Actually diamond left point is (820,180). Route: down from diamond bottom (860,216) is used.
+       Route for 실패: from left of diamond (820,180) → go left to x=680 → down to y=320 → left to F center(304,320) -->
+  <!-- Wait, let me rethink. Diamond center=(860,180). Points: top(860,144), right(896,180), bottom(860,216), left(824,180). -->
+  <!-- 성공 → E: from right point (896,180) → right then down to E(784,300) -->
+  <!-- 실패 → F: from bottom point (860,216) → down to y=280 → left to F -->
+
+  <!-- Q → E 성공: right exit from diamond (896,180) → bend right, down, left to E -->
+  <!-- E is at x=720,y=276, width=128,height=48, center=(784,300). Let me use E center y=300. -->
+  <!-- Path: from (896,180) right to (920,180) → down to (920,300) → left to E right edge (784+64=848, y=300) -->
+  <path d="M 896,180 L 920,180 Q 928,180 928,188 L 928,292 Q 928,300 920,300 L 848,300"
+        fill="none" stroke="#94382b" stroke-width="1.2" marker-end="url(#2026-10-15-9124f843-04-arr-stop)"/>
+
+  <!-- Q → F 실패: bottom exit from diamond (860,216) → down then left to F -->
+  <!-- F is at x=240,y=276,width=128,height=48, center=(304,300) -->
+  <path d="M 860,216 L 860,340 Q 860,348 852,348 L 368,348 Q 360,348 360,340 L 360,324"
+        fill="none" stroke="#6c8188" stroke-width="1.2" marker-end="url(#2026-10-15-9124f843-04-arr-muted)" stroke-dasharray="5,3"/>
+
+  <!-- F → A loop back: F top (304,276) → up to y=108 → left to A -->
+  <!-- A is at x=40,y=156,width=128,height=48, center=(104,180). Top edge y=156. -->
+  <path d="M 304,276 L 304,108 Q 304,100 296,100 L 112,100 Q 104,100 104,108 L 104,156"
+        fill="none" stroke="#6c8188" stroke-width="1.2" marker-end="url(#2026-10-15-9124f843-04-arr-muted)" stroke-dasharray="5,3"/>
+
+  <!-- ─────────────────── ARROW LABELS ─────────────────── -->
+
+  <!-- 성공 label on Q→E path: near (928, 240) -->
+  <rect x="910" y="228" width="36" height="14" rx="2" fill="#f8fafb"/>
+  <text x="928" y="239" fill="#94382b" font-size="10" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif"
+        text-anchor="middle" font-weight="500">Success</text>
+
+  <!-- 실패 label on Q→F path: near midpoint (680,348) -->
+  <rect x="650" y="336" width="36" height="14" rx="2" fill="#f8fafb"/>
+  <text x="668" y="347" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif"
+        text-anchor="middle" font-weight="500">Fail</text>
+
+  <!-- ─────────────────── NODES ─────────────────── -->
+
+  <!-- A: 무해한 역할극 시작 (muted treatment) — x=40,y=156,w=128,h=48 -->
+  <rect x="40" y="156" width="128" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="40" y="156" width="128" height="48" rx="6" fill="rgba(18,33,39,0.04)" stroke="#c3d0d4" stroke-width="1"/>
+  <rect x="48" y="162" width="24" height="11" rx="2" fill="transparent" stroke="rgba(108,129,136,0.4)" stroke-width="0.8"/>
+  <text x="60" y="171" fill="rgba(108,129,136,0.8)" font-size="7" font-family="'IBM Plex Mono',monospace"
+        text-anchor="middle" letter-spacing="0.08em">entry</text>
+  <text x="104" y="185" fill="#3f545c" font-size="12" font-weight="600"
+        font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">Benign Roleplay</text>
+  <text x="104" y="200" fill="#6c8188" font-size="11" font-weight="500"
+        font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">Start</text>
+
+  <!-- B: 캐릭터 몰입 유도 (warn treatment) — x=240,y=156,w=128,h=48 -->
+  <rect x="240" y="156" width="128" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="240" y="156" width="128" height="48" rx="6" fill="rgba(169,106,8,0.07)" stroke="#a96a08" stroke-width="1"/>
+  <rect x="248" y="162" width="24" height="11" rx="2" fill="transparent" stroke="rgba(169,106,8,0.40)" stroke-width="0.8"/>
+  <text x="260" y="171" fill="rgba(169,106,8,0.85)" font-size="7" font-family="'IBM Plex Mono',monospace"
+        text-anchor="middle" letter-spacing="0.08em">bound</text>
+  <text x="304" y="185" fill="#122127" font-size="12" font-weight="600"
+        font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">Character</text>
+  <text x="304" y="200" fill="#3f545c" font-size="11" font-weight="500"
+        font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">Immersion</text>
+
+  <!-- C: 경계 슬금슬금 탐색 (warn) — x=440,y=156,w=128,h=48 -->
+  <rect x="440" y="156" width="128" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="440" y="156" width="128" height="48" rx="6" fill="rgba(169,106,8,0.07)" stroke="#a96a08" stroke-width="1"/>
+  <rect x="448" y="162" width="24" height="11" rx="2" fill="transparent" stroke="rgba(169,106,8,0.40)" stroke-width="0.8"/>
+  <text x="460" y="171" fill="rgba(169,106,8,0.85)" font-size="7" font-family="'IBM Plex Mono',monospace"
+        text-anchor="middle" letter-spacing="0.08em">probe</text>
+  <text x="504" y="185" fill="#122127" font-size="12" font-weight="600"
+        font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">Boundary</text>
+  <text x="504" y="200" fill="#3f545c" font-size="11" font-weight="500"
+        font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">Probing</text>
+
+  <!-- D: 금지 영역 진입 시도 (stop) — x=640,y=156,w=128,h=48 -->
+  <rect x="640" y="156" width="128" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="640" y="156" width="128" height="48" rx="6" fill="rgba(148,56,43,0.07)" stroke="#94382b" stroke-width="1"/>
+  <rect x="648" y="162" width="24" height="11" rx="2" fill="transparent" stroke="rgba(148,56,43,0.40)" stroke-width="0.8"/>
+  <text x="660" y="171" fill="rgba(148,56,43,0.85)" font-size="7" font-family="'IBM Plex Mono',monospace"
+        text-anchor="middle" letter-spacing="0.08em">risk</text>
+  <text x="704" y="185" fill="#122127" font-size="12" font-weight="600"
+        font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">Forbidden Zone</text>
+  <text x="704" y="200" fill="#3f545c" font-size="11" font-weight="500"
+        font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">Entry Attempt</text>
+
+  <!-- Q: 탈옥 성공 (decision diamond, accent) — center=(860,180), half=36 -->
+  <rect x="820" y="140" width="80" height="80" rx="6" fill="#f8fafb"/>
+  <!-- Diamond shape -->
+  <polygon points="860,144 896,180 860,216 824,180" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="860" y="176" fill="#122127" font-size="11" font-weight="600"
+        font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">Jail-</text>
+  <text x="860" y="191" fill="#122127" font-size="11" font-weight="600"
+        font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">break?</text>
+
+  <!-- E: 금지 콘텐츠 생성 (stop, focal) — x=720,y=276,w=128,h=48 -->
+  <rect x="720" y="276" width="128" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="720" y="276" width="128" height="48" rx="6" fill="rgba(148,56,43,0.10)" stroke="#94382b" stroke-width="1.5"/>
+  <rect x="728" y="282" width="24" height="11" rx="2" fill="transparent" stroke="rgba(148,56,43,0.45)" stroke-width="0.8"/>
+  <text x="740" y="291" fill="rgba(148,56,43,0.9)" font-size="7" font-family="'IBM Plex Mono',monospace"
+        text-anchor="middle" letter-spacing="0.08em">result</text>
+  <text x="784" y="305" fill="#122127" font-size="12" font-weight="600"
+        font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">Prohibited</text>
+  <text x="784" y="320" fill="#3f545c" font-size="11" font-weight="500"
+        font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">Content Output</text>
+
+  <!-- F: 프레임 재구성 (warn) — x=240,y=276,w=128,h=48 -->
+  <rect x="240" y="276" width="128" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="240" y="276" width="128" height="48" rx="6" fill="rgba(169,106,8,0.07)" stroke="#a96a08" stroke-width="1"/>
+  <rect x="248" y="282" width="24" height="11" rx="2" fill="transparent" stroke="rgba(169,106,8,0.40)" stroke-width="0.8"/>
+  <text x="260" y="291" fill="rgba(169,106,8,0.85)" font-size="7" font-family="'IBM Plex Mono',monospace"
+        text-anchor="middle" letter-spacing="0.08em">bypass</text>
+  <text x="304" y="305" fill="#122127" font-size="12" font-weight="600"
+        font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">Frame</text>
+  <text x="304" y="320" fill="#3f545c" font-size="11" font-weight="500"
+        font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">Reframing</text>
+
+  <!-- ─────────────────── LOOP ANNOTATION ─────────────────── -->
+  <rect x="52" y="92" width="72" height="14" rx="2" fill="#f8fafb"/>
+  <text x="88" y="103" fill="#6c8188" font-size="9" font-family="'IBM Plex Mono',monospace"
+        text-anchor="middle" letter-spacing="0.06em">retry loop</text>
+
+  <!-- ─────────────────── LEGEND ─────────────────── -->
+  <line x1="40" y1="374" x2="920" y2="374" stroke="rgba(18,33,39,0.10)" stroke-width="0.8"/>
+  <text x="40" y="388" fill="#6c8188" font-size="8" font-family="'IBM Plex Mono',monospace"
+        letter-spacing="0.14em">legend</text>
+
+  <!-- Legend: 입구 -->
+  <rect x="96" y="380" width="28" height="14" rx="4" fill="rgba(18,33,39,0.04)" stroke="#c3d0d4" stroke-width="0.8"/>
+  <text x="130" y="391" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif">Entry Stage</text>
+
+  <!-- Legend: 경계 탐색 -->
+  <rect x="232" y="380" width="28" height="14" rx="4" fill="rgba(169,106,8,0.07)" stroke="#a96a08" stroke-width="0.8"/>
+  <text x="266" y="391" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif">Boundary Probe</text>
+
+  <!-- Legend: 위험 단계 -->
+  <rect x="368" y="380" width="28" height="14" rx="4" fill="rgba(148,56,43,0.07)" stroke="#94382b" stroke-width="0.8"/>
+  <text x="402" y="391" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif">Risk Stage</text>
+
+  <!-- Legend: 결정 -->
+  <polygon points="516,394 530,387 544,394 530,401" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="550" y="395" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif">Decision</text>
+
+  <!-- Legend: 재시도 경로 (dashed) -->
+  <line x1="612" y1="387" x2="648" y2="387" stroke="#6c8188" stroke-width="1.2" stroke-dasharray="5,3"/>
+  <polygon points="646,384 654,387 646,390" fill="#6c8188"/>
+  <text x="660" y="391" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif">Retry Path</text>
+
+</svg>
+</body>
+</html>
