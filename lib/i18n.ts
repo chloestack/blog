@@ -21,9 +21,9 @@ export function isLocale(value: string): value is Locale {
   return (LOCALES as readonly string[]).includes(value);
 }
 
-/** 검색 결과와 공유 카드에 나가는 사이트 설명. README가 이 블로그를 설명하는 말과 같다. */
+/** 검색 결과와 공유 카드에 나가는 사이트 설명. 네이버 서치어드바이저 권장에 맞춰 80자 이내로 쓴다. */
 export const SITE_DESCRIPTION: Record<Locale, string> = {
-  ko: "소프트웨어의 구조와 인터페이스, 운영에서 내린 판단을 기록하는 한국어 기술 블로그입니다. Spring·Java·아키텍처·DevOps·AI 도구를 다룹니다.",
+  ko: "소프트웨어 구조와 운영에서 내린 판단을 기록하는 기술 블로그입니다. Spring·Java·아키텍처·DevOps·AI 도구를 다룹니다.",
   en: "A software engineering blog on structure, interfaces, and the judgment calls behind running systems. Spring, Java, architecture, DevOps, and AI tooling.",
 };
 
