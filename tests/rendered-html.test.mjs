@@ -114,6 +114,9 @@ test("every page closes with the naver analytics tag", async () => {
     const gtagLoader = document.indexOf('src="https://www.googletagmanager.com/gtag/js?id=G-PES3ZK8G87"');
     assert.ok(gtagLoader > 0 && gtagLoader < document.indexOf("</head>"), `google tag loader is not in the head: ${pathname}`);
     assert.equal(document.split("gtag('config', 'G-PES3ZK8G87')").length - 1, 1, `google tag config missing or duplicated: ${pathname}`);
+
+    // Vercel Web Analytics도 같은 레이아웃이 한 번만 싣는다.
+    assert.equal(document.split('src="/_vercel/insights/script.js"').length - 1, 1, `vercel analytics missing or duplicated: ${pathname}`);
   }
 });
 

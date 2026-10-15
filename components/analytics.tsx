@@ -50,3 +50,20 @@ export function GoogleAnalytics() {
     </>
   );
 }
+
+/**
+ * Vercel Web Analytics. 방문자·유입 경로 기준선을 Vercel API로 뽑으려고 둔다.
+ *
+ * 스크립트는 Vercel이 배포에 붙여 주는 /_vercel/insights 경로에서 받으므로 패키지를 따로
+ * 들이지 않는다. 배포별 주소와 운영 주소는 Vercel이 environment로 나눠 집계한다.
+ */
+const VA_SNIPPET = `window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };`;
+
+export function VercelAnalytics() {
+  return (
+    <>
+      <script dangerouslySetInnerHTML={{ __html: VA_SNIPPET }} />
+      <script defer src="/_vercel/insights/script.js" />
+    </>
+  );
+}
