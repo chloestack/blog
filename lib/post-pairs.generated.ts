@@ -40,5 +40,6 @@ export const POST_PAIRS: Record<string, string> = {
   "2026-10-12-RAG-청킹-전략-—-Fixed·Semantic·Recursive-비교": "2026-10-12-rag-chunking-strategies-fixed-semantic-recursive",
   "2026-10-13-LLM-Context-Engineering-—-에이전트-성능을-결정하는-컨텍스트-윈도우-설계": "2026-10-13-llm-context-engineering-agent-context-window-design",
   "2026-10-14-Qdrant-프로덕션-배포-—-컬렉션-설계·HNSW-튜닝·필터-최적화": "2026-10-14-qdrant-production-collection-hnsw-filter-optimization",
-  "2026-10-15-LLM-레드팀-프롬프트-인젝션·탈옥-방어-설계": "2026-10-15-llm-red-teaming-prompt-injection-jailbreak-defense"
+  "2026-10-15-LLM-레드팀-프롬프트-인젝션·탈옥-방어-설계": "2026-10-15-llm-red-teaming-prompt-injection-jailbreak-defense",
+  "2026-10-16-PromptOps-—-LLM-프롬프트-버전-관리와-배포-파이프라인": "2026-10-16-promptops-llm-prompt-version-control-deployment"
 };

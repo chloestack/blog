@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>모델 교체 플로우</title>
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; }
+  svg { display: block; width: 100%; height: auto; max-width: 960px; }
+</style>
+</head>
+<body>
+<svg viewBox="0 0 960 600" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="2026-10-16-0c0801b4-09-flow-title 2026-10-16-0c0801b4-09-flow-desc">
+  <title id="2026-10-16-0c0801b4-09-flow-title">모델 교체 시 프롬프트 재평가 플로우</title>
+  <desc id="2026-10-16-0c0801b4-09-flow-desc">모델 EOL 공지 또는 신규 모델 출시 시 황금 데이터셋으로 재평가하고, 성능 변화에 따라 프롬프트를 조정하거나 메타데이터를 갱신한 뒤 카나리 배포로 이어지는 의사결정 흐름.</desc>
+
+  <defs>
+    <!-- Arrow markers -->
+    <marker id="2026-10-16-0c0801b4-09-arr" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-10-16-0c0801b4-09-arr-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <marker id="2026-10-16-0c0801b4-09-arr-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3a548f"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="960" height="600" fill="#f8fafb"/>
+
+  <!-- ===================== ARROWS (drawn before boxes) ===================== -->
+
+  <!-- EOL → REVAL (straight down) -->
+  <line x1="480" y1="96" x2="480" y2="144" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-16-0c0801b4-09-arr)"/>
+
+  <!-- REVAL → Q1 (straight down) -->
+  <line x1="480" y1="200" x2="480" y2="248" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-16-0c0801b4-09-arr)"/>
+
+  <!-- Q1 → UMETA: "없음" and "향상" branch (right side) -->
+  <!-- 없음: Q1 right → UMETA right -->
+  <path d="M 556 284 L 680 284 L 680 332" stroke="#3f545c" stroke-width="1" fill="none" marker-end="url(#2026-10-16-0c0801b4-09-arr)" stroke-linejoin="round"/>
+  <!-- label 없음 -->
+  <rect x="590" y="270" width="36" height="14" rx="2" fill="#f8fafb"/>
+  <text x="608" y="280" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">없음</text>
+
+  <!-- Q1 → TUNE: "저하" branch (left side) -->
+  <path d="M 404 284 L 280 284 L 280 332" stroke="#3f545c" stroke-width="1" fill="none" marker-end="url(#2026-10-16-0c0801b4-09-arr)" stroke-linejoin="round"/>
+  <!-- label 저하 -->
+  <rect x="316" y="270" width="36" height="14" rx="2" fill="#f8fafb"/>
+  <text x="334" y="280" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">저하</text>
+
+  <!-- Q1 → UMETA: "향상" branch — route from bottom of Q1 area down and right to UMETA -->
+  <!-- 향상: goes down from Q1 bottom, then right -->
+  <path d="M 480 320 L 480 344 L 680 344 L 680 332" stroke="#3f545c" stroke-width="1" fill="none" marker-end="url(#2026-10-16-0c0801b4-09-arr)" stroke-linejoin="round" stroke-dasharray="5,3"/>
+  <!-- label 향상 -->
+  <rect x="487" y="330" width="36" height="14" rx="2" fill="#f8fafb"/>
+  <text x="505" y="340" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">향상</text>
+
+  <!-- TUNE → REVAL2 (straight down) -->
+  <line x1="280" y1="388" x2="280" y2="428" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-16-0c0801b4-09-arr)"/>
+
+  <!-- REVAL2 → UMETA (right then up: orthogonal elbow) -->
+  <path d="M 340 456 L 500 456 L 500 408 L 620 408 L 620 388" stroke="#0d5763" stroke-width="1" fill="none" marker-end="url(#2026-10-16-0c0801b4-09-arr-accent)" stroke-linejoin="round"/>
+
+  <!-- UMETA → DEPLOY (straight down) -->
+  <line x1="680" y1="388" x2="680" y2="468" stroke="#0d5763" stroke-width="1" marker-end="url(#2026-10-16-0c0801b4-09-arr-accent)"/>
+
+  <!-- ===================== BOXES ===================== -->
+
+  <!-- EOL node (link/external style) x=360 y=48 w=240 h=48 -->
+  <rect x="360" y="48" width="240" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="360" y="48" width="240" height="48" rx="6" fill="rgba(58,84,143,0.06)" stroke="#3a548f" stroke-width="1"/>
+  <rect x="368" y="54" width="44" height="12" rx="2" fill="transparent" stroke="rgba(58,84,143,0.40)" stroke-width="0.8"/>
+  <text x="390" y="63" fill="rgba(58,84,143,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">TRIGGER</text>
+  <text x="480" y="76" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">모델 EOL 공지 / 신규 출시</text>
+
+  <!-- REVAL node (accent style) x=360 y=144 w=240 h=56 -->
+  <rect x="360" y="144" width="240" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="360" y="144" width="240" height="56" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <rect x="368" y="150" width="44" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="390" y="159" fill="rgba(13,87,99,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">EVAL</text>
+  <text x="480" y="174" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">황금 데이터셋 재평가</text>
+  <text x="480" y="190" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Golden Dataset</text>
+
+  <!-- Q1 DECISION DIAMOND center=480,284 half=76,36 -->
+  <!-- Paper mask -->
+  <polygon points="404,284 480,248 556,284 480,320" fill="#f8fafb"/>
+  <!-- Styled diamond -->
+  <polygon points="404,284 480,248 556,284 480,320" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="480" y="279" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">성능 변화</text>
+  <text x="480" y="295" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">있는가?</text>
+
+  <!-- TUNE node (warn style) x=160 y=332 w=240 h=56 -->
+  <rect x="160" y="332" width="240" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="160" y="332" width="240" height="56" rx="6" fill="rgba(169,106,8,0.08)" stroke="#a96a08" stroke-width="1"/>
+  <rect x="168" y="338" width="44" height="12" rx="2" fill="transparent" stroke="rgba(169,106,8,0.40)" stroke-width="0.8"/>
+  <text x="190" y="347" fill="rgba(169,106,8,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">TUNE</text>
+  <text x="280" y="362" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">프롬프트 조정</text>
+  <text x="280" y="378" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">신규 마이너 버전</text>
+
+  <!-- UMETA node (focal/accent) x=560 y=332 w=240 h=56 -->
+  <rect x="560" y="332" width="240" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="560" y="332" width="240" height="56" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="568" y="338" width="52" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="594" y="347" fill="rgba(13,87,99,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">UPDATE</text>
+  <text x="680" y="362" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">메타데이터 갱신</text>
+  <text x="680" y="378" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">target_model 변경</text>
+
+  <!-- REVAL2 node (accent style) x=160 y=428 w=240 h=48 -->
+  <rect x="160" y="428" width="240" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="160" y="428" width="240" height="48" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <rect x="168" y="434" width="44" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="190" y="443" fill="rgba(13,87,99,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">EVAL</text>
+  <text x="280" y="456" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">재평가 통과 확인</text>
+
+  <!-- DEPLOY node (focal) x=560 y=468 w=240 h=56 -->
+  <rect x="560" y="468" width="240" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="560" y="468" width="240" height="56" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="568" y="474" width="52" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="594" y="483" fill="rgba(13,87,99,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">DEPLOY</text>
+  <text x="680" y="500" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">신규 모델 카나리 배포</text>
+  <text x="680" y="516" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">Canary Deployment</text>
+
+  <!-- ===================== LEGEND ===================== -->
+  <line x1="40" y1="552" x2="920" y2="552" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+  <text x="40" y="564" fill="#6c8188" font-size="8" font-family="'IBM Plex Mono', monospace" letter-spacing="0.14em">LEGEND</text>
+
+  <!-- Trigger swatch -->
+  <rect x="112" y="556" width="12" height="12" rx="2" fill="rgba(58,84,143,0.06)" stroke="#3a548f" stroke-width="1"/>
+  <text x="130" y="566" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">트리거</text>
+
+  <!-- Eval swatch -->
+  <rect x="212" y="556" width="12" height="12" rx="2" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="230" y="566" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">평가 단계</text>
+
+  <!-- Warn swatch -->
+  <rect x="332" y="556" width="12" height="12" rx="2" fill="rgba(169,106,8,0.08)" stroke="#a96a08" stroke-width="1"/>
+  <text x="350" y="566" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">조정 필요</text>
+
+  <!-- Decision swatch -->
+  <polygon points="456,562 464,556 472,562 464,568" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="480" y="566" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">의사결정</text>
+
+  <!-- Dashed line swatch (향상 path) -->
+  <line x1="576" y1="562" x2="600" y2="562" stroke="#3f545c" stroke-width="1" stroke-dasharray="5,3"/>
+  <text x="608" y="566" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">성능 향상 경로</text>
+
+</svg>
+</body>
+</html>

@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 16px; }
+  svg { display: block; max-width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 960 600"
+  role="img"
+  aria-labelledby="2026-10-16-0c0801b4-01-promptops-title 2026-10-16-0c0801b4-01-promptops-desc"
+  style="width:100%;max-width:960px;height:auto;font-family:'IBM Plex Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif;"
+>
+  <title id="2026-10-16-0c0801b4-01-promptops-title">PromptOps 프롬프트 관리 방식 비교</title>
+  <desc id="2026-10-16-0c0801b4-01-promptops-desc">프롬프트 변경 요청이 하드코딩·DB 저장·PromptOps 세 가지 경로로 분기되며, PromptOps만 빠른 배포와 감사 추적을 달성함을 보여주는 순서도.</desc>
+
+  <defs>
+    <!-- Arrow markers -->
+    <marker id="2026-10-16-0c0801b4-01-arrow-ink" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-10-16-0c0801b4-01-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <marker id="2026-10-16-0c0801b4-01-arrow-warn" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#a96a08"/>
+    </marker>
+    <marker id="2026-10-16-0c0801b4-01-arrow-stop" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#94382b"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="960" height="600" fill="#f8fafb"/>
+
+  <!-- ─────────────────────────────────────────────
+       ARROWS  (drawn before boxes)
+  ───────────────────────────────────────────── -->
+
+  <!-- A → Q1 (vertical down) -->
+  <line x1="480" y1="96" x2="480" y2="152" stroke="#3f545c" stroke-width="1.2" marker-end="url(#2026-10-16-0c0801b4-01-arrow-ink)"/>
+
+  <!-- Q1 → B (left branch: elbow right→left) -->
+  <!-- exits left side of diamond at x=408, y=196; goes left then down to B center -->
+  <path d="M 408,196 Q 400,196 400,204 L 400,212 Q 400,220 392,220 L 224,220 Q 216,220 216,228 L 216,264" fill="none" stroke="#3f545c" stroke-width="1.2" marker-end="url(#2026-10-16-0c0801b4-01-arrow-ink)"/>
+
+  <!-- Q1 → C (middle branch: straight down through short elbow) -->
+  <path d="M 480,240 L 480,260 Q 480,268 480,268 L 480,264" fill="none" stroke="#3f545c" stroke-width="1.2" marker-end="url(#2026-10-16-0c0801b4-01-arrow-ink)"/>
+  <!-- Actually let's route Q1→C downward: diamond bottom at 480,240; C is at 480,312 -->
+  <!-- Q1 → D (right branch) exits right side of diamond at x=552, y=196 -->
+
+  <!-- Redraw clean routes -->
+  <!-- Q1 bottom → C: diamond bottom at (480, 240), C box top at (480, 312) -->
+  <!-- Q1 right → D: diamond right at (552, 196), D box left ~(648, 332) -->
+  <!-- Q1 left → B: diamond left at (408, 196), B box top (216, 264) -->
+
+  <!-- Q1 → B: left exit (408,196) → elbow to B top center (216,280) -->
+  <path d="M 408,196 L 280,196 Q 272,196 272,204 L 272,264" fill="none" stroke="#6c8188" stroke-width="1.2" marker-end="url(#2026-10-16-0c0801b4-01-arrow-ink)"/>
+
+  <!-- Q1 → C: bottom exit (480,240) → C top (480,312) -->
+  <path d="M 480,240 L 480,312" fill="none" stroke="#6c8188" stroke-width="1.2" marker-end="url(#2026-10-16-0c0801b4-01-arrow-ink)"/>
+
+  <!-- Q1 → D: right exit (552,196) → D top (700,312) -->
+  <path d="M 552,196 L 680,196 Q 688,196 688,204 L 688,312" fill="none" stroke="#0d5763" stroke-width="1.5" marker-end="url(#2026-10-16-0c0801b4-01-arrow-accent)"/>
+
+  <!-- B → E: B bottom (272,328) → E top (272,408) -->
+  <path d="M 272,328 L 272,408" fill="none" stroke="#6c8188" stroke-width="1.2" marker-end="url(#2026-10-16-0c0801b4-01-arrow-ink)"/>
+
+  <!-- C → F: C bottom (480,376) → F top (480,408) -->
+  <path d="M 480,376 L 480,408" fill="none" stroke="#6c8188" stroke-width="1.2" marker-end="url(#2026-10-16-0c0801b4-01-arrow-ink)"/>
+
+  <!-- D → G: D bottom (688,376) → G top (688,408) -->
+  <path d="M 688,376 L 688,408" fill="none" stroke="#0d5763" stroke-width="1.5" marker-end="url(#2026-10-16-0c0801b4-01-arrow-accent)"/>
+
+  <!-- ─────────────────────────────────────────────
+       ARROW LABELS
+  ───────────────────────────────────────────── -->
+
+  <!-- Q1 → B label "하드코딩" on segment around x=340, y=196 -->
+  <rect x="296" y="187" width="52" height="16" rx="2" fill="#f8fafb"/>
+  <text x="322" y="199" fill="#6c8188" font-size="11" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle" font-weight="500">하드코딩</text>
+
+  <!-- Q1 → C label "DB 저장" on segment around x=480, y=276 -->
+  <rect x="450" y="248" width="60" height="16" rx="2" fill="#f8fafb"/>
+  <text x="480" y="260" fill="#6c8188" font-size="11" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle" font-weight="500">DB 저장</text>
+
+  <!-- Q1 → D label "PromptOps" on segment around x=616, y=196 -->
+  <rect x="576" y="187" width="72" height="16" rx="2" fill="#f8fafb"/>
+  <text x="612" y="199" fill="#0d5763" font-size="11" font-family="'IBM Plex Mono',ui-monospace,monospace" text-anchor="middle" font-weight="500">PromptOps</text>
+
+  <!-- ─────────────────────────────────────────────
+       NODES
+  ───────────────────────────────────────────── -->
+
+  <!-- A: 프롬프트 변경 요청 — input style, top center -->
+  <!-- Box: w=200, h=48, centered at x=480 → x=380, y=40 -->
+  <rect x="380" y="40" width="200" height="52" rx="6" fill="#f8fafb"/>
+  <rect x="380" y="40" width="200" height="52" rx="6" fill="rgba(58,84,143,0.08)" stroke="#3a548f" stroke-width="1"/>
+  <rect x="388" y="47" width="44" height="12" rx="2" fill="transparent" stroke="rgba(58,84,143,0.4)" stroke-width="0.8"/>
+  <text x="410" y="56.5" fill="rgba(58,84,143,0.8)" font-size="8" font-family="'IBM Plex Mono',ui-monospace,monospace" text-anchor="middle" letter-spacing="0.08em">INPUT</text>
+  <text x="480" y="74" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">프롬프트 변경 요청</text>
+
+  <!-- Q1: 관리 방식은? — diamond decision, focal accent -->
+  <!-- Diamond centered at (480,196), half-width=72, half-height=44 -->
+  <polygon points="480,152 552,196 480,240 408,196" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.5"/>
+  <text x="480" y="192" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">관리 방식은?</text>
+
+  <!-- B: 코드 변경 PR·배포 필요 — warn -->
+  <!-- Box: w=160, h=64, centered at x=272 → x=192, y=264 -->
+  <rect x="192" y="264" width="160" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="192" y="264" width="160" height="64" rx="6" fill="rgba(169,106,8,0.08)" stroke="#a96a08" stroke-width="1"/>
+  <text x="272" y="290" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">코드 변경</text>
+  <text x="272" y="308" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono',ui-monospace,monospace" text-anchor="middle">PR · 배포 필요</text>
+
+  <!-- C: 직접 수정 이력 없음 — warn -->
+  <!-- Box: w=160, h=64, centered at x=480 → x=400, y=312 -->
+  <rect x="400" y="312" width="160" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="400" y="312" width="160" height="64" rx="6" fill="rgba(169,106,8,0.08)" stroke="#a96a08" stroke-width="1"/>
+  <text x="480" y="338" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">직접 수정</text>
+  <text x="480" y="356" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono',ui-monospace,monospace" text-anchor="middle">이력 없음</text>
+
+  <!-- D: 버전 관리 파이프라인 통과 — accent/focal -->
+  <!-- Box: w=160, h=64, centered at x=688 → x=608, y=312 -->
+  <rect x="608" y="312" width="160" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="608" y="312" width="160" height="64" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.5"/>
+  <text x="688" y="338" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">버전 관리</text>
+  <text x="688" y="356" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono',ui-monospace,monospace" text-anchor="middle">파이프라인 통과</text>
+
+  <!-- E: 느린 반영 비개발자 접근 불가 — stop/negative -->
+  <!-- Box: w=160, h=64, centered at x=272 → x=192, y=408 -->
+  <rect x="192" y="408" width="160" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="192" y="408" width="160" height="64" rx="6" fill="rgba(148,56,43,0.07)" stroke="#94382b" stroke-width="1"/>
+  <text x="272" y="434" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">느린 반영</text>
+  <text x="272" y="452" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">비개발자 접근 불가</text>
+
+  <!-- F: 드리프트 추적 불능 — stop/negative -->
+  <!-- Box: w=160, h=64, centered at x=480 → x=400, y=408 -->
+  <rect x="400" y="408" width="160" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="400" y="408" width="160" height="64" rx="6" fill="rgba(148,56,43,0.07)" stroke="#94382b" stroke-width="1"/>
+  <text x="480" y="434" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">드리프트</text>
+  <text x="480" y="452" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">추적 불능</text>
+
+  <!-- G: 빠른 배포 감사 추적·롤백 — accent/positive focal -->
+  <!-- Box: w=172, h=64, centered at x=688 → x=602, y=408 -->
+  <rect x="604" y="408" width="168" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="604" y="408" width="168" height="64" rx="6" fill="rgba(13,87,99,0.12)" stroke="#0d5763" stroke-width="1.5"/>
+  <text x="688" y="434" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">빠른 배포</text>
+  <text x="688" y="452" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">감사 추적 · 롤백</text>
+
+  <!-- ─────────────────────────────────────────────
+       LEGEND strip
+  ───────────────────────────────────────────── -->
+  <line x1="40" y1="524" x2="920" y2="524" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+
+  <!-- Legend label -->
+  <text x="40" y="540" fill="#6c8188" font-size="9" font-family="'IBM Plex Mono',ui-monospace,monospace" letter-spacing="0.14em">LEGEND</text>
+
+  <!-- item: 진입점 -->
+  <rect x="108" y="530" width="12" height="12" rx="2" fill="rgba(58,84,143,0.08)" stroke="#3a548f" stroke-width="1"/>
+  <text x="126" y="540" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif">진입점</text>
+
+  <!-- item: 결정 -->
+  <polygon points="174,542 180,534 186,542 180,550" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.5"/>
+  <text x="194" y="540" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif">결정</text>
+
+  <!-- item: 비추천 경로 -->
+  <rect x="240" y="530" width="12" height="12" rx="2" fill="rgba(169,106,8,0.08)" stroke="#a96a08" stroke-width="1"/>
+  <text x="258" y="540" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif">비추천 경로</text>
+
+  <!-- item: 문제 결과 -->
+  <rect x="352" y="530" width="12" height="12" rx="2" fill="rgba(148,56,43,0.07)" stroke="#94382b" stroke-width="1"/>
+  <text x="370" y="540" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif">문제 결과</text>
+
+  <!-- item: PromptOps 경로 -->
+  <rect x="456" y="530" width="12" height="12" rx="2" fill="rgba(13,87,99,0.12)" stroke="#0d5763" stroke-width="1.5"/>
+  <text x="474" y="540" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif">PromptOps 경로</text>
+
+  <!-- ─────────────────────────────────────────────
+       Outcome badge annotations (subtle)
+  ───────────────────────────────────────────── -->
+  <!-- "❌" marker near E -->
+  <text x="192" y="406" fill="#94382b" font-size="14" text-anchor="middle" opacity="0.7">✕</text>
+  <!-- "❌" marker near F -->
+  <text x="400" y="406" fill="#94382b" font-size="14" text-anchor="middle" opacity="0.7">✕</text>
+  <!-- "✓" marker near G -->
+  <text x="604" y="406" fill="#0d5763" font-size="14" text-anchor="middle" opacity="0.8">✓</text>
+
+</svg>
+</body>
+</html>

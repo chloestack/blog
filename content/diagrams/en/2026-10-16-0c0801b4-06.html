@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Canary Routing Flow</title>
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; display: flex; justify-content: center; padding: 0; }
+  .diagram-wrap { width: 100%; max-width: 960px; }
+  svg { width: 100%; height: auto; display: block; }
+</style>
+</head>
+<body>
+<div class="diagram-wrap">
+<svg viewBox="0 0 960 480" xmlns="http://www.w3.org/2000/svg"
+     role="img" aria-labelledby="2026-10-16-0c0801b4-06-canary-title 2026-10-16-0c0801b4-06-canary-desc">
+  <title id="2026-10-16-0c0801b4-06-canary-title">Canary Routing Flow Diagram</title>
+  <desc id="2026-10-16-0c0801b4-06-canary-desc">PromptOps deployment flow that splits requests based on user_id hash into canary prompt (v2.4.0) and stable prompt (v2.3.0), then records metrics.</desc>
+
+  <defs>
+    <!-- 기본 화살표 (muted) -->
+    <marker id="2026-10-16-0c0801b4-06-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <!-- 액센트 화살표 -->
+    <marker id="2026-10-16-0c0801b4-06-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <!-- 링크 화살표 -->
+    <marker id="2026-10-16-0c0801b4-06-arrow-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3a548f"/>
+    </marker>
+  </defs>
+
+  <!-- 배경 -->
+  <rect width="100%" height="100%" fill="#f8fafb"/>
+
+  <!-- ===================== CONNECTORS (z-order: 선 먼저) ===================== -->
+
+  <!-- REQ → HASH: 수평 직선 (y=240 공유) -->
+  <line x1="184" y1="240" x2="280" y2="240"
+        stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-16-0c0801b4-06-arrow)"/>
+
+  <!-- HASH → Q1: 수평 직선 -->
+  <line x1="392" y1="240" x2="456" y2="240"
+        stroke="#0d5763" stroke-width="1" marker-end="url(#2026-10-16-0c0801b4-06-arrow-accent)"/>
+
+  <!-- Q1 → CN (예, 위쪽): Q1 상단 → 수직 위 → CN 오른쪽으로 -->
+  <!-- Q1 center: (524, 240), 위쪽 꼭짓점: (524, 196) -->
+  <!-- CN center: (700, 152), CN 왼쪽: (620, 152) -->
+  <path d="M524,196 L524,152 L620,152"
+        fill="none" stroke="#3a548f" stroke-width="1" marker-end="url(#2026-10-16-0c0801b4-06-arrow-link)"/>
+
+  <!-- Q1 → ST (아니오, 아래쪽): Q1 하단 → 수직 아래 → ST 왼쪽 -->
+  <!-- Q1 아래 꼭짓점: (524, 284), ST center: (700, 328), ST 왼쪽: (620, 328) -->
+  <path d="M524,284 L524,328 L620,328"
+        fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-16-0c0801b4-06-arrow)"/>
+
+  <!-- CN → LOG: CN 오른쪽(780,152) → 수평 → 꺾어 LOG 왼쪽(856,240) -->
+  <!-- LOG center: (900, 240), LOG 왼쪽: (856, 240) -->
+  <path d="M780,152 L820,152 L820,240 L856,240"
+        fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-16-0c0801b4-06-arrow)"/>
+
+  <!-- ST → LOG: ST 오른쪽(780,328) → 수평 → 꺾어 LOG 왼쪽(856,240) -->
+  <path d="M780,328 L820,328 L820,240 L856,240"
+        fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-16-0c0801b4-06-arrow)"/>
+
+  <!-- ===================== ARROW LABELS ===================== -->
+
+  <!-- "예" label: Q1 → CN 경로, 수평 구간 midpoint (524+620)/2 = 572, y=152 -->
+  <rect x="534" y="136" width="24" height="14" rx="2" fill="#f8fafb"/>
+  <text x="546" y="147"
+        fill="#3a548f" font-size="10" font-weight="500"
+        font-family="'IBM Plex Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif"
+        text-anchor="middle">Yes</text>
+
+  <!-- "아니오" label: Q1 → ST 경로, 수평 구간 midpoint (524+620)/2 = 572, y=328 -->
+  <rect x="518" y="312" width="44" height="14" rx="2" fill="#f8fafb"/>
+  <text x="540" y="323"
+        fill="#3f545c" font-size="10" font-weight="500"
+        font-family="'IBM Plex Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif"
+        text-anchor="middle">No</text>
+
+  <!-- ===================== NODES ===================== -->
+
+  <!-- 1. REQ — 요청 수신 (input 처리: muted fill) -->
+  <!-- x=44, y=212, w=140, h=56, cx=114, cy=240 -->
+  <rect x="44" y="212" width="140" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="44" y="212" width="140" height="56" rx="6"
+        fill="rgba(63,84,92,0.10)" stroke="#6c8188" stroke-width="1"/>
+  <!-- 태그 -->
+  <rect x="52" y="220" width="28" height="12" rx="2"
+        fill="transparent" stroke="rgba(108,129,136,0.40)" stroke-width="0.8"/>
+  <text x="66" y="229" fill="rgba(108,129,136,0.8)" font-size="7"
+        font-family="'IBM Plex Mono',ui-monospace,monospace"
+        text-anchor="middle" letter-spacing="0.08em">REQ</text>
+  <!-- 이름 -->
+  <text x="114" y="246"
+        fill="#122127" font-size="12" font-weight="600"
+        font-family="'IBM Plex Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif"
+        text-anchor="middle">Receive Request</text>
+  <!-- 서브라벨 -->
+  <text x="114" y="260"
+        fill="#6c8188" font-size="9"
+        font-family="'IBM Plex Mono',ui-monospace,monospace"
+        text-anchor="middle">incl. user_id</text>
+
+  <!-- 2. HASH — 해시 계산 (focal: accent-tint) -->
+  <!-- x=280, y=212, w=112, h=56, cx=336, cy=240 -->
+  <rect x="280" y="212" width="112" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="280" y="212" width="112" height="56" rx="6"
+        fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <rect x="288" y="220" width="32" height="12" rx="2"
+        fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="304" y="229" fill="rgba(13,87,99,0.8)" font-size="7"
+        font-family="'IBM Plex Mono',ui-monospace,monospace"
+        text-anchor="middle" letter-spacing="0.08em">HASH</text>
+  <text x="336" y="246"
+        fill="#122127" font-size="12" font-weight="600"
+        font-family="'IBM Plex Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif"
+        text-anchor="middle">Hash Calc</text>
+  <text x="336" y="260"
+        fill="#6c8188" font-size="9"
+        font-family="'IBM Plex Mono',ui-monospace,monospace"
+        text-anchor="middle">user_id % 100</text>
+
+  <!-- 3. Q1 — 결정 다이아몬드 (focal: accent-tint) -->
+  <!-- center (524, 240), half-w=68, half-h=44 -->
+  <rect x="456" y="196" width="136" height="88" rx="0" fill="#f8fafb" stroke="none"/>
+  <polygon points="524,196 592,240 524,284 456,240"
+           fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="524" y="236"
+        fill="#122127" font-size="11" font-weight="600"
+        font-family="'IBM Plex Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif"
+        text-anchor="middle">Value</text>
+  <text x="524" y="250"
+        fill="#122127" font-size="11" font-weight="600"
+        font-family="'IBM Plex Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif"
+        text-anchor="middle">≤ 10?</text>
+
+  <!-- 4. CN — canary 프롬프트 (warn: 강조 amber) -->
+  <!-- x=620, y=124, w=160, h=56, cx=700, cy=152 -->
+  <rect x="620" y="124" width="160" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="620" y="124" width="160" height="56" rx="6"
+        fill="rgba(169,106,8,0.08)" stroke="#a96a08" stroke-width="1"/>
+  <rect x="628" y="132" width="48" height="12" rx="2"
+        fill="transparent" stroke="rgba(169,106,8,0.40)" stroke-width="0.8"/>
+  <text x="652" y="141" fill="rgba(169,106,8,0.8)" font-size="7"
+        font-family="'IBM Plex Mono',ui-monospace,monospace"
+        text-anchor="middle" letter-spacing="0.08em">CANARY</text>
+  <text x="700" y="158"
+        fill="#122127" font-size="12" font-weight="600"
+        font-family="'IBM Plex Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif"
+        text-anchor="middle">canary prompt</text>
+  <text x="700" y="172"
+        fill="#6c8188" font-size="9"
+        font-family="'IBM Plex Mono',ui-monospace,monospace"
+        text-anchor="middle">v2.4.0</text>
+
+  <!-- 5. ST — stable 프롬프트 (ok: green) -->
+  <!-- x=620, y=300, w=160, h=56, cx=700, cy=328 -->
+  <rect x="620" y="300" width="160" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="620" y="300" width="160" height="56" rx="6"
+        fill="rgba(40,109,80,0.08)" stroke="#286d50" stroke-width="1"/>
+  <rect x="628" y="308" width="44" height="12" rx="2"
+        fill="transparent" stroke="rgba(40,109,80,0.40)" stroke-width="0.8"/>
+  <text x="650" y="317" fill="rgba(40,109,80,0.8)" font-size="7"
+        font-family="'IBM Plex Mono',ui-monospace,monospace"
+        text-anchor="middle" letter-spacing="0.08em">STABLE</text>
+  <text x="700" y="334"
+        fill="#122127" font-size="12" font-weight="600"
+        font-family="'IBM Plex Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif"
+        text-anchor="middle">stable prompt</text>
+  <text x="700" y="348"
+        fill="#6c8188" font-size="9"
+        font-family="'IBM Plex Mono',ui-monospace,monospace"
+        text-anchor="middle">v2.3.0</text>
+
+  <!-- 6. LOG — 메트릭 기록 (store/muted) -->
+  <!-- x=856, y=212, w=88, h=56, cx=900, cy=240 -->
+  <rect x="856" y="212" width="88" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="856" y="212" width="88" height="56" rx="6"
+        fill="rgba(18,33,39,0.05)" stroke="#c3d0d4" stroke-width="1"/>
+  <rect x="864" y="220" width="28" height="12" rx="2"
+        fill="transparent" stroke="rgba(195,208,212,0.60)" stroke-width="0.8"/>
+  <text x="878" y="229" fill="rgba(63,84,92,0.7)" font-size="7"
+        font-family="'IBM Plex Mono',ui-monospace,monospace"
+        text-anchor="middle" letter-spacing="0.08em">LOG</text>
+  <text x="900" y="246"
+        fill="#3f545c" font-size="12" font-weight="600"
+        font-family="'IBM Plex Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif"
+        text-anchor="middle">Log Metrics</text>
+  <text x="900" y="260"
+        fill="#6c8188" font-size="9"
+        font-family="'IBM Plex Mono',ui-monospace,monospace"
+        text-anchor="middle">w/ version tag</text>
+
+  <!-- ===================== LEGEND ===================== -->
+  <line x1="32" y1="412" x2="928" y2="412"
+        stroke="rgba(18,33,39,0.10)" stroke-width="0.8"/>
+  <text x="32" y="428" fill="#3f545c" font-size="8"
+        font-family="'IBM Plex Mono',ui-monospace,monospace"
+        letter-spacing="0.14em">LEGEND</text>
+
+  <!-- focal (accent-tint) -->
+  <rect x="100" y="418" width="12" height="12" rx="2"
+        fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="116" y="428" fill="#3f545c" font-size="8"
+        font-family="'IBM Plex Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif">Key Step</text>
+
+  <!-- canary (amber) -->
+  <rect x="200" y="418" width="12" height="12" rx="2"
+        fill="rgba(169,106,8,0.08)" stroke="#a96a08" stroke-width="1"/>
+  <text x="216" y="428" fill="#3f545c" font-size="8"
+        font-family="'IBM Plex Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif">canary traffic</text>
+
+  <!-- stable (green) -->
+  <rect x="320" y="418" width="12" height="12" rx="2"
+        fill="rgba(40,109,80,0.08)" stroke="#286d50" stroke-width="1"/>
+  <text x="336" y="428" fill="#3f545c" font-size="8"
+        font-family="'IBM Plex Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif">stable traffic</text>
+
+  <!-- muted (store) -->
+  <rect x="440" y="418" width="12" height="12" rx="2"
+        fill="rgba(18,33,39,0.05)" stroke="#c3d0d4" stroke-width="1"/>
+  <text x="456" y="428" fill="#3f545c" font-size="8"
+        font-family="'IBM Plex Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif">Collect &amp; Store</text>
+
+  <!-- 결정 다이아몬드 범례 -->
+  <polygon points="580,424 592,418 604,424 592,430"
+           fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="608" y="428" fill="#3f545c" font-size="8"
+        font-family="'IBM Plex Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif">Branch Condition</text>
+
+</svg>
+</div>
+</body>
+</html>
