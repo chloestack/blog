@@ -1,6 +1,7 @@
 ---
 title: "Designing Order and Payment State Transitions with Spring State Machine"
 date: "2026-09-14 10:08"
+updated: "2026-09-19 19:59"
 category: "Spring"
 tags: ["Spring State Machine", "order state", "payment state", "state transition"]
 excerpt: "Mixing order and payment state into one field makes delayed payment notifications and cancellation requests collide. Here's how to prevent that."

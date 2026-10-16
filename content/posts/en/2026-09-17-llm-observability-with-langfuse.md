@@ -1,6 +1,7 @@
 ---
 title: "Implementing LLM Observability with Langfuse"
 date: "2026-09-17 07:41"
+updated: "2026-09-19 19:59"
 category: "AI"
 tags: ["Langfuse", "LLM observability", "tracing", "prompt version management", "LLM evaluation"]
 excerpt: "A practical guide to tracing, prompt version management, and automated evaluation for LLM applications in production using Langfuse."

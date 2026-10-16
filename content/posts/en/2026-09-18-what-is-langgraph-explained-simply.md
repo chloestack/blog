@@ -1,6 +1,7 @@
 ---
 title: "What Is LangGraph, Explained Simply"
 date: "2026-09-18 13:40"
+updated: "2026-09-19 19:59"
 category: "AI"
 tags: ["LangGraph", "AI agent", "LangChain", "workflow", "state management"]
 excerpt: "LangGraph is an orchestration library that ties multiple LLM calls together as a graph — not a model, not a framework, but a progress manager that remembers where you are."

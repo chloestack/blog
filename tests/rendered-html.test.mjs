@@ -635,3 +635,19 @@ test("the root domain moves every page to blog.pistamond.dev in one hop", async 
   const blog = await renderUrl("https://blog.pistamond.dev/robots.txt");
   assert.equal(blog.status, 200, "the official host must not redirect to itself");
 });
+
+test("the sitemap stamps posts with their last edit, not their publish time", async () => {
+  const sitemap = await (await render("/sitemap.xml")).text();
+  const entries = [...sitemap.matchAll(/<url>[\s\S]*?<\/url>/g)].map(([entry]) => entry);
+  for (const dir of [POSTS_DIR, EN_POSTS_DIR]) {
+    for (const file of fs.readdirSync(dir).filter((name) => name.endsWith(".md"))) {
+      const { data } = matter(fs.readFileSync(new URL(file, dir), "utf8"));
+      if (!data.updated) continue;
+      const slug = encodeURIComponent(file.replace(/\.md$/, ""));
+      const entry = entries.find((candidate) => candidate.includes(`/posts/${slug}</loc>`));
+      assert.ok(entry, `${file} is missing from the sitemap`);
+      const [day, time] = String(data.updated).split(" ");
+      assert.match(entry, new RegExp(`<lastmod>${day}T${time}:00\\+09:00</lastmod>`), `${file} lastmod ignores updated`);
+    }
+  }
+});

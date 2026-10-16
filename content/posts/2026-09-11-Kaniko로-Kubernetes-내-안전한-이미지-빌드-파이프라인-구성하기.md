@@ -1,6 +1,7 @@
 ---
 title: "Kaniko로 Kubernetes 내 안전한 이미지 빌드 파이프라인 구성하기"
 date: "2026-09-11 07:29"
+updated: "2026-09-23 08:42"
 category: "DevOps"
 tags: ["Kaniko로 Kubernetes 클러스터 내 안전한 컨테이너 이미지 빌드 파이프라인 구성하기", "DevOps", "Kaniko", "Kubernetes"]
 excerpt: "Kubernetes 클러스터에서 컨테이너 이미지를 빌드해야 하는 상황은 현대 CI/CD 파이프라인에서 매우 흔하게 맞닥뜨리는 과제입니다."

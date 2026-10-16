@@ -1,6 +1,7 @@
 ---
 title: "Implementing an MCP Server from Scratch — Connecting Tools to AI Agents with the Python SDK"
 date: "2026-09-15 12:10"
+updated: "2026-09-19 19:59"
 category: "AI"
 tags: ["MCP", "Python SDK", "AI agents", "LLM tool integration", "MCP server implementation"]
 excerpt: "Learn how to build a custom MCP server with the Python SDK, design tool schemas that guide model decisions, and test end-to-end with MCP Inspector."

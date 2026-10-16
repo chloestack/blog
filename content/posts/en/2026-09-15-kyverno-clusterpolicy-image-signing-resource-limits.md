@@ -1,6 +1,7 @@
 ---
 title: "Enforcing Image Signature Verification and Resource Constraints with Kyverno ClusterPolicy"
 date: "2026-09-15 07:15"
+updated: "2026-09-19 19:59"
 category: "DevOps"
 tags: ["Kyverno", "ClusterPolicy", "image signature verification", "Kubernetes security", "Cosign"]
 excerpt: "A practical guide to using Kyverno ClusterPolicy to enforce Cosign image signature verification and resource constraints in Kubernetes clusters."

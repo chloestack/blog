@@ -1,6 +1,7 @@
 ---
 title: "Implementing State-Based Multi-Agent Workflows with LangGraph"
 date: "2026-09-18 07:37"
+updated: "2026-09-19 19:59"
 category: "AI"
 tags: ["LangGraph", "multi-agent", "LangChain", "state management", "AI agent"]
 excerpt: "A practical guide to LangGraph's core abstractions—State, Node, and Conditional Edge—and how to design, implement, and operate multi-agent workflows in production."

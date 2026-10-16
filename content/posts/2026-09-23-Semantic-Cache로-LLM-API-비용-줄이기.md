@@ -1,6 +1,7 @@
 ---
 title: "Semantic Cache로 LLM API 비용 줄이기"
 date: "2026-09-23 02:18"
+updated: "2026-09-23 08:53"
 publishedAt: ""
 category: "AI"
 tags: ["Semantic Cache", "LLM 비용 최적화", "임베딩", "벡터 DB", "RAG"]

@@ -1,6 +1,7 @@
 ---
 title: "@Transactional Rolls Back Locally but Not on the Production WAS"
 date: "2026-09-14 13:56"
+updated: "2026-09-19 19:59"
 category: "Spring"
 tags: ["Spring Boot", "@Transactional", "JTA", "MyBatis", "WAS", "production experience"]
 excerpt: "Same code, same exception, but data survived on production. The culprit was Spring Boot silently switching to JtaTransactionManager after detecting the WAS JNDI UserTransaction."

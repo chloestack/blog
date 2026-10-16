@@ -1,6 +1,7 @@
 ---
 title: "MCP 서버 직접 구현하기 — Python SDK로 AI 에이전트에 도구 연결하기"
 date: "2026-09-15 12:10"
+updated: "2026-09-15 13:37"
 publishedAt: ""
 category: "AI"
 tags: ["MCP", "Python SDK", "AI 에이전트", "LLM 도구 연동", "MCP 서버 구현"]

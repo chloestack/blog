@@ -1,6 +1,7 @@
 ---
 title: "Hugging Face 사태 (1) 사람이 시키지 않은 첫 자율 공격"
 date: "2026-09-14 15:00"
+updated: "2026-09-14 16:56"
 category: "AI"
 series: "Hugging Face 사태"
 seriesOrder: 1

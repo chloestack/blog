@@ -1,6 +1,7 @@
 ---
 title: "PostgreSQL Full Text Search: Implementing Search with tsvector, tsquery, and GIN Indexes"
 date: "2026-09-14 07:39"
+updated: "2026-09-19 19:59"
 category: "Database"
 tags: ["PostgreSQL", "Full Text Search", "tsvector", "GIN index", "pg_bigm"]
 excerpt: "How PostgreSQL's tsvector, tsquery, and GIN indexes let you build fast, stemming-aware full text search without adding a separate search infrastructure."

@@ -1,6 +1,7 @@
 ---
 title: "Service Orchestration vs Choreography — How to Design Microservice Event Flows"
 date: "2026-09-15 07:30"
+updated: "2026-09-19 19:59"
 category: "Architecture"
 tags: ["service orchestration", "choreography", "microservices", "Saga pattern", "event-driven architecture"]
 excerpt: "A concrete comparison of orchestration and choreography patterns for microservice event flows, covering tradeoffs, failure isolation, and when to use each."

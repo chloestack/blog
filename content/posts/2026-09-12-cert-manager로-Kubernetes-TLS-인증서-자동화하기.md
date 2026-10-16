@@ -1,6 +1,7 @@
 ---
 title: "cert-manager로 Kubernetes TLS 인증서 자동화하기"
 date: "2026-09-12 07:25"
+updated: "2026-09-23 08:42"
 publishedAt: ""
 category: "DevOps"
 tags: ["cert-manager로 Kubernetes TLS 인증서 자동화하기", "DevOps", "cert-manager", "Kubernetes", "TLS"]

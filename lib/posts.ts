@@ -20,6 +20,8 @@ export type Post = {
   date: string;
   /** 정렬과 메타데이터에 쓰는 발행 시각. KST 기준 ISO 8601. */
   publishedAt: string;
+  /** 사이트맵 lastmod에 쓰는 마지막 수정 시각. frontmatter `updated`가 없으면 발행 시각과 같다. */
+  updatedAt: string;
   category: string;
   /** 시리즈 이름. 여러 글을 한 주제로 묶어 목록에서 따로 보여줄 때만 있다. */
   series: string;
@@ -79,6 +81,9 @@ function readPostFile(file: string, locale: Locale): Post | null {
   const slug = file.replace(/\.md$/, "");
   const body = content.trim();
   const { date, publishedAt } = readDate(data.date, slug.slice(0, 10));
+  // `updated`를 해석할 수 없거나 발행보다 이르면 발행 시각을 쓴다.
+  const updated = data.updated === undefined ? null : readDate(data.updated, "");
+  const updatedAt = updated?.date && updated.publishedAt > publishedAt ? updated.publishedAt : publishedAt;
   return {
     slug,
     file,
@@ -87,6 +92,7 @@ function readPostFile(file: string, locale: Locale): Post | null {
     title,
     date,
     publishedAt,
+    updatedAt,
     category: typeof data.category === "string" ? data.category : "GENERAL",
     series: typeof data.series === "string" ? data.series.trim() : "",
     seriesOrder: Number.isFinite(Number(data.seriesOrder)) ? Number(data.seriesOrder) : 0,

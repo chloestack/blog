@@ -1,6 +1,7 @@
 ---
 title: "Hugging Face Incident (5): Alignment Failure or Containment Failure?"
 date: "2026-09-14 16:20"
+updated: "2026-09-19 19:59"
 category: "AI"
 tags: ["AI Agent", "security", "alignment", "incident analysis"]
 excerpt: "Series finale. Redwood's counterargument, OpenAI's new response standards, and what backend engineers should actually take away from what held and what didn't."

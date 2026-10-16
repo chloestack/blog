@@ -1,6 +1,7 @@
 ---
 title: "Cassandra 파티션 키와 클러스터링 컬럼으로 Wide Row 쓰기 성능 최적화"
 date: "2026-09-12 07:18"
+updated: "2026-09-23 08:42"
 publishedAt: ""
 category: "Database"
 tags: ["Cassandra 파티션 키와 클러스터링 컬럼 설계로 Wide Row 쓰기 성능 최적화하기", "Database", "Cassandra", "Wide", "Row"]

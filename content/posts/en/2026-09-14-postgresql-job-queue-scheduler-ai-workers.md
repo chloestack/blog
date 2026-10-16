@@ -1,6 +1,7 @@
 ---
 title: "Can PostgreSQL Handle Your Job Queue and Scheduler Too?"
 date: "2026-09-14 10:24"
+updated: "2026-09-19 19:59"
 category: "Database"
 tags: ["PostgreSQL", "job queue", "scheduler", "AI worker"]
 excerpt: "You don't always need a separate message broker for embedding generation and document processing. PostgreSQL's SKIP LOCKED and a scheduled timestamp can build a queue, but you have to design lease recovery, idempotency, and database load together."

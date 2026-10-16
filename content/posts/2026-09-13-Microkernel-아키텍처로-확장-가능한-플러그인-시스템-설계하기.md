@@ -1,6 +1,7 @@
 ---
 title: "Microkernel 아키텍처로 확장 가능한 플러그인 시스템 설계하기"
 date: "2026-09-13 07:34"
+updated: "2026-09-23 08:42"
 publishedAt: ""
 category: "Architecture"
 tags: ["Microkernel 아키텍처로 확장 가능한 플러그인 시스템 설계하기", "Architecture", "Microkernel"]

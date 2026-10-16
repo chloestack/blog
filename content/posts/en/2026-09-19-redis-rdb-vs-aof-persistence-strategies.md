@@ -1,6 +1,7 @@
 ---
 title: "Redis RDB vs AOF Persistence Strategies Compared"
 date: "2026-09-19 07:49"
+updated: "2026-09-19 19:59"
 category: "Database"
 tags: ["Redis", "AOF", "RDB", "data persistence", "disaster recovery"]
 excerpt: "A deep dive into how Redis RDB snapshots and AOF logs work internally, when to use each, and how to run them together safely in production."

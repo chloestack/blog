@@ -1,6 +1,7 @@
 ---
 title: "Fine-Tuning Open-Source LLMs with LoRA — Domain-Specific Models on Limited GPU"
 date: "2026-09-14 09:37"
+updated: "2026-09-19 19:59"
 category: "AI"
 tags: ["LoRA", "LLM fine-tuning", "QLoRA", "PEFT", "open-source LLM"]
 excerpt: "LoRA lets you fine-tune a 7B–8B open-source LLM on a single RTX 4090 by training less than 1% of parameters, matching full fine-tuning quality on domain tasks."

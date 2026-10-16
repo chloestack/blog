@@ -1,6 +1,7 @@
 ---
 title: "Claude Code에 브라우저 손 붙이기 — aside mcp 실전"
 date: "2026-09-11 17:05"
+updated: "2026-09-23 08:42"
 category: "Tools"
 tags: ["Aside", "MCP", "Claude Code", "에이전트"]
 excerpt: "코딩 에이전트가 못 하는 건 코드가 아니라 로그인입니다. aside mcp 한 줄로 그 구멍을 메우는 방법과, 메우고 나서 반드시 막아야 할 것들."

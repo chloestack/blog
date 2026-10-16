@@ -1,6 +1,7 @@
 ---
 title: "When Implementation Takes 5 Minutes, Where Does the Rest of the Developer's Time Go?"
 date: "2026-09-14 14:05"
+updated: "2026-09-19 19:59"
 category: "AI"
 tags: ["AI coding", "software engineering", "career", "weekly question"]
 excerpt: "If coding is down to 5 minutes but alignment takes 4 days, what exactly fills the rest of a developer's day — and how do you make that visible?"

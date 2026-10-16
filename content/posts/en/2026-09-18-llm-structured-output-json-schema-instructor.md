@@ -1,6 +1,7 @@
 ---
 title: "LLM Structured Output Design: JSON Schema and the Instructor Pattern"
 date: "2026-09-18 18:19"
+updated: "2026-09-19 19:59"
 category: "AI"
 tags: ["LLM structured output", "JSON Schema", "Instructor", "Pydantic", "Constrained Decoding"]
 excerpt: "A systematic guide to designing type-safe LLM responses using JSON Schema constrained decoding and the Instructor pattern with Pydantic."

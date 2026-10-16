@@ -1,6 +1,7 @@
 ---
 title: "Database-per-Service 패턴으로 마이크로서비스 데이터 격리 구현하기"
 date: "2026-09-12 07:39"
+updated: "2026-09-23 08:42"
 publishedAt: ""
 category: "Architecture"
 tags: ["Database-per-Service 패턴으로 마이크로서비스 데이터 격리 구현하기", "Architecture", "Database-per-Service"]

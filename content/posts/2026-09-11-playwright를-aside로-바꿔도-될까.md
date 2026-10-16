@@ -1,6 +1,7 @@
 ---
 title: "Playwright를 Aside로 바꿔도 될까 — 스크립트와 에이전트의 경계"
 date: "2026-09-11 17:40"
+updated: "2026-09-23 08:42"
 category: "Engineering"
 tags: ["Playwright", "Aside", "테스트 자동화", "에이전트"]
 excerpt: "손익분기는 월 51회입니다. 그보다 자주 돌리면 스크립트가, 그보다 드물면 에이전트가 쌉니다. CI를 통째로 에이전트로 바꾸면 비용이 25배가 됩니다."

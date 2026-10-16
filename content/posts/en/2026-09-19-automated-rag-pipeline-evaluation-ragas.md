@@ -1,6 +1,7 @@
 ---
 title: "Automated RAG Pipeline Quality Evaluation with RAGAS"
 date: "2026-09-19 07:09"
+updated: "2026-09-19 19:59"
 category: "AI"
 tags: ["RAGAS", "RAG evaluation", "Faithfulness", "LLM-as-Judge", "vector search"]
 excerpt: "Learn how RAGAS measures Faithfulness, Context Recall, and Answer Relevancy to pinpoint whether failures in your RAG pipeline come from retrieval or generation."

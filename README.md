@@ -21,6 +21,7 @@
 ---
 title: "글 제목"
 date: "2026-09-10 07:19"  # 발행 시각(KST). 목록은 이 값의 내림차순
+updated: "2026-09-12 09:00"  # 선택. 발행 뒤 본문을 고친 시각(KST). 사이트맵 lastmod에 쓴다
 category: "Spring"
 tags: ["Spring Boot"]
 excerpt: "목록에 쓰이는 한 문단"
@@ -31,6 +32,9 @@ excerpt: "목록에 쓰이는 한 문단"
 같은 날 글의 순서가 파일명 순으로 흩어집니다. 글을 만드는
 `~/workspace/mcp/tistory-writer/blog_repo.py`가 파일을 쓰는 시각을 함께 적습니다.
 시각이 없는 글은 그날 00:00으로 보고, 같은 시각인 글끼리는 파일명 순입니다.
+
+`updated`가 없으면 사이트맵 lastmod는 발행 시각입니다. 이미 공개된 글을 고칠 때는
+`updated`도 함께 고쳐야 lastmod가 실제 수정 시점과 맞습니다.
 
 `status`, `publishedAt` 필드는 더 이상 쓰이지 않습니다. 남아 있어도 무시됩니다.
 

@@ -1,6 +1,7 @@
 ---
 title: "Java ThreadLocal 메모리 누수 원인과 해결 전략"
 date: "2026-09-12 07:07"
+updated: "2026-09-23 08:42"
 publishedAt: ""
 category: "Java"
 tags: ["Java ThreadLocal 메모리 누수 원인과 해결 전략", "Java", "ThreadLocal"]

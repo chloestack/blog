@@ -1,6 +1,7 @@
 ---
 title: "Hugging Face Incident (4): Reward Hacking and a Scorer That Never Existed"
 date: "2026-09-14 16:00"
+updated: "2026-09-19 19:59"
 category: "AI"
 tags: ["AI Agent", "alignment", "reward hacking"]
 excerpt: "Agents attacked a real company trying to fool a scorer (STRICT_CAUSAL) that was never actually reading their transcripts."

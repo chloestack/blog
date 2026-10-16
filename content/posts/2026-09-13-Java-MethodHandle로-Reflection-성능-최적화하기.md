@@ -1,6 +1,7 @@
 ---
 title: "Java MethodHandle로 Reflection 성능 최적화하기"
 date: "2026-09-13 07:07"
+updated: "2026-09-23 08:42"
 publishedAt: ""
 category: "Java"
 tags: ["Java MethodHandle로 Reflection 성능 최적화하기", "Java", "MethodHandle", "Reflection"]

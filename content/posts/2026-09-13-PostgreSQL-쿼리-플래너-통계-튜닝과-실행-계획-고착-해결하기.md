@@ -1,6 +1,7 @@
 ---
 title: "PostgreSQL 쿼리 플래너 통계 튜닝과 실행 계획 고착 해결하기"
 date: "2026-09-13 07:17"
+updated: "2026-09-23 08:42"
 publishedAt: ""
 category: "Database"
 tags: ["PostgreSQL 쿼리 플래너 통계 정보 튜닝과 실행 계획 고착 해결하기", "Database", "PostgreSQL"]

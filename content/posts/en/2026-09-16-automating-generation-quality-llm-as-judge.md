@@ -1,6 +1,7 @@
 ---
 title: "Automating Generation Quality Measurement with LLM-as-Judge"
 date: "2026-09-16 07:25"
+updated: "2026-09-19 19:59"
 category: "AI"
 tags: ["LLM-as-Judge", "LLM evaluation", "RAG evaluation", "generation quality", "evaluation pipeline"]
 excerpt: "A concrete guide to building an LLM-as-Judge evaluation pipeline: rubric design, prompt engineering, cost control, and CI/CD integration."

@@ -38,7 +38,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
     return {
       url,
-      lastModified: post.publishedAt,
+      lastModified: post.updatedAt,
       ...(counterpart && enUrl ? { alternates: { languages: { ko: koUrl, en: enUrl } } } : {}),
     };
   });

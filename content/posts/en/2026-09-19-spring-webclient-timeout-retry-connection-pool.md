@@ -1,6 +1,7 @@
 ---
 title: "Spring WebClient Timeout, Retry, and Connection Pool Tuning"
 date: "2026-09-19 07:18"
+updated: "2026-09-19 19:59"
 category: "Spring"
 tags: ["Spring WebClient", "Reactor Netty", "connection pool", "retry strategy", "Circuit Breaker"]
 excerpt: "A practical guide to tuning Spring WebClient's timeout layers, retry strategies, and connection pool settings for production reliability."

@@ -1,6 +1,7 @@
 ---
 title: "Spring Boot 서비스 하나 운영하는 데 한 달에 얼마가 들까"
 date: "2026-09-11 14:13"
+updated: "2026-09-23 08:42"
 category: "DevOps"
 tags: ["비용", "AWS", "Spring Boot", "인프라"]
 excerpt: "서버비만 세면 절반도 못 셉니다. NAT Gateway, 데이터 전송, 로그, 부가세까지 넣어 취미용 7천 원짜리와 이중화 프로덕션 62만 원짜리를 끝까지 계산했습니다."

@@ -1,6 +1,7 @@
 ---
 title: "Spring HTTP Interface(@HttpExchange)로 선언적 HTTP 클라이언트 구현하기"
 date: "2026-09-13 07:10"
+updated: "2026-09-23 08:42"
 publishedAt: ""
 category: "Spring"
 tags: ["Spring HTTP Interface(@HttpExchange)로 선언적 HTTP 클라이언트 구현하기", "Spring", "HTTP", "Interface", "HttpExchange"]
