@@ -11,6 +11,19 @@ const nextConfig: NextConfig = {
     "/en/rss.xml": ["./content/**/*"],
     "/en/posts/[slug]": ["./content/**/*"],
   },
+  // 이 프로젝트에는 루트 도메인도 붙어 있어 같은 글이 두 주소로 열렸다. 공식 주소는
+  // blog.pistamond.dev 하나다(canonical·사이트맵과 같다). ads.txt만 남긴다 —
+  // 애드센스는 하위 도메인 사이트의 ads.txt를 루트 도메인에서 찾는다.
+  async redirects() {
+    return [
+      {
+        source: "/:path((?!ads\\.txt$).*)",
+        has: [{ type: "host", value: "pistamond.dev" }],
+        destination: "https://blog.pistamond.dev/:path",
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default nextConfig;

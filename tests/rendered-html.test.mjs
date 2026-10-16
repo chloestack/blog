@@ -31,6 +31,18 @@ async function render(pathname = "/", init = {}) {
   );
 }
 
+/** 호스트까지 지정해 요청한다. 도메인에 따라 갈리는 동작을 볼 때 쓴다. */
+async function renderUrl(url) {
+  const workerUrl = new URL("../dist/server/index.js", import.meta.url);
+  workerUrl.searchParams.set("test", `${process.pid}-${Date.now()}`);
+  const { default: worker } = await import(workerUrl.href);
+  return worker.fetch(
+    new Request(url, { headers: { accept: "text/html", host: new URL(url).host }, redirect: "manual" }),
+    { ASSETS: { fetch: async () => new Response("Not found", { status: 404 }) } },
+    { waitUntil() {}, passThroughOnException() {} },
+  );
+}
+
 test("server-renders the blog homepage", async () => {
   const response = await render();
   assert.equal(response.status, 200);
@@ -597,4 +609,29 @@ test("each locale publishes its own feed", async () => {
     assert.match(sitemap, /<loc>https:\/\/blog\.pistamond\.dev\/en<\/loc>/);
     assert.match(sitemap, /hreflang="en"/);
   }
+});
+
+/**
+ * 루트 도메인도 이 프로젝트에 붙어 있다. 같은 글이 두 주소로 열리지 않게, 경로를
+ * 그대로 들고 공식 주소로 한 번에 영구 이동시킨다. ads.txt만 루트에 남는다.
+ */
+test("the root domain moves every page to blog.pistamond.dev in one hop", async () => {
+  const pair = readEnglishPosts()[0];
+  // 한글 slug와 쿼리는 넣지 않는다. vinext는 디코딩한 경로를 Location에 넣다가 터지고
+  // 쿼리를 버린다. 운영(Vercel)은 둘 다 그대로 옮긴다 — 배포 뒤 응답으로 확인한다.
+  const paths = ["/", "/en", "/sitemap.xml", "/robots.txt", "/posts/some-slug"];
+  if (pair) paths.push(`/en/posts/${pair.slug}`);
+  for (const pathname of paths) {
+    const source = new URL(pathname, "https://pistamond.dev");
+    const response = await renderUrl(source.href);
+    assert.equal(response.status, 308, `${pathname} is not a permanent redirect`);
+    const location = new URL(response.headers.get("location"));
+    assert.equal(location.host, "blog.pistamond.dev");
+    assert.equal(location.pathname, source.pathname);
+  }
+
+  const ads = await renderUrl("https://pistamond.dev/ads.txt");
+  assert.notEqual(ads.status, 308, "ads.txt must stay on the root domain");
+  const blog = await renderUrl("https://blog.pistamond.dev/robots.txt");
+  assert.equal(blog.status, 200, "the official host must not redirect to itself");
 });
