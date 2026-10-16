@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LLM Streaming — SSE Pipeline Issues</title>
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; font-family: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 960 600"
+  role="img"
+  aria-labelledby="2026-10-17-e8c9176c-06-sse-pipeline-title 2026-10-17-e8c9176c-06-sse-pipeline-desc"
+>
+  <title id="2026-10-17-e8c9176c-06-sse-pipeline-title">LLM Streaming SSE Pipeline Issues</title>
+  <desc id="2026-10-17-e8c9176c-06-sse-pipeline-desc">Flow diagram showing the SSE streaming pipeline from client to LLM API, where AWS ALB's 60-second idle timeout forces connection termination and Nginx buffer accumulation causes chunk delay issues.</desc>
+
+  <defs>
+    <!-- arrow markers -->
+    <marker id="2026-10-17-e8c9176c-06-sse-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-10-17-e8c9176c-06-sse-arrow-warn" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#a96a08"/>
+    </marker>
+    <marker id="2026-10-17-e8c9176c-06-sse-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+  </defs>
+
+  <!-- background -->
+  <rect width="960" height="600" fill="#f8fafb"/>
+
+  <!-- ============================================================ -->
+  <!-- ARROWS — drawn before boxes so z-order puts lines behind     -->
+  <!-- ============================================================ -->
+
+  <!-- CLIENT → ALB  (straight vertical) -->
+  <line x1="480" y1="92" x2="480" y2="148" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-17-e8c9176c-06-sse-arrow)"/>
+
+  <!-- ALB → NGINX   (straight vertical) -->
+  <line x1="480" y1="208" x2="480" y2="264" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-17-e8c9176c-06-sse-arrow)"/>
+
+  <!-- NGINX → APP   (straight vertical) -->
+  <line x1="480" y1="324" x2="480" y2="380" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-17-e8c9176c-06-sse-arrow)"/>
+
+  <!-- APP → LLMAPI  (straight vertical) -->
+  <line x1="480" y1="440" x2="480" y2="496" stroke="#0d5763" stroke-width="1" marker-end="url(#2026-10-17-e8c9176c-06-sse-arrow-accent)"/>
+
+  <!-- ALB →| DISC   (horizontal right elbow from ALB right edge → DISC)
+       ALB right edge: x=600, center-y=178
+       Route: right from (600,178) → (740,178) → down to DISC center-y=178 (same row) -->
+  <!-- elbow path: right from ALB right, arc down, to DISC left -->
+  <path d="M 600 178 L 700 178 Q 708 178 708 186 L 708 220 Q 708 228 716 228 L 736 228"
+        fill="none" stroke="#a96a08" stroke-width="1" stroke-dasharray="5,4" marker-end="url(#2026-10-17-e8c9176c-06-sse-arrow-warn)"/>
+
+  <!-- label: 60s idle -->
+  <rect x="642" y="162" width="60" height="14" rx="2" fill="#f8fafb"/>
+  <text x="672" y="173" fill="#a96a08" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500" text-anchor="middle">60s idle</text>
+
+  <!-- NGINX →| DELAY (horizontal right elbow from NGINX right edge → DELAY)
+       NGINX right edge: x=600, center-y=294
+       Route: right to elbow, arc, across to DELAY left -->
+  <path d="M 600 294 L 700 294 Q 708 294 708 302 L 708 336 Q 708 344 716 344 L 736 344"
+        fill="none" stroke="#a96a08" stroke-width="1" stroke-dasharray="5,4" marker-end="url(#2026-10-17-e8c9176c-06-sse-arrow-warn)"/>
+
+  <!-- label: buf accum -->
+  <rect x="638" y="278" width="60" height="14" rx="2" fill="#f8fafb"/>
+  <text x="668" y="289" fill="#a96a08" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500" text-anchor="middle">buf accum</text>
+
+  <!-- ============================================================ -->
+  <!-- BOXES                                                        -->
+  <!-- ============================================================ -->
+
+  <!-- CLIENT — input type: muted fill, soft stroke -->
+  <rect x="380" y="36" width="200" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="380" y="36" width="200" height="56" rx="6" fill="rgba(63,84,92,0.10)" stroke="#6c8188" stroke-width="1"/>
+  <rect x="388" y="44" width="36" height="12" rx="2" fill="transparent" stroke="rgba(108,129,136,0.40)" stroke-width="0.8"/>
+  <text x="406" y="53" fill="rgba(108,129,136,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">CLIENT</text>
+  <text x="480" y="73" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Client</text>
+
+  <!-- ALB — warn: amber fill/stroke -->
+  <rect x="360" y="148" width="240" height="60" rx="6" fill="#f8fafb"/>
+  <rect x="360" y="148" width="240" height="60" rx="6" fill="#f5e8cc" stroke="#a96a08" stroke-width="1"/>
+  <rect x="368" y="156" width="28" height="12" rx="2" fill="transparent" stroke="rgba(169,106,8,0.40)" stroke-width="0.8"/>
+  <text x="382" y="165" fill="rgba(169,106,8,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">ALB</text>
+  <text x="480" y="182" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">AWS ALB</text>
+  <text x="480" y="198" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">idle timeout 60s</text>
+
+  <!-- NGINX — warn: amber fill/stroke -->
+  <rect x="360" y="264" width="240" height="60" rx="6" fill="#f8fafb"/>
+  <rect x="360" y="264" width="240" height="60" rx="6" fill="#f5e8cc" stroke="#a96a08" stroke-width="1"/>
+  <rect x="368" y="272" width="36" height="12" rx="2" fill="transparent" stroke="rgba(169,106,8,0.40)" stroke-width="0.8"/>
+  <text x="386" y="281" fill="rgba(169,106,8,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">PROXY</text>
+  <text x="480" y="298" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Nginx</text>
+  <text x="480" y="314" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">proxy_buffering on</text>
+
+  <!-- APP — focal: accent fill/stroke -->
+  <rect x="360" y="380" width="240" height="60" rx="6" fill="#f8fafb"/>
+  <rect x="360" y="380" width="240" height="60" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <rect x="368" y="388" width="28" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="382" y="397" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">APP</text>
+  <text x="480" y="414" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Spring Boot</text>
+  <text x="480" y="430" fill="#0d5763" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">SseEmitter</text>
+
+  <!-- LLMAPI — focal: accent fill/stroke -->
+  <rect x="360" y="496" width="240" height="60" rx="6" fill="#f8fafb"/>
+  <rect x="360" y="496" width="240" height="60" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <rect x="368" y="504" width="28" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="382" y="513" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">LLM</text>
+  <text x="480" y="530" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">LLM API</text>
+  <text x="480" y="546" fill="#0d5763" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">Streaming</text>
+
+  <!-- DISC — problem node: red fill/stroke -->
+  <rect x="736" y="200" width="180" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="736" y="200" width="180" height="56" rx="6" fill="#f1d9d4" stroke="#94382b" stroke-width="1"/>
+  <rect x="744" y="208" width="36" height="12" rx="2" fill="transparent" stroke="rgba(148,56,43,0.40)" stroke-width="0.8"/>
+  <text x="762" y="217" fill="rgba(148,56,43,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">ERROR</text>
+  <text x="826" y="236" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Forced Disconnect</text>
+  <text x="826" y="250" fill="#94382b" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Timeout cutoff</text>
+
+  <!-- DELAY — problem node: red fill/stroke -->
+  <rect x="736" y="316" width="180" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="736" y="316" width="180" height="56" rx="6" fill="#f1d9d4" stroke="#94382b" stroke-width="1"/>
+  <rect x="744" y="324" width="36" height="12" rx="2" fill="transparent" stroke="rgba(148,56,43,0.40)" stroke-width="0.8"/>
+  <text x="762" y="333" fill="rgba(148,56,43,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">ERROR</text>
+  <text x="826" y="349" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Chunk Delay</text>
+  <text x="826" y="365" fill="#94382b" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Batched delivery</text>
+
+  <!-- ============================================================ -->
+  <!-- LEGEND STRIP                                                  -->
+  <!-- ============================================================ -->
+  <line x1="32" y1="578" x2="928" y2="578" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+
+  <!-- legend: Normal flow -->
+  <rect x="32" y="584" width="10" height="10" rx="2" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="48" y="593" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500">Normal flow</text>
+
+  <!-- legend: Problem zone -->
+  <rect x="140" y="584" width="10" height="10" rx="2" fill="#f5e8cc" stroke="#a96a08" stroke-width="1"/>
+  <text x="156" y="593" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500">Problem zone</text>
+
+  <!-- legend: Failure result -->
+  <rect x="252" y="584" width="10" height="10" rx="2" fill="#f1d9d4" stroke="#94382b" stroke-width="1"/>
+  <text x="268" y="593" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500">Failure result</text>
+
+  <!-- legend: dashed = problem path -->
+  <line x1="356" y1="589" x2="380" y2="589" stroke="#a96a08" stroke-width="1" stroke-dasharray="5,4"/>
+  <text x="388" y="593" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500">Problem path</text>
+
+</svg>
+</body>
+</html>

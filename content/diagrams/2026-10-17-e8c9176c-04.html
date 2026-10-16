@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SSE 스트리밍 흐름</title>
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; font-family: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; }
+  .diagram-wrap { display: block; width: 100%; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<div class="diagram-wrap">
+<svg viewBox="0 0 960 400" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="2026-10-17-e8c9176c-04-sse-flow-title 2026-10-17-e8c9176c-04-sse-flow-desc">
+  <title id="2026-10-17-e8c9176c-04-sse-flow-title">LLM SSE 스트리밍 흐름도</title>
+  <desc id="2026-10-17-e8c9176c-04-sse-flow-desc">HTTP 요청이 컨트롤러에서 SseEmitter를 생성하고, 가상 쓰레드 풀을 통해 LLM API를 스트림 호출한 뒤 청크와 완료 이벤트를 클라이언트로 전달하는 흐름을 보여주는 다이어그램.</desc>
+
+  <defs>
+    <!-- 기본 화살표 (muted) -->
+    <marker id="2026-10-17-e8c9176c-04-sse-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <!-- accent 화살표 -->
+    <marker id="2026-10-17-e8c9176c-04-sse-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <!-- link 화살표 -->
+    <marker id="2026-10-17-e8c9176c-04-sse-arrow-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3a548f"/>
+    </marker>
+  </defs>
+
+  <!-- 배경 -->
+  <rect width="960" height="400" fill="#f8fafb"/>
+
+  <!-- ============================================================
+       레이어 1: 화살표 (노드보다 먼저)
+       ============================================================ -->
+
+  <!-- REQ → CTRL (수평) -->
+  <line x1="112" y1="120" x2="204" y2="120" stroke="#3a548f" stroke-width="1.2" marker-end="url(#2026-10-17-e8c9176c-04-sse-arrow-link)"/>
+
+  <!-- CTRL → POOL (대각 → 직각 엘보) -->
+  <!-- CTRL 하단 중앙(280,144) → 아래로 → POOL 왼쪽 (348,232) -->
+  <path d="M280,144 L280,232 L348,232" fill="none" stroke="#3f545c" stroke-width="1.2" marker-end="url(#2026-10-17-e8c9176c-04-sse-arrow)"/>
+
+  <!-- CTRL → CLIENT (직각 엘보: CTRL 오른쪽 → 오른쪽으로 → 아래로 → CLIENT 왼쪽) -->
+  <!-- CTRL right: 356,120 → CLIENT left: 808,280 -->
+  <!-- 경로: CTRL right(356,120) → (700,120) → (700,280) → CLIENT left(808,280) -->
+  <path d="M356,120 L700,120 L700,280 L808,280" fill="none" stroke="#3f545c" stroke-width="1.2" marker-end="url(#2026-10-17-e8c9176c-04-sse-arrow)" stroke-dasharray="5,4"/>
+
+  <!-- POOL → LLM (수평) -->
+  <line x1="460" y1="232" x2="552" y2="232" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-10-17-e8c9176c-04-sse-arrow-accent)"/>
+
+  <!-- LLM → EMIT (직각 엘보: LLM right → EMIT left) -->
+  <!-- LLM right: 664,232 → EMIT left: 716,168 -->
+  <!-- 경로: (664,232) → (692,232) → (692,168) → (716,168) -->
+  <path d="M664,232 L692,232 L692,168 L716,168" fill="none" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-10-17-e8c9176c-04-sse-arrow-accent)"/>
+
+  <!-- EMIT → CLIENT (수평) -->
+  <line x1="820" y1="168" x2="860" y2="168" stroke="#3f545c" stroke-width="1.2" marker-end="url(#2026-10-17-e8c9176c-04-sse-arrow)"/>
+  <!-- CLIENT는 x=808이고 height=80이므로 중앙 y=280, top y=240 -->
+  <!-- EMIT right(820,168) → CLIENT는 right side에서 top으로 -->
+  <!-- CLIENT left(808,280), EMIT right(820,168) -->
+  <!-- 경로: EMIT right(820,168) → (856,168) → (856,240) → CLIENT right side top... -->
+  <!-- 다시: EMIT box right=820, CLIENT box left=808. 둘이 겹침. 
+       EMIT (716,144,104,48) → right=820, center_y=168
+       CLIENT (808,240,120,80) → left=808, center_y=280
+       화살표: EMIT right(820,168) → (856,168) → (856,240) → CLIENT 오른쪽(928,280) 아니면
+       CLIENT top 중앙(868,240)으로 내려가는 게 깔끔 -->
+  <!-- 위 line 제거하고 path로 -->
+
+  <!-- LLM → DONE (직각 엘보) -->
+  <!-- LLM right(664,232) → DONE left(716,308) -->
+  <!-- 경로: (664,232) → (692,232) ... 이미 위에서 692 사용 → (692,308) → (716,308) -->
+  <!-- 겹침 방지: LLM bottom(608,256) → (608,308) → DONE left(716,308) -->
+  <path d="M608,256 L608,308 L716,308" fill="none" stroke="#3f545c" stroke-width="1.2" marker-end="url(#2026-10-17-e8c9176c-04-sse-arrow)"/>
+
+  <!-- DONE → CLIENT (직각 엘보) -->
+  <!-- DONE right(820,308) → CLIENT bottom-right area -->
+  <!-- CLIENT(808,240,120,80): right=928, center_y=280 -->
+  <!-- 경로: DONE right(820,308) → (868,308) → (868,320) 아래로 내려가면 CLIENT 밑 -->
+  <!-- CLIENT bottom 중앙(868,320) - 하지만 CLIENT top=240, bottom=320 -->
+  <!-- DONE right(820,308) → CLIENT right(928,308) → CLIENT right side(928,280) ... 복잡 -->
+  <!-- 간단히: DONE right(820,308) → (928,308) → (928,280) 이면 CLIENT right side -->
+  <!-- 하지만 CLIENT right = 808+120=928, center_y=280: 이 점에 붙이면 완벽 -->
+
+  <!-- ============================================================
+       화살표 라벨 마스크 + 텍스트
+       ============================================================ -->
+
+  <!-- "비동기 실행" 라벨 (CTRL→POOL 경로 수직 세그먼트 왼편) -->
+  <rect x="188" y="168" width="64" height="16" rx="2" fill="#f8fafb"/>
+  <text x="220" y="179" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="500">비동기 실행</text>
+
+  <!-- "즉시 반환" 라벨 (CTRL→CLIENT 수평 세그먼트) -->
+  <rect x="500" y="102" width="52" height="14" rx="2" fill="#f8fafb"/>
+  <text x="526" y="112" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="500">즉시 반환</text>
+
+  <!-- "청크" 라벨 (LLM→EMIT) -->
+  <rect x="668" y="188" width="32" height="14" rx="2" fill="#f8fafb"/>
+  <text x="684" y="198" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">청크</text>
+
+  <!-- "완료" 라벨 (LLM→DONE) -->
+  <rect x="552" y="264" width="32" height="14" rx="2" fill="#f8fafb"/>
+  <text x="568" y="274" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">완료</text>
+
+  <!-- ============================================================
+       레이어 2: 노드 박스
+       ============================================================ -->
+
+  <!-- REQ: HTTP 요청 (input 스타일) x=8, y=96, w=104, h=48 -->
+  <rect x="8" y="96" width="104" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="8" y="96" width="104" height="48" rx="6" fill="rgba(58,84,143,0.08)" stroke="#3a548f" stroke-width="1"/>
+  <rect x="16" y="102" width="28" height="12" rx="2" fill="transparent" stroke="rgba(58,84,143,0.4)" stroke-width="0.8"/>
+  <text x="30" y="111" fill="rgba(58,84,143,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">HTTP</text>
+  <text x="60" y="126" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">HTTP 요청</text>
+
+  <!-- CTRL: 컨트롤러 (focal/accent) x=204, y=96, w=152, h=48 -->
+  <rect x="204" y="96" width="152" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="204" y="96" width="152" height="48" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="212" y="102" width="28" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.4)" stroke-width="0.8"/>
+  <text x="226" y="111" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">CTRL</text>
+  <text x="280" y="122" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">컨트롤러</text>
+  <text x="280" y="136" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">SseEmitter 생성</text>
+
+  <!-- POOL: 가상 쓰레드 풀 (backend) x=348, y=208, w=112, h=48 -->
+  <rect x="348" y="208" width="112" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="348" y="208" width="112" height="48" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="356" y="214" width="28" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.4)" stroke-width="0.8"/>
+  <text x="370" y="223" fill="rgba(18,33,39,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">POOL</text>
+  <text x="404" y="238" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">가상 쓰레드 풀</text>
+  <text x="404" y="251" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">Virtual Threads</text>
+
+  <!-- LLM: LLM API (focal/accent) x=552, y=208, w=112, h=48 -->
+  <rect x="552" y="208" width="112" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="552" y="208" width="112" height="48" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="560" y="214" width="24" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.4)" stroke-width="0.8"/>
+  <text x="572" y="223" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">LLM</text>
+  <text x="608" y="236" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">LLM API</text>
+  <text x="608" y="250" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">스트림 호출</text>
+
+  <!-- EMIT: emitter.send() (backend) x=716, y=144, w=104, h=48 -->
+  <rect x="716" y="144" width="104" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="716" y="144" width="104" height="48" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="724" y="150" width="28" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.4)" stroke-width="0.8"/>
+  <text x="738" y="159" fill="rgba(18,33,39,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">EMIT</text>
+  <text x="768" y="172" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">청크 전송</text>
+  <text x="768" y="183" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">emitter.send()</text>
+
+  <!-- DONE: emitter.complete() (backend) x=716, y=284, w=104, h=48 -->
+  <rect x="716" y="284" width="104" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="716" y="284" width="104" height="48" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="724" y="290" width="28" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.4)" stroke-width="0.8"/>
+  <text x="738" y="299" fill="rgba(18,33,39,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">DONE</text>
+  <text x="768" y="312" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">스트림 종료</text>
+  <text x="768" y="323" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">emitter.complete()</text>
+
+  <!-- CLIENT: 클라이언트 (input 스타일) x=808, y=240, w=120, h=80 -->
+  <rect x="808" y="240" width="120" height="80" rx="6" fill="#f8fafb"/>
+  <rect x="808" y="240" width="120" height="80" rx="6" fill="rgba(58,84,143,0.06)" stroke="#3a548f" stroke-width="1" stroke-dasharray="4,3"/>
+  <rect x="816" y="246" width="36" height="12" rx="2" fill="transparent" stroke="rgba(58,84,143,0.4)" stroke-width="0.8"/>
+  <text x="834" y="255" fill="rgba(58,84,143,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">CLIENT</text>
+  <text x="868" y="276" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">클라이언트</text>
+  <text x="868" y="292" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">연결 유지</text>
+  <text x="868" y="308" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">SSE stream</text>
+
+  <!-- ============================================================
+       화살표 재배치: EMIT→CLIENT, DONE→CLIENT (노드 뒤에 그리면 가려지므로
+       노드 위에 그려야 함. 이 위치에서 다시 그림)
+       ============================================================ -->
+
+  <!-- EMIT right(820,168) → (856,168) → (856,248) → CLIENT top-left corner fan point (848,240) -->
+  <path d="M820,168 L856,168 L856,244 L856,244 L848,244 L848,240" fill="none" stroke="#3f545c" stroke-width="1.2" marker-end="url(#2026-10-17-e8c9176c-04-sse-arrow)"/>
+
+  <!-- DONE right(820,308) → (928,308) → (928,280) → CLIENT right(928,280) -->
+  <path d="M820,308 L928,308 L928,280 L928,280" fill="none" stroke="#3f545c" stroke-width="1.2" marker-end="url(#2026-10-17-e8c9176c-04-sse-arrow)"/>
+
+  <!-- ============================================================
+       범례
+       ============================================================ -->
+  <line x1="28" y1="368" x2="932" y2="368" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+  <text x="28" y="382" fill="#3f545c" font-size="8" font-family="'IBM Plex Mono', monospace" letter-spacing="0.14em">LEGEND</text>
+
+  <!-- focal -->
+  <rect x="84" y="374" width="12" height="12" rx="2" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="100" y="383" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">주요 처리 단계</text>
+
+  <!-- backend -->
+  <rect x="228" y="374" width="12" height="12" rx="2" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <text x="244" y="383" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">내부 처리</text>
+
+  <!-- input/external -->
+  <rect x="340" y="374" width="12" height="12" rx="2" fill="rgba(58,84,143,0.06)" stroke="#3a548f" stroke-width="1" stroke-dasharray="4,3"/>
+  <text x="356" y="383" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">클라이언트 / 외부</text>
+
+  <!-- async arrow -->
+  <line x1="488" y1="380" x2="508" y2="380" stroke="#3f545c" stroke-width="1.2" stroke-dasharray="5,4" marker-end="url(#2026-10-17-e8c9176c-04-sse-arrow)"/>
+  <text x="516" y="383" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">비동기 / 유지</text>
+
+  <!-- accent arrow -->
+  <line x1="640" y1="380" x2="660" y2="380" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-10-17-e8c9176c-04-sse-arrow-accent)"/>
+  <text x="668" y="383" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">스트림 데이터</text>
+
+</svg>
+</div>
+</body>
+</html>

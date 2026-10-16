@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  body { margin: 0; padding: 0; background: #f8fafb; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<svg viewBox="0 0 960 360" xmlns="http://www.w3.org/2000/svg"
+     role="img" aria-labelledby="2026-10-17-e8c9176c-02-sse-title 2026-10-17-e8c9176c-02-sse-desc">
+  <title id="2026-10-17-e8c9176c-02-sse-title">SSE Streaming Flow</title>
+  <desc id="2026-10-17-e8c9176c-02-sse-desc">Diagram showing the browser EventSource sending an HTTP GET request to the server, the server returning chunk data sequentially as text/event-stream, and finally sending a [DONE] signal.</desc>
+
+  <defs>
+    <!-- 기본 화살표 (muted) -->
+    <marker id="2026-10-17-e8c9176c-02-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <!-- 강조 화살표 (accent) -->
+    <marker id="2026-10-17-e8c9176c-02-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <!-- link 화살표 -->
+    <marker id="2026-10-17-e8c9176c-02-arrow-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3a548f"/>
+    </marker>
+  </defs>
+
+  <!-- 배경 -->
+  <rect width="960" height="360" fill="#f8fafb"/>
+
+  <!-- ── 화살표를 노드보다 먼저 그림 ── -->
+
+  <!-- 1. 브라우저 → 서버 : HTTP GET (위 경로, 좌→우) -->
+  <!-- 브라우저 노드 오른쪽 중앙: x=272, y=128  /  서버 노드 왼쪽 중앙: x=568, y=128 -->
+  <!-- 팬 아웃: 브라우저 오른쪽 엣지 y=120, 서버 왼쪽 엣지 y=120 -->
+  <path d="M 272 120 L 568 120" stroke="#3a548f" stroke-width="1" fill="none" marker-end="url(#2026-10-17-e8c9176c-02-arrow-link)"/>
+  <!-- 라벨 마스크 (선 위 6px) -->
+  <rect x="374" y="98" width="72" height="14" rx="2" fill="#f8fafb"/>
+  <text x="410" y="109" fill="#3a548f" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500" text-anchor="middle">HTTP GET</text>
+
+  <!-- 2. 서버 → 브라우저 : data: chunk 1\n\n (아래 경로 중 위) -->
+  <!-- 서버 노드 왼쪽 엣지: x=568, y=172  /  브라우저 노드 오른쪽 엣지: x=272, y=172 -->
+  <path d="M 568 168 L 272 168" stroke="#3f545c" stroke-width="1" fill="none" marker-end="url(#2026-10-17-e8c9176c-02-arrow)"/>
+  <rect x="366" y="146" width="88" height="14" rx="2" fill="#f8fafb"/>
+  <text x="410" y="157" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">data: chunk 1</text>
+
+  <!-- 3. 서버 → 브라우저 : data: chunk 2\n\n -->
+  <path d="M 568 196 L 272 196" stroke="#3f545c" stroke-width="1" fill="none" marker-end="url(#2026-10-17-e8c9176c-02-arrow)"/>
+  <rect x="366" y="174" width="88" height="14" rx="2" fill="#f8fafb"/>
+  <text x="410" y="185" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">data: chunk 2</text>
+
+  <!-- 4. 서버 → 브라우저 : data: [DONE]\n\n -->
+  <path d="M 568 224 L 272 224" stroke="#0d5763" stroke-width="1.2" fill="none" stroke-dasharray="5,4" marker-end="url(#2026-10-17-e8c9176c-02-arrow-accent)"/>
+  <rect x="358" y="202" width="104" height="14" rx="2" fill="#f8fafb"/>
+  <text x="410" y="213" fill="#0d5763" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">data: [DONE]</text>
+
+  <!-- ── 노드 ── -->
+
+  <!-- 브라우저 노드 (input 처리 / link-border) x=100, y=92, w=172, h=80 -->
+  <rect x="100" y="92" width="172" height="80" rx="6" fill="#f8fafb"/>
+  <rect x="100" y="92" width="172" height="80" rx="6" fill="rgba(58,84,143,0.08)" stroke="#3a548f" stroke-width="1"/>
+  <!-- 타입 태그 -->
+  <rect x="108" y="100" width="44" height="12" rx="2" fill="transparent" stroke="rgba(58,84,143,0.40)" stroke-width="0.8"/>
+  <text x="130" y="109" fill="rgba(58,84,143,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">CLIENT</text>
+  <!-- 노드 이름 -->
+  <text x="186" y="148" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Browser</text>
+  <!-- 기술 서브라벨 -->
+  <text x="186" y="164" fill="#6c8188" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">EventSource</text>
+
+  <!-- 서버 노드 (focal / accent) x=568, y=92, w=192, h=80 -->
+  <rect x="568" y="92" width="192" height="80" rx="6" fill="#f8fafb"/>
+  <rect x="568" y="92" width="192" height="80" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <!-- 타입 태그 -->
+  <rect x="576" y="100" width="44" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="598" y="109" fill="rgba(13,87,99,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">SERVER</text>
+  <!-- 노드 이름 -->
+  <text x="664" y="144" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Server</text>
+  <!-- 기술 서브라벨 -->
+  <text x="664" y="160" fill="#6c8188" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">text/event-stream</text>
+
+  <!-- ── 범례 구분선 + 범례 ── -->
+  <line x1="40" y1="292" x2="920" y2="292" stroke="rgba(18,33,39,0.10)" stroke-width="0.8"/>
+
+  <!-- 범례 레이블 -->
+  <text x="40" y="308" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.14em">LEGEND</text>
+
+  <!-- 범례 항목 1: HTTP GET -->
+  <line x1="112" y1="308" x2="148" y2="308" stroke="#3a548f" stroke-width="1" marker-end="url(#2026-10-17-e8c9176c-02-arrow-link)"/>
+  <text x="156" y="312" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500">HTTP GET Request</text>
+
+  <!-- 범례 항목 2: 청크 데이터 -->
+  <line x1="308" y1="308" x2="344" y2="308" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-17-e8c9176c-02-arrow)"/>
+  <text x="352" y="312" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500">Stream Chunk</text>
+
+  <!-- 범례 항목 3: [DONE] -->
+  <line x1="488" y1="308" x2="524" y2="308" stroke="#0d5763" stroke-width="1.2" stroke-dasharray="5,4" marker-end="url(#2026-10-17-e8c9176c-02-arrow-accent)"/>
+  <text x="532" y="312" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500">End Signal [DONE]</text>
+
+  <!-- 하단 여백 -->
+</svg>
+</body>
+</html>
