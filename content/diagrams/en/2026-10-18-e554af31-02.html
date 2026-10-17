@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ollama Model Loading Flow</title>
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; font-family: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 600" role="img" aria-labelledby="2026-10-18-e554af31-02-ollama-title 2026-10-18-e554af31-02-ollama-desc">
+  <title id="2026-10-18-e554af31-02-ollama-title">Ollama Model Loading Flow</title>
+  <desc id="2026-10-18-e554af31-02-ollama-desc">Shows the flow of pulling a model from the Ollama registry, storing it in the layer cache, passing weights and meta layers to the inference engine (llama.cpp), then branching to Metal/CUDA/ROCm GPU-accelerated inference or CPU-only inference depending on GPU availability.</desc>
+
+  <defs>
+    <!-- dot pattern (opt-in editorial) -->
+    <pattern id="2026-10-18-e554af31-02-dots" width="22" height="22" patternUnits="userSpaceOnUse">
+      <circle cx="1" cy="1" r="0.9" fill="rgba(18,33,39,0.10)"/>
+    </pattern>
+
+    <!-- markers -->
+    <marker id="2026-10-18-e554af31-02-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-10-18-e554af31-02-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <marker id="2026-10-18-e554af31-02-arrow-muted" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#6c8188"/>
+    </marker>
+  </defs>
+
+  <!-- background -->
+  <rect width="100%" height="100%" fill="#f8fafb"/>
+
+  <!-- ═══════════════════════════════════════════════
+       CONNECTORS (drawn before boxes)
+  ════════════════════════════════════════════════ -->
+
+  <!-- R → L  (Registry → Layer Cache): vertical, x=480, y=92→152 -->
+  <line x1="480" y1="92" x2="480" y2="148" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-10-18-e554af31-02-arrow-accent)"/>
+  <!-- pull label -->
+  <rect x="455" y="104" width="50" height="14" rx="2" fill="#f8fafb"/>
+  <text x="480" y="115" fill="#0d5763" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.06em">pull</text>
+
+  <!-- L → W  (Cache → Weight Layer): left branch, elbow -->
+  <!-- from bottom-left of L (x=400,y=204) down then left to W center-top (x=296,y=272) -->
+  <path d="M 400 204 L 400 236 Q 400 244 392 244 L 304 244 Q 296 244 296 252" fill="none" stroke="#6c8188" stroke-width="1" marker-end="url(#2026-10-18-e554af31-02-arrow-muted)"/>
+
+  <!-- L → M  (Cache → Meta Layer): right branch, elbow -->
+  <!-- from bottom-right of L (x=560,y=204) down then right to M center-top (x=664,y=272) -->
+  <path d="M 560 204 L 560 236 Q 560 244 568 244 L 656 244 Q 664 244 664 252" fill="none" stroke="#6c8188" stroke-width="1" marker-end="url(#2026-10-18-e554af31-02-arrow-muted)"/>
+
+  <!-- W → E  (Weight → Engine): right elbow to E left -->
+  <!-- W center-bottom (x=296,y=328) → down → right → E left-center (x=396,y=396) -->
+  <path d="M 296 328 L 296 360 Q 296 368 304 368 L 388 368 Q 396 368 396 376" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-18-e554af31-02-arrow)"/>
+
+  <!-- M → E  (Meta → Engine): left elbow to E right -->
+  <!-- M center-bottom (x=664,y=328) → down → left → E right-center (x=564,y=396) -->
+  <path d="M 664 328 L 664 360 Q 664 368 656 368 L 572 368 Q 564 368 564 376" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-18-e554af31-02-arrow)"/>
+
+  <!-- E → G  (Engine → Decision): vertical -->
+  <!-- E bottom (x=480,y=428) → G top (x=480,y=460) -->
+  <line x1="480" y1="428" x2="480" y2="456" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-18-e554af31-02-arrow)"/>
+
+  <!-- G → GPU  (yes, right): elbow right -->
+  <!-- G right-vertex (x=560,y=492) → right → GPU left (x=636,y=492) -->
+  <path d="M 556 492 L 556 492 L 632 492" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-18-e554af31-02-arrow)"/>
+  <!-- Yes label -->
+  <rect x="572" y="481" width="24" height="14" rx="2" fill="#f8fafb"/>
+  <text x="584" y="492" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" dominant-baseline="middle">Yes</text>
+
+  <!-- G → CPU  (no, left): elbow left -->
+  <!-- G left-vertex (x=404,y=492) → left → CPU right (x=324,y=492) -->
+  <path d="M 404 492 L 328 492" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-18-e554af31-02-arrow)"/>
+  <!-- No label -->
+  <rect x="340" y="481" width="44" height="14" rx="2" fill="#f8fafb"/>
+  <text x="362" y="492" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" dominant-baseline="middle">No</text>
+
+  <!-- ═══════════════════════════════════════════════
+       NODES (drawn after connectors)
+  ════════════════════════════════════════════════ -->
+
+  <!-- ① Ollama Registry (external / link-blue treatment) -->
+  <rect x="364" y="24" width="232" height="68" rx="6" fill="#f8fafb"/>
+  <rect x="364" y="24" width="232" height="68" rx="6" fill="rgba(58,84,143,0.06)" stroke="#3a548f" stroke-width="1"/>
+  <!-- tag -->
+  <rect x="372" y="30" width="52" height="13" rx="2" fill="transparent" stroke="rgba(58,84,143,0.40)" stroke-width="0.8"/>
+  <text x="398" y="39.5" fill="rgba(58,84,143,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.10em">REGISTRY</text>
+  <!-- name -->
+  <text x="480" y="62" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Ollama Registry</text>
+
+  <!-- ② Layer Cache (focal / accent) -->
+  <rect x="364" y="152" width="232" height="68" rx="6" fill="#f8fafb"/>
+  <rect x="364" y="152" width="232" height="68" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <!-- tag -->
+  <rect x="372" y="158" width="36" height="13" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="390" y="167.5" fill="rgba(13,87,99,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.10em">CACHE</text>
+  <!-- name -->
+  <text x="480" y="183" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Layer Cache</text>
+  <!-- sublabel -->
+  <text x="480" y="200" fill="#6c8188" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">~/.ollama/models</text>
+
+  <!-- ③ Weight Layer (store / muted) -->
+  <rect x="196" y="252" width="200" height="76" rx="6" fill="#f8fafb"/>
+  <rect x="196" y="252" width="200" height="76" rx="6" fill="rgba(18,33,39,0.04)" stroke="#c3d0d4" stroke-width="1"/>
+  <!-- tag -->
+  <rect x="204" y="258" width="36" height="13" rx="2" fill="transparent" stroke="rgba(18,33,39,0.20)" stroke-width="0.8"/>
+  <text x="222" y="267.5" fill="#6c8188" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.10em">WEIGHT</text>
+  <!-- name -->
+  <text x="296" y="290" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Weight Layer</text>
+  <!-- sublabel -->
+  <text x="296" y="308" fill="#6c8188" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">GGUF file</text>
+
+  <!-- ④ Meta Layer (store / muted) -->
+  <rect x="564" y="252" width="200" height="76" rx="6" fill="#f8fafb"/>
+  <rect x="564" y="252" width="200" height="76" rx="6" fill="rgba(18,33,39,0.04)" stroke="#c3d0d4" stroke-width="1"/>
+  <!-- tag -->
+  <rect x="572" y="258" width="28" height="13" rx="2" fill="transparent" stroke="rgba(18,33,39,0.20)" stroke-width="0.8"/>
+  <text x="586" y="267.5" fill="#6c8188" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.10em">META</text>
+  <!-- name -->
+  <text x="664" y="290" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Meta Layer</text>
+  <!-- sublabel -->
+  <text x="664" y="308" fill="#6c8188" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">Template · Prompt</text>
+
+  <!-- ⑤ Inference Engine (focal / accent) -->
+  <rect x="384" y="376" width="192" height="52" rx="6" fill="#f8fafb"/>
+  <rect x="384" y="376" width="192" height="52" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <!-- tag -->
+  <rect x="392" y="382" width="36" height="13" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="410" y="391.5" fill="rgba(13,87,99,0.8)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.10em">ENGINE</text>
+  <!-- name -->
+  <text x="480" y="408" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Inference Engine</text>
+  <!-- sublabel -->
+  <text x="480" y="422" fill="#6c8188" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">llama.cpp</text>
+
+  <!-- ⑥ Decision diamond: GPU acceleration available? -->
+  <!-- center (480,492), half-width=76, half-height=36 -->
+  <polygon points="480,456 556,492 480,528 404,492" fill="#f8fafb"/>
+  <polygon points="480,456 556,492 480,528 404,492" fill="rgba(13,87,99,0.06)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="480" y="487" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">GPU Accel.</text>
+  <text x="480" y="502" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Available?</text>
+
+  <!-- ⑦ GPU Acceleration (backend) -->
+  <rect x="632" y="460" width="200" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="632" y="460" width="200" height="64" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <!-- tag -->
+  <rect x="640" y="466" width="24" height="13" rx="2" fill="transparent" stroke="rgba(18,33,39,0.35)" stroke-width="0.8"/>
+  <text x="652" y="475.5" fill="rgba(18,33,39,0.7)" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.10em">GPU</text>
+  <!-- name -->
+  <text x="732" y="489" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">GPU Acceleration</text>
+  <!-- sublabel -->
+  <text x="732" y="507" fill="#6c8188" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">Metal / CUDA / ROCm</text>
+
+  <!-- ⑧ CPU Only (optional / dashed) -->
+  <rect x="128" y="460" width="196" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="128" y="460" width="196" height="64" rx="6" fill="rgba(18,33,39,0.02)" stroke="rgba(18,33,39,0.20)" stroke-width="1" stroke-dasharray="4,3"/>
+  <!-- tag -->
+  <rect x="136" y="466" width="24" height="13" rx="2" fill="transparent" stroke="rgba(18,33,39,0.20)" stroke-width="0.8"/>
+  <text x="148" y="475.5" fill="#6c8188" font-size="8" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.10em">CPU</text>
+  <!-- name -->
+  <text x="226" y="489" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">CPU-Only Inference</text>
+  <text x="226" y="507" fill="#6c8188" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">No acceleration</text>
+
+  <!-- ═══════════════════════════════════════════════
+       LEGEND strip
+  ════════════════════════════════════════════════ -->
+  <line x1="40" y1="555" x2="920" y2="555" stroke="rgba(18,33,39,0.10)" stroke-width="0.8"/>
+
+  <!-- focal -->
+  <rect x="40" y="566" width="12" height="12" rx="2" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="58" y="576" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">Key Step</text>
+
+  <!-- external/registry -->
+  <rect x="160" y="566" width="12" height="12" rx="2" fill="rgba(58,84,143,0.06)" stroke="#3a548f" stroke-width="1"/>
+  <text x="178" y="576" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">External Registry</text>
+
+  <!-- store/muted -->
+  <rect x="308" y="566" width="12" height="12" rx="2" fill="rgba(18,33,39,0.04)" stroke="#c3d0d4" stroke-width="1"/>
+  <text x="326" y="576" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">Storage Layer</text>
+
+  <!-- backend/step -->
+  <rect x="436" y="566" width="12" height="12" rx="2" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <text x="454" y="576" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">Exec. Step</text>
+
+  <!-- optional/dashed -->
+  <rect x="548" y="566" width="12" height="12" rx="2" fill="rgba(18,33,39,0.02)" stroke="rgba(18,33,39,0.20)" stroke-width="1" stroke-dasharray="4,3"/>
+  <text x="566" y="576" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">Fallback path</text>
+
+</svg>
+</body>
+</html>

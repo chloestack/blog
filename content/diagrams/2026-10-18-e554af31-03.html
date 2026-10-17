@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ollama 요청 흐름</title>
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; font-family: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; }
+  .diagram-wrap { width: 100%; max-width: 960px; margin: 0 auto; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<div class="diagram-wrap">
+<svg viewBox="0 0 960 480" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="2026-10-18-e554af31-03-ollama-flow-title 2026-10-18-e554af31-03-ollama-flow-desc">
+  <title id="2026-10-18-e554af31-03-ollama-flow-title">Ollama 요청 처리 흐름</title>
+  <desc id="2026-10-18-e554af31-03-ollama-flow-desc">클라이언트가 Ollama 서버에 POST 요청을 보내면 모델이 메모리에 있는지 확인한 뒤 추론을 실행하고 스트리밍으로 응답을 반환하며, 5분 미사용 시 메모리에서 언로드하는 흐름을 나타낸 순서도.</desc>
+
+  <defs>
+    <!-- 화살표 마커 -->
+    <marker id="2026-10-18-e554af31-03-arr-muted" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-10-18-e554af31-03-arr-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <marker id="2026-10-18-e554af31-03-arr-soft" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#6c8188"/>
+    </marker>
+  </defs>
+
+  <!-- 배경 -->
+  <rect width="960" height="480" fill="#f8fafb"/>
+
+  <!-- ===================== ARROWS (drawn before boxes) ===================== -->
+
+  <!-- 클라이언트 → Ollama 서버: POST /v1/chat -->
+  <path d="M 168,196 L 244,196" fill="none" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-10-18-e554af31-03-arr-accent)"/>
+  <rect x="176" y="182" width="60" height="14" rx="2" fill="#f8fafb"/>
+  <text x="206" y="192" fill="#0d5763" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.04em">POST /v1/chat</text>
+
+  <!-- Ollama 서버 → 결정 다이아몬드 -->
+  <path d="M 384,196 L 460,196" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-18-e554af31-03-arr-muted)"/>
+
+  <!-- 결정(예) → 추론 실행: 오른쪽 -->
+  <path d="M 580,196 L 644,196" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-18-e554af31-03-arr-muted)"/>
+  <rect x="588" y="182" width="24" height="14" rx="2" fill="#f8fafb"/>
+  <text x="600" y="192" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">예</text>
+
+  <!-- 결정(아니오) → 모델 로드: 아래쪽 -->
+  <path d="M 520,244 L 520,292 Q 520,300 528,300 L 644,300" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-18-e554af31-03-arr-muted)"/>
+  <rect x="492" y="256" width="44" height="14" rx="2" fill="#f8fafb"/>
+  <text x="514" y="266" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">아니오</text>
+
+  <!-- 모델 로드 → 추론 실행 -->
+  <path d="M 764,300 L 800,300 Q 808,300 808,292 L 808,228 Q 808,220 800,220 L 764,220" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-18-e554af31-03-arr-muted)"/>
+
+  <!-- 추론 실행 → 클라이언트 (스트리밍, 위로 돌아감) -->
+  <path d="M 704,176 L 704,140 Q 704,132 696,132 L 128,132 Q 120,132 120,140 L 120,176" fill="none" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-10-18-e554af31-03-arr-accent)"/>
+  <rect x="366" y="118" width="60" height="14" rx="2" fill="#f8fafb"/>
+  <text x="396" y="128" fill="#0d5763" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">스트리밍</text>
+
+  <!-- 추론 실행 → 메모리 언로드 (아래) -->
+  <path d="M 704,236 L 704,300 Q 704,308 712,308 L 800,308" fill="none" stroke="#6c8188" stroke-width="1" stroke-dasharray="5,4" marker-end="url(#2026-10-18-e554af31-03-arr-soft)"/>
+  <rect x="686" y="260" width="64" height="14" rx="2" fill="#f8fafb"/>
+  <text x="718" y="270" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">5분 미사용</text>
+
+  <!-- ===================== NODES ===================== -->
+
+  <!-- 클라이언트 (input 타입) -->
+  <rect x="40" y="172" width="128" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="40" y="172" width="128" height="48" rx="6" fill="rgba(63,84,92,0.10)" stroke="#6c8188" stroke-width="1"/>
+  <rect x="48" y="178" width="32" height="12" rx="2" fill="transparent" stroke="rgba(108,129,136,0.40)" stroke-width="0.8"/>
+  <text x="64" y="187" fill="rgba(108,129,136,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">CLIENT</text>
+  <text x="104" y="202" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">클라이언트</text>
+
+  <!-- Ollama 서버 (focal) -->
+  <rect x="244" y="164" width="140" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="244" y="164" width="140" height="64" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="252" y="170" width="36" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="270" y="179" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">SERVER</text>
+  <text x="314" y="198" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">Ollama 서버</text>
+  <text x="314" y="216" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">:11434</text>
+
+  <!-- 결정 다이아몬드 -->
+  <rect x="460" y="148" width="120" height="96" rx="0" fill="#f8fafb"/>
+  <!-- 다이아몬드 도형 -->
+  <polygon points="520,152 580,196 520,240 460,196" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="520" y="192" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">모델이</text>
+  <text x="520" y="208" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">메모리에 있나</text>
+
+  <!-- 추론 실행 (backend) -->
+  <rect x="644" y="176" width="120" height="60" rx="6" fill="#f8fafb"/>
+  <rect x="644" y="176" width="120" height="60" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="652" y="182" width="36" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="670" y="191" fill="rgba(18,33,39,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">INFER</text>
+  <text x="704" y="212" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">추론 실행</text>
+
+  <!-- 모델 로드 (store/state) -->
+  <rect x="644" y="276" width="120" height="60" rx="6" fill="#f8fafb"/>
+  <rect x="644" y="276" width="120" height="60" rx="6" fill="rgba(18,33,39,0.05)" stroke="#3f545c" stroke-width="1"/>
+  <rect x="652" y="282" width="28" height="12" rx="2" fill="transparent" stroke="rgba(63,84,92,0.40)" stroke-width="0.8"/>
+  <text x="666" y="291" fill="rgba(63,84,92,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">LOAD</text>
+  <text x="704" y="308" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">모델 로드</text>
+  <text x="704" y="324" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">수 초 소요</text>
+
+  <!-- 메모리 언로드 (optional/muted) -->
+  <rect x="800" y="276" width="124" height="60" rx="6" fill="#f8fafb"/>
+  <rect x="800" y="276" width="124" height="60" rx="6" fill="rgba(18,33,39,0.02)" stroke="rgba(18,33,39,0.20)" stroke-width="1" stroke-dasharray="4,3"/>
+  <rect x="808" y="282" width="36" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.20)" stroke-width="0.8"/>
+  <text x="826" y="291" fill="rgba(18,33,39,0.5)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">UNLOAD</text>
+  <text x="862" y="308" fill="#3f545c" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">메모리</text>
+  <text x="862" y="324" fill="#3f545c" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">언로드</text>
+
+  <!-- ===================== LEGEND ===================== -->
+  <line x1="40" y1="412" x2="920" y2="412" stroke="rgba(18,33,39,0.10)" stroke-width="0.8"/>
+  <text x="40" y="428" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.14em">LEGEND</text>
+
+  <!-- 범례: 요청 경로 -->
+  <line x1="120" y1="424" x2="148" y2="424" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-10-18-e554af31-03-arr-accent)"/>
+  <text x="156" y="428" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif">요청 / 응답 경로</text>
+
+  <!-- 범례: 내부 흐름 -->
+  <line x1="312" y1="424" x2="340" y2="424" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-18-e554af31-03-arr-muted)"/>
+  <text x="348" y="428" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif">내부 흐름</text>
+
+  <!-- 범례: 비활성 전환 -->
+  <line x1="468" y1="424" x2="496" y2="424" stroke="#6c8188" stroke-width="1" stroke-dasharray="5,4" marker-end="url(#2026-10-18-e554af31-03-arr-soft)"/>
+  <text x="504" y="428" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif">비활성 전환</text>
+
+  <!-- 범례: focal 박스 -->
+  <rect x="636" y="416" width="16" height="16" rx="3" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="660" y="428" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif">핵심 구성요소</text>
+
+  <!-- 범례: optional 박스 -->
+  <rect x="784" y="416" width="16" height="16" rx="3" fill="rgba(18,33,39,0.02)" stroke="rgba(18,33,39,0.20)" stroke-width="1" stroke-dasharray="4,3"/>
+  <text x="808" y="428" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', sans-serif">자동 해제</text>
+
+</svg>
+</div>
+</body>
+</html>

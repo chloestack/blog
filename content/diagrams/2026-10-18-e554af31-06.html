@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>로컬 LLM 서버 도구 선택</title>
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; font-family: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; }
+  .diagram-wrap { width: 100%; max-width: 960px; margin: 0 auto; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<div class="diagram-wrap">
+<svg viewBox="0 0 960 600" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="2026-10-18-e554af31-06-llm-select-title 2026-10-18-e554af31-06-llm-select-desc">
+  <title id="2026-10-18-e554af31-06-llm-select-title">로컬 LLM 서버 도구 선택</title>
+  <desc id="2026-10-18-e554af31-06-llm-select-desc">GUI 필요 여부, 프로덕션 처리량 우선 여부, 개발·테스트 목적 여부를 순서대로 판단해 LM Studio, vLLM, Ollama, llama.cpp 중 적합한 도구를 선택하는 의사결정 흐름.</desc>
+
+  <defs>
+    <!-- arrow markers -->
+    <marker id="2026-10-18-e554af31-06-arr-muted" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-10-18-e554af31-06-arr-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+  </defs>
+
+  <!-- page background -->
+  <rect width="960" height="600" fill="#f8fafb"/>
+
+  <!-- ─────────────────────────────────────────────
+       ARROWS — drawn before boxes (z-order)
+  ───────────────────────────────────────────── -->
+
+  <!-- N → Q1 (horizontal right) -->
+  <path d="M 216 200 L 296 200" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-18-e554af31-06-arr-muted)"/>
+
+  <!-- Q1 →예→ LM Studio (down then right) -->
+  <path d="M 356 232 L 356 296 L 440 296" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-18-e554af31-06-arr-muted)"/>
+  <!-- 예 label on Q1→LMS -->
+  <rect x="334" y="250" width="20" height="14" rx="2" fill="#f8fafb"/>
+  <text x="344" y="261" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR',sans-serif" text-anchor="middle">예</text>
+
+  <!-- Q1 →아니오→ Q2 (horizontal right) -->
+  <path d="M 416 200 L 472 200" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-18-e554af31-06-arr-muted)"/>
+  <!-- 아니오 label -->
+  <rect x="420" y="188" width="40" height="14" rx="2" fill="#f8fafb"/>
+  <text x="440" y="199" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR',sans-serif" text-anchor="middle">아니오</text>
+
+  <!-- Q2 →예→ vLLM (down then right) -->
+  <path d="M 532 232 L 532 296 L 636 296" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-18-e554af31-06-arr-muted)"/>
+  <!-- 예 label on Q2→VL -->
+  <rect x="510" y="250" width="20" height="14" rx="2" fill="#f8fafb"/>
+  <text x="520" y="261" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR',sans-serif" text-anchor="middle">예</text>
+
+  <!-- Q2 →아니오→ Q3 (horizontal right) -->
+  <path d="M 592 200 L 648 200" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-18-e554af31-06-arr-muted)"/>
+  <!-- 아니오 label -->
+  <rect x="596" y="188" width="40" height="14" rx="2" fill="#f8fafb"/>
+  <text x="616" y="199" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR',sans-serif" text-anchor="middle">아니오</text>
+
+  <!-- Q3 →예→ Ollama (down then right) — accent path -->
+  <path d="M 708 232 L 708 392 L 788 392" fill="none" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-10-18-e554af31-06-arr-accent)"/>
+  <!-- 예 label on Q3→OL -->
+  <rect x="686" y="278" width="20" height="14" rx="2" fill="#f8fafb"/>
+  <text x="696" y="289" fill="#0d5763" font-size="10" font-family="'IBM Plex Sans KR',sans-serif" text-anchor="middle">예</text>
+
+  <!-- Q3 →아니오→ llama.cpp (down then right) -->
+  <path d="M 708 168 L 708 104 L 788 104" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-18-e554af31-06-arr-muted)"/>
+  <!-- 아니오 label -->
+  <rect x="686" y="122" width="40" height="14" rx="2" fill="#f8fafb"/>
+  <text x="706" y="133" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR',sans-serif" text-anchor="middle">아니오</text>
+
+  <!-- ─────────────────────────────────────────────
+       NODES — drawn after arrows
+  ───────────────────────────────────────────── -->
+
+  <!-- N: 시작 노드 — 시작 타원 (rx=20) -->
+  <!-- opaque mask -->
+  <rect x="60" y="172" width="156" height="56" rx="20" fill="#f8fafb"/>
+  <!-- styled box: external/input treatment -->
+  <rect x="60" y="172" width="156" height="56" rx="20" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="138" y="196" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR',sans-serif" text-anchor="middle">로컬 LLM 서버</text>
+  <text x="138" y="214" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR',sans-serif" text-anchor="middle">도구 선택</text>
+
+  <!-- Q1: 다이아몬드 — GUI 필요? -->
+  <!-- opaque mask -->
+  <polygon points="356,168 416,200 356,232 296,200" fill="#f8fafb"/>
+  <!-- styled diamond: decision -->
+  <polygon points="356,168 416,200 356,232 296,200" fill="rgba(13,87,99,0.06)" stroke="#0d5763" stroke-width="1"/>
+  <text x="356" y="196" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR',sans-serif" text-anchor="middle">GUI가</text>
+  <text x="356" y="210" fill="#122127" font-size="11" font-family="'IBM Plex Sans KR',sans-serif" text-anchor="middle">필요한가</text>
+
+  <!-- Q2: 다이아몬드 — 처리량 최우선? -->
+  <polygon points="532,168 592,200 532,232 472,200" fill="#f8fafb"/>
+  <polygon points="532,168 592,200 532,232 472,200" fill="rgba(13,87,99,0.06)" stroke="#0d5763" stroke-width="1"/>
+  <text x="532" y="196" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR',sans-serif" text-anchor="middle">프로덕션</text>
+  <text x="532" y="210" fill="#122127" font-size="11" font-family="'IBM Plex Sans KR',sans-serif" text-anchor="middle">처리량 최우선</text>
+
+  <!-- Q3: 다이아몬드 — 개발·테스트? -->
+  <polygon points="708,168 768,200 708,232 648,200" fill="#f8fafb"/>
+  <polygon points="708,168 768,200 708,232 648,200" fill="rgba(13,87,99,0.06)" stroke="#0d5763" stroke-width="1"/>
+  <text x="708" y="196" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR',sans-serif" text-anchor="middle">개발·테스트</text>
+  <text x="708" y="210" fill="#122127" font-size="11" font-family="'IBM Plex Sans KR',sans-serif" text-anchor="middle">목적인가</text>
+
+  <!-- LM Studio: muted -->
+  <rect x="440" y="268" width="140" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="440" y="268" width="140" height="56" rx="6" fill="#eef2f4" stroke="#c3d0d4" stroke-width="1"/>
+  <rect x="452" y="278" width="52" height="13" rx="2" fill="transparent" stroke="rgba(99,129,136,0.40)" stroke-width="0.8"/>
+  <text x="478" y="288" fill="rgba(99,129,136,0.8)" font-size="8" font-family="'IBM Plex Mono',monospace" text-anchor="middle" letter-spacing="0.08em">GUI</text>
+  <text x="510" y="305" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR',sans-serif" text-anchor="middle">LM Studio</text>
+  <text x="510" y="319" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR',sans-serif" text-anchor="middle">GUI 중심</text>
+
+  <!-- vLLM: backend -->
+  <rect x="636" y="268" width="140" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="636" y="268" width="140" height="56" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="648" y="278" width="52" height="13" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="674" y="288" fill="rgba(18,33,39,0.8)" font-size="8" font-family="'IBM Plex Mono',monospace" text-anchor="middle" letter-spacing="0.08em">GPU</text>
+  <text x="706" y="305" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR',sans-serif" text-anchor="middle">vLLM</text>
+  <text x="706" y="319" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR',sans-serif" text-anchor="middle">NVIDIA 필수</text>
+
+  <!-- Ollama: FOCAL (accent) -->
+  <rect x="788" y="364" width="148" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="788" y="364" width="148" height="56" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.5"/>
+  <rect x="800" y="374" width="52" height="13" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="826" y="384" fill="rgba(13,87,99,0.8)" font-size="8" font-family="'IBM Plex Mono',monospace" text-anchor="middle" letter-spacing="0.08em">API</text>
+  <text x="862" y="401" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR',sans-serif" text-anchor="middle">Ollama</text>
+  <text x="862" y="415" fill="#0d5763" font-size="11" font-weight="500" font-family="'IBM Plex Sans KR',sans-serif" text-anchor="middle">단순 · API 호환</text>
+
+  <!-- llama.cpp: backend -->
+  <rect x="788" y="76" width="148" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="788" y="76" width="148" height="56" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="800" y="86" width="52" height="13" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="826" y="96" fill="rgba(18,33,39,0.8)" font-size="8" font-family="'IBM Plex Mono',monospace" text-anchor="middle" letter-spacing="0.08em">BUILD</text>
+  <text x="862" y="113" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR',sans-serif" text-anchor="middle">llama.cpp</text>
+  <text x="862" y="127" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR',sans-serif" text-anchor="middle">직접 빌드</text>
+
+  <!-- ─────────────────────────────────────────────
+       LEGEND STRIP
+  ───────────────────────────────────────────── -->
+  <line x1="40" y1="528" x2="920" y2="528" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+  <text x="40" y="542" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono',monospace" letter-spacing="0.14em">LEGEND</text>
+
+  <!-- legend: 시작점 -->
+  <rect x="120" y="533" width="32" height="16" rx="8" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="158" y="544" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR',sans-serif">시작점</text>
+
+  <!-- legend: 판단 -->
+  <polygon points="232,549 248,541 264,549 248,557" fill="rgba(13,87,99,0.06)" stroke="#0d5763" stroke-width="1"/>
+  <text x="272" y="553" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR',sans-serif">판단</text>
+
+  <!-- legend: 추천 도구 -->
+  <rect x="328" y="533" width="32" height="16" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.5"/>
+  <text x="368" y="544" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR',sans-serif">추천 도구 (Ollama)</text>
+
+  <!-- legend: 기타 도구 -->
+  <rect x="536" y="533" width="32" height="16" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <text x="576" y="544" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR',sans-serif">기타 도구</text>
+
+</svg>
+</div>
+</body>
+</html>
