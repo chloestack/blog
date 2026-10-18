@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; display: flex; justify-content: center; padding: 0; }
+  .diagram-wrap { width: 100%; max-width: 960px; }
+  svg { width: 100%; height: auto; display: block; }
+</style>
+</head>
+<body>
+<div class="diagram-wrap">
+<svg viewBox="0 0 960 320" xmlns="http://www.w3.org/2000/svg"
+     role="img" aria-labelledby="2026-10-19-bd9f231a-05-grd-title 2026-10-19-bd9f231a-05-grd-desc">
+  <title id="2026-10-19-bd9f231a-05-grd-title">가드레일 흐름도 — 입력·출력 가드레일과 에이전트 실행</title>
+  <desc id="2026-10-19-bd9f231a-05-grd-desc">사용자 입력이 입력 가드레일을 통과하면 에이전트가 실행되고, 출력 가드레일을 통과한 결과가 최종 응답으로 전달된다. 각 가드레일에서 차단되면 오류 메시지나 재시도 응답이 반환된다.</desc>
+
+  <defs>
+    <!-- Arrow markers -->
+    <marker id="2026-10-19-bd9f231a-05-grd-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-10-19-bd9f231a-05-grd-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <marker id="2026-10-19-bd9f231a-05-grd-arrow-block" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#94382b"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="960" height="320" fill="#f8fafb"/>
+
+  <!-- ─────────────────────────────────────────
+       CONNECTORS (drawn before boxes)
+       Layout (LR):
+         사용자 입력   x=40  cx=140
+         입력 가드레일 x=224 cx=336
+         에이전트 실행 x=424 cx=520
+         출력 가드레일 x=608 cx=720
+         최종 응답     x=804 cx=896
+
+       Main row y=140 (cy=160)
+       Block row: 차단 메시지 cy=260, 재시도 cy=260
+  ───────────────────────────────────────────── -->
+
+  <!-- 1. 사용자 입력 → 입력 가드레일 -->
+  <line x1="224" y1="160" x2="218" y2="160" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-19-bd9f231a-05-grd-arrow)"/>
+  <line x1="140" y1="160" x2="218" y2="160" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-19-bd9f231a-05-grd-arrow)"/>
+
+  <!-- 2. 입력 가드레일 → 에이전트 실행 (통과) -->
+  <line x1="448" y1="160" x2="442" y2="160" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-10-19-bd9f231a-05-grd-arrow-accent)"/>
+  <line x1="336" y1="160" x2="442" y2="160" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-10-19-bd9f231a-05-grd-arrow-accent)"/>
+
+  <!-- 3. 입력 가드레일 → 차단 메시지 반환 (차단) -->
+  <!-- Elbow: right edge of 입력가드레일 (x=448,y=160) down to 차단메시지 (cx=336, cy=260) -->
+  <!-- We go from 입력가드레일 bottom edge (cx=336, y=196) down then to 차단메시지 box -->
+  <path d="M336,196 Q336,204 336,216 L336,240" fill="none" stroke="#94382b" stroke-width="1" stroke-dasharray="5,4" marker-end="url(#2026-10-19-bd9f231a-05-grd-arrow-block)"/>
+
+  <!-- 4. 에이전트 실행 → 출력 가드레일 -->
+  <line x1="616" y1="160" x2="610" y2="160" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-10-19-bd9f231a-05-grd-arrow-accent)"/>
+  <line x1="520" y1="160" x2="610" y2="160" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-10-19-bd9f231a-05-grd-arrow-accent)"/>
+
+  <!-- 5. 출력 가드레일 → 최종 응답 (통과) -->
+  <line x1="804" y1="160" x2="800" y2="160" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-10-19-bd9f231a-05-grd-arrow-accent)"/>
+  <line x1="720" y1="160" x2="800" y2="160" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-10-19-bd9f231a-05-grd-arrow-accent)"/>
+
+  <!-- 6. 출력 가드레일 → 재시도/오류 응답 (차단) -->
+  <path d="M720,196 Q720,204 720,216 L720,240" fill="none" stroke="#94382b" stroke-width="1" stroke-dasharray="5,4" marker-end="url(#2026-10-19-bd9f231a-05-grd-arrow-block)"/>
+
+  <!-- ─────────────────────────────────────────
+       NODES
+  ───────────────────────────────────────────── -->
+
+  <!-- 사용자 입력 (Input/User treatment) -->
+  <rect x="40" y="136" width="200" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="40" y="136" width="200" height="48" rx="6" fill="rgba(63,84,92,0.10)" stroke="#6c8188" stroke-width="1"/>
+  <rect x="52" y="143" width="24" height="12" rx="2" fill="transparent" stroke="rgba(108,129,136,0.40)" stroke-width="0.8"/>
+  <text x="64" y="152" fill="rgba(108,129,136,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">IN</text>
+  <text x="140" y="165" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">사용자 입력</text>
+
+  <!-- 입력 가드레일 (Focal / accent treatment) -->
+  <rect x="224" y="128" width="224" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="224" y="128" width="224" height="64" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="236" y="136" width="48" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="260" y="145" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">GUARD</text>
+  <text x="336" y="162" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">입력 가드레일</text>
+  <text x="336" y="179" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">Input Guardrail</text>
+
+  <!-- 에이전트 실행 (Backend/step treatment) -->
+  <rect x="424" y="132" width="192" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="424" y="132" width="192" height="56" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="436" y="140" width="40" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="456" y="149" fill="rgba(18,33,39,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">AGENT</text>
+  <text x="520" y="165" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">에이전트 실행</text>
+
+  <!-- 출력 가드레일 (Focal / accent treatment) -->
+  <rect x="608" y="128" width="224" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="608" y="128" width="224" height="64" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="620" y="136" width="48" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="644" y="145" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">GUARD</text>
+  <text x="720" y="162" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">출력 가드레일</text>
+  <text x="720" y="179" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">Output Guardrail</text>
+
+  <!-- 최종 응답 (Store/State treatment) -->
+  <rect x="804" y="136" width="120" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="804" y="136" width="120" height="48" rx="6" fill="rgba(18,33,39,0.05)" stroke="#3f545c" stroke-width="1"/>
+  <rect x="816" y="143" width="32" height="12" rx="2" fill="transparent" stroke="rgba(63,84,92,0.40)" stroke-width="0.8"/>
+  <text x="832" y="152" fill="rgba(63,84,92,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">OUT</text>
+  <text x="864" y="165" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">최종 응답</text>
+
+  <!-- 차단 메시지 반환 (아래쪽, 입력 가드레일 밑) -->
+  <rect x="240" y="240" width="192" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="240" y="240" width="192" height="48" rx="6" fill="rgba(148,56,43,0.06)" stroke="rgba(148,56,43,0.50)" stroke-width="1" stroke-dasharray="4,4"/>
+  <text x="336" y="261" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">차단 메시지 반환</text>
+  <text x="336" y="278" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">blocked response</text>
+
+  <!-- 재시도 또는 오류 응답 (아래쪽, 출력 가드레일 밑) -->
+  <rect x="624" y="240" width="192" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="624" y="240" width="192" height="48" rx="6" fill="rgba(148,56,43,0.06)" stroke="rgba(148,56,43,0.50)" stroke-width="1" stroke-dasharray="4,4"/>
+  <text x="720" y="261" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">재시도 또는 오류 응답</text>
+  <text x="720" y="278" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">retry / error response</text>
+
+  <!-- ─────────────────────────────────────────
+       ARROW LABELS
+  ───────────────────────────────────────────── -->
+
+  <!-- 통과 label between 입력가드레일 → 에이전트 -->
+  <rect x="374" y="144" width="36" height="14" rx="2" fill="#f8fafb"/>
+  <text x="392" y="154" fill="#0d5763" font-size="12" font-weight="500" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">통과</text>
+
+  <!-- 통과 label between 출력가드레일 → 최종응답 -->
+  <rect x="754" y="144" width="36" height="14" rx="2" fill="#f8fafb"/>
+  <text x="772" y="154" fill="#0d5763" font-size="12" font-weight="500" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">통과</text>
+
+  <!-- 차단 label on left elbow (x=336, midpoint y≈218) -->
+  <rect x="318" y="206" width="36" height="14" rx="2" fill="#f8fafb"/>
+  <text x="336" y="216" fill="#94382b" font-size="12" font-weight="500" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">차단</text>
+
+  <!-- 차단 label on right elbow (x=720, midpoint y≈218) -->
+  <rect x="702" y="206" width="36" height="14" rx="2" fill="#f8fafb"/>
+  <text x="720" y="216" fill="#94382b" font-size="12" font-weight="500" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">차단</text>
+
+  <!-- ─────────────────────────────────────────
+       LEGEND STRIP
+  ───────────────────────────────────────────── -->
+  <line x1="40" y1="304" x2="920" y2="304" stroke="rgba(18,33,39,0.10)" stroke-width="0.8"/>
+  <text x="40" y="316" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" letter-spacing="0.14em">LEGEND</text>
+
+  <!-- focal -->
+  <rect x="116" y="308" width="12" height="12" rx="2" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="132" y="318" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">가드레일 (핵심)</text>
+
+  <!-- backend -->
+  <rect x="256" y="308" width="12" height="12" rx="2" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <text x="272" y="318" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">실행 단계</text>
+
+  <!-- blocked -->
+  <rect x="368" y="308" width="12" height="12" rx="2" fill="rgba(148,56,43,0.06)" stroke="rgba(148,56,43,0.50)" stroke-width="1" stroke-dasharray="4,4"/>
+  <text x="384" y="318" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">차단 경로</text>
+
+  <!-- pass arrow -->
+  <line x1="476" y1="314" x2="500" y2="314" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-10-19-bd9f231a-05-grd-arrow-accent)"/>
+  <text x="508" y="318" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">통과 흐름</text>
+
+  <!-- block arrow -->
+  <line x1="596" y1="314" x2="620" y2="314" stroke="#94382b" stroke-width="1" stroke-dasharray="5,4" marker-end="url(#2026-10-19-bd9f231a-05-grd-arrow-block)"/>
+  <text x="628" y="318" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">차단 흐름</text>
+
+</svg>
+</div>
+</body>
+</html>

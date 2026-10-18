@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Multi-Agent Framework Selection</title>
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; font-family: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; }
+  .diagram-wrap { display: block; width: 100%; max-width: 960px; margin: 0 auto; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<div class="diagram-wrap">
+<svg viewBox="0 0 960 600" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="2026-10-19-bd9f231a-06-fw-title 2026-10-19-bd9f231a-06-fw-desc">
+  <title id="2026-10-19-bd9f231a-06-fw-title">Multi-Agent Framework Selection Criteria</title>
+  <desc id="2026-10-19-bd9f231a-06-fw-desc">A decision flowchart showing three paths — LangGraph, OpenAI Agents SDK, and CrewAI — branching from a framework selection node based on flow predictability, model delegation, and rapid prototyping criteria.</desc>
+
+  <defs>
+    <!-- Arrow markers -->
+    <marker id="2026-10-19-bd9f231a-06-fw-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-10-19-bd9f231a-06-fw-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="960" height="600" fill="#f8fafb"/>
+
+  <!-- ═══════════════════════════════════════════════
+       ARROWS — drawn before boxes (z-order)
+  ════════════════════════════════════════════════ -->
+
+  <!-- Decision → LangGraph (left branch) -->
+  <!-- from diamond left vertex (400,200) elbow left then down to LangGraph top (180,276) -->
+  <path d="M 400,200 L 220,200 Q 212,200 212,208 L 212,272" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-19-bd9f231a-06-fw-arrow)"/>
+
+  <!-- Decision → OpenAI Agents SDK (center, straight down) -->
+  <!-- from diamond bottom (480,232) down to OA top (480,276) -->
+  <path d="M 480,232 L 480,272" fill="none" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-10-19-bd9f231a-06-fw-arrow-accent)"/>
+
+  <!-- Decision → CrewAI (right branch) -->
+  <!-- from diamond right vertex (560,200) elbow right then down to CrewAI top (748,276) -->
+  <path d="M 560,200 L 748,200 Q 756,200 756,208 L 756,272" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-19-bd9f231a-06-fw-arrow)"/>
+
+  <!-- LangGraph → L1 (straight down) -->
+  <path d="M 212,348 L 212,404" fill="none" stroke="#3f545c" stroke-width="0.8" stroke-dasharray="4,3" marker-end="url(#2026-10-19-bd9f231a-06-fw-arrow)"/>
+
+  <!-- OA → O1 (straight down) -->
+  <path d="M 480,348 L 480,404" fill="none" stroke="#0d5763" stroke-width="0.8" stroke-dasharray="4,3" marker-end="url(#2026-10-19-bd9f231a-06-fw-arrow-accent)"/>
+
+  <!-- CrewAI → C1 (straight down) -->
+  <path d="M 748,348 L 748,404" fill="none" stroke="#3f545c" stroke-width="0.8" stroke-dasharray="4,3" marker-end="url(#2026-10-19-bd9f231a-06-fw-arrow)"/>
+
+  <!-- ═══════════════════════════════════════════════
+       ARROW LABELS
+  ════════════════════════════════════════════════ -->
+
+  <!-- Label: Flow Predictability (on left elbow segment, horizontal at y=200) -->
+  <!-- segment runs x=220→400, midpoint x=310; label above y=200 -->
+  <rect x="266" y="184" width="88" height="14" rx="2" fill="#f8fafb"/>
+  <text x="310" y="195" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500" text-anchor="middle">Flow Predictability</text>
+
+  <!-- Label: Model Delegation (center, vertical segment x=480, y=232→272, midpoint y=252) -->
+  <rect x="420" y="238" width="88" height="14" rx="2" fill="#f8fafb"/>
+  <text x="464" y="249" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500" text-anchor="middle">Model Delegation</text>
+
+  <!-- Label: Rapid Prototype (on right elbow, horizontal at y=200) -->
+  <!-- segment runs x=560→748, midpoint x=654 -->
+  <rect x="610" y="184" width="88" height="14" rx="2" fill="#f8fafb"/>
+  <text x="654" y="195" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500" text-anchor="middle">Rapid Prototype</text>
+
+  <!-- ═══════════════════════════════════════════════
+       NODES — drawn after arrows
+  ════════════════════════════════════════════════ -->
+
+  <!-- DECISION DIAMOND: Framework Selection — focal -->
+  <!-- Diamond centered at (480,200), half-width=80, half-height=32 -->
+  <!-- Paper mask -->
+  <polygon points="480,168 560,200 480,232 400,200" fill="#f8fafb"/>
+  <!-- Styled diamond -->
+  <polygon points="480,168 560,200 480,232 400,200" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <!-- Label -->
+  <text x="480" y="196" fill="#122127" font-size="12" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">Framework Select</text>
+  <text x="480" y="210" fill="#3f545c" font-size="9" font-family="'IBM Plex Mono', monospace" text-anchor="middle">decision</text>
+
+  <!-- LangGraph box -->
+  <rect x="132" y="272" width="160" height="76" rx="6" fill="#f8fafb"/>
+  <rect x="132" y="272" width="160" height="76" rx="6" fill="white" stroke="#122127" stroke-width="1"/>
+  <!-- tag -->
+  <rect x="140" y="278" width="52" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="166" y="287" fill="rgba(18,33,39,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">FRAMEWORK</text>
+  <!-- name -->
+  <text x="212" y="312" fill="#122127" font-size="14" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">LangGraph</text>
+  <!-- sublabel -->
+  <text x="212" y="330" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">Explicit Graph</text>
+
+  <!-- OpenAI Agents SDK box — focal -->
+  <rect x="400" y="272" width="160" height="76" rx="6" fill="#f8fafb"/>
+  <rect x="400" y="272" width="160" height="76" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <!-- tag -->
+  <rect x="408" y="278" width="52" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="434" y="287" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">FRAMEWORK</text>
+  <!-- name -->
+  <text x="480" y="308" fill="#122127" font-size="13" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">OpenAI Agents SDK</text>
+  <!-- sublabel -->
+  <text x="480" y="330" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">Dynamic Handoff</text>
+
+  <!-- CrewAI box -->
+  <rect x="668" y="272" width="160" height="76" rx="6" fill="#f8fafb"/>
+  <rect x="668" y="272" width="160" height="76" rx="6" fill="white" stroke="#122127" stroke-width="1"/>
+  <!-- tag -->
+  <rect x="676" y="278" width="52" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="702" y="287" fill="rgba(18,33,39,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">FRAMEWORK</text>
+  <!-- name -->
+  <text x="748" y="312" fill="#122127" font-size="14" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">CrewAI</text>
+  <!-- sublabel -->
+  <text x="748" y="330" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">Role-Centric</text>
+
+  <!-- L1 — store/muted style -->
+  <rect x="132" y="404" width="160" height="68" rx="6" fill="#f8fafb"/>
+  <rect x="132" y="404" width="160" height="68" rx="6" fill="rgba(18,33,39,0.05)" stroke="#c3d0d4" stroke-width="1"/>
+  <text x="212" y="432" fill="#3f545c" font-size="12" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">Complex Branching</text>
+  <text x="212" y="452" fill="#6c8188" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" font-weight="400" text-anchor="middle">Audit Required</text>
+
+  <!-- O1 — store/muted style (focal-adjacent) -->
+  <rect x="400" y="404" width="160" height="68" rx="6" fill="#f8fafb"/>
+  <rect x="400" y="404" width="160" height="68" rx="6" fill="rgba(13,87,99,0.05)" stroke="#c3d0d4" stroke-width="1"/>
+  <text x="480" y="428" fill="#3f545c" font-size="12" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">OpenAI Models</text>
+  <text x="480" y="452" fill="#6c8188" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" font-weight="400" text-anchor="middle">Dynamic Handoff</text>
+
+  <!-- C1 — store/muted style -->
+  <rect x="668" y="404" width="160" height="68" rx="6" fill="#f8fafb"/>
+  <rect x="668" y="404" width="160" height="68" rx="6" fill="rgba(18,33,39,0.05)" stroke="#c3d0d4" stroke-width="1"/>
+  <text x="748" y="432" fill="#3f545c" font-size="12" font-family="'IBM Plex Sans KR', sans-serif" font-weight="600" text-anchor="middle">Non-Tech Teams</text>
+  <text x="748" y="452" fill="#6c8188" font-size="11" font-family="'IBM Plex Sans KR', sans-serif" font-weight="400" text-anchor="middle">Easy Role Definition</text>
+
+  <!-- ═══════════════════════════════════════════════
+       LEGEND STRIP
+  ════════════════════════════════════════════════ -->
+  <line x1="40" y1="524" x2="920" y2="524" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+
+  <!-- Legend: decision -->
+  <polygon points="64,542 76,548 64,554 52,548" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="84" y="552" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500">Decision Branch</text>
+
+  <!-- Legend: framework -->
+  <rect x="180" y="540" width="12" height="12" rx="2" fill="white" stroke="#122127" stroke-width="1"/>
+  <text x="198" y="551" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500">Framework</text>
+
+  <!-- Legend: focal -->
+  <rect x="300" y="540" width="12" height="12" rx="2" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="318" y="551" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500">Recommended (this article)</text>
+
+  <!-- Legend: characteristics -->
+  <rect x="460" y="540" width="12" height="12" rx="2" fill="rgba(18,33,39,0.05)" stroke="#c3d0d4" stroke-width="1"/>
+  <text x="478" y="551" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" font-weight="500">Key Characteristics</text>
+
+  <!-- Legend label -->
+  <text x="40" y="575" fill="#6c8188" font-size="9" font-family="'IBM Plex Mono', monospace" letter-spacing="0.10em">LEGEND</text>
+</svg>
+</div>
+</body>
+</html>

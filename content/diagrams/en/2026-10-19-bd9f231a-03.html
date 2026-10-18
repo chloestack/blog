@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Runner Agent Loop</title>
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; }
+  .diagram-wrap { width: 100%; max-width: 960px; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<div class="diagram-wrap">
+<svg viewBox="0 0 960 420" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="2026-10-19-bd9f231a-03-runner-loop-title 2026-10-19-bd9f231a-03-runner-loop-desc">
+  <title id="2026-10-19-bd9f231a-03-runner-loop-title">Runner Agent Loop</title>
+  <desc id="2026-10-19-bd9f231a-03-runner-loop-desc">User input enters the agent loop via Runner.run(), which branches into three paths: tool call, handoff, and final response.</desc>
+
+  <defs>
+    <!-- arrow markers -->
+    <marker id="2026-10-19-bd9f231a-03-arr" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0,8 3,0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-10-19-bd9f231a-03-arr-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0,8 3,0 6" fill="#0d5763"/>
+    </marker>
+    <marker id="2026-10-19-bd9f231a-03-arr-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0,8 3,0 6" fill="#3a548f"/>
+    </marker>
+  </defs>
+
+  <!-- background -->
+  <rect width="960" height="420" fill="#f8fafb"/>
+
+  <!-- ===================== ARROWS (drawn before boxes) ===================== -->
+
+  <!-- IN → RUN (straight horizontal) -->
+  <line x1="152" y1="156" x2="208" y2="156" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-19-bd9f231a-03-arr)"/>
+
+  <!-- RUN → LOOP (straight horizontal) -->
+  <line x1="328" y1="156" x2="388" y2="156" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-10-19-bd9f231a-03-arr-accent)"/>
+
+  <!-- LOOP → TOOL: down from diamond bottom, right to TOOL -->
+  <!-- diamond center (476,156), bottom point at (476,196) -->
+  <!-- TOOL box top-center at (476, 248) -->
+  <path d="M476,196 L476,244" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-19-bd9f231a-03-arr)"/>
+
+  <!-- TOOL → LOOP: right from TOOL, up, back into diamond right -->
+  <!-- TOOL right edge at x=556, y=272 center; elbow right then up to diamond right at (524,156) -->
+  <path d="M556,272 Q572,272 572,244 L572,136 Q572,120 556,120 L524,120" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-19-bd9f231a-03-arr)" stroke-dasharray="5,4"/>
+
+  <!-- LOOP → NEW: diamond right point (524,156) → NEW left (608,156) — but we go via top-route to avoid TOOL column -->
+  <!-- NEW box left edge at x=608, center y=156 -->
+  <!-- Route: from diamond right (524,156) straight right to NEW left (608,156) -->
+  <!-- TOOL is at x=436..556, y=248..296 — this horizontal is y=156 which clears TOOL vertically, fine -->
+  <line x1="524" y1="156" x2="604" y2="156" stroke="#3a548f" stroke-width="1" marker-end="url(#2026-10-19-bd9f231a-03-arr-link)"/>
+
+  <!-- NEW → LOOP: NEW top-center (668,128) → up → left → into diamond top (476,116) -->
+  <path d="M668,128 L668,100 Q668,84 652,84 L492,84 Q476,84 476,100 L476,116" fill="none" stroke="#3a548f" stroke-width="1" marker-end="url(#2026-10-19-bd9f231a-03-arr-link)" stroke-dasharray="5,4"/>
+
+  <!-- LOOP → OUT: diamond bottom-right area → right route at y=156, then route down to OUT -->
+  <!-- OUT box left edge at x=784, center y=304 -->
+  <!-- Route: from diamond right (524,156) we already use that for NEW. Use a lower exit from diamond. -->
+  <!-- OUT is right-bottom. Route from diamond bottom (476,196) → down to y=304 → right to OUT left (784,304) -->
+  <!-- But that conflicts with TOOL path. Let's route: diamond right (524,156) fans: use y=172 exit -->
+  <!-- Actually let's fan the diamond exits properly: -->
+  <!-- diamond right has two connectors: NEW (y=148 attach) and OUT (y=164 attach) — fan 16px apart -->
+  <!-- Redraw: NEW attach at (524,148), OUT attach at (524,164) -->
+  <!-- NEW path already drawn at y=156 — let's use y=150 for NEW, y=162 for OUT -->
+  <!-- Simplify: route OUT from bottom of diamond (476,196), turn right, go to OUT -->
+  <!-- But TOOL also leaves from bottom. Fan: TOOL at x=468 (left of center), OUT route at x=484 -->
+  <!-- Actually cleaner: OUT exits diamond bottom-right corner area → route down-right -->
+  <!-- Let me re-route: OUT exits diamond at right side lower attach (524,164), goes right past TOOL column, then down to OUT -->
+  <path d="M524,164 L648,164 Q664,164 664,180 L664,304 Q664,320 680,320 L780,320" fill="none" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-10-19-bd9f231a-03-arr-accent)"/>
+
+  <!-- ===================== NODES ===================== -->
+
+  <!-- IN: User Input — input type, oval -->
+  <!-- oval: x=44, y=128, w=108, h=56, rx=20 -->
+  <rect x="44" y="128" width="108" height="56" rx="20" fill="#f8fafb"/>
+  <rect x="44" y="128" width="108" height="56" rx="20" fill="rgba(63,84,92,0.10)" stroke="#6c8188" stroke-width="1"/>
+  <text x="98" y="159" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">User Input</text>
+
+  <!-- RUN: Runner.run() — focal/accent -->
+  <!-- rect: x=208, y=128, w=120, h=56, rx=6 -->
+  <rect x="208" y="128" width="120" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="208" y="128" width="120" height="56" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <!-- type tag -->
+  <rect x="216" y="134" width="32" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="232" y="143" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono',monospace" text-anchor="middle" letter-spacing="0.08em">API</text>
+  <text x="268" y="161" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Mono',monospace" text-anchor="middle">Runner.run()</text>
+
+  <!-- LOOP: Agent Loop — diamond, focal/accent -->
+  <!-- diamond center (476,156), half-width=48, half-height=40 -->
+  <rect x="428" y="116" width="96" height="80" rx="0" fill="#f8fafb" stroke="none"/>
+  <polygon points="476,116 524,156 476,196 428,156" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="476" y="152" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">Agent</text>
+  <text x="476" y="168" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">Loop</text>
+
+  <!-- TOOL: Tool Execution — store/muted -->
+  <!-- rect: x=436, y=248, w=120, h=48, rx=6 -->
+  <rect x="436" y="248" width="120" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="436" y="248" width="120" height="48" rx="6" fill="rgba(18,33,39,0.05)" stroke="#3f545c" stroke-width="1"/>
+  <text x="496" y="277" fill="#3f545c" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">Tool Exec</text>
+
+  <!-- NEW: New Agent — backend/link -->
+  <!-- rect: x=604, y=128, w=128, h=56, rx=6 -->
+  <rect x="604" y="128" width="128" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="604" y="128" width="128" height="56" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <!-- type tag -->
+  <rect x="612" y="134" width="40" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="632" y="143" fill="rgba(18,33,39,0.8)" font-size="7" font-family="'IBM Plex Mono',monospace" text-anchor="middle" letter-spacing="0.08em">AGENT</text>
+  <text x="668" y="161" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">New Agent</text>
+
+  <!-- OUT: Return Response — oval/end -->
+  <!-- oval: x=780, y=292, w=120, h=56, rx=20 -->
+  <rect x="780" y="292" width="120" height="56" rx="20" fill="#f8fafb"/>
+  <rect x="780" y="292" width="120" height="56" rx="20" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="840" y="323" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">Return Resp.</text>
+
+  <!-- ===================== ARROW LABELS ===================== -->
+
+  <!-- Tool Call label: on vertical segment LOOP→TOOL, x=476, midpoint y≈220 -->
+  <rect x="448" y="210" width="56" height="14" rx="2" fill="#f8fafb"/>
+  <text x="476" y="220" fill="#6c8188" font-size="9" font-family="'IBM Plex Mono',monospace" text-anchor="middle" letter-spacing="0.06em">tool call</text>
+
+  <!-- Retry label on TOOL→LOOP dashed return: segment at y=120, midpoint x≈(556+524)/2=540 -->
+  <rect x="516" y="110" width="48" height="14" rx="2" fill="#f8fafb"/>
+  <text x="540" y="120" fill="#6c8188" font-size="9" font-family="'IBM Plex Mono',monospace" text-anchor="middle" letter-spacing="0.06em">retry</text>
+
+  <!-- Handoff label: horizontal LOOP→NEW at y=156, midpoint x=(524+604)/2=564 -->
+  <rect x="541" y="146" width="46" height="14" rx="2" fill="#f8fafb"/>
+  <text x="564" y="156" fill="#3a548f" font-size="9" font-family="'IBM Plex Mono',monospace" text-anchor="middle" letter-spacing="0.06em">handoff</text>
+
+  <!-- Final Response label: on OUT path at segment x=664, y≈240 (vertical portion) -->
+  <rect x="636" y="230" width="56" height="14" rx="2" fill="#f8fafb"/>
+  <text x="664" y="240" fill="#6c8188" font-size="9" font-family="'IBM Plex Mono',monospace" text-anchor="middle" letter-spacing="0.06em">final resp.</text>
+
+  <!-- ===================== LEGEND ===================== -->
+  <line x1="44" y1="370" x2="916" y2="370" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+  <text x="44" y="384" fill="#3f545c" font-size="8" font-family="'IBM Plex Mono',monospace" letter-spacing="0.14em">LEGEND</text>
+
+  <!-- focal node swatch -->
+  <rect x="108" y="374" width="16" height="12" rx="3" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="130" y="384" fill="#3f545c" font-size="9" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif">Key Step</text>
+
+  <!-- decision swatch -->
+  <polygon points="188,386 196,380 204,386 196,392" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="212" y="384" fill="#3f545c" font-size="9" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif">Decision</text>
+
+  <!-- step swatch -->
+  <rect x="280" y="374" width="16" height="12" rx="3" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <text x="302" y="384" fill="#3f545c" font-size="9" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif">Exec Step</text>
+
+  <!-- store swatch -->
+  <rect x="368" y="374" width="16" height="12" rx="3" fill="rgba(18,33,39,0.05)" stroke="#3f545c" stroke-width="1"/>
+  <text x="390" y="384" fill="#3f545c" font-size="9" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif">Tool/Ext.</text>
+
+  <!-- dashed arrow swatch -->
+  <line x1="460" y1="380" x2="492" y2="380" stroke="#3f545c" stroke-width="1" stroke-dasharray="4,3"/>
+  <text x="500" y="384" fill="#3f545c" font-size="9" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif">Feedback Loop</text>
+
+</svg>
+</div>
+</body>
+</html>

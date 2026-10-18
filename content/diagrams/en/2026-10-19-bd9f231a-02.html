@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Multi-Agent Handoff Flow</title>
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; font-family: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<svg viewBox="0 0 960 600" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="2026-10-19-bd9f231a-02-handoff-title 2026-10-19-bd9f231a-02-handoff-desc">
+  <title id="2026-10-19-bd9f231a-02-handoff-title">Multi-Agent Handoff Flow</title>
+  <desc id="2026-10-19-bd9f231a-02-handoff-desc">Flowchart showing Runner.run() invoking the triage agent, which branches requests to a billing agent or tech support agent via a handoff list, with each agent using dedicated tools.</desc>
+
+  <defs>
+    <!-- Arrow markers -->
+    <marker id="2026-10-19-bd9f231a-02-arrow-muted" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-10-19-bd9f231a-02-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <marker id="2026-10-19-bd9f231a-02-arrow-ink" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#122127"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="960" height="600" fill="#f8fafb"/>
+
+  <!-- ============================================================
+       ARROWS (drawn before boxes so they sit behind nodes)
+       ============================================================ -->
+
+  <!-- Runner.run() → Triage Agent (vertical, straight) -->
+  <line x1="480" y1="108" x2="480" y2="156" stroke="#3a548f" stroke-width="1.2" marker-end="url(#2026-10-19-bd9f231a-02-arrow-ink)"/>
+
+  <!-- Triage Agent → Handoff List (vertical, straight) -->
+  <line x1="480" y1="216" x2="480" y2="264" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-10-19-bd9f231a-02-arrow-accent)"/>
+
+  <!-- Handoff List → Billing Agent (elbow: down then left) -->
+  <!-- attach: bottom-center of Handoff List → top-center of Billing Agent -->
+  <!-- Handoff List bottom-center: (480, 324) -->
+  <!-- Billing Agent top-center: (284, 372) -->
+  <path d="M 480 324 L 480 348 Q 480 356 472 356 L 292 356 Q 284 356 284 364" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-19-bd9f231a-02-arrow-muted)"/>
+
+  <!-- Handoff List → Tech Support Agent (elbow: down then right) -->
+  <!-- Tech Support Agent top-center: (676, 372) -->
+  <path d="M 480 324 L 480 348 Q 480 356 488 356 L 668 356 Q 676 356 676 364" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-19-bd9f231a-02-arrow-muted)"/>
+
+  <!-- Billing Agent → Tool: Billing Lookup (vertical, straight) -->
+  <line x1="284" y1="432" x2="284" y2="468" stroke="#3f545c" stroke-width="1" stroke-dasharray="5,4" marker-end="url(#2026-10-19-bd9f231a-02-arrow-muted)"/>
+
+  <!-- Tech Support Agent → Tool: Log Search (vertical, straight) -->
+  <line x1="676" y1="432" x2="676" y2="468" stroke="#3f545c" stroke-width="1" stroke-dasharray="5,4" marker-end="url(#2026-10-19-bd9f231a-02-arrow-muted)"/>
+
+  <!-- ============================================================
+       NODES
+       ============================================================ -->
+
+  <!-- Runner.run() — input type, focal entry -->
+  <!-- center: (480, 72), w=192, h=36 → x=384, y=54 -->
+  <rect x="384" y="54" width="192" height="36" rx="6" fill="#f8fafb"/>
+  <rect x="384" y="54" width="192" height="36" rx="6" fill="rgba(58,84,143,0.10)" stroke="#3a548f" stroke-width="1.2"/>
+  <text x="384" y="54" font-size="0" opacity="0">Runner.run() node</text>
+  <!-- type tag -->
+  <rect x="392" y="60" width="36" height="12" rx="2" fill="transparent" stroke="rgba(58,84,143,0.40)" stroke-width="0.8"/>
+  <text x="410" y="69" fill="rgba(58,84,143,0.80)" font-size="7" font-family="'IBM Plex Mono', ui-monospace, monospace" text-anchor="middle" letter-spacing="0.08em">ENTRY</text>
+  <!-- label -->
+  <text x="488" y="75" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Mono', ui-monospace, monospace" text-anchor="middle">Runner.run()</text>
+
+  <!-- Triage Agent — focal -->
+  <!-- center: (480, 188), w=220, h=56 → x=370, y=160 -->
+  <rect x="370" y="160" width="220" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="370" y="160" width="220" height="56" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.5"/>
+  <!-- type tag -->
+  <rect x="378" y="166" width="40" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="398" y="175" fill="rgba(13,87,99,0.80)" font-size="7" font-family="'IBM Plex Mono', ui-monospace, monospace" text-anchor="middle" letter-spacing="0.08em">AGENT</text>
+  <!-- label -->
+  <text x="480" y="191" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Triage Agent</text>
+  <text x="480" y="207" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', ui-monospace, monospace" text-anchor="middle">triage · handoff decision</text>
+
+  <!-- Handoff List — store/state type -->
+  <!-- center: (480, 294), w=200, h=56 → x=380, y=266 -->
+  <rect x="380" y="266" width="200" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="380" y="266" width="200" height="56" rx="6" fill="rgba(18,33,39,0.05)" stroke="#c3d0d4" stroke-width="1"/>
+  <!-- type tag -->
+  <rect x="388" y="272" width="40" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.25)" stroke-width="0.8"/>
+  <text x="408" y="281" fill="rgba(18,33,39,0.55)" font-size="7" font-family="'IBM Plex Mono', ui-monospace, monospace" text-anchor="middle" letter-spacing="0.08em">LIST</text>
+  <!-- label -->
+  <text x="480" y="297" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Handoff List</text>
+  <text x="480" y="313" fill="#6c8188" font-size="10" font-family="'IBM Plex Mono', ui-monospace, monospace" text-anchor="middle">handoffs[ ]</text>
+
+  <!-- Billing Agent — backend type -->
+  <!-- center: (284, 404), w=188, h=56 → x=190, y=376 -->
+  <rect x="190" y="376" width="188" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="190" y="376" width="188" height="56" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <!-- type tag -->
+  <rect x="198" y="382" width="40" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.30)" stroke-width="0.8"/>
+  <text x="218" y="391" fill="rgba(18,33,39,0.65)" font-size="7" font-family="'IBM Plex Mono', ui-monospace, monospace" text-anchor="middle" letter-spacing="0.08em">AGENT</text>
+  <!-- label -->
+  <text x="284" y="407" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Billing Agent</text>
+  <text x="284" y="423" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', ui-monospace, monospace" text-anchor="middle">billing specialist</text>
+
+  <!-- Tech Support Agent — backend type -->
+  <!-- center: (676, 404), w=196, h=56 → x=578, y=376 -->
+  <rect x="578" y="376" width="196" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="578" y="376" width="196" height="56" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <!-- type tag -->
+  <rect x="586" y="382" width="40" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.30)" stroke-width="0.8"/>
+  <text x="606" y="391" fill="rgba(18,33,39,0.65)" font-size="7" font-family="'IBM Plex Mono', ui-monospace, monospace" text-anchor="middle" letter-spacing="0.08em">AGENT</text>
+  <!-- label -->
+  <text x="676" y="407" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Tech Support Agent</text>
+  <text x="676" y="423" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', ui-monospace, monospace" text-anchor="middle">tech support specialist</text>
+
+  <!-- Tool: Billing Lookup — optional/muted type -->
+  <!-- center: (284, 500), w=172, h=44 → x=198, y=478 -->
+  <rect x="198" y="478" width="172" height="44" rx="6" fill="#f8fafb"/>
+  <rect x="198" y="478" width="172" height="44" rx="6" fill="rgba(18,33,39,0.02)" stroke="rgba(18,33,39,0.20)" stroke-width="1" stroke-dasharray="4,3"/>
+  <!-- type tag -->
+  <rect x="206" y="484" width="32" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.18)" stroke-width="0.8"/>
+  <text x="222" y="493" fill="rgba(18,33,39,0.45)" font-size="7" font-family="'IBM Plex Mono', ui-monospace, monospace" text-anchor="middle" letter-spacing="0.08em">TOOL</text>
+  <!-- label -->
+  <text x="284" y="506" fill="#3f545c" font-size="12" font-weight="500" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Billing Lookup</text>
+
+  <!-- Tool: Log Search — optional/muted type -->
+  <!-- center: (676, 500), w=172, h=44 → x=590, y=478 -->
+  <rect x="590" y="478" width="172" height="44" rx="6" fill="#f8fafb"/>
+  <rect x="590" y="478" width="172" height="44" rx="6" fill="rgba(18,33,39,0.02)" stroke="rgba(18,33,39,0.20)" stroke-width="1" stroke-dasharray="4,3"/>
+  <!-- type tag -->
+  <rect x="598" y="484" width="32" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.18)" stroke-width="0.8"/>
+  <text x="614" y="493" fill="rgba(18,33,39,0.45)" font-size="7" font-family="'IBM Plex Mono', ui-monospace, monospace" text-anchor="middle" letter-spacing="0.08em">TOOL</text>
+  <!-- label -->
+  <text x="676" y="506" fill="#3f545c" font-size="12" font-weight="500" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Log Search</text>
+
+  <!-- ============================================================
+       LEGEND STRIP
+       ============================================================ -->
+  <line x1="40" y1="552" x2="920" y2="552" stroke="rgba(18,33,39,0.10)" stroke-width="0.8"/>
+
+  <!-- Legend items -->
+  <!-- focal agent -->
+  <rect x="40" y="560" width="14" height="10" rx="2" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="60" y="569" fill="#3f545c" font-size="9" font-family="'IBM Plex Mono', ui-monospace, monospace" letter-spacing="0.06em">FOCAL AGENT</text>
+
+  <!-- agent -->
+  <rect x="180" y="560" width="14" height="10" rx="2" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <text x="200" y="569" fill="#3f545c" font-size="9" font-family="'IBM Plex Mono', ui-monospace, monospace" letter-spacing="0.06em">AGENT</text>
+
+  <!-- store/list -->
+  <rect x="280" y="560" width="14" height="10" rx="2" fill="rgba(18,33,39,0.05)" stroke="#c3d0d4" stroke-width="1"/>
+  <text x="300" y="569" fill="#3f545c" font-size="9" font-family="'IBM Plex Mono', ui-monospace, monospace" letter-spacing="0.06em">LIST / STATE</text>
+
+  <!-- tool (dashed) -->
+  <rect x="420" y="560" width="14" height="10" rx="2" fill="rgba(18,33,39,0.02)" stroke="rgba(18,33,39,0.20)" stroke-width="1" stroke-dasharray="3,2"/>
+  <text x="440" y="569" fill="#3f545c" font-size="9" font-family="'IBM Plex Mono', ui-monospace, monospace" letter-spacing="0.06em">TOOL (optional)</text>
+
+  <!-- handoff arrow -->
+  <line x1="560" y1="565" x2="580" y2="565" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-19-bd9f231a-02-arrow-muted)"/>
+  <text x="586" y="569" fill="#3f545c" font-size="9" font-family="'IBM Plex Mono', ui-monospace, monospace" letter-spacing="0.06em">HANDOFF</text>
+
+  <!-- dashed arrow -->
+  <line x1="680" y1="565" x2="700" y2="565" stroke="#3f545c" stroke-width="1" stroke-dasharray="5,4" marker-end="url(#2026-10-19-bd9f231a-02-arrow-muted)"/>
+  <text x="706" y="569" fill="#3f545c" font-size="9" font-family="'IBM Plex Mono', ui-monospace, monospace" letter-spacing="0.06em">TOOL CALL</text>
+
+</svg>
+</body>
+</html>

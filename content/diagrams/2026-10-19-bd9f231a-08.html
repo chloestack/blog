@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>비동기 멀티세션 실행 구조</title>
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; font-family: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; }
+  .diagram-wrap { width: 100%; max-width: 960px; margin: 0 auto; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<div class="diagram-wrap">
+<svg viewBox="0 0 960 400" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="2026-10-19-bd9f231a-08-async-pool-title 2026-10-19-bd9f231a-08-async-pool-desc">
+  <title id="2026-10-19-bd9f231a-08-async-pool-title">비동기 멀티세션 실행 구조</title>
+  <desc id="2026-10-19-bd9f231a-08-async-pool-desc">다수의 요청이 비동기 실행 풀을 통해 세 개의 독립 세션으로 분배되고, 각 세션의 처리 결과가 모니터링으로 수렴되는 흐름을 보여준다.</desc>
+
+  <defs>
+    <!-- Arrow markers -->
+    <marker id="2026-10-19-bd9f231a-08-ap-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-10-19-bd9f231a-08-ap-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <marker id="2026-10-19-bd9f231a-08-ap-arrow-muted" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#6c8188"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="960" height="400" fill="#f8fafb"/>
+
+  <!-- ─── ARROWS (drawn before boxes) ─── -->
+
+  <!-- REQ → POOL -->
+  <line x1="168" y1="200" x2="232" y2="200" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-10-19-bd9f231a-08-ap-arrow-accent)"/>
+
+  <!-- POOL → S1 (top) -->
+  <!-- from POOL right edge (x=400) center-y=200, go right to x=440, then up to y=120, then right to S1 left x=480 -->
+  <path d="M400,192 L440,192 L440,120 L480,120" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-19-bd9f231a-08-ap-arrow)"/>
+
+  <!-- POOL → S2 (middle) straight -->
+  <line x1="400" y1="200" x2="480" y2="200" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-19-bd9f231a-08-ap-arrow)"/>
+
+  <!-- POOL → S3 (bottom) -->
+  <path d="M400,208 L440,208 L440,280 L480,280" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-19-bd9f231a-08-ap-arrow)"/>
+
+  <!-- S1 → MON -->
+  <!-- S1 right edge x=640, y=120 → go right to x=700, down to y=200, right to MON x=740 -->
+  <path d="M640,120 L700,120 L700,192 L740,192" fill="none" stroke="#6c8188" stroke-width="1" marker-end="url(#2026-10-19-bd9f231a-08-ap-arrow-muted)"/>
+
+  <!-- S2 → MON straight -->
+  <line x1="640" y1="200" x2="740" y2="200" stroke="#6c8188" stroke-width="1" marker-end="url(#2026-10-19-bd9f231a-08-ap-arrow-muted)"/>
+
+  <!-- S3 → MON -->
+  <path d="M640,280 L700,280 L700,208 L740,208" fill="none" stroke="#6c8188" stroke-width="1" marker-end="url(#2026-10-19-bd9f231a-08-ap-arrow-muted)"/>
+
+  <!-- ─── NODES ─── -->
+
+  <!-- REQ: 다수의 요청 — input type -->
+  <!-- x=48, y=172, w=120, h=56, cx=108, cy=200 -->
+  <rect x="48" y="172" width="120" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="48" y="172" width="120" height="56" rx="6" fill="rgba(58,84,143,0.08)" stroke="#3a548f" stroke-width="1"/>
+  <rect x="56" y="180" width="28" height="12" rx="2" fill="transparent" stroke="rgba(58,84,143,0.40)" stroke-width="0.8"/>
+  <text x="70" y="189" fill="rgba(58,84,143,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">INPUT</text>
+  <text x="108" y="203" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">다수의 요청</text>
+  <text x="108" y="219" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">concurrent</text>
+
+  <!-- POOL: 비동기 실행 풀 — focal/accent type -->
+  <!-- x=232, y=160, w=168, h=80, cx=316, cy=200 -->
+  <rect x="232" y="160" width="168" height="80" rx="6" fill="#f8fafb"/>
+  <rect x="232" y="160" width="168" height="80" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="240" y="168" width="32" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="256" y="177" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">POOL</text>
+  <text x="316" y="197" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">비동기 실행 풀</text>
+  <text x="316" y="214" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">async runner</text>
+
+  <!-- S1: 세션 A — backend type -->
+  <!-- x=480, y=92, w=160, h=56, cx=560, cy=120 -->
+  <rect x="480" y="92" width="160" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="480" y="92" width="160" height="56" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="488" y="100" width="32" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="504" y="109" fill="rgba(18,33,39,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">SESSION</text>
+  <text x="560" y="123" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">세션 A</text>
+  <text x="560" y="138" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">순차 처리</text>
+
+  <!-- S2: 세션 B — backend type -->
+  <!-- x=480, y=172, w=160, h=56, cx=560, cy=200 -->
+  <rect x="480" y="172" width="160" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="480" y="172" width="160" height="56" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="488" y="180" width="32" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="504" y="189" fill="rgba(18,33,39,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">SESSION</text>
+  <text x="560" y="203" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">세션 B</text>
+  <text x="560" y="218" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">순차 처리</text>
+
+  <!-- S3: 세션 C — backend type -->
+  <!-- x=480, y=252, w=160, h=56, cx=560, cy=280 -->
+  <rect x="480" y="252" width="160" height="56" rx="6" fill="#f8fafb"/>
+  <rect x="480" y="252" width="160" height="56" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="488" y="260" width="32" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="504" y="269" fill="rgba(18,33,39,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">SESSION</text>
+  <text x="560" y="283" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">세션 C</text>
+  <text x="560" y="298" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">순차 처리</text>
+
+  <!-- MON: 모니터링 — store type -->
+  <!-- x=740, y=168, w=160, h=64, cx=820, cy=200 -->
+  <rect x="740" y="168" width="160" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="740" y="168" width="160" height="64" rx="6" fill="rgba(18,33,39,0.05)" stroke="#3f545c" stroke-width="1"/>
+  <rect x="748" y="176" width="40" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.30)" stroke-width="0.8"/>
+  <text x="768" y="185" fill="rgba(18,33,39,0.6)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">MONITOR</text>
+  <text x="820" y="206" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">모니터링</text>
+  <text x="820" y="222" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace" text-anchor="middle">aggregated</text>
+
+  <!-- ─── LEGEND STRIP ─── -->
+  <line x1="32" y1="352" x2="928" y2="352" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+  <text x="32" y="366" fill="#6c8188" font-size="8" font-family="'IBM Plex Mono', monospace" letter-spacing="0.14em">LEGEND</text>
+
+  <!-- Legend: input -->
+  <rect x="100" y="358" width="16" height="12" rx="3" fill="rgba(58,84,143,0.08)" stroke="#3a548f" stroke-width="1"/>
+  <text x="122" y="368" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">진입점</text>
+
+  <!-- Legend: focal -->
+  <rect x="196" y="358" width="16" height="12" rx="3" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="218" y="368" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">핵심 컴포넌트</text>
+
+  <!-- Legend: backend -->
+  <rect x="340" y="358" width="16" height="12" rx="3" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <text x="362" y="368" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">처리 세션</text>
+
+  <!-- Legend: store -->
+  <rect x="452" y="358" width="16" height="12" rx="3" fill="rgba(18,33,39,0.05)" stroke="#3f545c" stroke-width="1"/>
+  <text x="474" y="368" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">수집 / 관찰</text>
+
+</svg>
+</div>
+</body>
+</html>
