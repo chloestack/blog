@@ -1,9 +1,10 @@
 ---
 title: "LLM Context Engineering — Designing the Context Window That Determines Agent Performance"
 date: "2026-10-13 02:16"
+updated: "2026-10-19 15:39"
 category: "AI"
 tags: ["Context Engineering", "LLM Agent", "Context Window", "RAG", "Prompt Caching"]
-excerpt: "Context design often matters more than model selection when tracking down LLM agent performance issues — here's how to engineer it systematically."
+excerpt: "Check the context before swapping models. Designing an agent's context window around lost-in-the-middle, threshold-based compression, memory tiers, and sub-agent summaries."
 koSlug: "2026-10-13-LLM-Context-Engineering-—-에이전트-성능을-결정하는-컨텍스트-윈도우-설계"
 ---
 

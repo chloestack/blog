@@ -1,9 +1,10 @@
 ---
 title: "LLM 스트리밍 응답 구현 — Server-Sent Events와 청크 파싱"
 date: "2026-10-17 02:09"
+updated: "2026-10-19 15:39"
 category: "AI"
 tags: ["LLM 스트리밍", "SSE", "Spring Boot", "청크 파싱", "실시간 응답"]
-excerpt: "LLM(대형 언어 모델)을 애플리케이션에 통합할 때 가장 먼저 맞닥뜨리는 과제 중 하나는 응답 지연(latency) 문제입니다."
+excerpt: "LLM 응답을 토큰 단위로 흘려보내는 법입니다. SSE 청크 파싱, Spring Boot SseEmitter, 프론트엔드 렌더링, 그리고 프록시 버퍼링·타임아웃·조기 종료라는 세 가지 함정을 다룹니다."
 ---
 
 ## 목차

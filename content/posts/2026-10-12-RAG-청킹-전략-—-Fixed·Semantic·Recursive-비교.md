@@ -1,9 +1,10 @@
 ---
 title: "RAG 청킹 전략 — Fixed·Semantic·Recursive 비교"
 date: "2026-10-12 02:09"
+updated: "2026-10-19 15:39"
 category: "AI"
 tags: ["RAG", "청킹", "벡터 검색", "LangChain", "임베딩"]
-excerpt: "RAG(Retrieval-Augmented Generation)는 LLM이 외부 문서를 참조해 답변을 생성하는 아키텍처입니다."
+excerpt: "구조화된 문서라면 Recursive 청킹부터 시작하세요. Fixed·Recursive·Semantic 청킹의 원리와 비용, 문서 유형과 정확도 요구에 따라 고르는 기준을 비교했습니다."
 ---
 
 ## 목차

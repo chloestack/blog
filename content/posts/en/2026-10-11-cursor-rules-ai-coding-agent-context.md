@@ -1,9 +1,10 @@
 ---
 title: "Delivering Context to AI Coding Agents Through Cursor Rules Design"
 date: "2026-10-11 02:10"
+updated: "2026-10-19 15:39"
 category: "AI"
 tags: ["Cursor Rules", "AI coding agent", "prompt engineering", "developer productivity"]
-excerpt: "Learn how to design Cursor Rules as a persistent interface between your project and an AI coding agent, not just a style config file."
+excerpt: "If the AI keeps repeating the same mistakes, it is time to design rules: global vs layer rules, 30-50 lines per file, and versioning them in Git to give Cursor your project context."
 koSlug: "2026-10-11-Cursor-Rules-설계로-AI-코딩-에이전트에-컨텍스트-전달하기"
 ---
 

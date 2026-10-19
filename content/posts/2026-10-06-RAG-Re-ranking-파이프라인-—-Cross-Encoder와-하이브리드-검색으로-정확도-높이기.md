@@ -1,9 +1,10 @@
 ---
 title: "RAG Re-ranking 파이프라인 — Cross-Encoder와 하이브리드 검색으로 정확도 높이기"
 date: "2026-10-06 02:09"
+updated: "2026-10-19 15:39"
 category: "AI"
 tags: ["RAG", "Re-ranking", "Cross-Encoder", "하이브리드 검색", "벡터 검색"]
-excerpt: "RAG(Retrieval-Augmented Generation) 시스템에서 생성 품질은 검색 단계의 결과에 직접 의존합니다."
+excerpt: "BM25와 벡터 검색을 RRF로 합치고 Cross-Encoder로 다시 순위를 매기면 RAG 정확도가 올라갑니다. 2단계 검색 파이프라인의 구현과 지연 시간·정확도 트레이드오프를 정리했습니다."
 ---
 
 ## 목차

@@ -1,9 +1,10 @@
 ---
 title: "Reducing LLM API Costs with Prompt Caching — Anthropic vs. OpenAI Caching Strategies Compared"
 date: "2026-09-29 09:34"
+updated: "2026-10-19 15:39"
 category: "AI"
 tags: ["Prompt Caching", "LLM Cost Optimization", "Anthropic", "OpenAI"]
-excerpt: "A practical comparison of Anthropic and OpenAI prompt caching mechanisms, covering cost structures, implementation patterns, and when to use each approach."
+excerpt: "Anthropic discounts cache hits by 90%; OpenAI applies 50% automatically. Compare both, including the 1,024-token prefix rule and the fixed → semi-fixed → dynamic prompt layout."
 koSlug: "2026-09-29-Prompt-Caching으로-LLM-API-비용-줄이기-—-Anthropic·OpenAI-캐싱-전략-비교"
 ---
 

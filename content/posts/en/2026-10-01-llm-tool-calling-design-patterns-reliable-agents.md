@@ -1,10 +1,10 @@
 ---
 title: "LLM Tool Calling Design Patterns — Building More Reliable Agents"
 date: "2026-10-01 02:16"
-updated: "2026-10-02 02:19"
+updated: "2026-10-19 15:39"
 category: "AI"
 tags: ["Tool Calling", "LLM Agent", "Agent Design", "Error Handling", "Claude API"]
-excerpt: "A practical guide to schema design, error handling, retry strategies, and loop safety for production LLM tool-calling agents."
+excerpt: "Past 10 tools, split the agent. Design patterns for reliable tool-calling agents: schemas, failure responses, retry and stop rules, and loop limits."
 koSlug: "2026-10-01-LLM-Tool-Calling-설계-패턴-—-에이전트-신뢰성-높이기"
 ---
 

@@ -1,9 +1,10 @@
 ---
 title: "Qdrant Production Deployment — Collection Design, HNSW Tuning, and Filter Optimization"
 date: "2026-10-14 02:18"
+updated: "2026-10-19 15:39"
 category: "AI"
 tags: ["Qdrant", "vector database", "HNSW", "RAG", "vector search"]
-excerpt: "A practical guide to designing Qdrant collections, tuning HNSW parameters, and optimizing filters for production workloads."
+excerpt: "Running Qdrant in production: choosing HNSW m, ef_construct, and hnsw_ef, indexing filter fields, and backing up snapshots. Dimensions and distance metric cannot change later."
 koSlug: "2026-10-14-Qdrant-프로덕션-배포-—-컬렉션-설계·HNSW-튜닝·필터-최적화"
 ---
 

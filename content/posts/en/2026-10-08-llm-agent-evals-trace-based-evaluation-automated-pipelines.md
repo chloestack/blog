@@ -1,9 +1,10 @@
 ---
 title: "LLM Agent Evals Design — Trace-Based Evaluation and Automated Pipelines"
 date: "2026-10-08 02:18"
+updated: "2026-10-19 15:39"
 category: "AI"
 tags: ["LLM Evals", "agent evaluation", "trace-based evaluation", "automated test pipeline", "RAG"]
-excerpt: "How to design a trace-based evaluation system for non-deterministic LLM agents and wire it into a CI/CD quality gate."
+excerpt: "Final answers alone hide where an agent went wrong. Designing trace-based agent evals: span collection, tool-call accuracy, LLM-as-Judge, and regression checks in CI/CD."
 koSlug: "2026-10-08-LLM-에이전트-Evals-설계-—-트레이스-기반-평가와-자동화-파이프라인"
 ---
 

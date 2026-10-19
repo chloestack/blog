@@ -1,9 +1,10 @@
 ---
 title: "RAG Chunking Strategies — Fixed, Semantic, and Recursive Compared"
 date: "2026-10-12 02:09"
+updated: "2026-10-19 15:39"
 category: "AI"
 tags: ["RAG", "chunking", "vector search", "LangChain", "embedding"]
-excerpt: "A practical comparison of Fixed-Size, Recursive, and Semantic chunking strategies for RAG systems, with guidance on when to use each."
+excerpt: "For structured documents, start with recursive chunking. Fixed, recursive, and semantic chunking compared on how they work, what they cost, and when each one fits."
 koSlug: "2026-10-12-RAG-청킹-전략-—-Fixed·Semantic·Recursive-비교"
 ---
 

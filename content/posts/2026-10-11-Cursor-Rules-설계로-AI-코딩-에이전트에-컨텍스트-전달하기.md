@@ -1,9 +1,10 @@
 ---
 title: "Cursor Rules 설계로 AI 코딩 에이전트에 컨텍스트 전달하기"
 date: "2026-10-11 02:10"
+updated: "2026-10-19 15:39"
 category: "AI"
 tags: ["Cursor Rules", "AI 코딩 에이전트", "프롬프트 엔지니어링", "개발 생산성"]
-excerpt: "Cursor Rules는 AI 코딩 에이전트인 Cursor가 코드를 생성하거나 편집할 때 자동으로 참고하는 프로젝트 전용 지침 파일입니다."
+excerpt: "AI가 같은 실수를 반복한다면 Rules를 설계할 때입니다. 글로벌·레이어별 규칙 분리, 파일당 30~50줄, Git 버전 관리까지 Cursor에 프로젝트 맥락을 전하는 법을 정리했습니다."
 ---
 
 ## 목차

@@ -1,9 +1,10 @@
 ---
 title: "Implementing LLM Streaming Responses — Server-Sent Events and Chunk Parsing"
 date: "2026-10-17 02:09"
+updated: "2026-10-19 15:39"
 category: "AI"
 tags: ["LLM streaming", "SSE", "Spring Boot", "chunk parsing", "real-time response"]
-excerpt: "How to wire LLM streaming APIs to Server-Sent Events in Spring Boot, covering chunk parsing, proxy pitfalls, and frontend rendering."
+excerpt: "Streaming LLM responses token by token: SSE chunk parsing, Spring Boot SseEmitter, front-end rendering, and three pitfalls — proxy buffering, timeouts, and early disconnects."
 koSlug: "2026-10-17-LLM-스트리밍-응답-구현-—-Server-Sent-Events와-청크-파싱"
 ---
 

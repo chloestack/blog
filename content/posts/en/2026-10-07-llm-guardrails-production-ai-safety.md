@@ -1,9 +1,10 @@
 ---
 title: "Implementing Production AI Input/Output Safety with LLM Guardrails"
 date: "2026-10-07 02:13"
+updated: "2026-10-19 15:39"
 category: "AI"
 tags: ["LLM Guardrails", "prompt injection", "PII masking", "AI safety", "hallucination detection"]
-excerpt: "A practical guide to building layered input and output guardrails for production LLM services, covering prompt injection, PII masking, and hallucination detection."
+excerpt: "Layered LLM guardrails for production: prompt-injection detection, harmful-content classification, PII masking, and hallucination checks, plus how to keep false positives down."
 koSlug: "2026-10-07-LLM-Guardrails로-프로덕션-AI-입출력-안전성-구현하기"
 ---
 

@@ -1,9 +1,10 @@
 ---
 title: "OpenAI Agents SDK로 멀티에이전트 핸드오프와 가드레일 구현하기"
 date: "2026-10-19 02:10"
+updated: "2026-10-19 15:39"
 category: "AI"
 tags: ["OpenAI Agents SDK", "멀티에이전트", "핸드오프", "가드레일", "AI 에이전트"]
-excerpt: "LLM 기반 애플리케이션이 단순 질의응답을 넘어 복잡한 업무 자동화로 확장되면서, 하나의 에이전트로 처리하기 어려운 작업들이 등장했습니다."
+excerpt: "OpenAI Agents SDK로 에이전트 사이에 작업을 넘기는 핸드오프와 입력·출력 가드레일을 구현합니다. RunContext 상태 공유, LangGraph·CrewAI와의 선택 기준까지 정리했습니다."
 ---
 
 ## 목차

@@ -1,9 +1,10 @@
 ---
 title: "추론 모델 프롬프팅 전략 — o3·Claude Opus를 비용 효율적으로 활용하는 법"
 date: "2026-10-03 02:09"
+updated: "2026-10-19 15:39"
 category: "AI"
 tags: ["추론 모델", "Extended Thinking", "LLM 비용 최적화", "Prompt Engineering", "멀티 에이전트"]
-excerpt: "추론 모델(Reasoning Model)은 2024년 말 OpenAI의 o1을 기점으로 주류 LLM 생태계에 본격 진입했습니다."
+excerpt: "추론 모델에는 '어떻게'가 아니라 '무엇을·왜'를 줘야 합니다. 사고 토큰 과금 구조, budget_tokens 설정, 작업 난도별 3단계 라우팅으로 o3·Claude Opus 비용을 줄이는 법입니다."
 ---
 
 ## 목차

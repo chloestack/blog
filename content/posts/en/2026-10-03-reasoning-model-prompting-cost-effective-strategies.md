@@ -1,9 +1,10 @@
 ---
 title: "Reasoning Model Prompting Strategies — Using o3 and Claude Opus Cost-Effectively"
 date: "2026-10-03 02:09"
+updated: "2026-10-19 15:39"
 category: "AI"
 tags: ["reasoning model", "Extended Thinking", "LLM cost optimization", "Prompt Engineering", "multi-agent"]
-excerpt: "Learn how to control thinking token costs and get the best performance from reasoning models like o3 and Claude Opus with targeted prompting strategies."
+excerpt: "Tell reasoning models what and why, not how. How thinking tokens are billed, how to set budget_tokens, and three-tier routing by task difficulty to keep o3 and Claude Opus costs in check."
 koSlug: "2026-10-03-추론-모델-프롬프팅-전략-—-o3·Claude-Opus를-비용-효율적으로-활용하는-법"
 ---
 

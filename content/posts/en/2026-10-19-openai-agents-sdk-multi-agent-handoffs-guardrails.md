@@ -1,9 +1,10 @@
 ---
 title: "Implementing Multi-Agent Handoffs and Guardrails with the OpenAI Agents SDK"
 date: "2026-10-19 02:10"
+updated: "2026-10-19 15:39"
 category: "AI"
 tags: ["OpenAI Agents SDK", "multi-agent", "handoff", "guardrail", "AI agent"]
-excerpt: "A practical deep-dive into how the OpenAI Agents SDK handles handoffs and guardrails, from internal mechanics to production pitfalls."
+excerpt: "Implementing handoffs between agents and input/output guardrails with the OpenAI Agents SDK, sharing state through RunContext, and choosing between it, LangGraph, and CrewAI."
 koSlug: "2026-10-19-OpenAI-Agents-SDK로-멀티에이전트-핸드오프와-가드레일-구현하기"
 ---
 

@@ -1,9 +1,10 @@
 ---
 title: "Agentic RAG Design — Delegating Retrieval Decisions to an Agent"
 date: "2026-09-30 02:17"
+updated: "2026-10-19 15:39"
 category: "AI"
 tags: ["Agentic RAG", "RAG architecture", "LLM agent", "retrieval-augmented generation", "multi-hop retrieval"]
-excerpt: "How to move beyond fixed RAG pipelines by letting an LLM agent decide whether, how, and how many times to retrieve — with concrete implementation patterns."
+excerpt: "If over 80% of questions are simple lookups, classic RAG wins. How Agentic RAG lets an agent decide whether, how, and when to search again, and when it is worth adopting."
 koSlug: "2026-09-30-Agentic-RAG-설계-—-검색-판단을-에이전트에게-위임하는-RAG-아키텍처"
 ---
 

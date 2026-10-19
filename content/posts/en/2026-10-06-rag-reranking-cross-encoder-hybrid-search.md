@@ -1,9 +1,10 @@
 ---
 title: "RAG Re-ranking Pipeline — Improving Accuracy with Cross-Encoders and Hybrid Search"
 date: "2026-10-06 02:09"
+updated: "2026-10-19 15:39"
 category: "AI"
 tags: ["RAG", "Re-ranking", "Cross-Encoder", "hybrid search", "vector search"]
-excerpt: "A practical guide to combining hybrid search (BM25 + Dense Retrieval) and Cross-Encoder re-ranking to improve retrieval quality in RAG pipelines."
+excerpt: "Merge BM25 and vector search with RRF, then re-rank with a cross-encoder. Building the two-stage RAG retrieval pipeline and weighing its latency against accuracy."
 koSlug: "2026-10-06-RAG-Re-ranking-파이프라인-—-Cross-Encoder와-하이브리드-검색으로-정확도-높이기"
 ---
 

@@ -1,9 +1,10 @@
 ---
 title: "AI 에이전트 Human-in-the-Loop 설계법"
 date: "2026-10-05 02:13"
+updated: "2026-10-19 15:39"
 category: "AI"
 tags: ["Human-in-the-Loop", "AI 에이전트", "LangGraph", "자동화 설계", "워크플로"]
-excerpt: "AI 에이전트가 실제 프로젝트에 본격적으로 투입되면서, 자동화 수준을 어디까지 허용할 것인가라는 질문이 핵심 설계 과제로 떠오르고 있습니다."
+excerpt: "되돌릴 수 없는 작업이라면 사람의 승인이 필수입니다. LangGraph interrupt와 체크포인트로 인라인·신뢰도 기반·다단계 승인 게이트를 설계하는 Human-in-the-Loop 패턴입니다."
 ---
 
 ## 목차

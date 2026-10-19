@@ -1,9 +1,10 @@
 ---
 title: "How to Design Human-in-the-Loop for AI Agents"
 date: "2026-10-05 02:13"
+updated: "2026-10-19 15:39"
 category: "AI"
 tags: ["Human-in-the-Loop", "AI agents", "LangGraph", "automation design", "workflow"]
-excerpt: "A practical guide to structuring human approval gates in AI agent pipelines, covering patterns, LangGraph implementation, and production considerations."
+excerpt: "If an agent's action cannot be undone, a human must approve it. Inline, confidence-based, and multi-level approval gates built with LangGraph interrupts and checkpoints."
 koSlug: "2026-10-05-AI-에이전트-Human-in-the-Loop-설계법"
 ---
 

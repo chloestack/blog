@@ -1,9 +1,10 @@
 ---
 title: "Optimizing LLM Cost and Quality Simultaneously with Request Routing"
 date: "2026-10-04 02:16"
+updated: "2026-10-19 15:39"
 category: "AI"
 tags: ["LLM routing", "model selection automation", "cost optimization", "AI architecture", "LLMOps"]
-excerpt: "Learn how to route LLM requests to the right model automatically, cutting costs without sacrificing response quality."
+excerpt: "Routing pays off once LLM spend passes $500 a month and simple requests exceed 40%. Rule-based, ML, and cascade routing that picks a model per request without losing quality."
 koSlug: "2026-10-04-LLM-요청-라우팅으로-비용과-품질-동시에-최적화하기"
 ---
 

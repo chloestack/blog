@@ -1,9 +1,10 @@
 ---
 title: "LLM Red Teaming: Designing Defenses Against Prompt Injection and Jailbreaks"
 date: "2026-10-15 02:25"
+updated: "2026-10-19 15:39"
 category: "AI"
 tags: ["LLM security", "prompt injection", "red teaming", "Jailbreak", "AI safety"]
-excerpt: "A structured look at prompt injection and jailbreak attack mechanics, and how to build layered defenses into LLM applications from the architecture up."
+excerpt: "LLM apps with tool calls or RAG need the strongest defenses. A taxonomy of direct and indirect prompt injection and jailbreaks, with layered defenses and ongoing red teaming."
 koSlug: "2026-10-15-LLM-레드팀-프롬프트-인젝션·탈옥-방어-설계"
 ---
 

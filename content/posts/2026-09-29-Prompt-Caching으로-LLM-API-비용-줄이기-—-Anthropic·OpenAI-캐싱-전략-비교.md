@@ -1,9 +1,10 @@
 ---
 title: "Prompt Caching으로 LLM API 비용 줄이기 — Anthropic·OpenAI 캐싱 전략 비교"
 date: "2026-09-29 09:34"
+updated: "2026-10-19 15:39"
 category: "AI"
 tags: ["Prompt Caching", "LLM 비용 최적화", "Anthropic", "OpenAI"]
-excerpt: "상보다 빠르게 청구 비용이 치솟습니다. RAG(Retrieval-Augmented Generation) 파이프라인이나 복잡한 시스템 프롬프트를 사용하는 에이전트 워크플로우에서는 매 요청마다 수천 토큰짜리 컨텍스트를 반복적으로 모델에…"
+excerpt: "Anthropic은 캐시 히트 시 90%, OpenAI는 자동으로 50% 할인됩니다. 1,024토큰 고정 prefix 조건과 '고정→반고정→동적' 배치로 LLM API 비용을 줄이는 법을 비교했습니다."
 ---
 
 상보다 빠르게 청구 비용이 치솟습니다. RAG(Retrieval-Augmented Generation) 파이프라인이나 복잡한 시스템 프롬프트를 사용하는 에이전트 워크플로우에서는 매 요청마다 수천 토큰짜리 컨텍스트를 반복적으로 모델에 전달하게 됩니다. Prompt Caching은 이 반복 비용을 획기적으로 줄여 주는 기술로, Anthropic과 OpenAI 모두 자체적인 캐싱 메커니즘을 제공합니다. 두 플랫폼의 접근 방식은 구조적으로 상당히 다르며, 어떤 방식을 어떤 맥락에서 선택하느냐에 따라 실제 절감 효과가 크게 달라집니다.

@@ -1,9 +1,10 @@
 ---
 title: "Serving Local LLMs with Ollama and OpenAI-Compatible API Integration"
 date: "2026-10-18 02:10"
+updated: "2026-10-19 15:39"
 category: "AI"
 tags: ["Ollama", "LocalLLM", "OpenAICompatibleAPI", "LLMDevEnvironment", "Spring AI"]
-excerpt: "Learn how Ollama lets you run open-weight LLMs locally with an OpenAI-compatible API, cutting costs and keeping sensitive data off external servers."
+excerpt: "Cut LLM costs to zero during development. Install Ollama and connect Spring through its OpenAI-compatible API so one environment variable switches between local and hosted models."
 koSlug: "2026-10-18-Ollama로-로컬-LLM-서빙과-OpenAI-호환-API-연동하기"
 ---
 

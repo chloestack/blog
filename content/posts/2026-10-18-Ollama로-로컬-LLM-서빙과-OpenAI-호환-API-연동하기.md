@@ -1,9 +1,10 @@
 ---
 title: "Ollama로 로컬 LLM 서빙과 OpenAI 호환 API 연동하기"
 date: "2026-10-18 02:10"
+updated: "2026-10-19 15:39"
 category: "AI"
 tags: ["Ollama", "로컬LLM", "OpenAI호환API", "LLM개발환경", "Spring AI"]
-excerpt: "LLM(Large Language Model)을 활용한 애플리케이션 개발이 빠르게 확산되면서, 개발·테스트 단계에서 OpenAI나 Anthropic 같은 상용 API에만 의존하는 방식의 한계가 점점 뚜렷해지고 있습니다."
+excerpt: "개발 단계 LLM 비용을 0원으로 만드는 법입니다. Ollama 설치부터 OpenAI 호환 API로 Spring에 붙이기까지, 환경 변수 하나로 로컬 모델과 상용 API를 오가게 구성합니다."
 ---
 
 ## 목차

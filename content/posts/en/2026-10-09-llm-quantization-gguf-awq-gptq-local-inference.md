@@ -1,9 +1,10 @@
 ---
 title: "Optimizing Local LLM Inference with Quantization (GGUF, AWQ, GPTQ)"
 date: "2026-10-09 02:06"
+updated: "2026-10-19 15:39"
 category: "AI"
 tags: ["LLM quantization", "GGUF", "AWQ", "GPTQ", "local inference"]
-excerpt: "A practical guide to GGUF, AWQ, and GPTQ quantization formats for running large open-source models on consumer hardware without sacrificing usability."
+excerpt: "INT4 quantization cuts memory nearly 4x versus FP16. How GGUF, AWQ, and GPTQ differ, and which to pair with llama.cpp, vLLM, or ExLlamaV2 for your local inference setup."
 koSlug: "2026-10-09-LLM-양자화(GGUF·AWQ·GPTQ)로-오픈소스-모델-로컬-추론-최적화"
 ---
 

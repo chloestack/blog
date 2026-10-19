@@ -1,9 +1,10 @@
 ---
 title: "Building LLM Fine-Tuning Datasets with Synthetic Data"
 date: "2026-10-10 02:21"
+updated: "2026-10-19 15:39"
 category: "AI"
 tags: ["synthetic data", "LLM fine-tuning", "Self-Instruct", "data augmentation"]
-excerpt: "A practical guide to generating high-quality fine-tuning datasets using Teacher-Student synthesis, covering Self-Instruct, Evol-Instruct, quality filtering, and production pitfalls."
+excerpt: "A guide to fine-tuning with synthetic data where labels are costly, such as medicine, law, and finance: widening coverage with Self-Instruct and Evol-Instruct, filtering with LLM-as-Judge."
 koSlug: "2026-10-10-합성-데이터로-LLM-파인튜닝-데이터셋-구축하기"
 ---
 

@@ -1,9 +1,10 @@
 ---
 title: "Multimodal RAG — Designing a PDF Search Pipeline That Handles Images and Tables"
 date: "2026-10-02 02:10"
+updated: "2026-10-19 15:39"
 category: "AI"
 tags: ["multimodal RAG", "PDF parsing", "vector search", "ColPali", "embedding"]
-excerpt: "A practical walkthrough of building a multimodal RAG pipeline for PDFs containing images, tables, and charts — from parsing strategy to vector indexing and response generation."
+excerpt: "When tables and figures carry the key facts in over 30% of your PDFs, consider multimodal RAG: element-level parsing, CLIP vs ColPali embeddings, hybrid search, and re-ranking."
 koSlug: "2026-10-02-멀티모달-RAG-구현-—-이미지·표-포함-PDF-검색-파이프라인-설계"
 ---
 

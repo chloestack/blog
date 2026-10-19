@@ -1,9 +1,10 @@
 ---
 title: "LLM 양자화(GGUF·AWQ·GPTQ)로 오픈소스 모델 로컬 추론 최적화"
 date: "2026-10-09 02:06"
+updated: "2026-10-19 15:39"
 category: "AI"
 tags: ["LLM 양자화", "GGUF", "AWQ", "GPTQ", "로컬 추론"]
-excerpt: "LLM 양자화(Quantization)는 수백억 개의 파라미터를 가진 대형 언어 모델을 소비자용 하드웨어에서 실행 가능하게 만드는 핵심 압축 기술입니다. Llama 3."
+excerpt: "INT4 양자화는 FP16 대비 메모리를 4배 가까이 줄입니다. GGUF·AWQ·GPTQ의 차이와 llama.cpp·vLLM·ExLlamaV2 중 무엇과 조합할지, 로컬 추론 환경별로 골라 드립니다."
 ---
 
 ## 목차

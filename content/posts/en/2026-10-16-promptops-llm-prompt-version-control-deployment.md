@@ -1,9 +1,10 @@
 ---
 title: "PromptOps — LLM Prompt Version Control and Deployment Pipelines"
 date: "2026-10-16 02:14"
+updated: "2026-10-19 15:39"
 category: "AI"
 tags: ["PromptOps", "LLM", "prompt version control", "CI/CD", "LLM-as-Judge"]
-excerpt: "A practical guide to treating LLM prompts as managed artifacts with Git-based versioning, CI/CD pipelines, evaluation frameworks, and canary rollouts."
+excerpt: "If prompts change weekly, manage them like code. A prompt delivery pipeline with Git versioning, static checks, LLM-as-Judge evaluation, and canary rollouts."
 koSlug: "2026-10-16-PromptOps-—-LLM-프롬프트-버전-관리와-배포-파이프라인"
 ---
 
