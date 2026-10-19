@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Archify가 그림을 만드는 흐름</title>
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; }
+  .diagram-wrap { width: 100%; max-width: 960px; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<div class="diagram-wrap">
+<svg viewBox="0 0 960 400" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="2026-10-19-archify-01-title 2026-10-19-archify-01-desc">
+  <title id="2026-10-19-archify-01-title">Archify가 그림을 만드는 흐름</title>
+  <desc id="2026-10-19-archify-01-desc">사용자 요청과 저장소 소스를 에이전트가 읽어 타입이 정해진 JSON 후보를 쓰고, finalize가 스키마 검증·원자적 전달·정적 검사·실제 브라우저 검사를 차례로 통과시킨 뒤에만 단독 HTML을 내놓는다. 실패하면 진단 JSON이 에이전트에게 돌아가 최대 두 번 고친다.</desc>
+  <defs>
+    <marker id="2026-10-19-archify-01-arr-muted" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#3f545c"/></marker>
+    <marker id="2026-10-19-archify-01-arr-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#0d5763"/></marker>
+    <marker id="2026-10-19-archify-01-arr-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#3a548f"/></marker>
+    <marker id="2026-10-19-archify-01-arr-warn" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#a96a08"/></marker>
+    <marker id="2026-10-19-archify-01-arr-stop" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#94382b"/></marker>
+    <marker id="2026-10-19-archify-01-arr-ok" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#286d50"/></marker>
+  </defs>
+  <rect width="960" height="400" fill="#f8fafb"/>
+  <path d="M664,124 L664,130" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-19-archify-01-arr-muted)"/>
+  <path d="M664,174 L664,180" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-19-archify-01-arr-muted)"/>
+  <path d="M664,224 L664,230" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-19-archify-01-arr-muted)"/>
+  <path d="M164,102 L188,102 L188,132 L208,132" fill="none" stroke="#3a548f" stroke-width="1" marker-end="url(#2026-10-19-archify-01-arr-link)"/>
+  <path d="M164,186 L188,186 L188,156 L208,156" fill="none" stroke="#3a548f" stroke-width="1" marker-end="url(#2026-10-19-archify-01-arr-link)"/>
+  <path d="M344,144 L388,144" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-19-archify-01-arr-muted)"/>
+  <path d="M524,144 L544,144 L544,104 L578,104" fill="none" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-10-19-archify-01-arr-accent)"/>
+  <path d="M746,254 L776,254 L776,144 L802,144" fill="none" stroke="#286d50" stroke-width="1.2" marker-end="url(#2026-10-19-archify-01-arr-ok)"/>
+  <path d="M582,254 L560,254 L560,334 L528,334" fill="none" stroke="#94382b" stroke-width="1" stroke-dasharray="5,4" marker-end="url(#2026-10-19-archify-01-arr-stop)"/>
+  <path d="M392,334 L278,334 L278,180" fill="none" stroke="#a96a08" stroke-width="1" stroke-dasharray="5,4" marker-end="url(#2026-10-19-archify-01-arr-warn)"/>
+  <rect x="32" y="76" width="132" height="52" rx="6" fill="#f8fafb"/>
+  <rect x="32" y="76" width="132" height="52" rx="6" fill="#dbe2f2" stroke="#3a548f" stroke-width="1"/>
+  <rect x="40" y="83" width="38" height="12" rx="2" fill="transparent" stroke="rgba(58,84,143,0.8)" stroke-opacity="0.5" stroke-width="0.8"/>
+  <text x="59.0" y="92" fill="rgba(58,84,143,0.8)" font-size="7" font-family="'IBM Plex Mono',monospace" text-anchor="middle" letter-spacing="0.08em">INPUT</text>
+  <text x="98.0" y="112.0" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">자연어 요청</text>
+  <rect x="32" y="160" width="132" height="52" rx="6" fill="#f8fafb"/>
+  <rect x="32" y="160" width="132" height="52" rx="6" fill="#dbe2f2" stroke="#3a548f" stroke-width="1"/>
+  <rect x="40" y="167" width="38" height="12" rx="2" fill="transparent" stroke="rgba(58,84,143,0.8)" stroke-opacity="0.5" stroke-width="0.8"/>
+  <text x="59.0" y="176" fill="rgba(58,84,143,0.8)" font-size="7" font-family="'IBM Plex Mono',monospace" text-anchor="middle" letter-spacing="0.08em">INPUT</text>
+  <text x="98.0" y="192.0" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">코드 저장소</text>
+  <text x="98.0" y="208.0" fill="#6c8188" font-size="10.5" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">선택 사항</text>
+  <rect x="212" y="112" width="132" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="212" y="112" width="132" height="64" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="220" y="119" width="38" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.8)" stroke-opacity="0.5" stroke-width="0.8"/>
+  <text x="239.0" y="128" fill="rgba(18,33,39,0.8)" font-size="7" font-family="'IBM Plex Mono',monospace" text-anchor="middle" letter-spacing="0.08em">AGENT</text>
+  <text x="278.0" y="150.0" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">AI 에이전트</text>
+  <text x="278.0" y="166.0" fill="#6c8188" font-size="10.5" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">Claude Code·Codex 등</text>
+  <rect x="392" y="112" width="132" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="392" y="112" width="132" height="64" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="400" y="119" width="24" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.85)" stroke-opacity="0.5" stroke-width="0.8"/>
+  <text x="412.0" y="128" fill="rgba(13,87,99,0.85)" font-size="7" font-family="'IBM Plex Mono',monospace" text-anchor="middle" letter-spacing="0.08em">IR</text>
+  <text x="458.0" y="150.0" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">JSON 후보</text>
+  <text x="458.0" y="166.0" fill="#6c8188" font-size="10.5" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">candidate.json</text>
+  <rect x="582" y="84" width="164" height="40" rx="6" fill="#f8fafb"/>
+  <rect x="582" y="84" width="164" height="40" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="664.0" y="109.0" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Mono',monospace" text-anchor="middle">validate</text>
+  <rect x="582" y="134" width="164" height="40" rx="6" fill="#f8fafb"/>
+  <rect x="582" y="134" width="164" height="40" rx="6" fill="#eef2f4" stroke="#c3d0d4" stroke-width="1"/>
+  <text x="664.0" y="159.0" fill="#3f545c" font-size="13" font-weight="600" font-family="'IBM Plex Mono',monospace" text-anchor="middle">deliver</text>
+  <rect x="582" y="184" width="164" height="40" rx="6" fill="#f8fafb"/>
+  <rect x="582" y="184" width="164" height="40" rx="6" fill="#eef2f4" stroke="#c3d0d4" stroke-width="1"/>
+  <text x="664.0" y="209.0" fill="#3f545c" font-size="13" font-weight="600" font-family="'IBM Plex Mono',monospace" text-anchor="middle">check</text>
+  <rect x="582" y="234" width="164" height="40" rx="6" fill="#f8fafb"/>
+  <rect x="582" y="234" width="164" height="40" rx="6" fill="#eef2f4" stroke="#c3d0d4" stroke-width="1"/>
+  <text x="664.0" y="259.0" fill="#3f545c" font-size="13" font-weight="600" font-family="'IBM Plex Mono',monospace" text-anchor="middle">browser-check</text>
+  <rect x="806" y="112" width="124" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="806" y="112" width="124" height="64" rx="6" fill="#d6e9de" stroke="#286d50" stroke-width="1.2"/>
+  <rect x="814" y="119" width="26" height="12" rx="2" fill="transparent" stroke="rgba(40,109,80,0.85)" stroke-opacity="0.5" stroke-width="0.8"/>
+  <text x="827.0" y="128" fill="rgba(40,109,80,0.85)" font-size="7" font-family="'IBM Plex Mono',monospace" text-anchor="middle" letter-spacing="0.08em">OUT</text>
+  <text x="868.0" y="150.0" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">단독 HTML</text>
+  <text x="868.0" y="166.0" fill="#6c8188" font-size="10.5" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">뷰어 내장</text>
+  <rect x="392" y="312" width="132" height="44" rx="6" fill="#f8fafb"/>
+  <rect x="392" y="312" width="132" height="44" rx="6" fill="#f1d9d4" stroke="#94382b" stroke-width="1.2"/>
+  <rect x="400" y="319" width="32" height="12" rx="2" fill="transparent" stroke="rgba(148,56,43,0.85)" stroke-opacity="0.5" stroke-width="0.8"/>
+  <text x="416.0" y="328" fill="rgba(148,56,43,0.85)" font-size="7" font-family="'IBM Plex Mono',monospace" text-anchor="middle" letter-spacing="0.08em">FAIL</text>
+  <text x="458.0" y="344.0" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">진단 JSON</text>
+  <rect x="528.0" y="290" width="64" height="14" rx="2" fill="#f8fafb"/><text x="560" y="300" fill="#94382b" font-size="9.5" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">게이트 실패</text>
+  <rect x="275.5" y="316" width="109" height="14" rx="2" fill="#f8fafb"/><text x="330" y="326" fill="#a96a08" font-size="9.5" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">규칙 코드·고칠 방법</text>
+  <rect x="237.0" y="230" width="82" height="14" rx="2" fill="#f8fafb"/><text x="278" y="240" fill="#a96a08" font-size="9.5" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">최대 2회 수정</text>
+  <rect x="566" y="56" width="196" height="232" rx="8" fill="none" stroke="#c3d0d4" stroke-width="1" stroke-dasharray="4,3"/>
+  <text x="578" y="74" fill="#3f545c" font-size="8" font-family="'IBM Plex Mono',monospace" text-anchor="start" letter-spacing="0.12em">FINALIZE 게이트</text>
+  <line x1="40" y1="372" x2="920" y2="372" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+  <text x="40" y="388" fill="#3f545c" font-size="8" font-family="'IBM Plex Mono',monospace" text-anchor="start" letter-spacing="0.14em">LEGEND</text>
+  <rect x="104" y="378" width="16" height="12" rx="3" fill="#dbe2f2" stroke="#3a548f" stroke-width="1"/>
+  <text x="126" y="388" fill="#3f545c" font-size="9" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="start">사람이 주는 것</text>
+  <rect x="220" y="378" width="16" height="12" rx="3" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="242" y="388" fill="#3f545c" font-size="9" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="start">핵심 산출물</text>
+  <rect x="318" y="378" width="16" height="12" rx="3" fill="#d6e9de" stroke="#286d50" stroke-width="1"/>
+  <text x="340" y="388" fill="#3f545c" font-size="9" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="start">통과 결과</text>
+  <rect x="407" y="378" width="16" height="12" rx="3" fill="#f1d9d4" stroke="#94382b" stroke-width="1"/>
+  <text x="429" y="388" fill="#3f545c" font-size="9" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="start">실패</text>
+  <line x1="469" y1="384" x2="497" y2="384" stroke="#a96a08" stroke-width="1" stroke-dasharray="4,3"/>
+  <text x="503" y="388" fill="#3f545c" font-size="9" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="start">수정 루프</text>
+</svg>
+</div>
+</body>
+</html>

@@ -44,5 +44,6 @@ export const POST_PAIRS: Record<string, string> = {
   "2026-10-16-PromptOps-—-LLM-프롬프트-버전-관리와-배포-파이프라인": "2026-10-16-promptops-llm-prompt-version-control-deployment",
   "2026-10-17-LLM-스트리밍-응답-구현-—-Server-Sent-Events와-청크-파싱": "2026-10-17-llm-streaming-sse-chunk-parsing-spring-boot",
   "2026-10-18-Ollama로-로컬-LLM-서빙과-OpenAI-호환-API-연동하기": "2026-10-18-local-llm-serving-ollama-openai-compatible-api",
+  "2026-10-19-Archify란-코드를-인터랙티브-아키텍처-다이어그램으로-바꾸는-AI-에이전트-스킬": "2026-10-19-archify-ai-agent-interactive-architecture-diagrams",
   "2026-10-19-OpenAI-Agents-SDK로-멀티에이전트-핸드오프와-가드레일-구현하기": "2026-10-19-openai-agents-sdk-multi-agent-handoffs-guardrails"
 };

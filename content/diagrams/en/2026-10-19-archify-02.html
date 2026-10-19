@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How Repository Evidence Attaches to Nodes</title>
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; }
+  .diagram-wrap { width: 100%; max-width: 960px; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<div class="diagram-wrap">
+<svg viewBox="0 0 960 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="2026-10-19-archify-02-title 2026-10-19-archify-02-desc">
+  <title id="2026-10-19-archify-02-title">How Repository Evidence Attaches to Nodes</title>
+  <desc id="2026-10-19-archify-02-desc">The agent pins the HEAD commit and remote URL of the repository, then follows call sites from the entry point, recording file paths and line ranges. Each node is annotated with a SRC number as evidence; clicking it in the viewer links to the corresponding line of the pinned commit.</desc>
+  <defs>
+    <marker id="2026-10-19-archify-02-arr-muted" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#3f545c"/></marker>
+    <marker id="2026-10-19-archify-02-arr-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#0d5763"/></marker>
+    <marker id="2026-10-19-archify-02-arr-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#3a548f"/></marker>
+    <marker id="2026-10-19-archify-02-arr-warn" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#a96a08"/></marker>
+    <marker id="2026-10-19-archify-02-arr-stop" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#94382b"/></marker>
+    <marker id="2026-10-19-archify-02-arr-ok" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#286d50"/></marker>
+  </defs>
+  <rect width="960" height="300" fill="#f8fafb"/>
+  <path d="M188,130 L214,130" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-19-archify-02-arr-muted)"/>
+  <path d="M374,130 L400,130" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-19-archify-02-arr-muted)"/>
+  <path d="M560,130 L586,130" fill="none" stroke="#0d5763" stroke-width="1" marker-end="url(#2026-10-19-archify-02-arr-accent)"/>
+  <path d="M746,130 L772,130" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-19-archify-02-arr-muted)"/>
+  <path d="M296,204 L296,168" fill="none" stroke="#a96a08" stroke-width="1" stroke-dasharray="5,4" marker-end="url(#2026-10-19-archify-02-arr-warn)"/>
+  <path d="M668,204 L668,168" fill="none" stroke="#3f545c" stroke-width="1" stroke-dasharray="5,4" marker-end="url(#2026-10-19-archify-02-arr-muted)"/>
+  <rect x="32" y="96" width="156" height="68" rx="6" fill="#f8fafb"/>
+  <rect x="32" y="96" width="156" height="68" rx="6" fill="#dbe2f2" stroke="#3a548f" stroke-width="1"/>
+  <rect x="40" y="103" width="26" height="12" rx="2" fill="transparent" stroke="rgba(58,84,143,0.8)" stroke-opacity="0.5" stroke-width="0.8"/>
+  <text x="53.0" y="112" fill="rgba(58,84,143,0.8)" font-size="7" font-family="'IBM Plex Mono',monospace" text-anchor="middle" letter-spacing="0.08em">PIN</text>
+  <text x="110.0" y="136.0" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">Pin Repo</text>
+  <text x="110.0" y="152.0" fill="#6c8188" font-size="10.5" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">HEAD 40-char commit</text>
+  <rect x="218" y="96" width="156" height="68" rx="6" fill="#f8fafb"/>
+  <rect x="218" y="96" width="156" height="68" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="226" y="103" width="38" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.8)" stroke-opacity="0.5" stroke-width="0.8"/>
+  <text x="245.0" y="112" fill="rgba(18,33,39,0.8)" font-size="7" font-family="'IBM Plex Mono',monospace" text-anchor="middle" letter-spacing="0.08em">TRACE</text>
+  <text x="296.0" y="136.0" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">Trace Calls</text>
+  <text x="296.0" y="152.0" fill="#6c8188" font-size="10.5" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">entry → call site</text>
+  <rect x="404" y="96" width="156" height="68" rx="6" fill="#f8fafb"/>
+  <rect x="404" y="96" width="156" height="68" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="412" y="103" width="56" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.8)" stroke-opacity="0.5" stroke-width="0.8"/>
+  <text x="440.0" y="112" fill="rgba(18,33,39,0.8)" font-size="7" font-family="'IBM Plex Mono',monospace" text-anchor="middle" letter-spacing="0.08em">EVIDENCE</text>
+  <text x="482.0" y="136.0" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">Record Evidence</text>
+  <text x="482.0" y="152.0" fill="#6c8188" font-size="10.5" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">path + line range</text>
+  <rect x="590" y="96" width="156" height="68" rx="6" fill="#f8fafb"/>
+  <rect x="590" y="96" width="156" height="68" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="598" y="103" width="32" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.85)" stroke-opacity="0.5" stroke-width="0.8"/>
+  <text x="614.0" y="112" fill="rgba(13,87,99,0.85)" font-size="7" font-family="'IBM Plex Mono',monospace" text-anchor="middle" letter-spacing="0.08em">NODE</text>
+  <text x="668.0" y="136.0" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">Attach SRC n</text>
+  <text x="668.0" y="152.0" fill="#6c8188" font-size="10.5" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">nodes with evidence</text>
+  <rect x="776" y="96" width="156" height="68" rx="6" fill="#f8fafb"/>
+  <rect x="776" y="96" width="156" height="68" rx="6" fill="#d6e9de" stroke="#286d50" stroke-width="1.2"/>
+  <rect x="784" y="103" width="32" height="12" rx="2" fill="transparent" stroke="rgba(40,109,80,0.85)" stroke-opacity="0.5" stroke-width="0.8"/>
+  <text x="800.0" y="112" fill="rgba(40,109,80,0.85)" font-size="7" font-family="'IBM Plex Mono',monospace" text-anchor="middle" letter-spacing="0.08em">VIEW</text>
+  <text x="854.0" y="136.0" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">Source Card</text>
+  <text x="854.0" y="152.0" fill="#6c8188" font-size="10.5" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">pinned commit link</text>
+  <rect x="218" y="204" width="156" height="44" rx="6" fill="#f8fafb"/>
+  <rect x="218" y="204" width="156" height="44" rx="6" fill="#f5e8cc" stroke="#a96a08" stroke-width="1.2"/>
+  <text x="296.0" y="231.0" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">Working Tree Changes</text>
+  <rect x="590" y="204" width="156" height="44" rx="6" fill="#f8fafb"/>
+  <rect x="590" y="204" width="156" height="44" rx="6" fill="#eef2f4" stroke="#c3d0d4" stroke-width="1"/>
+  <text x="668.0" y="231.0" fill="#3f545c" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">SSH · Private Repo</text>
+  <rect x="250.5" y="180" width="91" height="14" rx="2" fill="#f8fafb"/><text x="296" y="190" fill="#a96a08" font-size="9.5" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">excluded from evidence</text>
+  <rect x="604.5" y="180" width="127" height="14" rx="2" fill="#f8fafb"/><text x="668" y="190" fill="#6c8188" font-size="9.5" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">local-only link</text>
+  <text x="32" y="60" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="start">Only committed bytes become evidence. Auth credentials in remote URLs are stripped before recording.</text>
+  <line x1="40" y1="272" x2="920" y2="272" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+  <text x="40" y="288" fill="#3f545c" font-size="8" font-family="'IBM Plex Mono',monospace" text-anchor="start" letter-spacing="0.14em">LEGEND</text>
+  <rect x="104" y="278" width="16" height="12" rx="3" fill="#dbe2f2" stroke="#3a548f" stroke-width="1"/>
+  <text x="126" y="288" fill="#3f545c" font-size="9" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="start">Pin point</text>
+  <rect x="193" y="278" width="16" height="12" rx="3" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="215" y="288" fill="#3f545c" font-size="9" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="start">Evidence attach point</text>
+  <rect x="318" y="278" width="16" height="12" rx="3" fill="#d6e9de" stroke="#286d50" stroke-width="1"/>
+  <text x="340" y="288" fill="#3f545c" font-size="9" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="start">Reader view</text>
+  <rect x="434" y="278" width="16" height="12" rx="3" fill="#f5e8cc" stroke="#a96a08" stroke-width="1"/>
+  <text x="456" y="288" fill="#3f545c" font-size="9" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="start">Excluded</text>
+</svg>
+</div>
+</body>
+</html>
