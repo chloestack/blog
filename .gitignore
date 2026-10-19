@@ -39,6 +39,8 @@ next-env.d.ts
 /dist/
 /.wrangler/
 /outputs/
+# 빌드가 그리는 공유 카드 이미지 (scripts/build-og-images.mjs)
+/public/og/
 /work/
 
 # typescript incremental build info

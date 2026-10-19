@@ -2,8 +2,36 @@ import Link from "next/link";
 import { MermaidDiagrams } from "@/components/mermaid-diagrams";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
-import { STRINGS, localePrefix } from "@/lib/i18n";
+import { SITE, STRINGS, localePrefix } from "@/lib/i18n";
+import { hasOgImage, ogImagePath } from "@/lib/metadata";
 import { getRelatedPosts, getSeriesPosts, hasDiagrams, postHref, renderMarkdown, toneFor, type Post } from "@/lib/posts";
+
+/**
+ * 검색엔진이 이 페이지를 "글"로 읽도록 schema.org BlogPosting을 붙인다.
+ * 발행·수정 시각과 대표 이미지가 결과 화면에 쓰일 수 있다.
+ */
+function articleJsonLd(post: Post): string {
+  const url = `${SITE}${postHref(post.slug, post.locale)}`;
+  const org = { "@type": "Organization", name: "Pistamond", url: SITE };
+  const data = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: post.title,
+    description: post.excerpt,
+    datePublished: post.publishedAt,
+    dateModified: post.updatedAt,
+    inLanguage: post.locale,
+    articleSection: post.category,
+    keywords: post.tags.join(", "),
+    mainEntityOfPage: url,
+    url,
+    author: org,
+    publisher: org,
+    ...(hasOgImage(post) ? { image: `${SITE}${ogImagePath(post)}` } : {}),
+  };
+  // 본문에 "</script>"가 섞여도 태그가 닫히지 않도록 <를 이스케이프한다.
+  return JSON.stringify(data).replace(/</g, "\\u003c");
+}
 
 export function ArticleView({ post }: { post: Post }) {
   const locale = post.locale;
@@ -23,6 +51,7 @@ export function ArticleView({ post }: { post: Post }) {
 
       <div className="wrap">
         <article className="article">
+          <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: articleJsonLd(post) }} />
           <div className="article-head">
             <Link className="back-link" href={list}>{strings.backToList}</Link>
             <div className="label-row"><span className={`tag ${tone}`}>{post.category.toUpperCase()}</span><span className="meta">{date} {time}</span></div>

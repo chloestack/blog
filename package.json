@@ -7,12 +7,13 @@
   },
   "scripts": {
     "dev": "WRANGLER_LOG_PATH=.wrangler/wrangler.log vinext dev",
-    "build": "npm run pairs && WRANGLER_LOG_PATH=.wrangler/wrangler.log vinext build",
-    "build:vercel": "npm run pairs && next build",
+    "build": "npm run pairs && npm run og && WRANGLER_LOG_PATH=.wrangler/wrangler.log vinext build",
+    "build:vercel": "npm run pairs && npm run og && next build",
     "start": "WRANGLER_LOG_PATH=.wrangler/wrangler.log vinext start",
     "test": "npm run build && node --test tests/rendered-html.test.mjs",
     "lint": "eslint . --ignore-pattern dist --ignore-pattern .next",
     "pairs": "node scripts/build-post-pairs.mjs",
+    "og": "node scripts/build-og-images.mjs",
     "db:generate": "drizzle-kit generate"
   },
   "dependencies": {

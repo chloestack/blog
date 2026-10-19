@@ -220,6 +220,33 @@ test("every page describes itself for search results and share cards", async () 
 });
 
 /**
+ * 공유 카드와 검색 결과에 쓰이는 글 정보. 빌드가 public/og/에 그린 카드 이미지를
+ * og:image로 내보내고, 검색엔진에는 BlogPosting 구조화 데이터로 글임을 알린다.
+ */
+test("an article carries a share image and BlogPosting data", async () => {
+  const posts = readPosts();
+  if (posts.length === 0) return;
+  const { slug, title } = posts[0];
+  const html = await (await render(`/posts/${encodeURIComponent(slug)}`)).text();
+  const head = html.split("</head>")[0];
+
+  const image = `https://blog.pistamond.dev/og/${encodeURIComponent(slug)}.png`;
+  assert.ok(fs.existsSync(new URL(`../public/og/${slug}.png`, import.meta.url)), "the build did not draw the share image");
+  assert.ok(head.includes(`property="og:image" content="${image}"`), "og:image does not point at the drawn card");
+  assert.match(head, /property="og:image:width" content="1200"/);
+  assert.match(head, /name="twitter:card" content="summary_large_image"/);
+
+  const json = html.match(/<script type="application\/ld\+json">(.*?)<\/script>/s);
+  assert.ok(json, "the article has no structured data");
+  const data = JSON.parse(json[1]);
+  assert.equal(data["@type"], "BlogPosting");
+  assert.equal(data.headline, title);
+  assert.equal(data.image, image);
+  assert.match(data.datePublished, /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:00\+09:00$/);
+  assert.equal(data.mainEntityOfPage, `https://blog.pistamond.dev/posts/${encodeURIComponent(slug)}`);
+});
+
+/**
  * 푸터는 세 페이지가 같은 컴포넌트를 쓴다. 소개, 라벨 붙은 연락처, 개인정보처리방침
  * 링크가 어느 페이지에서도 빠지지 않아야 한다.
  */
