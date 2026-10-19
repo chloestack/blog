@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; display: flex; justify-content: center; padding: 0; }
+  .diagram-wrap { width: 100%; max-width: 960px; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<div class="diagram-wrap">
+<svg viewBox="0 0 960 380" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="2026-10-19-6b5f07e6-05-graphify-query-title 2026-10-19-6b5f07e6-05-graphify-query-desc">
+  <title id="2026-10-19-6b5f07e6-05-graphify-query-title">Graphify 질의 목적별 명령어 선택</title>
+  <desc id="2026-10-19-6b5f07e6-05-graphify-query-desc">질의 목적에 따라 graphify query, graphify path, graphify explain 세 가지 명령어 중 하나를 선택하는 흐름도.</desc>
+
+  <defs>
+    <marker id="2026-10-19-6b5f07e6-05-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-10-19-6b5f07e6-05-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="100%" height="100%" fill="#f8fafb"/>
+
+  <!-- ── Connectors (drawn before boxes) ── -->
+
+  <!-- Q → QR (top branch) -->
+  <!-- Q center: (272, 190). Exit right: (336, 190). Elbow up to y=100, then right to QR left x=524 -->
+  <path d="M336,190 L396,190 Q404,190 404,182 L404,108 Q404,100 412,100 L524,100"
+        fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-19-6b5f07e6-05-arrow)"/>
+
+  <!-- Q → PT (middle branch, straight right) -->
+  <!-- Q center: (272, 190). Exit right: (336, 190). PT left: (524, 190) -->
+  <path d="M336,190 L524,190"
+        fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-19-6b5f07e6-05-arrow)"/>
+
+  <!-- Q → EX (bottom branch) -->
+  <!-- Q center: (272, 190). Exit right: (336, 190). Elbow down to y=280, then right to EX left x=524 -->
+  <path d="M336,190 L396,190 Q404,190 404,198 L404,272 Q404,280 412,280 L524,280"
+        fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-19-6b5f07e6-05-arrow)"/>
+
+  <!-- Arrow label masks & text -->
+  <!-- Top label: "기능 어떻게 동작하나" -->
+  <rect x="400" y="80" width="112" height="28" rx="2" fill="#f8fafb"/>
+  <text x="456" y="91" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle" font-weight="500">기능 어떻게</text>
+  <text x="456" y="104" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle" font-weight="500">동작하나</text>
+
+  <!-- Middle label: "두 개념이 어떻게 연결되나" -->
+  <rect x="380" y="160" width="120" height="28" rx="2" fill="#f8fafb"/>
+  <text x="440" y="171" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle" font-weight="500">두 개념이 어떻게</text>
+  <text x="440" y="184" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle" font-weight="500">연결되나</text>
+
+  <!-- Bottom label: "한 개념의 전체 연결 파악" -->
+  <rect x="388" y="284" width="120" height="28" rx="2" fill="#f8fafb"/>
+  <text x="448" y="295" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle" font-weight="500">한 개념의 전체</text>
+  <text x="448" y="308" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle" font-weight="500">연결 파악</text>
+
+  <!-- ── Decision diamond: 질의 목적 ── -->
+  <!-- Center: (272, 190), half-w=64, half-h=44 -->
+  <rect x="168" y="146" width="208" height="88" rx="6" fill="#f8fafb"/>
+  <polygon points="272,148 334,190 272,232 210,190" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="272" y="186" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">질의 목적</text>
+  <text x="272" y="202" fill="#3f545c" font-size="10" font-family="'IBM Plex Mono',ui-monospace,monospace" text-anchor="middle">QUERY INTENT</text>
+
+  <!-- ── Result boxes ── -->
+
+  <!-- QR: graphify query — y=68, height=64 -->
+  <rect x="524" y="68" width="220" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="524" y="68" width="220" height="64" rx="6" fill="white" stroke="#122127" stroke-width="1"/>
+  <!-- type tag -->
+  <rect x="532" y="76" width="36" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.35)" stroke-width="0.8"/>
+  <text x="550" y="85" fill="rgba(18,33,39,0.7)" font-size="7" font-family="'IBM Plex Mono',ui-monospace,monospace" text-anchor="middle" letter-spacing="0.08em">CMD</text>
+  <!-- name -->
+  <text x="634" y="102" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">하위 그래프 반환</text>
+  <!-- sublabel -->
+  <text x="634" y="118" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono',ui-monospace,monospace" text-anchor="middle">graphify query</text>
+
+  <!-- PT: graphify path — y=158, height=64 -->
+  <rect x="524" y="158" width="220" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="524" y="158" width="220" height="64" rx="6" fill="white" stroke="#122127" stroke-width="1"/>
+  <rect x="532" y="166" width="36" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.35)" stroke-width="0.8"/>
+  <text x="550" y="175" fill="rgba(18,33,39,0.7)" font-size="7" font-family="'IBM Plex Mono',ui-monospace,monospace" text-anchor="middle" letter-spacing="0.08em">CMD</text>
+  <text x="634" y="192" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">최단 경로</text>
+  <text x="634" y="208" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono',ui-monospace,monospace" text-anchor="middle">graphify path A B</text>
+
+  <!-- EX: graphify explain — y=248, height=64 -->
+  <rect x="524" y="248" width="220" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="524" y="248" width="220" height="64" rx="6" fill="white" stroke="#122127" stroke-width="1"/>
+  <rect x="532" y="256" width="36" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.35)" stroke-width="0.8"/>
+  <text x="550" y="265" fill="rgba(18,33,39,0.7)" font-size="7" font-family="'IBM Plex Mono',ui-monospace,monospace" text-anchor="middle" letter-spacing="0.08em">CMD</text>
+  <text x="634" y="282" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" text-anchor="middle">개념 연결 탐색</text>
+  <text x="634" y="298" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono',ui-monospace,monospace" text-anchor="middle">graphify explain</text>
+
+  <!-- ── Legend strip ── -->
+  <line x1="40" y1="342" x2="920" y2="342" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+  <text x="40" y="356" fill="#6c8188" font-size="8" font-family="'IBM Plex Mono',ui-monospace,monospace" letter-spacing="0.14em">LEGEND</text>
+
+  <!-- Legend: Decision -->
+  <polygon points="100,368 112,358 124,368 112,378" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="132" y="372" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" font-weight="500">질의 목적 분기</text>
+
+  <!-- Legend: Command -->
+  <rect x="260" y="358" width="20" height="20" rx="4" fill="white" stroke="#122127" stroke-width="1"/>
+  <text x="288" y="372" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif" font-weight="500">Graphify 명령어</text>
+
+</svg>
+</div>
+</body>
+</html>

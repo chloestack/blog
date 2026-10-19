@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; display: flex; justify-content: center; padding: 0; }
+  .diagram-wrap { width: 100%; max-width: 960px; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<div class="diagram-wrap">
+<svg viewBox="0 0 960 480" xmlns="http://www.w3.org/2000/svg"
+     role="img" aria-labelledby="2026-10-19-6b5f07e6-07-gfy-title 2026-10-19-6b5f07e6-07-gfy-desc">
+  <title id="2026-10-19-6b5f07e6-07-gfy-title">Graphify 질의 탐색 유형 선택 흐름</title>
+  <desc id="2026-10-19-6b5f07e6-07-gfy-desc">에이전트 질의가 탐색 유형 결정 지점에서 그래프 순회(Graphify), 벡터 검색(RAG), 하이브리드 세 경로로 분기되고, 각 경로의 결과(정확도 또는 비용 증가)를 보여주는 플로우차트.</desc>
+
+  <defs>
+    <!-- Arrow markers -->
+    <marker id="2026-10-19-6b5f07e6-07-gfy-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-10-19-6b5f07e6-07-gfy-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <marker id="2026-10-19-6b5f07e6-07-gfy-arrow-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3a548f"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="960" height="480" fill="#f8fafb"/>
+
+  <!-- ═══════════════════════════════════════════
+       ARROWS — drawn before boxes
+  ═══════════════════════════════════════════ -->
+
+  <!-- REQ → Q (horizontal) -->
+  <line x1="172" y1="240" x2="256" y2="240"
+        stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-10-19-6b5f07e6-07-gfy-arrow-accent)"/>
+
+  <!-- Q → GR (up-right, orthogonal elbow) -->
+  <path d="M 296 215 L 296 132 L 388 132"
+        fill="none" stroke="#3f545c" stroke-width="1"
+        marker-end="url(#2026-10-19-6b5f07e6-07-gfy-arrow)"/>
+  <!-- label: 구조·호출·의존성 -->
+  <rect x="298" y="120" width="76" height="16" rx="2" fill="#f8fafb"/>
+  <text x="336" y="132" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif"
+        text-anchor="middle" font-weight="500">구조·호출·의존성</text>
+
+  <!-- Q → VR (straight right) -->
+  <line x1="296" y1="240" x2="388" y2="240"
+        stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-19-6b5f07e6-07-gfy-arrow)"/>
+  <!-- label: 자연어·의미 유사도 -->
+  <rect x="298" y="228" width="76" height="16" rx="2" fill="#f8fafb"/>
+  <text x="336" y="240" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif"
+        text-anchor="middle" font-weight="500">자연어·의미 유사도</text>
+
+  <!-- Q → HY (down-right, orthogonal elbow) -->
+  <path d="M 296 265 L 296 348 L 388 348"
+        fill="none" stroke="#3f545c" stroke-width="1"
+        marker-end="url(#2026-10-19-6b5f07e6-07-gfy-arrow)"/>
+  <!-- label: 혼합 필요 -->
+  <rect x="310" y="336" width="48" height="16" rx="2" fill="#f8fafb"/>
+  <text x="334" y="348" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif"
+        text-anchor="middle" font-weight="500">혼합 필요</text>
+
+  <!-- GR → OUT1 -->
+  <line x1="548" y1="132" x2="640" y2="132"
+        stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-19-6b5f07e6-07-gfy-arrow)"/>
+
+  <!-- VR → OUT2 -->
+  <line x1="548" y1="240" x2="640" y2="240"
+        stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-19-6b5f07e6-07-gfy-arrow)"/>
+
+  <!-- HY → OUT3 -->
+  <line x1="548" y1="348" x2="640" y2="348"
+        stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-19-6b5f07e6-07-gfy-arrow)"/>
+
+  <!-- ═══════════════════════════════════════════
+       NODES
+  ═══════════════════════════════════════════ -->
+
+  <!-- REQ: 에이전트 질의 — input treatment -->
+  <rect x="32" y="208" width="140" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="32" y="208" width="140" height="64" rx="6"
+        fill="rgba(63,84,92,0.10)" stroke="#6c8188" stroke-width="1"/>
+  <rect x="40" y="215" width="28" height="12" rx="2"
+        fill="transparent" stroke="rgba(108,129,136,0.40)" stroke-width="0.8"/>
+  <text x="54" y="224" fill="rgba(108,129,136,0.8)" font-size="7"
+        font-family="'IBM Plex Mono', monospace" text-anchor="middle"
+        letter-spacing="0.08em">INPUT</text>
+  <text x="102" y="241" fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">에이전트</text>
+  <text x="102" y="259" fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">질의</text>
+
+  <!-- Q: 탐색 유형 — focal decision diamond -->
+  <!-- Diamond centered at (296, 240), half-width=36, half-height=36 -->
+  <polygon points="260,240 296,204 332,240 296,276"
+           fill="#f8fafb"/>
+  <polygon points="260,240 296,204 332,240 296,276"
+           fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="296" y="236" fill="#122127" font-size="13" font-weight="600"
+        font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">탐색</text>
+  <text x="296" y="252" fill="#122127" font-size="13" font-weight="600"
+        font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">유형</text>
+
+  <!-- GR: 그래프 순회 / Graphify — backend (accent focal) -->
+  <rect x="388" y="100" width="160" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="388" y="100" width="160" height="64" rx="6"
+        fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="396" y="107" width="32" height="12" rx="2"
+        fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="412" y="116" fill="rgba(13,87,99,0.8)" font-size="7"
+        font-family="'IBM Plex Mono', monospace" text-anchor="middle"
+        letter-spacing="0.08em">GRAPH</text>
+  <text x="468" y="133" fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">그래프 순회</text>
+  <text x="468" y="151" fill="#3f545c" font-size="11"
+        font-family="'IBM Plex Mono', monospace" text-anchor="middle">Graphify</text>
+
+  <!-- VR: 벡터 검색 / RAG — backend -->
+  <rect x="388" y="208" width="160" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="388" y="208" width="160" height="64" rx="6"
+        fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="396" y="215" width="28" height="12" rx="2"
+        fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="410" y="224" fill="rgba(18,33,39,0.8)" font-size="7"
+        font-family="'IBM Plex Mono', monospace" text-anchor="middle"
+        letter-spacing="0.08em">VEC</text>
+  <text x="468" y="241" fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">벡터 검색</text>
+  <text x="468" y="259" fill="#3f545c" font-size="11"
+        font-family="'IBM Plex Mono', monospace" text-anchor="middle">RAG</text>
+
+  <!-- HY: 하이브리드 — optional/async (dashed) -->
+  <rect x="388" y="316" width="160" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="388" y="316" width="160" height="64" rx="6"
+        fill="rgba(18,33,39,0.02)" stroke="rgba(18,33,39,0.20)"
+        stroke-width="1" stroke-dasharray="4,3"/>
+  <rect x="396" y="323" width="36" height="12" rx="2"
+        fill="transparent" stroke="rgba(18,33,39,0.30)" stroke-width="0.8"/>
+  <text x="414" y="332" fill="rgba(18,33,39,0.5)" font-size="7"
+        font-family="'IBM Plex Mono', monospace" text-anchor="middle"
+        letter-spacing="0.08em">HYBRID</text>
+  <text x="468" y="349" fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">하이브리드</text>
+  <text x="468" y="367" fill="#3f545c" font-size="11"
+        font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">둘 다 사용</text>
+
+  <!-- OUT1: 경로·연결 정확 — store treatment -->
+  <rect x="640" y="100" width="160" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="640" y="100" width="160" height="64" rx="6"
+        fill="rgba(18,33,39,0.05)" stroke="#3f545c" stroke-width="1"/>
+  <rect x="648" y="107" width="28" height="12" rx="2"
+        fill="transparent" stroke="rgba(63,84,92,0.40)" stroke-width="0.8"/>
+  <text x="662" y="116" fill="rgba(63,84,92,0.8)" font-size="7"
+        font-family="'IBM Plex Mono', monospace" text-anchor="middle"
+        letter-spacing="0.08em">OUT</text>
+  <text x="720" y="133" fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">경로·연결</text>
+  <text x="720" y="151" fill="#3f545c" font-size="12"
+        font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">정확한 결과</text>
+
+  <!-- OUT2: 의미 일치 정확 — store treatment -->
+  <rect x="640" y="208" width="160" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="640" y="208" width="160" height="64" rx="6"
+        fill="rgba(18,33,39,0.05)" stroke="#3f545c" stroke-width="1"/>
+  <rect x="648" y="215" width="28" height="12" rx="2"
+        fill="transparent" stroke="rgba(63,84,92,0.40)" stroke-width="0.8"/>
+  <text x="662" y="224" fill="rgba(63,84,92,0.8)" font-size="7"
+        font-family="'IBM Plex Mono', monospace" text-anchor="middle"
+        letter-spacing="0.08em">OUT</text>
+  <text x="720" y="241" fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">의미 일치</text>
+  <text x="720" y="259" fill="#3f545c" font-size="12"
+        font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">정확한 결과</text>
+
+  <!-- OUT3: 비용·복잡도 증가 — optional/async (dashed) -->
+  <rect x="640" y="316" width="160" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="640" y="316" width="160" height="64" rx="6"
+        fill="rgba(18,33,39,0.02)" stroke="rgba(18,33,39,0.20)"
+        stroke-width="1" stroke-dasharray="4,3"/>
+  <rect x="648" y="323" width="28" height="12" rx="2"
+        fill="transparent" stroke="rgba(18,33,39,0.30)" stroke-width="0.8"/>
+  <text x="662" y="332" fill="rgba(18,33,39,0.5)" font-size="7"
+        font-family="'IBM Plex Mono', monospace" text-anchor="middle"
+        letter-spacing="0.08em">OUT</text>
+  <text x="720" y="349" fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">비용·복잡도</text>
+  <text x="720" y="367" fill="#3f545c" font-size="12"
+        font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">증가</text>
+
+  <!-- ═══════════════════════════════════════════
+       LEGEND — horizontal bottom strip
+  ═══════════════════════════════════════════ -->
+  <line x1="32" y1="424" x2="928" y2="424"
+        stroke="rgba(18,33,39,0.10)" stroke-width="0.8"/>
+
+  <!-- Legend: Focal -->
+  <rect x="32" y="436" width="12" height="12" rx="2"
+        fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="50" y="447" fill="#6c8188" font-size="10"
+        font-family="'IBM Plex Sans KR', sans-serif">핵심 분기점</text>
+
+  <!-- Legend: Backend -->
+  <rect x="180" y="436" width="12" height="12" rx="2"
+        fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <text x="198" y="447" fill="#6c8188" font-size="10"
+        font-family="'IBM Plex Sans KR', sans-serif">탐색 방법</text>
+
+  <!-- Legend: Store -->
+  <rect x="320" y="436" width="12" height="12" rx="2"
+        fill="rgba(18,33,39,0.05)" stroke="#3f545c" stroke-width="1"/>
+  <text x="338" y="447" fill="#6c8188" font-size="10"
+        font-family="'IBM Plex Sans KR', sans-serif">결과</text>
+
+  <!-- Legend: Optional -->
+  <rect x="420" y="436" width="12" height="12" rx="2"
+        fill="rgba(18,33,39,0.02)" stroke="rgba(18,33,39,0.20)"
+        stroke-width="1" stroke-dasharray="4,3"/>
+  <text x="438" y="447" fill="#6c8188" font-size="10"
+        font-family="'IBM Plex Sans KR', sans-serif">복잡도 높음</text>
+
+</svg>
+</div>
+</body>
+</html>

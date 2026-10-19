@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 960 584"
+  role="img"
+  aria-labelledby="2026-10-19-6b5f07e6-09-graphify-merge-title 2026-10-19-6b5f07e6-09-graphify-merge-desc"
+>
+  <title id="2026-10-19-6b5f07e6-09-graphify-merge-title">graphify merge-graphs workflow</title>
+  <desc id="2026-10-19-6b5f07e6-09-graphify-merge-desc">Shows the flow of merging graph.json from two repositories with graphify merge-graphs, then branching to trust tag review or impact scope re-evaluation based on whether INFERRED edges or God nodes increase in the merged graph.</desc>
+
+  <defs>
+    <!-- Arrow markers -->
+    <marker id="2026-10-19-6b5f07e6-09-gm-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-10-19-6b5f07e6-09-gm-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <marker id="2026-10-19-6b5f07e6-09-gm-arrow-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3a548f"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="960" height="584" fill="#f8fafb"/>
+
+  <!-- ─────────────────────────────────────────
+       CONNECTORS (drawn before boxes)
+  ───────────────────────────────────────── -->
+
+  <!-- R1 → MG: elbow right-angle from bottom-center of R1 (cx=212, y=144) down to top of MG (cx=480, y=212) -->
+  <!-- R1 bottom: (212, 144), MG top: (480, 212) -->
+  <path d="M 212 144 L 212 176 Q 212 184 220 184 L 472 184 Q 480 184 480 192 L 480 212"
+        fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-19-6b5f07e6-09-gm-arrow)"/>
+
+  <!-- R2 → MG: elbow from bottom-center of R2 (cx=748, y=144) down to top of MG (cx=480, y=212) -->
+  <path d="M 748 144 L 748 176 Q 748 184 740 184 L 488 184 Q 480 184 480 192 L 480 212"
+        fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-19-6b5f07e6-09-gm-arrow)"/>
+
+  <!-- MG → MGOUT (accent connector) -->
+  <path d="M 480 276 L 480 316"
+        fill="none" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-10-19-6b5f07e6-09-gm-arrow-accent)"/>
+
+  <!-- MGOUT → Q2 -->
+  <path d="M 480 380 L 480 408"
+        fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-19-6b5f07e6-09-gm-arrow)"/>
+
+  <!-- Q2 → CHK (left branch): from left vertex of diamond to CHK right -->
+  <!-- Diamond center: (480, 436), left vertex: (480-44, 436)=(436, 436) -->
+  <!-- CHK center: (208, 500), right edge: (208+68, 500)=(276, 500) -->
+  <path d="M 436 436 L 340 436 Q 332 436 332 444 L 332 500 Q 332 508 324 508 L 276 508"
+        fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-19-6b5f07e6-09-gm-arrow)"/>
+
+  <!-- Q2 → GND (right branch): from right vertex of diamond to GND left -->
+  <!-- Diamond right vertex: (524, 436); GND center: (752, 500), left edge: (752-68, 500)=(684, 500) -->
+  <path d="M 524 436 L 620 436 Q 628 436 628 444 L 628 500 Q 628 508 636 508 L 684 508"
+        fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-19-6b5f07e6-09-gm-arrow)"/>
+
+  <!-- ─────────────────────────────────────────
+       ARROW LABELS
+  ───────────────────────────────────────── -->
+
+  <!-- Q2 → CHK label: "INFERRED edges increase" — on horizontal segment at y=436, midpoint ~388 -->
+  <rect x="318" y="416" width="92" height="28" rx="2" fill="#f8fafb"/>
+  <text x="364" y="427" fill="#6c8188" font-size="9" font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.04em">INFERRED</text>
+  <text x="364" y="439" fill="#6c8188" font-size="9" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">edges increase</text>
+
+  <!-- Q2 → GND label: "God nodes increase" — on horizontal segment at y=436, midpoint ~572 -->
+  <rect x="534" y="421" width="76" height="20" rx="2" fill="#f8fafb"/>
+  <text x="572" y="434" fill="#6c8188" font-size="9" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">God nodes increase</text>
+
+  <!-- ─────────────────────────────────────────
+       NODES (boxes drawn after arrows)
+  ───────────────────────────────────────── -->
+
+  <!-- R1: Repo A / graph.json — input style, link color -->
+  <!-- cx=212, cy=108, w=160, h=72 -->
+  <rect x="132" y="72" width="160" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="132" y="72" width="160" height="72" rx="6" fill="rgba(58,84,143,0.07)" stroke="#3a548f" stroke-width="1"/>
+  <rect x="140" y="80" width="28" height="12" rx="2" fill="transparent" stroke="rgba(58,84,143,0.4)" stroke-width="0.8"/>
+  <text x="154" y="89" fill="rgba(58,84,143,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.08em">SRC</text>
+  <text x="212" y="114" fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Repo A</text>
+  <text x="212" y="130" fill="#3f545c" font-size="11"
+        font-family="'IBM Plex Mono', monospace" text-anchor="middle">graph.json</text>
+
+  <!-- R2: Repo B / graph.json — input style, link color -->
+  <!-- cx=748, cy=108, w=160, h=72 -->
+  <rect x="668" y="72" width="160" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="668" y="72" width="160" height="72" rx="6" fill="rgba(58,84,143,0.07)" stroke="#3a548f" stroke-width="1"/>
+  <rect x="676" y="80" width="28" height="12" rx="2" fill="transparent" stroke="rgba(58,84,143,0.4)" stroke-width="0.8"/>
+  <text x="690" y="89" fill="rgba(58,84,143,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.08em">SRC</text>
+  <text x="748" y="114" fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Repo B</text>
+  <text x="748" y="130" fill="#3f545c" font-size="11"
+        font-family="'IBM Plex Mono', monospace" text-anchor="middle">graph.json</text>
+
+  <!-- MG: graphify merge-graphs — FOCAL (accent) -->
+  <!-- cx=480, cy=244, w=240, h=64 -->
+  <rect x="360" y="212" width="240" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="360" y="212" width="240" height="64" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="368" y="220" width="36" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.4)" stroke-width="0.8"/>
+  <text x="386" y="229" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.08em">CMD</text>
+  <text x="480" y="253" fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Mono', monospace" text-anchor="middle">graphify merge-graphs</text>
+
+  <!-- MGOUT: Merged graph / cross-service deps — store/state style -->
+  <!-- cx=480, cy=348, w=240, h=64 -->
+  <rect x="360" y="316" width="240" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="360" y="316" width="240" height="64" rx="6" fill="rgba(18,33,39,0.05)" stroke="#3f545c" stroke-width="1"/>
+  <rect x="368" y="324" width="40" height="12" rx="2" fill="transparent" stroke="rgba(63,84,92,0.4)" stroke-width="0.8"/>
+  <text x="388" y="333" fill="rgba(63,84,92,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.08em">GRAPH</text>
+  <text x="480" y="353" fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Merged Graph</text>
+  <text x="480" y="369" fill="#3f545c" font-size="11"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">cross-service dependencies</text>
+
+  <!-- Q2: Review needed — decision diamond, accent style -->
+  <!-- center (480, 436), half-w=44, half-h=28 -->
+  <polygon points="480,408 524,436 480,464 436,436"
+           fill="#f8fafb"/>
+  <polygon points="480,408 524,436 480,464 436,436"
+           fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="480" y="440" fill="#122127" font-size="12" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Check?</text>
+
+  <!-- CHK: Trust tag review — backend/warn style -->
+  <!-- cx=208, cy=500+8=508? let's place center at cy=500, w=136, h=48 -->
+  <rect x="140" y="476" width="136" height="52" rx="6" fill="#f8fafb"/>
+  <rect x="140" y="476" width="136" height="52" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="148" y="484" width="40" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.4)" stroke-width="0.8"/>
+  <text x="168" y="493" fill="rgba(18,33,39,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.08em">ACTION</text>
+  <text x="208" y="511" fill="#122127" font-size="13" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Trust Tag Review</text>
+
+  <!-- GND: Impact scope re-evaluation — backend/warn style -->
+  <!-- cx=752, cy=500, w=136, h=52 -->
+  <rect x="684" y="476" width="136" height="52" rx="6" fill="#f8fafb"/>
+  <rect x="684" y="476" width="136" height="52" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="692" y="484" width="40" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.4)" stroke-width="0.8"/>
+  <text x="712" y="493" fill="rgba(18,33,39,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.08em">ACTION</text>
+  <text x="752" y="507" fill="#122127" font-size="13" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Re-evaluate</text>
+  <text x="752" y="521" fill="#122127" font-size="13" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Impact Scope</text>
+
+  <!-- ─────────────────────────────────────────
+       LEGEND
+  ───────────────────────────────────────── -->
+  <line x1="40" y1="548" x2="920" y2="548" stroke="rgba(18,33,39,0.10)" stroke-width="0.8"/>
+
+  <!-- Legend item 1: source -->
+  <rect x="40" y="556" width="12" height="12" rx="2" fill="rgba(58,84,143,0.07)" stroke="#3a548f" stroke-width="0.8"/>
+  <text x="58" y="565" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">Input Repo</text>
+
+  <!-- Legend item 2: focal -->
+  <rect x="160" y="556" width="12" height="12" rx="2" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="0.8"/>
+  <text x="178" y="565" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">Core Command</text>
+
+  <!-- Legend item 3: store -->
+  <rect x="260" y="556" width="12" height="12" rx="2" fill="rgba(18,33,39,0.05)" stroke="#3f545c" stroke-width="0.8"/>
+  <text x="278" y="565" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">Graph Output</text>
+
+  <!-- Legend item 4: decision -->
+  <polygon points="366,562 374,556 382,562 374,568" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="0.8"/>
+  <text x="388" y="565" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">Branch Condition</text>
+
+  <!-- Legend item 5: action -->
+  <rect x="460" y="556" width="12" height="12" rx="2" fill="#ffffff" stroke="#122127" stroke-width="0.8"/>
+  <text x="478" y="565" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">Follow-up Action</text>
+
+</svg>
+</body>
+</html>
