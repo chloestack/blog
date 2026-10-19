@@ -1,16 +1,12 @@
 ---
 title: "Database-per-Service 패턴으로 마이크로서비스 데이터 격리 구현하기"
 date: "2026-09-12 07:39"
-updated: "2026-09-23 08:42"
+updated: "2026-10-19 16:40"
 publishedAt: ""
 category: "Architecture"
-tags: ["Database-per-Service 패턴으로 마이크로서비스 데이터 격리 구현하기", "Architecture", "Database-per-Service"]
-excerpt: "권한이 아직 없어서 파일로는 저장하지 않겠습니다. 아래에 완성된 블로그 포스트를 바로 출력합니다."
+tags: ["Database-per-Service", "마이크로서비스", "Saga 패턴", "CQRS", "트랜잭셔널 아웃박스"]
+excerpt: "서비스는 나눴는데 DB는 하나라면 아직 마이크로서비스가 아닙니다. 서비스별 DB 분리, API 컴포지션·CQRS 조회, Saga·트랜잭셔널 아웃박스로 일관성을 지키는 법과 도입 판단 기준을 정리했습니다."
 status: "draft"
----
-
-권한이 아직 없어서 파일로는 저장하지 않겠습니다. 아래에 완성된 블로그 포스트를 바로 출력합니다.
-
 ---
 
 ## 목차

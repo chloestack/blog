@@ -1,14 +1,30 @@
 ---
 title: "Reducing LLM API Costs with Prompt Caching — Anthropic vs. OpenAI Caching Strategies Compared"
 date: "2026-09-29 09:34"
-updated: "2026-10-19 15:39"
+updated: "2026-10-19 16:45"
 category: "AI"
 tags: ["Prompt Caching", "LLM Cost Optimization", "Anthropic", "OpenAI"]
 excerpt: "Anthropic discounts cache hits by 90%; OpenAI applies 50% automatically. Compare both, including the 1,024-token prefix rule and the fixed → semi-fixed → dynamic prompt layout."
 koSlug: "2026-09-29-Prompt-Caching으로-LLM-API-비용-줄이기-—-Anthropic·OpenAI-캐싱-전략-비교"
 ---
 
-Costs climb faster than you expect. In RAG (Retrieval-Augmented Generation) pipelines or agent workflows with complex system prompts, you end up feeding thousands of tokens of context to the model on every single request. Prompt Caching is a technique that dramatically cuts that repeated cost, and both Anthropic and OpenAI provide their own caching mechanisms. The two platforms take structurally quite different approaches, and the actual savings you see depend heavily on which approach you choose and in what context.
+## Table of Contents
+
+1. Overview
+2. How Prompt Caching Works
+3. Anthropic Claude's Caching Strategy
+4. OpenAI GPT's Caching Strategy
+5. Comparing the Two Platforms and Choosing Between Them
+6. Considerations When Applying to Production
+7. Conclusion
+
+---
+
+## Overview
+
+### Background
+
+Once an LLM API is in production and call volume grows, costs climb faster than you expect. In RAG (Retrieval-Augmented Generation) pipelines or agent workflows with complex system prompts, you end up feeding thousands of tokens of context to the model on every single request. Prompt Caching is a technique that dramatically cuts that repeated cost, and both Anthropic and OpenAI provide their own caching mechanisms. The two platforms take structurally quite different approaches, and the actual savings you see depend heavily on which approach you choose and in what context.
 
 LLM API costs are determined by the sum of input tokens and output tokens. Output tokens vary per request, but fixed portions of the input — like the system prompt or document context — repeat identically every time. If you have a 2,000-token system prompt and call the API 1,000 times a day, the system prompt alone burns through 2 million tokens a day. With Prompt Caching applied, that repeated cost can be cut by up to 90% (Anthropic) or 50% (OpenAI).
 
