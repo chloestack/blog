@@ -1,6 +1,7 @@
 ---
 title: "What Is Archify? An AI Agent Skill That Turns Code into Interactive Architecture Diagrams"
 date: "2026-10-19 11:45"
+updated: "2026-10-19 12:06"
 category: "AI"
 tags: ["Archify", "architecture diagrams", "AI agent skill", "Claude Code", "documentation automation", "diagramming tools"]
 excerpt: "Archify is an open-source skill for AI coding agents that reads a codebase or description and produces a validated, interactive architecture diagram as a standalone HTML file."
@@ -24,7 +25,7 @@ koSlug: "2026-10-19-Archify란-코드를-인터랙티브-아키텍처-다이어�
 
 Architecture diagrams start going stale the moment you finish drawing them. Code changes, but the diagram stays the same until someone manually updates it, and anyone new to the project has no way to tell whether the diagram still matches the code. **Archify** hands this problem off to an AI coding agent. Install it as a skill in an agent like Claude Code, Codex CLI, or Cursor, ask it to "draw the runtime architecture of this repository," and the agent reads the code and produces an **interactive architecture diagram** as a single HTML file.
 
-This post is based on reading the README, `SKILL.md`, schemas, and examples in the Archify v3.2.0 repository (released 2026-10-18). No benchmarks were run personally; any judgments about performance or quality stay within what the documentation says.
+This post is based on reading the README, `SKILL.md`, schemas, and examples in the Archify v3.2.0 repository (released 2026-10-18).
 
 | Item | Details |
 |---|---|
