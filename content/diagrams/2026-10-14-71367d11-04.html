@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Qdrant 필터 쿼리 실행 경로</title>
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; font-family: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<svg viewBox="0 0 960 560" xmlns="http://www.w3.org/2000/svg"
+     role="img" aria-labelledby="2026-10-14-71367d11-04-fq-title 2026-10-14-71367d11-04-fq-desc">
+
+  <title id="2026-10-14-71367d11-04-fq-title">Qdrant 필터 쿼리 실행 경로</title>
+  <desc id="2026-10-14-71367d11-04-fq-desc">벡터 쿼리가 카디널리티 추정 단계를 거쳐 통과 비율에 따라 HNSW 우선, 필터 우선, 브루트포스 세 경로 중 하나로 분기되는 흐름을 보여줍니다. 브루트포스는 지연 급증으로 연결됩니다.</desc>
+
+  <defs>
+    <!-- Arrow markers -->
+    <marker id="2026-10-14-71367d11-04-fq-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-10-14-71367d11-04-fq-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+    <marker id="2026-10-14-71367d11-04-fq-arrow-warn" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#8a3b2a"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="960" height="560" fill="#f8fafb"/>
+
+  <!-- ═══════════════════════════════════════════
+       ARROWS (drawn before boxes)
+  ═══════════════════════════════════════════ -->
+
+  <!-- FQ → EST: straight horizontal -->
+  <line x1="172" y1="200" x2="272" y2="200" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-14-71367d11-04-fq-arrow)"/>
+
+  <!-- EST → Q1 (decision): straight horizontal -->
+  <line x1="412" y1="200" x2="468" y2="200" stroke="#0d5763" stroke-width="1" marker-end="url(#2026-10-14-71367d11-04-fq-arrow-accent)"/>
+
+  <!-- Q1 → HF: exit right, 10% 이상 -->
+  <!-- From diamond right point (540,200) → HF left (620,140) -->
+  <!-- orthogonal: right then up -->
+  <path d="M 540,200 L 572,200 L 572,140 L 620,140"
+        fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-14-71367d11-04-fq-arrow)"/>
+  <!-- label -->
+  <rect x="546" y="166" width="52" height="14" rx="2" fill="#f8fafb"/>
+  <text x="572" y="177" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="500">10% 이상</text>
+
+  <!-- Q1 → PF: exit bottom, 1% 미만 -->
+  <!-- From diamond bottom (504,232) → PF left (620,200) -->
+  <path d="M 504,232 L 504,272 L 588,272 L 588,200 L 620,200"
+        fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-14-71367d11-04-fq-arrow)"/>
+  <!-- label -->
+  <rect x="548" y="248" width="52" height="14" rx="2" fill="#f8fafb"/>
+  <text x="574" y="259" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="500">1% 미만</text>
+
+  <!-- Q1 → BF: exit bottom further, 인덱스 없음 -->
+  <!-- From diamond bottom (504,232) → BF (620,312) -->
+  <path d="M 504,232 L 504,312 L 620,312"
+        fill="none" stroke="#8a3b2a" stroke-width="1" stroke-dasharray="5,4" marker-end="url(#2026-10-14-71367d11-04-fq-arrow-warn)"/>
+  <!-- label -->
+  <rect x="520" y="288" width="68" height="14" rx="2" fill="#f8fafb"/>
+  <text x="554" y="299" fill="#8a3b2a" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="500">인덱스 없음</text>
+
+  <!-- HF → R: horizontal -->
+  <line x1="760" y1="140" x2="820" y2="140" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-14-71367d11-04-fq-arrow)"/>
+  <!-- elbow R: from HF right (760,140) to R (844,200): right then down -->
+  <!-- already HF→R goes to 820,140; then R box is at x=820,y=176 -->
+
+  <!-- PF → R: horizontal -->
+  <line x1="760" y1="200" x2="820" y2="200" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-14-71367d11-04-fq-arrow)"/>
+
+  <!-- BF → SLOW: horizontal -->
+  <line x1="760" y1="312" x2="820" y2="312" stroke="#8a3b2a" stroke-width="1" stroke-dasharray="5,4" marker-end="url(#2026-10-14-71367d11-04-fq-arrow-warn)"/>
+
+  <!-- ═══════════════════════════════════════════
+       NODES
+  ═══════════════════════════════════════════ -->
+
+  <!-- FQ: 필터 조건 포함 벡터 쿼리 (input type) -->
+  <rect x="28" y="168" width="144" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="28" y="168" width="144" height="64" rx="6" fill="rgba(58,84,143,0.08)" stroke="#3a548f" stroke-width="1"/>
+  <rect x="36" y="176" width="28" height="12" rx="2" fill="transparent" stroke="rgba(58,84,143,0.40)" stroke-width="0.8"/>
+  <text x="50" y="185" fill="rgba(58,84,143,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">INPUT</text>
+  <text x="100" y="202" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">필터 조건 포함</text>
+  <text x="100" y="220" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">벡터 쿼리</text>
+
+  <!-- EST: 카디널리티 추정 (focal) -->
+  <rect x="272" y="164" width="140" height="72" rx="6" fill="#f8fafb"/>
+  <rect x="272" y="164" width="140" height="72" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="280" y="172" width="28" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="294" y="181" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">STEP</text>
+  <text x="342" y="204" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">카디널리티 추정</text>
+  <text x="342" y="222" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">페이로드 인덱스</text>
+
+  <!-- Q1: 통과 비율 (decision diamond, focal) -->
+  <!-- center 504,200, half-width 36, half-height 32 -->
+  <polygon points="468,200 504,168 540,200 504,232" fill="#f8fafb"/>
+  <polygon points="468,200 504,168 540,200 504,232" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="504" y="196" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">통과</text>
+  <text x="504" y="210" fill="#122127" font-size="11" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">비율</text>
+
+  <!-- HF: HNSW 우선 (ok — backend) -->
+  <rect x="620" y="108" width="140" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="620" y="108" width="140" height="64" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="628" y="116" width="28" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="642" y="125" fill="rgba(18,33,39,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">PATH</text>
+  <text x="690" y="146" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">HNSW 우선</text>
+  <text x="690" y="162" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">→ 필터 적용</text>
+
+  <!-- PF: 필터 우선 (ok — backend) -->
+  <rect x="620" y="168" width="140" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="620" y="168" width="140" height="64" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="628" y="176" width="28" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="642" y="185" fill="rgba(18,33,39,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">PATH</text>
+  <text x="690" y="206" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">필터 우선</text>
+  <text x="690" y="222" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">→ 벡터 계산</text>
+
+  <!-- BF: 브루트포스 (optional/warning) -->
+  <rect x="620" y="280" width="140" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="620" y="280" width="140" height="64" rx="6" fill="rgba(18,33,39,0.02)" stroke="rgba(18,33,39,0.20)" stroke-width="1" stroke-dasharray="4,3"/>
+  <rect x="628" y="288" width="28" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.25)" stroke-width="0.8"/>
+  <text x="642" y="297" fill="rgba(18,33,39,0.5)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">SCAN</text>
+  <text x="690" y="316" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">브루트포스</text>
+  <text x="690" y="332" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">전체 스캔</text>
+
+  <!-- R: 결과 반환 — merge node area, covers HF+PF exits -->
+  <!-- Sits at x=820, spans y=108..232, center at y=170 -->
+  <rect x="820" y="108" width="112" height="124" rx="6" fill="#f8fafb"/>
+  <rect x="820" y="108" width="112" height="124" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="828" y="116" width="32" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="844" y="125" fill="rgba(18,33,39,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">OUTPUT</text>
+  <text x="876" y="174" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">결과</text>
+  <text x="876" y="190" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">반환</text>
+
+  <!-- SLOW: 지연 급증 (accent / warning focal) -->
+  <rect x="820" y="280" width="112" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="820" y="280" width="112" height="64" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="828" y="288" width="28" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="842" y="297" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">WARN</text>
+  <text x="876" y="316" fill="#122127" font-size="12" font-weight="600" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">지연 급증</text>
+  <text x="876" y="332" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">선형 스캔</text>
+
+  <!-- ═══════════════════════════════════════════
+       LEGEND STRIP
+  ═══════════════════════════════════════════ -->
+  <line x1="28" y1="488" x2="932" y2="488" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+  <text x="28" y="504" fill="#3f545c" font-size="8" font-family="'IBM Plex Mono', monospace" letter-spacing="0.14em">LEGEND</text>
+
+  <!-- backend -->
+  <rect x="96" y="494" width="12" height="12" rx="2" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <text x="114" y="504" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">정상 경로</text>
+
+  <!-- focal -->
+  <rect x="196" y="494" width="12" height="12" rx="2" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="214" y="504" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">핵심 단계</text>
+
+  <!-- optional/brute -->
+  <rect x="296" y="494" width="12" height="12" rx="2" fill="rgba(18,33,39,0.02)" stroke="rgba(18,33,39,0.20)" stroke-width="1" stroke-dasharray="3,2"/>
+  <text x="314" y="504" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">비권장 경로</text>
+
+  <!-- dashed arrow -->
+  <line x1="408" y1="500" x2="440" y2="500" stroke="#8a3b2a" stroke-width="1" stroke-dasharray="5,4" marker-end="url(#2026-10-14-71367d11-04-fq-arrow-warn)"/>
+  <text x="450" y="504" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">인덱스 없음 경로</text>
+
+  <!-- solid arrow -->
+  <line x1="568" y1="500" x2="600" y2="500" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-14-71367d11-04-fq-arrow)"/>
+  <text x="610" y="504" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif">정상 흐름</text>
+
+</svg>
+</body>
+</html>

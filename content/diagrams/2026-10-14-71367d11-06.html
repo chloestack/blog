@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; padding: 0; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 560" role="img" aria-labelledby="2026-10-14-71367d11-06-qdrant-ops-title 2026-10-14-71367d11-06-qdrant-ops-desc">
+  <title id="2026-10-14-71367d11-06-qdrant-ops-title">Qdrant 운영 중 함정과 대응 전략</title>
+  <desc id="2026-10-14-71367d11-06-qdrant-ops-desc">운영 중 발생하는 세 가지 함정(인덱스 재구축 CPU 스파이크, 최적화 중 디스크 풀, 낮은 ef로 recall 저하)과 각각의 해결책이 안정 운영으로 수렴하는 흐름을 보여주는 플로우차트.</desc>
+
+  <defs>
+    <!-- Arrow markers -->
+    <marker id="2026-10-14-71367d11-06-arr-muted" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-10-14-71367d11-06-arr-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="960" height="560" fill="#f8fafb"/>
+
+  <!-- ===================== ARROWS (drawn before boxes) ===================== -->
+
+  <!-- OPS → T1 (left branch) -->
+  <path d="M 340 120 L 340 148 Q 340 156 332 156 L 212 156 Q 204 156 204 164 L 204 196" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-14-71367d11-06-arr-muted)"/>
+
+  <!-- OPS → T2 (center) -->
+  <path d="M 480 120 L 480 196" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-14-71367d11-06-arr-muted)"/>
+
+  <!-- OPS → T3 (right branch) -->
+  <path d="M 620 120 L 620 148 Q 620 156 628 156 L 748 156 Q 756 156 756 164 L 756 196" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-14-71367d11-06-arr-muted)"/>
+
+  <!-- T1 → F1 -->
+  <path d="M 204 276 L 204 320" fill="none" stroke="#0d5763" stroke-width="1" marker-end="url(#2026-10-14-71367d11-06-arr-accent)"/>
+
+  <!-- T2 → F2 -->
+  <path d="M 480 276 L 480 320" fill="none" stroke="#0d5763" stroke-width="1" marker-end="url(#2026-10-14-71367d11-06-arr-accent)"/>
+
+  <!-- T3 → F3 -->
+  <path d="M 756 276 L 756 320" fill="none" stroke="#0d5763" stroke-width="1" marker-end="url(#2026-10-14-71367d11-06-arr-accent)"/>
+
+  <!-- F1 → STABLE -->
+  <path d="M 204 400 L 204 432 Q 204 440 212 440 L 432 440 Q 440 440 440 448 L 440 452" fill="none" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-10-14-71367d11-06-arr-accent)"/>
+
+  <!-- F2 → STABLE -->
+  <path d="M 480 400 L 480 452" fill="none" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-10-14-71367d11-06-arr-accent)"/>
+
+  <!-- F3 → STABLE -->
+  <path d="M 756 400 L 756 432 Q 756 440 748 440 L 528 440 Q 520 440 520 448 L 520 452" fill="none" stroke="#0d5763" stroke-width="1.2" marker-end="url(#2026-10-14-71367d11-06-arr-accent)"/>
+
+  <!-- ===================== NODES ===================== -->
+
+  <!-- OPS — focal (1 accent node) -->
+  <rect x="300" y="44" width="360" height="76" rx="6" fill="#f8fafb"/>
+  <rect x="300" y="44" width="360" height="76" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.5"/>
+  <rect x="312" y="52" width="52" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.4)" stroke-width="0.8"/>
+  <text x="338" y="61" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">TRIGGER</text>
+  <text x="480" y="92" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">운영 중 함정</text>
+  <text x="480" y="108" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">Qdrant production pitfalls</text>
+
+  <!-- T1 — warn -->
+  <rect x="136" y="196" width="136" height="80" rx="6" fill="#f8fafb"/>
+  <rect x="136" y="196" width="136" height="80" rx="6" fill="#f5e8cc" stroke="#a96a08" stroke-width="1"/>
+  <rect x="148" y="204" width="36" height="12" rx="2" fill="transparent" stroke="rgba(169,106,8,0.4)" stroke-width="0.8"/>
+  <text x="166" y="213" fill="rgba(169,106,8,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">RISK</text>
+  <text x="204" y="242" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">인덱스 재구축</text>
+  <text x="204" y="260" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">CPU 스파이크</text>
+
+  <!-- T2 — warn -->
+  <rect x="412" y="196" width="136" height="80" rx="6" fill="#f8fafb"/>
+  <rect x="412" y="196" width="136" height="80" rx="6" fill="#f5e8cc" stroke="#a96a08" stroke-width="1"/>
+  <rect x="424" y="204" width="36" height="12" rx="2" fill="transparent" stroke="rgba(169,106,8,0.4)" stroke-width="0.8"/>
+  <text x="442" y="213" fill="rgba(169,106,8,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">RISK</text>
+  <text x="480" y="242" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">최적화 중</text>
+  <text x="480" y="260" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">디스크 풀</text>
+
+  <!-- T3 — warn -->
+  <rect x="688" y="196" width="136" height="80" rx="6" fill="#f8fafb"/>
+  <rect x="688" y="196" width="136" height="80" rx="6" fill="#f5e8cc" stroke="#a96a08" stroke-width="1"/>
+  <rect x="700" y="204" width="36" height="12" rx="2" fill="transparent" stroke="rgba(169,106,8,0.4)" stroke-width="0.8"/>
+  <text x="718" y="213" fill="rgba(169,106,8,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">RISK</text>
+  <text x="756" y="238" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">낮은 ef로</text>
+  <text x="756" y="254" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">recall 저하</text>
+
+  <!-- F1 — fix -->
+  <rect x="136" y="320" width="136" height="80" rx="6" fill="#f8fafb"/>
+  <rect x="136" y="320" width="136" height="80" rx="6" fill="#d4e7ea" stroke="#0d5763" stroke-width="1"/>
+  <rect x="148" y="328" width="28" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.4)" stroke-width="0.8"/>
+  <text x="162" y="337" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">FIX</text>
+  <text x="204" y="359" fill="#122127" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">max_indexing</text>
+  <text x="204" y="373" fill="#122127" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">_threads = 2</text>
+  <text x="204" y="389" fill="#3f545c" font-size="11" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">스레드 제한</text>
+
+  <!-- F2 — fix -->
+  <rect x="412" y="320" width="136" height="80" rx="6" fill="#f8fafb"/>
+  <rect x="412" y="320" width="136" height="80" rx="6" fill="#d4e7ea" stroke="#0d5763" stroke-width="1"/>
+  <rect x="424" y="328" width="28" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.4)" stroke-width="0.8"/>
+  <text x="438" y="337" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">FIX</text>
+  <text x="480" y="359" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">디스크 2.5배</text>
+  <text x="480" y="377" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">프로비저닝</text>
+
+  <!-- F3 — fix -->
+  <rect x="688" y="320" width="136" height="80" rx="6" fill="#f8fafb"/>
+  <rect x="688" y="320" width="136" height="80" rx="6" fill="#d4e7ea" stroke="#0d5763" stroke-width="1"/>
+  <rect x="700" y="328" width="28" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.4)" stroke-width="0.8"/>
+  <text x="714" y="337" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">FIX</text>
+  <text x="756" y="355" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">쿼리 타입별</text>
+  <text x="756" y="371" fill="#122127" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">ef 분리</text>
+
+  <!-- STABLE — outcome -->
+  <rect x="364" y="452" width="232" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="364" y="452" width="232" height="64" rx="6" fill="#d6e9de" stroke="#286d50" stroke-width="1.5"/>
+  <rect x="376" y="460" width="52" height="12" rx="2" fill="transparent" stroke="rgba(40,109,80,0.4)" stroke-width="0.8"/>
+  <text x="402" y="469" fill="rgba(40,109,80,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">OUTCOME</text>
+  <text x="480" y="494" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">안정 운영</text>
+
+  <!-- ===================== LEGEND ===================== -->
+  <line x1="40" y1="532" x2="920" y2="532" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+
+  <!-- Legend items -->
+  <rect x="40" y="540" width="12" height="12" rx="2" fill="#f5e8cc" stroke="#a96a08" stroke-width="1"/>
+  <text x="58" y="550" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">운영 위험</text>
+
+  <rect x="156" y="540" width="12" height="12" rx="2" fill="#d4e7ea" stroke="#0d5763" stroke-width="1"/>
+  <text x="174" y="550" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">대응 조치</text>
+
+  <rect x="272" y="540" width="12" height="12" rx="2" fill="#d6e9de" stroke="#286d50" stroke-width="1.2"/>
+  <text x="290" y="550" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">안정 상태</text>
+
+  <rect x="388" y="540" width="12" height="12" rx="2" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="406" y="550" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">진입점</text>
+
+</svg>
+</body>
+</html>
