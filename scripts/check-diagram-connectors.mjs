@@ -224,3 +224,5 @@ for (const f of files) {
   }
 }
 console.log(`\n${bad}/${files.length} 파일에 문제`);
+// 생성기(tistory-writer diagrams.py)가 이 값으로 다시 그릴지 정한다.
+process.exitCode = bad ? 1 : 0;
