@@ -210,6 +210,27 @@ marked.use({
       return renderCodeBlock(text, lang);
     },
   },
+  extensions: [
+    // 독자가 놓치면 안 되는 핵심 문장을 표시한다. ==문장== 이 <mark>문장</mark> 으로 그려진다.
+    // 안쪽은 다시 인라인으로 읽어 굵게·코드·링크도 함께 쓸 수 있게 한다.
+    // "a == b"처럼 == 뒤가 공백이면 강조로 읽지 않는다.
+    {
+      name: "highlight",
+      level: "inline",
+      start(src) {
+        const index = src.indexOf("==");
+        return index < 0 ? undefined : index;
+      },
+      tokenizer(src) {
+        const match = /^==(?=\S)([\s\S]*?\S)==/.exec(src);
+        if (!match) return undefined;
+        return { type: "highlight", raw: match[0], tokens: this.lexer.inlineTokens(match[1]) };
+      },
+      renderer(token) {
+        return `<mark>${this.parser.parseInline(token.tokens ?? [])}</mark>`;
+      },
+    },
+  ],
 });
 
 export function hasDiagrams(body: string): boolean {

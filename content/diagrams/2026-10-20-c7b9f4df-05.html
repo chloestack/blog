@@ -6,177 +6,58 @@
 <link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  body { background: #f8fafb; font-family: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; }
+  body { background: #f8fafb; }
   svg { display: block; width: 100%; height: auto; }
 </style>
 </head>
 <body>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 340" role="img" aria-labelledby="2026-10-20-c7b9f4df-05-dpo-selector-title 2026-10-20-c7b9f4df-05-dpo-selector-desc">
-  <title id="2026-10-20-c7b9f4df-05-dpo-selector-title">LLM 정렬 알고리즘 선택 흐름</title>
-  <desc id="2026-10-20-c7b9f4df-05-dpo-selector-desc">새 정렬 프로젝트에서 시작해 쌍 데이터 확보 여부, SFT 단계 유무, 노이즈 수준을 순서대로 묻고 KTO·ORPO·IPO·DPO 중 하나를 선택하는 의사결정 흐름도.</desc>
-
-  <defs>
-    <!-- 기본 화살표 -->
-    <marker id="2026-10-20-c7b9f4df-05-arr" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
-      <polygon points="0 0,8 3,0 6" fill="#3f545c"/>
-    </marker>
-    <!-- 강조 화살표 (accent) -->
-    <marker id="2026-10-20-c7b9f4df-05-arr-acc" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
-      <polygon points="0 0,8 3,0 6" fill="#0d5763"/>
-    </marker>
-  </defs>
-
-  <!-- 배경 -->
-  <rect width="960" height="340" fill="#f8fafb"/>
-
-  <!-- ============================================================
-       화살표를 노드보다 먼저 그림 (z-order)
-       노드 배치:
-         N (시작)    : cx=72,  cy=160, w=104, h=44  → x=20,  y=138
-         Q1 (마름모) : cx=228, cy=160  (다이아몬드 폭88 높44)
-         Q2 (마름모) : cx=420, cy=160
-         Q3 (마름모) : cx=616, cy=160
-         KTO         : cx=228, cy=260, w=96,  h=40
-         ORPO        : cx=420, cy=260, w=96,  h=40
-         IPO         : cx=616, cy=260, w=96,  h=40
-         DPO         : cx=808, cy=160, w=96,  h=44
-       ============================================================ -->
-
-  <!-- N → Q1  (N 우측 cx+52=124 → Q1 좌꼭짓점 cx-44=184) -->
-  <path d="M 124,160 L 184,160" stroke="#3f545c" stroke-width="1.2" fill="none" marker-end="url(#2026-10-20-c7b9f4df-05-arr)"/>
-
-  <!-- Q1 아니오 → KTO  (Q1 하꼭짓점 cy+22=182 → KTO 상단 y=240) -->
-  <path d="M 228,182 L 228,240" stroke="#3f545c" stroke-width="1.2" fill="none" marker-end="url(#2026-10-20-c7b9f4df-05-arr)"/>
-
-  <!-- Q1 예 → Q2  (Q1 우꼭짓점 cx+44=272 → Q2 좌꼭짓점 cx-44=376) -->
-  <path d="M 272,160 L 376,160" stroke="#0d5763" stroke-width="1.2" fill="none" marker-end="url(#2026-10-20-c7b9f4df-05-arr-acc)"/>
-
-  <!-- Q2 아니오 → ORPO  (Q2 하꼭짓점 cy+22=182 → ORPO 상단 y=240) -->
-  <path d="M 420,182 L 420,240" stroke="#3f545c" stroke-width="1.2" fill="none" marker-end="url(#2026-10-20-c7b9f4df-05-arr)"/>
-
-  <!-- Q2 예 → Q3  (Q2 우꼭짓점 cx+44=464 → Q3 좌꼭짓점 cx-44=572) -->
-  <path d="M 464,160 L 572,160" stroke="#0d5763" stroke-width="1.2" fill="none" marker-end="url(#2026-10-20-c7b9f4df-05-arr-acc)"/>
-
-  <!-- Q3 예 → IPO  (Q3 하꼭짓점 cy+22=182 → IPO 상단 y=240) -->
-  <path d="M 616,182 L 616,240" stroke="#3f545c" stroke-width="1.2" fill="none" marker-end="url(#2026-10-20-c7b9f4df-05-arr)"/>
-
-  <!-- Q3 아니오 → DPO  (Q3 우꼭짓점 cx+44=660 → DPO 좌측 x=760) -->
-  <path d="M 660,160 L 760,160" stroke="#0d5763" stroke-width="1.2" fill="none" marker-end="url(#2026-10-20-c7b9f4df-05-arr-acc)"/>
-
-  <!-- ============================================================
-       화살표 라벨 (마스크 포함)
-       ============================================================ -->
-
-  <!-- N→Q1 라벨 없음 -->
-
-  <!-- Q1 아니오 -->
-  <rect x="194" y="187" width="36" height="14" rx="2" fill="#f8fafb"/>
-  <text x="212" y="197" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR',sans-serif" text-anchor="middle" font-weight="500">아니오</text>
-
-  <!-- Q1 예 -->
-  <rect x="291" y="150" width="24" height="14" rx="2" fill="#f8fafb"/>
-  <text x="303" y="160" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR',sans-serif" text-anchor="middle" font-weight="500">예</text>
-
-  <!-- Q2 아니오 -->
-  <rect x="386" y="187" width="36" height="14" rx="2" fill="#f8fafb"/>
-  <text x="404" y="197" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR',sans-serif" text-anchor="middle" font-weight="500">아니오</text>
-
-  <!-- Q2 예 -->
-  <rect x="483" y="150" width="24" height="14" rx="2" fill="#f8fafb"/>
-  <text x="495" y="160" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR',sans-serif" text-anchor="middle" font-weight="500">예</text>
-
-  <!-- Q3 예 -->
-  <rect x="582" y="187" width="24" height="14" rx="2" fill="#f8fafb"/>
-  <text x="594" y="197" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR',sans-serif" text-anchor="middle" font-weight="500">예</text>
-
-  <!-- Q3 아니오 -->
-  <rect x="675" y="150" width="36" height="14" rx="2" fill="#f8fafb"/>
-  <text x="693" y="160" fill="#6c8188" font-size="10" font-family="'IBM Plex Sans KR',sans-serif" text-anchor="middle" font-weight="500">아니오</text>
-
-  <!-- ============================================================
-       노드 그리기
-       ============================================================ -->
-
-  <!-- N: 새 정렬 프로젝트 (input 스타일, 타원형 rx=20) -->
-  <rect x="20" y="138" width="104" height="44" rx="20" fill="rgba(58,84,143,0.08)" stroke="#3a548f" stroke-width="1"/>
-  <text x="72" y="156" fill="#122127" font-size="12" font-family="'IBM Plex Sans KR',sans-serif" font-weight="600" text-anchor="middle">새 정렬</text>
-  <text x="72" y="172" fill="#122127" font-size="12" font-family="'IBM Plex Sans KR',sans-serif" font-weight="600" text-anchor="middle">프로젝트</text>
-
-  <!-- Q1: 쌍 데이터 확보 가능한가 (다이아몬드) -->
-  <!-- 다이아몬드: cx=228, cy=160, 반폭=44, 반높=22 -->
-  <rect x="184" y="138" width="88" height="44" rx="0" fill="#f8fafb"/>
-  <polygon points="228,138 272,160 228,182 184,160" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
-  <text x="228" y="156" fill="#122127" font-size="10" font-family="'IBM Plex Sans KR',sans-serif" font-weight="600" text-anchor="middle">쌍 데이터</text>
-  <text x="228" y="169" fill="#122127" font-size="10" font-family="'IBM Plex Sans KR',sans-serif" font-weight="600" text-anchor="middle">확보 가능?</text>
-
-  <!-- Q2: SFT 단계 이미 있나 (다이아몬드) -->
-  <rect x="376" y="138" width="88" height="44" rx="0" fill="#f8fafb"/>
-  <polygon points="420,138 464,160 420,182 376,160" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
-  <text x="420" y="156" fill="#122127" font-size="10" font-family="'IBM Plex Sans KR',sans-serif" font-weight="600" text-anchor="middle">SFT 단계</text>
-  <text x="420" y="169" fill="#122127" font-size="10" font-family="'IBM Plex Sans KR',sans-serif" font-weight="600" text-anchor="middle">이미 있나?</text>
-
-  <!-- Q3: 노이즈 많은가 (다이아몬드) -->
-  <rect x="572" y="138" width="88" height="44" rx="0" fill="#f8fafb"/>
-  <polygon points="616,138 660,160 616,182 572,160" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
-  <text x="616" y="156" fill="#122127" font-size="10" font-family="'IBM Plex Sans KR',sans-serif" font-weight="600" text-anchor="middle">노이즈</text>
-  <text x="616" y="169" fill="#122127" font-size="10" font-family="'IBM Plex Sans KR',sans-serif" font-weight="600" text-anchor="middle">많은가?</text>
-
-  <!-- KTO (muted) cx=228 cy=260 -->
-  <rect x="180" y="240" width="96" height="40" rx="6" fill="#eef2f4"/>
-  <rect x="180" y="240" width="96" height="40" rx="6" fill="none" stroke="#c3d0d4" stroke-width="1"/>
-  <rect x="188" y="246" width="24" height="11" rx="2" fill="none" stroke="rgba(195,208,212,0.6)" stroke-width="0.8"/>
-  <text x="200" y="254" fill="#6c8188" font-size="7" font-family="'IBM Plex Mono',monospace" text-anchor="middle" letter-spacing="0.08em">ALT</text>
-  <text x="228" y="267" fill="#3f545c" font-size="12" font-family="'IBM Plex Sans KR',sans-serif" font-weight="600" text-anchor="middle">KTO</text>
-
-  <!-- ORPO (warn) cx=420 cy=260 -->
-  <rect x="372" y="240" width="96" height="40" rx="6" fill="#f5e8cc"/>
-  <rect x="372" y="240" width="96" height="40" rx="6" fill="none" stroke="#a96a08" stroke-width="1"/>
-  <rect x="380" y="246" width="32" height="11" rx="2" fill="none" stroke="rgba(169,106,8,0.4)" stroke-width="0.8"/>
-  <text x="396" y="254" fill="#a96a08" font-size="7" font-family="'IBM Plex Mono',monospace" text-anchor="middle" letter-spacing="0.08em">SFT 불요</text>
-  <text x="420" y="267" fill="#122127" font-size="12" font-family="'IBM Plex Sans KR',sans-serif" font-weight="600" text-anchor="middle">ORPO</text>
-
-  <!-- IPO (warn) cx=616 cy=260 -->
-  <rect x="568" y="240" width="96" height="40" rx="6" fill="#f5e8cc"/>
-  <rect x="568" y="240" width="96" height="40" rx="6" fill="none" stroke="#a96a08" stroke-width="1"/>
-  <rect x="576" y="246" width="32" height="11" rx="2" fill="none" stroke="rgba(169,106,8,0.4)" stroke-width="0.8"/>
-  <text x="592" y="254" fill="#a96a08" font-size="7" font-family="'IBM Plex Mono',monospace" text-anchor="middle" letter-spacing="0.08em">노이즈 강건</text>
-  <text x="616" y="267" fill="#122127" font-size="12" font-family="'IBM Plex Sans KR',sans-serif" font-weight="600" text-anchor="middle">IPO</text>
-
-  <!-- DPO (focal/ok) cx=808 cy=160 -->
-  <rect x="760" y="138" width="96" height="44" rx="6" fill="rgba(13,87,99,0.08)"/>
-  <rect x="760" y="138" width="96" height="44" rx="6" fill="none" stroke="#0d5763" stroke-width="1.5"/>
-  <rect x="768" y="144" width="28" height="11" rx="2" fill="none" stroke="rgba(13,87,99,0.4)" stroke-width="0.8"/>
-  <text x="782" y="152" fill="#0d5763" font-size="7" font-family="'IBM Plex Mono',monospace" text-anchor="middle" letter-spacing="0.08em">권장</text>
-  <text x="808" y="169" fill="#122127" font-size="14" font-family="'IBM Plex Sans KR',sans-serif" font-weight="600" text-anchor="middle">DPO</text>
-
-  <!-- ============================================================
-       범례 (하단 구분선 + 수평 항목)
-       ============================================================ -->
-  <line x1="20" y1="300" x2="940" y2="300" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
-
-  <!-- 범례 라벨 -->
-  <text x="20" y="316" fill="#6c8188" font-size="9" font-family="'IBM Plex Mono',monospace" letter-spacing="0.14em">LEGEND</text>
-
-  <!-- 권장 (DPO) -->
-  <rect x="88" y="306" width="28" height="16" rx="4" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
-  <text x="122" y="318" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR',sans-serif" font-weight="500">권장 (DPO)</text>
-
-  <!-- 조건부 권장 -->
-  <rect x="220" y="306" width="28" height="16" rx="4" fill="#f5e8cc" stroke="#a96a08" stroke-width="1"/>
-  <text x="254" y="318" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR',sans-serif" font-weight="500">조건부 권장</text>
-
-  <!-- 대안 -->
-  <rect x="368" y="306" width="28" height="16" rx="4" fill="#eef2f4" stroke="#c3d0d4" stroke-width="1"/>
-  <text x="402" y="318" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR',sans-serif" font-weight="500">대안 (KTO)</text>
-
-  <!-- 의사결정 -->
-  <polygon points="524,322 538,314 552,322 538,330" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
-  <text x="558" y="318" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR',sans-serif" font-weight="500">의사결정</text>
-
-  <!-- 시작 -->
-  <rect x="648" y="306" width="28" height="16" rx="8" fill="rgba(58,84,143,0.08)" stroke="#3a548f" stroke-width="1"/>
-  <text x="682" y="318" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR',sans-serif" font-weight="500">시작</text>
-
+<svg viewBox="0 0 720 644" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="2026-10-20-c7b9f4df-05-title 2026-10-20-c7b9f4df-05-desc">
+  <title id="2026-10-20-c7b9f4df-05-title">선호도 최적화 알고리즘 고르기</title>
+  <desc id="2026-10-20-c7b9f4df-05-desc">쌍 데이터가 있는지, SFT 체크포인트가 있는지, 레이블 노이즈가 많은지를 차례로 물어 KTO, ORPO, IPO, DPO 중 하나를 고른다.</desc>
+  <defs><marker id="2026-10-20-c7b9f4df-05-arr" markerWidth="9" markerHeight="7" refX="8.5" refY="3.5" orient="auto"><polygon points="0 0,9 3.5,0 7" fill="#3f545c"/></marker><marker id="2026-10-20-c7b9f4df-05-acc" markerWidth="9" markerHeight="7" refX="8.5" refY="3.5" orient="auto"><polygon points="0 0,9 3.5,0 7" fill="#0d5763"/></marker></defs>
+  <rect width="720" height="644" fill="#f8fafb"/>
+  <path d="M 210 72 L 210 114" fill="none" stroke="#3f545c" stroke-width="1.3" marker-end="url(#2026-10-20-c7b9f4df-05-arr)"/>
+  <path d="M 360.0 168.0 L 448 168.0" fill="none" stroke="#0d5763" stroke-width="1.3" marker-end="url(#2026-10-20-c7b9f4df-05-acc)"/>
+  <path d="M 210 220 L 210 262" fill="none" stroke="#3f545c" stroke-width="1.3" marker-end="url(#2026-10-20-c7b9f4df-05-arr)"/>
+  <path d="M 360.0 316.0 L 448 316.0" fill="none" stroke="#0d5763" stroke-width="1.3" marker-end="url(#2026-10-20-c7b9f4df-05-acc)"/>
+  <path d="M 210 368 L 210 410" fill="none" stroke="#3f545c" stroke-width="1.3" marker-end="url(#2026-10-20-c7b9f4df-05-arr)"/>
+  <path d="M 360.0 464.0 L 448 464.0" fill="none" stroke="#0d5763" stroke-width="1.3" marker-end="url(#2026-10-20-c7b9f4df-05-acc)"/>
+  <path d="M 210 516 L 210 558" fill="none" stroke="#3f545c" stroke-width="1.3" marker-end="url(#2026-10-20-c7b9f4df-05-arr)"/>
+  <rect x="394.0" y="147.0" width="22" height="17" rx="3" fill="#f8fafb"/>
+  <text x="405.0" y="159.0" text-anchor="middle" fill="#3f545c" font-family="'IBM Plex Sans KR',sans-serif" font-size="12" font-weight="600">예</text>
+  <rect x="221.0" y="235.0" width="46" height="17" rx="3" fill="#f8fafb"/>
+  <text x="244.0" y="247.0" text-anchor="middle" fill="#3f545c" font-family="'IBM Plex Sans KR',sans-serif" font-size="12" font-weight="600">아니오</text>
+  <rect x="394.0" y="295.0" width="22" height="17" rx="3" fill="#f8fafb"/>
+  <text x="405.0" y="307.0" text-anchor="middle" fill="#3f545c" font-family="'IBM Plex Sans KR',sans-serif" font-size="12" font-weight="600">예</text>
+  <rect x="221.0" y="383.0" width="46" height="17" rx="3" fill="#f8fafb"/>
+  <text x="244.0" y="395.0" text-anchor="middle" fill="#3f545c" font-family="'IBM Plex Sans KR',sans-serif" font-size="12" font-weight="600">아니오</text>
+  <rect x="394.0" y="443.0" width="22" height="17" rx="3" fill="#f8fafb"/>
+  <text x="405.0" y="455.0" text-anchor="middle" fill="#3f545c" font-family="'IBM Plex Sans KR',sans-serif" font-size="12" font-weight="600">예</text>
+  <rect x="221.0" y="531.0" width="46" height="17" rx="3" fill="#f8fafb"/>
+  <text x="244.0" y="543.0" text-anchor="middle" fill="#3f545c" font-family="'IBM Plex Sans KR',sans-serif" font-size="12" font-weight="600">아니오</text>
+  <rect x="100" y="28" width="220" height="44" rx="22.0" fill="#dbe2f2" stroke="#3a548f" stroke-width="1.2"/>
+  <text x="210.0" y="54.7" text-anchor="middle" fill="#122127" font-family="'IBM Plex Sans KR',sans-serif" font-size="13" font-weight="600">정렬 방법 고르기</text>
+  <polygon points="210,116.0 360.0,168.0 210,220.0 60.0,168.0" fill="#d4e7ea" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="210" y="163.5" text-anchor="middle" fill="#122127" font-family="'IBM Plex Sans KR',sans-serif" font-size="12.5" font-weight="600">chosen/rejected</text>
+  <text x="210" y="181.5" text-anchor="middle" fill="#122127" font-family="'IBM Plex Sans KR',sans-serif" font-size="12.5" font-weight="600">쌍이 없나?</text>
+  <rect x="450" y="136.0" width="240" height="64" rx="6" fill="#f5e8cc" stroke="#a96a08" stroke-width="1.2"/>
+  <text x="570.0" y="163.2" text-anchor="middle" fill="#122127" font-family="'IBM Plex Sans KR',sans-serif" font-size="13" font-weight="600">KTO</text>
+  <text x="570.0" y="182.2" text-anchor="middle" fill="#3f545c" font-family="'IBM Plex Sans KR',sans-serif" font-size="12" font-weight="400">좋음/나쁨 단일 레이블로 학습</text>
+  <polygon points="210,264.0 360.0,316.0 210,368.0 60.0,316.0" fill="#d4e7ea" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="210" y="311.5" text-anchor="middle" fill="#122127" font-family="'IBM Plex Sans KR',sans-serif" font-size="12.5" font-weight="600">SFT 체크포인트가</text>
+  <text x="210" y="329.5" text-anchor="middle" fill="#122127" font-family="'IBM Plex Sans KR',sans-serif" font-size="12.5" font-weight="600">없나?</text>
+  <rect x="450" y="284.0" width="240" height="64" rx="6" fill="#f5e8cc" stroke="#a96a08" stroke-width="1.2"/>
+  <text x="570.0" y="311.2" text-anchor="middle" fill="#122127" font-family="'IBM Plex Sans KR',sans-serif" font-size="13" font-weight="600">ORPO</text>
+  <text x="570.0" y="330.2" text-anchor="middle" fill="#3f545c" font-family="'IBM Plex Sans KR',sans-serif" font-size="12" font-weight="400">SFT와 정렬을 한 번에</text>
+  <polygon points="210,412.0 360.0,464.0 210,516.0 60.0,464.0" fill="#d4e7ea" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="210" y="459.5" text-anchor="middle" fill="#122127" font-family="'IBM Plex Sans KR',sans-serif" font-size="12.5" font-weight="600">선호 레이블에</text>
+  <text x="210" y="477.5" text-anchor="middle" fill="#122127" font-family="'IBM Plex Sans KR',sans-serif" font-size="12.5" font-weight="600">노이즈가 많나?</text>
+  <rect x="450" y="432.0" width="240" height="64" rx="6" fill="#f5e8cc" stroke="#a96a08" stroke-width="1.2"/>
+  <text x="570.0" y="459.2" text-anchor="middle" fill="#122127" font-family="'IBM Plex Sans KR',sans-serif" font-size="13" font-weight="600">IPO</text>
+  <text x="570.0" y="478.2" text-anchor="middle" fill="#3f545c" font-family="'IBM Plex Sans KR',sans-serif" font-size="12" font-weight="400">정규화로 과적합 완화</text>
+  <rect x="100" y="560" width="220" height="56" rx="6" fill="#d4e7ea" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="210.0" y="583.0" text-anchor="middle" fill="#122127" font-family="'IBM Plex Sans KR',sans-serif" font-size="14" font-weight="600">DPO</text>
+  <text x="210.0" y="603.0" text-anchor="middle" fill="#3f545c" font-family="'IBM Plex Sans KR',sans-serif" font-size="13" font-weight="400">기본 선택</text>
 </svg>
 </body>
 </html>

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,153 +11,46 @@
 </style>
 </head>
 <body>
-<svg viewBox="0 0 960 480" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="2026-10-20-c7b9f4df-01-dpo-flow-title 2026-10-20-c7b9f4df-01-dpo-flow-desc">
-  <title id="2026-10-20-c7b9f4df-01-dpo-flow-title">RLHF vs DPO Training Pipeline Comparison</title>
-  <desc id="2026-10-20-c7b9f4df-01-dpo-flow-desc">A flowchart comparing RLHF (two-stage: reward model training then PPO reinforcement learning) and DPO (single-stage direct preference optimization) side by side. Shows how DPO reaches the same alignment result without complex intermediate steps.</desc>
-
-  <defs>
-    <!-- 기본 화살표 -->
-    <marker id="2026-10-20-c7b9f4df-01-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
-      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
-    </marker>
-    <!-- 강조 화살표 (accent) -->
-    <marker id="2026-10-20-c7b9f4df-01-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
-      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
-    </marker>
-    <!-- 분기선 화살표 -->
-    <marker id="2026-10-20-c7b9f4df-01-arrow-muted" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
-      <polygon points="0 0, 8 3, 0 6" fill="#6c8188"/>
-    </marker>
-  </defs>
-
-  <!-- 배경 -->
-  <rect width="960" height="480" fill="#f8fafb"/>
-
-  <!-- ── 구분선: 위(RLHF) / 아래(DPO) ────────────────────────────── -->
-  <line x1="32" y1="240" x2="928" y2="240" stroke="rgba(18,33,39,0.10)" stroke-width="1" stroke-dasharray="4,4"/>
-
-  <!-- 섹션 레이블 -->
-  <text x="40" y="56" font-family="'IBM Plex Mono', monospace" font-size="10" font-weight="500" fill="#6c8188" letter-spacing="0.14em">RLHF</text>
-  <text x="40" y="296" font-family="'IBM Plex Mono', monospace" font-size="10" font-weight="500" fill="#0d5763" letter-spacing="0.14em">DPO</text>
-
-  <!-- ════════════════════════════════════════════
-       RLHF 레인 (위) — y 중심선 128
-  ════════════════════════════════════════════ -->
-
-  <!-- [선호도 데이터] -->
-  <rect x="40" y="96" width="140" height="64" rx="6" fill="#f8fafb"/>
-  <rect x="40" y="96" width="140" height="64" rx="6" fill="rgba(58,84,143,0.07)" stroke="#3a548f" stroke-width="1"/>
-  <rect x="48" y="104" width="32" height="12" rx="2" fill="transparent" stroke="rgba(58,84,143,0.40)" stroke-width="0.8"/>
-  <text x="64" y="113" font-family="'IBM Plex Mono', monospace" font-size="10" font-weight="500" fill="rgba(58,84,143,0.8)" text-anchor="middle" letter-spacing="0.08em">DATA</text>
-  <text x="110" y="136" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" font-size="14" font-weight="600" fill="#122127" text-anchor="middle">Pref. Data</text>
-
-  <!-- [SFT 모델] — 위 -->
-  <rect x="40" y="176" width="140" height="48" rx="6" fill="#f8fafb"/>
-  <rect x="40" y="176" width="140" height="48" rx="6" fill="rgba(195,208,212,0.30)" stroke="#c3d0d4" stroke-width="1"/>
-  <rect x="48" y="184" width="28" height="12" rx="2" fill="transparent" stroke="rgba(99,129,136,0.40)" stroke-width="0.8"/>
-  <text x="62" y="193" font-family="'IBM Plex Mono', monospace" font-size="10" font-weight="500" fill="#6c8188" text-anchor="middle" letter-spacing="0.08em">SFT</text>
-  <text x="110" y="204" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" font-size="14" font-weight="600" fill="#3f545c" text-anchor="middle">SFT Model</text>
-
-  <!-- 화살표: 선호도 데이터 → 보상 모델 -->
-  <path d="M180,128 L244,128" stroke="#3f545c" stroke-width="1" fill="none" marker-end="url(#2026-10-20-c7b9f4df-01-arrow)"/>
-
-  <!-- [보상 모델 학습] -->
-  <rect x="244" y="96" width="160" height="64" rx="6" fill="#f8fafb"/>
-  <rect x="244" y="96" width="160" height="64" rx="6" fill="rgba(249,232,204,0.5)" stroke="#a96a08" stroke-width="1"/>
-  <rect x="252" y="104" width="28" height="12" rx="2" fill="transparent" stroke="rgba(169,106,8,0.40)" stroke-width="0.8"/>
-  <text x="266" y="113" font-family="'IBM Plex Mono', monospace" font-size="10" font-weight="500" fill="rgba(169,106,8,0.8)" text-anchor="middle" letter-spacing="0.08em">RM</text>
-  <text x="324" y="130" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" font-size="14" font-weight="600" fill="#122127" text-anchor="middle">Reward Model</text>
-  <text x="324" y="148" font-family="'IBM Plex Mono', monospace" font-size="10" fill="#6c8188" text-anchor="middle">RLHF Stage 2</text>
-
-  <!-- 화살표: 보상 모델 → PPO -->
-  <path d="M404,128 L468,128" stroke="#3f545c" stroke-width="1" fill="none" marker-end="url(#2026-10-20-c7b9f4df-01-arrow)"/>
-
-  <!-- 화살표: SFT(위) → PPO (꺾임: 아래로 → 오른쪽) -->
-  <path d="M180,200 Q230,200 230,172 Q230,144 468,144" stroke="#6c8188" stroke-width="1" fill="none" stroke-dasharray="1,0" marker-end="url(#2026-10-20-c7b9f4df-01-arrow-muted)"/>
-
-  <!-- [PPO 강화학습] -->
-  <rect x="468" y="96" width="160" height="64" rx="6" fill="#f8fafb"/>
-  <rect x="468" y="96" width="160" height="64" rx="6" fill="rgba(241,217,212,0.5)" stroke="#94382b" stroke-width="1"/>
-  <rect x="476" y="104" width="28" height="12" rx="2" fill="transparent" stroke="rgba(148,56,43,0.40)" stroke-width="0.8"/>
-  <text x="490" y="113" font-family="'IBM Plex Mono', monospace" font-size="10" font-weight="500" fill="rgba(148,56,43,0.8)" text-anchor="middle" letter-spacing="0.08em">PPO</text>
-  <text x="548" y="130" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" font-size="14" font-weight="600" fill="#122127" text-anchor="middle">PPO RL</text>
-  <text x="548" y="148" font-family="'IBM Plex Mono', monospace" font-size="10" fill="#6c8188" text-anchor="middle">RLHF Stage 3</text>
-
-  <!-- 화살표: PPO → 정렬 모델(RLHF) -->
-  <path d="M628,128 L692,128" stroke="#3f545c" stroke-width="1" fill="none" marker-end="url(#2026-10-20-c7b9f4df-01-arrow)"/>
-
-  <!-- [정렬 모델 (RLHF 결과)] -->
-  <rect x="692" y="96" width="148" height="64" rx="6" fill="#f8fafb"/>
-  <rect x="692" y="96" width="148" height="64" rx="6" fill="rgba(212,231,234,0.5)" stroke="#0d5763" stroke-width="1"/>
-  <rect x="700" y="104" width="36" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
-  <text x="718" y="113" font-family="'IBM Plex Mono', monospace" font-size="10" font-weight="500" fill="rgba(13,87,99,0.8)" text-anchor="middle" letter-spacing="0.08em">OUTPUT</text>
-  <text x="766" y="130" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" font-size="14" font-weight="600" fill="#122127" text-anchor="middle">Aligned Model</text>
-  <text x="766" y="148" font-family="'IBM Plex Mono', monospace" font-size="10" fill="#6c8188" text-anchor="middle">RLHF</text>
-
-  <!-- ════════════════════════════════════════════
-       DPO 레인 (아래) — y 중심선 348
-  ════════════════════════════════════════════ -->
-
-  <!-- [선호도 데이터] (DPO) -->
-  <rect x="40" y="316" width="140" height="64" rx="6" fill="#f8fafb"/>
-  <rect x="40" y="316" width="140" height="64" rx="6" fill="rgba(58,84,143,0.07)" stroke="#3a548f" stroke-width="1"/>
-  <rect x="48" y="324" width="32" height="12" rx="2" fill="transparent" stroke="rgba(58,84,143,0.40)" stroke-width="0.8"/>
-  <text x="64" y="333" font-family="'IBM Plex Mono', monospace" font-size="10" font-weight="500" fill="rgba(58,84,143,0.8)" text-anchor="middle" letter-spacing="0.08em">DATA</text>
-  <text x="110" y="356" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" font-size="14" font-weight="600" fill="#122127" text-anchor="middle">Pref. Data</text>
-
-  <!-- [SFT 모델] (DPO) -->
-  <rect x="40" y="396" width="140" height="48" rx="6" fill="#f8fafb"/>
-  <rect x="40" y="396" width="140" height="48" rx="6" fill="rgba(195,208,212,0.30)" stroke="#c3d0d4" stroke-width="1"/>
-  <rect x="48" y="404" width="28" height="12" rx="2" fill="transparent" stroke="rgba(99,129,136,0.40)" stroke-width="0.8"/>
-  <text x="62" y="413" font-family="'IBM Plex Mono', monospace" font-size="10" font-weight="500" fill="#6c8188" text-anchor="middle" letter-spacing="0.08em">SFT</text>
-  <text x="110" y="424" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" font-size="14" font-weight="600" fill="#3f545c" text-anchor="middle">SFT Model</text>
-
-  <!-- 화살표: 선호도 데이터(DPO) → DPO -->
-  <path d="M180,348 L468,348" stroke="#0d5763" stroke-width="1.2" fill="none" marker-end="url(#2026-10-20-c7b9f4df-01-arrow-accent)"/>
-
-  <!-- 화살표: SFT(아래) → DPO (꺾임) -->
-  <path d="M180,420 Q330,420 330,392 Q330,364 468,364" stroke="#6c8188" stroke-width="1" fill="none" marker-end="url(#2026-10-20-c7b9f4df-01-arrow-muted)"/>
-
-  <!-- [DPO 직접 학습] — focal 노드 -->
-  <rect x="468" y="316" width="160" height="64" rx="6" fill="#f8fafb"/>
-  <rect x="468" y="316" width="160" height="64" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.5"/>
-  <rect x="476" y="324" width="28" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.45)" stroke-width="0.8"/>
-  <text x="490" y="333" font-family="'IBM Plex Mono', monospace" font-size="10" font-weight="500" fill="rgba(13,87,99,0.9)" text-anchor="middle" letter-spacing="0.08em">DPO</text>
-  <text x="548" y="350" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" font-size="14" font-weight="600" fill="#122127" text-anchor="middle">DPO Direct Train</text>
-  <text x="548" y="368" font-family="'IBM Plex Mono', monospace" font-size="10" fill="#0d5763" text-anchor="middle">Single Stage</text>
-
-  <!-- 화살표: DPO → 정렬 모델(DPO) -->
-  <path d="M628,348 L692,348" stroke="#0d5763" stroke-width="1.2" fill="none" marker-end="url(#2026-10-20-c7b9f4df-01-arrow-accent)"/>
-
-  <!-- [정렬 모델 (DPO 결과)] -->
-  <rect x="692" y="316" width="148" height="64" rx="6" fill="#f8fafb"/>
-  <rect x="692" y="316" width="148" height="64" rx="6" fill="rgba(212,231,234,0.5)" stroke="#0d5763" stroke-width="1.5"/>
-  <rect x="700" y="324" width="36" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
-  <text x="718" y="333" font-family="'IBM Plex Mono', monospace" font-size="10" font-weight="500" fill="rgba(13,87,99,0.8)" text-anchor="middle" letter-spacing="0.08em">OUTPUT</text>
-  <text x="766" y="350" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" font-size="14" font-weight="600" fill="#122127" text-anchor="middle">Aligned Model</text>
-  <text x="766" y="368" font-family="'IBM Plex Mono', monospace" font-size="10" fill="#0d5763" text-anchor="middle">DPO</text>
-
-  <!-- ── 범례 ────────────────────────────────────── -->
-  <line x1="32" y1="452" x2="928" y2="452" stroke="rgba(18,33,39,0.10)" stroke-width="0.8"/>
-
-  <!-- 범례 항목들 -->
-  <rect x="40" y="460" width="12" height="12" rx="2" fill="rgba(58,84,143,0.07)" stroke="#3a548f" stroke-width="1"/>
-  <text x="58" y="471" font-family="'IBM Plex Mono', monospace" font-size="10" fill="#3f545c" letter-spacing="0.06em">Pref. Data</text>
-
-  <rect x="192" y="460" width="12" height="12" rx="2" fill="rgba(195,208,212,0.30)" stroke="#c3d0d4" stroke-width="1"/>
-  <text x="210" y="471" font-family="'IBM Plex Mono', monospace" font-size="10" fill="#3f545c" letter-spacing="0.06em">SFT Model</text>
-
-  <rect x="312" y="460" width="12" height="12" rx="2" fill="rgba(249,232,204,0.5)" stroke="#a96a08" stroke-width="1"/>
-  <text x="330" y="471" font-family="'IBM Plex Mono', monospace" font-size="10" fill="#3f545c" letter-spacing="0.06em">Interm. Stage</text>
-
-  <rect x="432" y="460" width="12" height="12" rx="2" fill="rgba(241,217,212,0.5)" stroke="#94382b" stroke-width="1"/>
-  <text x="450" y="471" font-family="'IBM Plex Mono', monospace" font-size="10" fill="#3f545c" letter-spacing="0.06em">Complex Stage</text>
-
-  <rect x="548" y="460" width="12" height="12" rx="2" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.5"/>
-  <text x="566" y="471" font-family="'IBM Plex Mono', monospace" font-size="10" fill="#3f545c" letter-spacing="0.06em">DPO (core)</text>
-
-  <rect x="672" y="460" width="12" height="12" rx="2" fill="rgba(212,231,234,0.5)" stroke="#0d5763" stroke-width="1"/>
-  <text x="690" y="471" font-family="'IBM Plex Mono', monospace" font-size="10" fill="#3f545c" letter-spacing="0.06em">Aligned Model</text>
+<svg viewBox="0 0 960 470" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="2026-10-20-c7b9f4df-01-en-title 2026-10-20-c7b9f4df-01-en-desc">
+  <title id="2026-10-20-c7b9f4df-01-en-title">RLHF vs DPO training pipeline</title>
+  <desc id="2026-10-20-c7b9f4df-01-en-desc">RLHF goes from the SFT model through reward model training and PPO to the aligned model; DPO replaces those two stages with one stage that learns directly from preference data.</desc>
+  <defs><marker id="2026-10-20-c7b9f4df-01-en-arr" markerWidth="9" markerHeight="7" refX="8.5" refY="3.5" orient="auto"><polygon points="0 0,9 3.5,0 7" fill="#3f545c"/></marker><marker id="2026-10-20-c7b9f4df-01-en-acc" markerWidth="9" markerHeight="7" refX="8.5" refY="3.5" orient="auto"><polygon points="0 0,9 3.5,0 7" fill="#0d5763"/></marker></defs>
+  <rect width="960" height="470" fill="#f8fafb"/>
+  <path d="M 210 94.0 L 268 94.0" fill="none" stroke="#3f545c" stroke-width="1.3" marker-end="url(#2026-10-20-c7b9f4df-01-en-arr)"/>
+  <path d="M 450 94.0 L 508 94.0" fill="none" stroke="#3f545c" stroke-width="1.3" marker-end="url(#2026-10-20-c7b9f4df-01-en-arr)"/>
+  <path d="M 690 94.0 L 748 94.0" fill="none" stroke="#3f545c" stroke-width="1.3" marker-end="url(#2026-10-20-c7b9f4df-01-en-arr)"/>
+  <path d="M 360.0 174 L 360.0 126" fill="none" stroke="#3f545c" stroke-width="1.3" marker-end="url(#2026-10-20-c7b9f4df-01-en-arr)"/>
+  <path d="M 210 320.0 L 268 320.0" fill="none" stroke="#0d5763" stroke-width="1.3" marker-end="url(#2026-10-20-c7b9f4df-01-en-acc)"/>
+  <path d="M 690 320.0 L 748 320.0" fill="none" stroke="#0d5763" stroke-width="1.3" marker-end="url(#2026-10-20-c7b9f4df-01-en-acc)"/>
+  <path d="M 480.0 400 L 480.0 352" fill="none" stroke="#0d5763" stroke-width="1.3" marker-end="url(#2026-10-20-c7b9f4df-01-en-acc)"/>
+  <text x="30" y="44" text-anchor="start" fill="#6c8188" font-family="'IBM Plex Mono',monospace" font-size="11" font-weight="600" letter-spacing="0.12em">RLHF · 3 TRAINING STAGES</text>
+  <text x="510" y="150" text-anchor="start" fill="#6c8188" font-family="'IBM Plex Sans KR',sans-serif" font-size="11.5" font-weight="400">Policy, reference, reward, value:</text>
+  <text x="510" y="168" text-anchor="start" fill="#6c8188" font-family="'IBM Plex Sans KR',sans-serif" font-size="11.5" font-weight="400">four models in GPU memory at once</text>
+  <line x1="30" y1="246" x2="930" y2="246" stroke="#c3d0d4" stroke-width="1" stroke-dasharray="4 4"/>
+  <text x="30" y="270" text-anchor="start" fill="#6c8188" font-family="'IBM Plex Mono',monospace" font-size="11" font-weight="600" letter-spacing="0.12em">DPO · 1 TRAINING STAGE</text>
+  <text x="590.0" y="420" text-anchor="start" fill="#6c8188" font-family="'IBM Plex Sans KR',sans-serif" font-size="11.5" font-weight="400">Reference log-probs come from</text>
+  <text x="590.0" y="438" text-anchor="start" fill="#6c8188" font-family="'IBM Plex Sans KR',sans-serif" font-size="11.5" font-weight="400">the same model, adapter off</text>
+  <rect x="30" y="64" width="180" height="60" rx="6" fill="#eef2f4" stroke="#6c8188" stroke-width="1.2"/>
+  <text x="120.0" y="98.7" text-anchor="middle" fill="#122127" font-family="'IBM Plex Sans KR',sans-serif" font-size="13" font-weight="600">SFT model</text>
+  <rect x="270" y="64" width="180" height="60" rx="6" fill="#f5e8cc" stroke="#a96a08" stroke-width="1.2"/>
+  <text x="360.0" y="89.2" text-anchor="middle" fill="#122127" font-family="'IBM Plex Sans KR',sans-serif" font-size="13" font-weight="600">Reward model</text>
+  <text x="360.0" y="108.2" text-anchor="middle" fill="#3f545c" font-family="'IBM Plex Sans KR',sans-serif" font-size="12" font-weight="400">learns a scorer</text>
+  <rect x="510" y="64" width="180" height="60" rx="6" fill="#f1d9d4" stroke="#94382b" stroke-width="1.2"/>
+  <text x="600.0" y="89.2" text-anchor="middle" fill="#122127" font-family="'IBM Plex Sans KR',sans-serif" font-size="13" font-weight="600">PPO</text>
+  <text x="600.0" y="108.2" text-anchor="middle" fill="#3f545c" font-family="'IBM Plex Sans KR',sans-serif" font-size="12" font-weight="400">generate → score → update</text>
+  <rect x="750" y="64" width="180" height="60" rx="6" fill="#d6e9de" stroke="#286d50" stroke-width="1.2"/>
+  <text x="840.0" y="98.7" text-anchor="middle" fill="#122127" font-family="'IBM Plex Sans KR',sans-serif" font-size="13" font-weight="600">Aligned model</text>
+  <rect x="270" y="174" width="180" height="48" rx="6" fill="#dbe2f2" stroke="#3a548f" stroke-width="1.2"/>
+  <text x="360.0" y="202.5" text-anchor="middle" fill="#122127" font-family="'IBM Plex Sans KR',sans-serif" font-size="12.5" font-weight="600">Preference data</text>
+  <rect x="30" y="290" width="180" height="60" rx="6" fill="#eef2f4" stroke="#6c8188" stroke-width="1.2"/>
+  <text x="120.0" y="324.7" text-anchor="middle" fill="#122127" font-family="'IBM Plex Sans KR',sans-serif" font-size="13" font-weight="600">SFT model</text>
+  <rect x="270" y="290" width="420" height="60" rx="6" fill="#d4e7ea" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="480.0" y="315.2" text-anchor="middle" fill="#122127" font-family="'IBM Plex Sans KR',sans-serif" font-size="13" font-weight="600">DPO training</text>
+  <text x="480.0" y="334.2" text-anchor="middle" fill="#3f545c" font-family="'IBM Plex Sans KR',sans-serif" font-size="12" font-weight="400">widen the gap between chosen and rejected</text>
+  <rect x="750" y="290" width="180" height="60" rx="6" fill="#d6e9de" stroke="#286d50" stroke-width="1.2"/>
+  <text x="840.0" y="324.7" text-anchor="middle" fill="#122127" font-family="'IBM Plex Sans KR',sans-serif" font-size="13" font-weight="600">Aligned model</text>
+  <rect x="390.0" y="400" width="180" height="48" rx="6" fill="#dbe2f2" stroke="#3a548f" stroke-width="1.2"/>
+  <text x="480.0" y="428.5" text-anchor="middle" fill="#122127" font-family="'IBM Plex Sans KR',sans-serif" font-size="12.5" font-weight="600">Preference data</text>
 </svg>
 </body>
 </html>

@@ -10,6 +10,7 @@
   --plum: #7b3f6b; --plum-soft: #efddea;
   --olive: #5c6b22; --olive-soft: #e4eacb;
   --rose: #a03a5b; --rose-soft: #f3d9e1;
+  --highlight: #f4e3a1;
   --sans: "IBM Plex Sans KR", "Apple SD Gothic Neo", system-ui, sans-serif;
   --head: "Gothic A1", "Apple SD Gothic Neo", system-ui, sans-serif;
   --mono: "IBM Plex Mono", ui-monospace, monospace;
@@ -161,6 +162,9 @@ footer { display: grid; gap: 2.2rem; padding: 2.6rem 0 3rem; border-top: 1px sol
 .prose li::marker { color: var(--ink-3); }
 .prose a { border-bottom: 1px solid var(--accent); color: var(--accent); }
 .prose strong { color: var(--ink); font-weight: 600; }
+/* 형광펜으로 그은 듯한 강조(==문장==). 글자 아래쪽 60%에 노란 형광색을 깐다.
+   청록 계열(--accent-soft)은 종이색과 너무 가까워 보이지 않았다. */
+.prose mark { padding: 0 .1em; background: linear-gradient(transparent 40%, var(--highlight) 40%); color: var(--ink); font-weight: 500; }
 .prose hr { margin: 2rem 0; border: 0; border-top: 1px solid var(--line); }
 .prose blockquote { margin: 1.15rem 0; padding: .3rem 0 .3rem 1.1rem; border-left: 3px solid var(--accent); color: var(--ink); font-size: 1.07rem; }
 .prose blockquote p { margin: .35rem 0; }
