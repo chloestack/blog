@@ -3,86 +3,94 @@ title: "Fine-Tuning LLM Alignment with DPO — Preference Learning Without RLHF"
 date: "2026-10-20 11:17"
 category: "AI"
 tags: ["DPO", "RLHF", "LLM alignment", "TRL", "LoRA"]
-excerpt: "A practical guide to DPO: how the loss is derived, implementing it with TRL DPOTrainer, tuning beta, filtering by margin, and reading training metrics."
+excerpt: "A practical guide to DPO for developers new to LLM training: how it works, how to run it with TRL DPOTrainer, and how to read the training metrics."
 koSlug: "2026-10-20-DPO로-LLM-정렬-파인튜닝하기-—-RLHF-없이-선호도-학습-구현"
 ---
 
 ## Table of Contents
 
 1. Overview
-2. Where Does the DPO Loss Come From
-3. Implementing with TRL DPOTrainer and Reading Training Metrics
+2. What DPO Actually Learns
+3. Implementing with TRL DPOTrainer and Reading the Metrics
 4. Choosing Between RLHF, IPO, KTO, and ORPO
-5. Diagnosing DPO Training Failures and Optimizing Memory
+5. What to Check When DPO Training Fails
 6. Closing Thoughts
 
 ---
 
 ## Overview
 
-After reading this post you will understand where the DPO loss comes from, be able to run training with TRL `DPOTrainer`, and judge from training metrics alone whether alignment is working. DPO (Direct Preference Optimization) aligns an LLM using only preference pairs of the form "A is better than B," with no reward model and no reinforcement learning. At the end, I cover how to decide between RLHF, IPO, KTO, and ORPO.
+After reading this post you'll understand what DPO does, be able to run training yourself with the TRL library, and know how to judge the results from the training metrics. DPO (Direct Preference Optimization) is a training method that improves LLM response quality using only pairwise comparison data — "this answer is better than that one." This is written for developers who have used LLMs through an API but haven't trained one themselves.
 
-### What Makes RLHF Heavy
+### Why You Need to Teach "Better Answers" Separately
 
-A model that has only gone through pre-training and SFT (supervised fine-tuning) has never learned what "a better response" means. The standard way to close that gap — alignment — has long been RLHF. RLHF runs **reward model training** followed by **PPO reinforcement learning** on top of the SFT model. During the PPO phase you keep four models on GPU simultaneously — policy, reference, reward, and value — and loop through generating responses, scoring them, and updating. Get the clipping or KL coefficient wrong and you get reward hacking: the reward goes up while the responses fall apart, which multiplies the number of experiments you need to run.
+LLMs are built in two stages. First, the model is trained to predict the next word on internet-scale text (pre-training). Then it's trained again on question–answer pairs to learn how to respond to prompts. That second stage is called SFT (supervised fine-tuning).
+
+A model that has been through SFT can answer questions, but it doesn't know which answer is better when multiple valid ones exist. For example, when asked "how do I remove duplicates from a Python list?", both answers below are correct, but people generally prefer A.
+
+| | Answer | Human preference |
+|---|---|---|
+| A (chosen) | Using `dict.fromkeys()` removes duplicates while preserving order. | Preferred |
+| B (rejected) | You can loop through with a for loop. | Not preferred |
+
+The process of tuning a model to match human preferences like this is called **alignment**.
+
+### Why the Existing Approach, RLHF, Is So Heavy
+
+RLHF was the standard for alignment. It first trains a separate **reward model** that scores responses using comparison data like the above, then runs a **reinforcement learning (PPO)** loop where the model generates a response, the reward model scores it, and the model is updated to increase that score. This requires four model copies on the GPU simultaneously, and a slightly wrong configuration can cause the score to rise while the actual responses become nonsensical.
 
 ```diagram
 en/2026-10-20-c7b9f4df-01
 ```
 
-==DPO collapses the two RLHF stages — reward model training and PPO — into a single step that trains directly on preference data.== The idea comes from Rafailov et al.'s 2023 paper ["Direct Preference Optimization: Your Language Model is Secretly a Reward Model"](https://arxiv.org/abs/2305.18290).
+==DPO eliminates the reward model and reinforcement learning, reducing the whole thing to a single training step directly on the comparison data.== It comes from the 2023 paper ["Direct Preference Optimization: Your Language Model is Secretly a Reward Model"](https://arxiv.org/abs/2305.18290) by Rafailov et al.
 
 ---
 
-## Where Does the DPO Loss Come From
+## What DPO Actually Learns
 
-The short answer: DPO solves the same objective as RLHF but rewrites the reward as a log probability ratio between the model being trained and the reference model, which eliminates the need for a separate reward model. Three lines of math make this clear.
+In one sentence, ==DPO increases the probability of the preferred answer and decreases the probability of the rejected answer, while keeping the model from drifting too far from what it was before training.==
 
-### From the RLHF Objective to the DPO Loss
+### Intuition: Movement Is Measured Relative to the Original Model
 
-RLHF maximizes expected reward while staying close to the reference policy π_ref (the SFT model) via a KL penalty.
+When a language model generates a response, it computes the probability of each token. For every comparison pair, DPO looks at "the probability of A" and "the probability of B" and nudges the model so A's probability grows.
+
+The anchor for this is the **reference model** — a frozen copy of the SFT model taken before training starts. DPO compares not absolute probabilities, but "how much did this go up relative to the reference model?" That means it barely touches answers the model was already getting right, and makes larger updates on pairs the original model was getting wrong. Having a reference point also reduces the risk of losing pre-existing language ability while fitting the preference data.
+
+| Term | Meaning |
+|---|---|
+| Policy model (π_θ) | The model currently being trained |
+| Reference model (π_ref) | A frozen copy of the SFT model before training. The comparison baseline. |
+| β (beta) | Controls how tightly the model is held to the reference. Higher = smaller moves, lower = larger moves. |
+| chosen / rejected | The preferred / rejected response in a comparison pair |
+
+> Start with TRL's default β=0.1. Increase it if responses start sounding unnatural; decrease it if alignment effects are too weak.
+
+### The Math (You Can Skip This)
+
+The DPO loss is a direct translation of that intuition into a formula. x is the prompt, y_w is chosen, y_l is rejected.
 
 ```
-max_π  E[r(x, y)]  −  β · KL[π(·|x) ∥ π_ref(·|x)]
+L_DPO  =  −log σ( β·log(π_θ(y_w|x) / π_ref(y_w|x))  −  β·log(π_θ(y_l|x) / π_ref(y_l|x)) )
 ```
 
-This problem has a closed-form optimal policy, and solving that expression backwards for the reward r lets you write the reward as a log ratio of the two policies.
-
-```
-r(x, y)  =  β · log(π*(y|x) / π_ref(y|x))  +  β · log Z(x)
-```
-
-Plug this into the **Bradley-Terry model** P(y_w ≻ y_l) = σ(r(x, y_w) − r(x, y_l)), which treats preference probability as the sigmoid of the reward gap, and the Z(x) terms — which depend only on prompt x — cancel in the subtraction. What remains is the DPO loss. y_w is the preferred response (chosen) and y_l is the dispreferred response (rejected).
-
-```
-L_DPO  =  −E[ log σ( β log(π_θ(y_w|x)/π_ref(y_w|x))  −  β log(π_θ(y_l|x)/π_ref(y_l|x)) ) ]
-```
-
-### What the Loss Actually Does
-
-==DPO does not simply push the probability of the preferred response up; it trains the model so that the probability increase relative to the reference model is larger for the preferred response than for the dispreferred one.== Responses the reference model already handles well see little change in their ratio, so they move less. The signal is strongest where the reference model was wrong.
-
-β is the KL coefficient multiplied into that ratio. Higher β keeps the model closer to the reference; lower β lets it move further toward the preference signal.
-
-> Start with the default β=0.1 in TRL `DPOConfig`. If language quality degrades, raise it. If alignment is too weak, lower it.
-
-The Bradley-Terry model handles poorly cases where responses trade off on multiple dimensions (accurate but verbose vs. concise but inaccurate). IPO and KTO address this limitation; I compare them in section 4.
+The first term inside the parentheses is "how much better does the chosen response come out compared to the reference model?", and the second is "how much better does the rejected response come out?" The loss decreases when the first term is larger than the second. The key insight of the paper is showing that RLHF's reward scores can be replaced with these probability ratios — which is why you don't need a separate reward model. Here σ (sigmoid) converts the score difference into a probability between 0 and 1 of "choosing A", a formulation known as the Bradley-Terry model.
 
 ---
 
-## Implementing with TRL DPOTrainer and Reading Training Metrics
+## Implementing with TRL DPOTrainer and Reading the Metrics
 
-The implementation itself is short. What separates good results from bad is **data margin** and **knowing how to read training metrics**, not the code.
+The code is short. What determines outcomes is **what comparison pairs you feed in** and **how you read the training metrics**.
 
-### Data: Drop Pairs With Small Quality Gaps
+### Data: Keep Only Pairs with a Clear Difference
 
-DPO data has three columns: `prompt`, `chosen`, `rejected`. Pairs are produced either by human comparison ([HH-RLHF](https://huggingface.co/datasets/Anthropic/hh-rlhf)) or by scoring with a strong model such as GPT-4 ([UltraFeedback](https://huggingface.co/datasets/openbmb/UltraFeedback)). AI judges are cheap but transfer the judge model's biases directly.
+DPO data is a table with three columns: `prompt`, `chosen`, and `rejected`. Pairs are either labeled by humans ([HH-RLHF](https://huggingface.co/datasets/Anthropic/hh-rlhf)) or generated by having a stronger model score outputs ([UltraFeedback](https://huggingface.co/datasets/openbmb/UltraFeedback)). Model-scored labels are cheap but inherit the scoring model's preferences.
 
-==Filter out pairs where the score gap is small before training.== When two responses are nearly equal in quality, the preference probability in the Bradley-Terry formulation stays near 0.5, giving the model almost no directional signal. There is no fixed threshold; try a few values, train separate runs, and compare on the same held-out eval set. Also check that prompt types are not skewed toward one category.
+==Remove pairs where the quality difference between the two responses is small before training.== If the two responses are nearly the same, the model can't learn a direction — it becomes noise rather than signal. There's no universal threshold for score difference; try a few values, train on each, and compare on the same evaluation question set.
 
 ### Core Implementation
 
-This assumes you have an SFT checkpoint. `trl-lib/ultrafeedback_binarized` is a public dataset that converts UltraFeedback into the paired format.
+Start from a model that has already been through SFT. The code below trains only **LoRA** — small additional weights, not the full model. It attaches thin correction layers to certain layers and trains only those, leaving the original weights untouched, which makes it feasible to run on consumer GPUs.
 
 ```python
 from transformers import AutoModelForCausalLM, AutoTokenizer
@@ -92,13 +100,13 @@ from peft import LoraConfig, get_peft_model
 
 model_name = "meta-llama/Llama-3.2-3B-Instruct"
 
-# Train only a small LoRA adapter. Practically required for large models.
+# Train only a small adapter with LoRA. Practically required for larger models.
 lora_cfg = LoraConfig(r=16, lora_alpha=32, target_modules=["q_proj", "v_proj"])
 model = AutoModelForCausalLM.from_pretrained(model_name, torch_dtype="auto")
 model = get_peft_model(model, lora_cfg)
 
 # When passing a PEFT model, ref_model=None is fine.
-# TRL computes reference probabilities with the adapter disabled, so no second copy of the model is loaded.
+# TRL computes reference probabilities with the adapter disabled, so no second model copy is loaded.
 ref_model = None
 tokenizer = AutoTokenizer.from_pretrained(model_name)
 tokenizer.pad_token = tokenizer.eos_token
@@ -126,70 +134,72 @@ trainer = DPOTrainer(
     processing_class=tokenizer,  # Older TRL versions use tokenizer=
 )
 trainer.train()
-# Output: LoRA adapter and training state saved to ./llama3-dpo/checkpoint-*
+# Output: LoRA adapter and training state are saved to ./llama3-dpo/checkpoint-*
 ```
 
-The learning rate is much lower than SFT because DPO is a stage that nudges an already-capable model by a small amount.
+The reason `learning_rate` is set much lower than in SFT is that DPO is a fine adjustment on an already functional model.
 
-### Judging Alignment From Training Metrics
+### Using Training Metrics to Judge Alignment
 
-==The first metric to check is `rewards/accuracies`. If it stays below 0.5 consistently, the model is learning in the wrong direction.== 0.5 is the same as random selection. Look at the trend, not the noise in the first few steps.
+During training, DPO logs scores that represent "how much did the probability go up relative to the reference model?" These are called **implicit rewards** because they're obtained without a separate reward model.
 
-| Metric | Meaning | Healthy | Warning sign |
+==The first metric to watch is `rewards/accuracies`. If it stays below 0.5, the model is learning in the wrong direction.== 0.5 is the same as a coin flip.
+
+| Metric | Meaning | Normal | Warning sign |
 |---|---|---|---|
-| `rewards/accuracies` | Fraction of pairs where chosen reward > rejected reward | Steady climb from 0.5 | Drops below 0.5 |
-| `rewards/margins` | Mean difference between chosen and rejected rewards | Widens steadily | Shrinks or goes negative |
-| `rewards/chosen` | Implicit reward of chosen responses | Rises, or falls less than rejected | Drops sharply alongside rejected |
-| `train/loss` | DPO loss | Decreases from starting value of log 2 | Spikes or NaN |
+| `rewards/accuracies` | Fraction of pairs where chosen score > rejected score | Steadily rises from 0.5 | Drops below 0.5 |
+| `rewards/margins` | Average difference between chosen and rejected scores | Keeps growing | Shrinks or goes negative |
+| `rewards/chosen` | Score for chosen responses | Rises, or drops less than rejected | Drops sharply along with rejected |
+| `train/loss` | DPO loss | Starts near log 2 (~0.69) and decreases | Spikes or NaN |
 
-The loss starts at log 2 because the trained model begins identical to the reference model, making the loss −log σ(0). Conversely, if `rewards/accuracies` jumps close to 1 early in training, the model may be memorizing; check the same metrics on a held-out eval set.
+The loss starting near log 2 happens because at the beginning the training model and reference model are identical, so the model can't yet distinguish chosen from rejected. Conversely, if `rewards/accuracies` spikes close to 1 early in training, the model may be memorizing — check the same metric on pairs not used in training.
 
 ---
 
 ## Choosing Between RLHF, IPO, KTO, and ORPO
 
-==If you have paired data, an SFT checkpoint, and reasonably clean labels, DPO is the default choice.== The other methods are for when one of those conditions breaks down.
+==If you have pairwise comparison data, an SFT model, and reasonably clean data, DPO is the default choice.== Pick a different method when one of those conditions breaks down.
 
 ```diagram
 en/2026-10-20-c7b9f4df-05
 ```
 
-| Method | Reward model | Training data | When to use it | Caveats |
-|---|---|---|---|---|
-| RLHF + PPO | Required | Pairs | Reward signal needs continuous updates and infrastructure is available | Four models on GPU simultaneously; heavy to tune |
-| DPO | Not required | Pairs | Paired data exists and you want fast iteration | Prone to overfitting with noisy data |
-| IPO | Not required | Pairs | Label noise is high | Adds a regularization term to the loss |
-| KTO | Not required | Single responses + good/bad labels | Hard to form pairs from the same prompt | Based on prospect theory instead of Bradley-Terry |
-| ORPO | Not required | Pairs | No SFT stage available | Combines SFT and alignment into one objective |
+| Method | One-line description | Required data | When to use it |
+|---|---|---|---|
+| RLHF + PPO | Train a reward model, then use RL to maximize its score | Comparison pairs | When scoring criteria change frequently and you have plenty of GPU headroom |
+| DPO | Train directly on comparison pairs | Comparison pairs | When you want to iterate quickly |
+| IPO | Adds a constraint on top of DPO to prevent over-fitting | Comparison pairs | When a significant fraction of pairs have noisy labels |
+| KTO | Trains on individual responses labeled good/bad, no pairing needed | Response + good/bad label | When collecting two responses to the same prompt is difficult |
+| ORPO | Combines SFT and alignment into a single training pass | Comparison pairs | When you don't have an SFT model yet |
 
-KTO's biggest advantage is that it works directly with data where each response has only a good/bad label — like satisfaction flags on customer service logs — without needing matched pairs. On the other hand, if you can define a reward function precisely and need to keep reflecting a changing reward signal, the overhead of RLHF becomes worth it.
+KTO's biggest advantage is that you can use feedback that's already accumulated — like satisfaction/dissatisfaction buttons in a support chat log. On the other hand, if your scoring criteria can be defined precisely in code and change often, the overhead of RLHF may be worth it.
 
 ---
 
-## Diagnosing DPO Training Failures and Optimizing Memory
+## What to Check When DPO Training Fails
 
-DPO failures fall into three categories most of the time. Checking them in the order below narrows down the cause quickly.
+DPO failures usually look like one of three things. Working through them in the order below narrows down the cause quickly.
 
 ```diagram
 en/2026-10-20-c7b9f4df-06
 ```
 
-### Three Failure Modes and How to Handle Them
+### Three Failure Modes and Fixes
 
-1. **Language quality degradation.** Alignment improves but general text quality drops. Caused by a high learning rate or preference data concentrated in a narrow domain. Lower the learning rate; if the problem persists, compare responses before and after alignment on a general-purpose question set unrelated to the preference data to check for domain skew.
-2. **Learning in reverse.** `rewards/accuracies` stays below 0.5. Re-examine learning rate and beta, and verify that chosen and rejected are not swapped in the data. ==The reference model must be an SFT checkpoint; using a base model that has only been pre-trained makes the KL term ineffective.==
-3. **Length bias.** Responses grow longer over training. This is the result of annotators tending to pick "more detailed" as "better," leaving that bias in the data. Add explicit guidance to your labeling instructions to judge on accuracy and relevance, not length.
+1. **Responses become unnatural.** The preference direction is right but general response quality degrades. Caused by a learning rate that's too high or comparison data concentrated in one domain. Lower the learning rate and compare responses to general questions (unrelated to the alignment task) before and after training.
+2. **Learning in reverse.** `rewards/accuracies` stays below 0.5. First check whether the chosen and rejected columns are swapped, then revisit the learning rate and β. ==The reference model must be an SFT-trained model. Using a pre-training-only model breaks the comparison baseline entirely.==
+3. **Responses keep getting longer.** This is a leftover bias from humans tending to prefer the more detailed answer. Add explicit guidance to annotators to select based on accuracy rather than length.
 
-### Verifying Training Direction With Implicit Rewards
+### Computing Scores Per Pair Directly
 
-Because a DPO model implicitly contains a reward model, you can score any response by computing the log probability ratio between the trained model and the reference model. If you trained with `ref_model=None` as in the code above, reference probabilities come from the same model with the adapter disabled.
+Running the trained model on pairs it wasn't trained on and computing scores manually can reveal problems hidden behind metric averages. If you trained with LoRA as in the code above, the same model with the adapter disabled is the reference model.
 
 ```python
 import torch
 
 def compute_implicit_reward(model, tokenizer, prompt, response, beta=0.1):
     """Implicit reward r(x,y) = β · log(π_θ / π_ref) — summed over response tokens only.
-    model is the PEFT model trained above. The same model with the adapter disabled is the reference."""
+    model is the PEFT model trained above. The same model with the adapter disabled is the reference model."""
     prompt_len = len(tokenizer(prompt)["input_ids"])
     inputs = tokenizer(prompt + response, return_tensors="pt").to(model.device)
 
@@ -209,25 +219,25 @@ def compute_implicit_reward(model, tokenizer, prompt, response, beta=0.1):
     return reward.item()
 
 prompt = "How do you remove duplicates from a list in Python?"
-chosen = "Convert to set(), or use dict.fromkeys(). The latter is recommended if you need to preserve order."
-rejected = "Just loop through it with a for loop."
+chosen = "You can convert to a set() or use dict.fromkeys(). If order matters, the latter is recommended."
+rejected = "Just loop through with a for loop."
 
 r_chosen = compute_implicit_reward(model, tokenizer, prompt, chosen)
 r_rejected = compute_implicit_reward(model, tokenizer, prompt, rejected)
-# Result: r_chosen > r_rejected means the model learned the preference direction correctly for this pair
+# If r_chosen > r_rejected, the model learned the correct preference direction for this pair
 ```
 
-Track the reversal rate on pairs not used in training. If it rises in the next training run, revisit the data or beta.
+Track the fraction of pairs where rejected scores higher than chosen, and if that fraction rises in the next training run, revisit the data or β.
 
-### Reducing Memory Usage
+### When You're Running Low on GPU Memory
 
-| Technique | What it reduces | Cost |
+| Technique | What it does | Trade-off |
 |---|---|---|
-| LoRA + `ref_model=None` | Optimizer state, one full copy of the reference model | Trainable parameters are limited to the adapter |
-| Gradient checkpointing | Storing intermediate activations | Recomputes on the backward pass, slowing training |
-| Flash Attention 2 | Storing the full attention matrix | Requires specific GPU and dtype; benefit grows with sequence length |
+| LoRA + `ref_model=None` | Trains only small correction layers; no separate reference model copy loaded | Less headroom for change than full-model training |
+| Gradient checkpointing | Discards intermediate activations during training and recomputes them when needed | Slower training |
+| Flash Attention 2 | Replaces the attention computation with a memory-efficient implementation | Only supported on certain GPUs |
 
-How much each technique saves depends on model size, batch size, and sequence length, so compare `torch.cuda.max_memory_allocated()` with and without each one under the same settings ([Hugging Face single-GPU training memory optimization docs](https://huggingface.co/docs/transformers/perf_train_gpu_one)).
+How much memory each saves depends on model size and sequence length, so measure `torch.cuda.max_memory_allocated()` before and after enabling each one under the same settings ([Hugging Face training memory optimization docs](https://huggingface.co/docs/transformers/perf_train_gpu_one)).
 
 ---
 
@@ -235,10 +245,10 @@ How much each technique saves depends on model size, batch size, and sequence le
 
 ### Key Takeaways
 
-- DPO rewrites the reward as a probability ratio between the trained model and the reference model, reducing RLHF's reward model training and PPO into a single supervised-learning-like step.
-- Data margin matters more than code. Filter out pairs with small quality gaps and check the prompt distribution.
-- During training, watch `rewards/accuracies` and `rewards/margins` first. If accuracies drop below 0.5, inspect learning rate, beta, and data label direction.
+- DPO uses comparison pairs ("A is better than B") to raise the probability of A relative to what the model would have produced before training. No reward model, no reinforcement learning.
+- Data matters more than code. Keep only pairs with a clear quality difference.
+- During training, watch `rewards/accuracies` and `rewards/margins` first. If accuracies drop below 0.5, inspect data direction, learning rate, and β.
 
-### Decision Criteria
+### Deciding Whether to Use DPO
 
-==Before starting DPO, confirm you have three things: an SFT checkpoint, preference pairs with sufficient margin, and a clear alignment goal.== If you are missing the SFT checkpoint, consider ORPO first. If you cannot construct pairs, consider KTO first. If safety is the top priority or strict output formatting is required, run multiple rounds of DPO or consider RLHF. If the goal is improving general assistant quality, starting with a public preference dataset and one round of DPO, then iterating on results, is the fastest path forward.
+==Before starting DPO, confirm you have three things: an SFT-trained model, comparison pairs with clear differences, and a specific behavior you want to fix.== If you don't have an SFT model, look at ORPO first. If you can't create comparison pairs and only have good/bad feedback, look at KTO first. If your goal is improving a general-purpose assistant, starting with a public comparison dataset and one round of DPO, then iterating based on results, is usually the fastest path forward.
