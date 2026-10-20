@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; padding: 0; }
+  .diagram-wrap { width: 100%; max-width: 720px; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<div class="diagram-wrap">
+<svg viewBox="0 0 720 680" xmlns="http://www.w3.org/2000/svg"
+     role="img" aria-labelledby="2026-10-20-c7b9f4df-06-dpo-flow-title 2026-10-20-c7b9f4df-06-dpo-flow-desc">
+  <title id="2026-10-20-c7b9f4df-06-dpo-flow-title">DPO Training Issue Diagnosis Flowchart</title>
+  <desc id="2026-10-20-c7b9f4df-06-dpo-flow-desc">After DPO training starts, checks for language ability degradation and rewards/accuracies decline in sequence, branching into learning rate adjustment, data diversity check, beta value increase, or normal continuation.</desc>
+
+  <defs>
+    <!-- 기본 화살표 -->
+    <marker id="2026-10-20-c7b9f4df-06-arr" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0,8 3,0 6" fill="#3f545c"/>
+    </marker>
+    <!-- 강조 화살표 (accent) -->
+    <marker id="2026-10-20-c7b9f4df-06-arr-acc" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0,8 3,0 6" fill="#0d5763"/>
+    </marker>
+  </defs>
+
+  <!-- 배경 -->
+  <rect width="720" height="680" fill="#f8fafb"/>
+
+  <!-- ===================== 화살표 (박스보다 먼저) ===================== -->
+
+  <!-- START → CHECK (down) -->
+  <line x1="360" y1="84" x2="360" y2="148" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-20-c7b9f4df-06-arr)"/>
+
+  <!-- CHECK → LR (예, right) -->
+  <path d="M 424 188 Q 432 188 432 196 L 432 244 Q 432 252 440 252 L 476 252"
+        fill="none" stroke="#0d5763" stroke-width="1" marker-end="url(#2026-10-20-c7b9f4df-06-arr-acc)"/>
+
+  <!-- CHECK → REWARD (아니오, down) -->
+  <line x1="360" y1="228" x2="360" y2="300" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-20-c7b9f4df-06-arr)"/>
+
+  <!-- LR → LOWER (예, right) -->
+  <line x1="588" y1="252" x2="628" y2="252" stroke="#0d5763" stroke-width="1" marker-end="url(#2026-10-20-c7b9f4df-06-arr-acc)"/>
+
+  <!-- LR → DATA (아니오, down) -->
+  <line x1="532" y1="276" x2="532" y2="376" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-20-c7b9f4df-06-arr)"/>
+
+  <!-- REWARD → BETA (예, right) -->
+  <line x1="424" y1="340" x2="476" y2="340" stroke="#0d5763" stroke-width="1" marker-end="url(#2026-10-20-c7b9f4df-06-arr-acc)"/>
+
+  <!-- REWARD → OK (아니오, down) -->
+  <line x1="360" y1="380" x2="360" y2="452" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-20-c7b9f4df-06-arr)"/>
+
+  <!-- ===================== 화살표 라벨 ===================== -->
+
+  <!-- CHECK → LR: 예 -->
+  <rect x="422" y="198" width="20" height="14" rx="2" fill="#f8fafb"/>
+  <text x="432" y="209" text-anchor="middle" fill="#3f545c" font-family="'IBM Plex Sans KR',sans-serif" font-size="12" font-weight="500">Yes</text>
+
+  <!-- CHECK → REWARD: 아니오 -->
+  <rect x="332" y="248" width="36" height="14" rx="2" fill="#f8fafb"/>
+  <text x="350" y="259" text-anchor="middle" fill="#3f545c" font-family="'IBM Plex Sans KR',sans-serif" font-size="12" font-weight="500">No</text>
+
+  <!-- LR → LOWER: 예 -->
+  <rect x="596" y="242" width="20" height="14" rx="2" fill="#f8fafb"/>
+  <text x="606" y="253" text-anchor="middle" fill="#3f545c" font-family="'IBM Plex Sans KR',sans-serif" font-size="12" font-weight="500">Yes</text>
+
+  <!-- LR → DATA: 아니오 -->
+  <rect x="504" y="318" width="36" height="14" rx="2" fill="#f8fafb"/>
+  <text x="522" y="329" text-anchor="middle" fill="#3f545c" font-family="'IBM Plex Sans KR',sans-serif" font-size="12" font-weight="500">No</text>
+
+  <!-- REWARD → BETA: 예 -->
+  <rect x="426" y="330" width="20" height="14" rx="2" fill="#f8fafb"/>
+  <text x="436" y="341" text-anchor="middle" fill="#3f545c" font-family="'IBM Plex Sans KR',sans-serif" font-size="12" font-weight="500">Yes</text>
+
+  <!-- REWARD → OK: 아니오 -->
+  <rect x="332" y="408" width="36" height="14" rx="2" fill="#f8fafb"/>
+  <text x="350" y="419" text-anchor="middle" fill="#3f545c" font-family="'IBM Plex Sans KR',sans-serif" font-size="12" font-weight="500">No</text>
+
+  <!-- ===================== 노드 박스 ===================== -->
+
+  <!-- START: 타원형 시작 노드 — #DBE2F2/#3A548F -->
+  <rect x="296" y="44" width="128" height="40" rx="20" fill="#f8fafb"/>
+  <rect x="296" y="44" width="128" height="40" rx="20" fill="#dbe2f2" stroke="#3a548f" stroke-width="1"/>
+  <text x="360" y="69" text-anchor="middle" fill="#122127" font-family="'IBM Plex Sans KR',sans-serif" font-size="14" font-weight="600">DPO Training Start</text>
+
+  <!-- CHECK: 다이아몬드 — #D4E7EA/#0D5763 -->
+  <rect x="296" y="148" width="128" height="80" rx="4" fill="#f8fafb"/>
+  <polygon points="360,148 424,188 360,228 296,188" fill="#d4e7ea" stroke="#0d5763" stroke-width="1"/>
+  <text x="360" y="183" text-anchor="middle" fill="#122127" font-family="'IBM Plex Sans KR',sans-serif" font-size="12" font-weight="600">Language</text>
+  <text x="360" y="199" text-anchor="middle" fill="#122127" font-family="'IBM Plex Sans KR',sans-serif" font-size="12" font-weight="600">degraded?</text>
+
+  <!-- LR: 다이아몬드 — #D4E7EA/#0D5763 -->
+  <rect x="476" y="212" width="112" height="80" rx="4" fill="#f8fafb"/>
+  <polygon points="532,212 588,252 532,292 476,252" fill="#d4e7ea" stroke="#0d5763" stroke-width="1"/>
+  <text x="532" y="247" text-anchor="middle" fill="#122127" font-family="'IBM Plex Sans KR',sans-serif" font-size="12" font-weight="600">LR too</text>
+  <text x="532" y="263" text-anchor="middle" fill="#122127" font-family="'IBM Plex Sans KR',sans-serif" font-size="12" font-weight="600">high?</text>
+
+  <!-- REWARD: 다이아몬드 — #D4E7EA/#0D5763 -->
+  <rect x="296" y="300" width="128" height="80" rx="4" fill="#f8fafb"/>
+  <polygon points="360,300 424,340 360,380 296,340" fill="#d4e7ea" stroke="#0d5763" stroke-width="1"/>
+  <text x="360" y="333" text-anchor="middle" fill="#122127" font-family="'IBM Plex Sans KR',sans-serif" font-size="11" font-weight="600">rewards/</text>
+  <text x="360" y="349" text-anchor="middle" fill="#122127" font-family="'IBM Plex Sans KR',sans-serif" font-size="11" font-weight="600">accuracies drop?</text>
+
+  <!-- LOWER: 액션 박스 — #F5E8CC/#A96A08 -->
+  <rect x="628" y="228" width="68" height="48" rx="4" fill="#f8fafb"/>
+  <rect x="628" y="228" width="68" height="48" rx="4" fill="#f5e8cc" stroke="#a96a08" stroke-width="1"/>
+  <text x="662" y="249" text-anchor="middle" fill="#122127" font-family="'IBM Plex Sans KR',sans-serif" font-size="11" font-weight="600">Lower LR</text>
+  <text x="662" y="265" text-anchor="middle" fill="#122127" font-family="'IBM Plex Mono',monospace" font-size="10">to 5e-7</text>
+
+  <!-- DATA: 액션 박스 — #F5E8CC/#A96A08 -->
+  <rect x="476" y="372" width="112" height="48" rx="4" fill="#f8fafb"/>
+  <rect x="476" y="372" width="112" height="48" rx="4" fill="#f5e8cc" stroke="#a96a08" stroke-width="1"/>
+  <text x="532" y="393" text-anchor="middle" fill="#122127" font-family="'IBM Plex Sans KR',sans-serif" font-size="12" font-weight="600">Check Data</text>
+  <text x="532" y="409" text-anchor="middle" fill="#122127" font-family="'IBM Plex Sans KR',sans-serif" font-size="12" font-weight="600">Diversity</text>
+
+  <!-- BETA: 액션 박스 — #F5E8CC/#A96A08 -->
+  <rect x="476" y="316" width="112" height="48" rx="4" fill="#f8fafb"/>
+  <rect x="476" y="316" width="112" height="48" rx="4" fill="#f5e8cc" stroke="#a96a08" stroke-width="1"/>
+  <text x="532" y="337" text-anchor="middle" fill="#122127" font-family="'IBM Plex Sans KR',sans-serif" font-size="12" font-weight="600">Increase</text>
+  <text x="532" y="353" text-anchor="middle" fill="#122127" font-family="'IBM Plex Sans KR',sans-serif" font-size="12" font-weight="600">beta value</text>
+
+  <!-- OK: 타원형 종료 노드 — #D6E9DE/#286D50 -->
+  <rect x="296" y="452" width="128" height="40" rx="20" fill="#f8fafb"/>
+  <rect x="296" y="452" width="128" height="40" rx="20" fill="#d6e9de" stroke="#286d50" stroke-width="1"/>
+  <text x="360" y="467" text-anchor="middle" fill="#122127" font-family="'IBM Plex Sans KR',sans-serif" font-size="12" font-weight="600">Training Normal</text>
+  <text x="360" y="483" text-anchor="middle" fill="#122127" font-family="'IBM Plex Sans KR',sans-serif" font-size="12" font-weight="600">Continue</text>
+
+  <!-- ===================== 범례 구분선 ===================== -->
+  <line x1="32" y1="568" x2="688" y2="568" stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+  <text x="32" y="582" fill="#6c8188" font-family="'IBM Plex Mono',monospace" font-size="10" letter-spacing="0.14em">LEGEND</text>
+
+  <!-- 범례 항목 -->
+  <!-- 시작/종료 -->
+  <rect x="96" y="596" width="48" height="20" rx="10" fill="#dbe2f2" stroke="#3a548f" stroke-width="1"/>
+  <text x="152" y="610" fill="#3f545c" font-family="'IBM Plex Sans KR',sans-serif" font-size="12">Start/End</text>
+
+  <!-- 판단 -->
+  <polygon points="240,606 260,596 280,606 260,616" fill="#d4e7ea" stroke="#0d5763" stroke-width="1"/>
+  <text x="288" y="610" fill="#3f545c" font-family="'IBM Plex Sans KR',sans-serif" font-size="12">Decision</text>
+
+  <!-- 조치 -->
+  <rect x="336" y="596" width="48" height="20" rx="4" fill="#f5e8cc" stroke="#a96a08" stroke-width="1"/>
+  <text x="392" y="610" fill="#3f545c" font-family="'IBM Plex Sans KR',sans-serif" font-size="12">Action</text>
+
+  <!-- 정상 -->
+  <rect x="472" y="596" width="48" height="20" rx="10" fill="#d6e9de" stroke="#286d50" stroke-width="1"/>
+  <text x="528" y="610" fill="#3f545c" font-family="'IBM Plex Sans KR',sans-serif" font-size="12">Normal</text>
+
+</svg>
+</div>
+</body>
+</html>

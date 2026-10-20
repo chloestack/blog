@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DPO Preference Dataset Construction Flow</title>
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; font-family: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; }
+  .diagram-wrap { display: block; width: 100%; max-width: 960px; margin: 0 auto; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<div class="diagram-wrap">
+<svg viewBox="0 0 960 600" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="2026-10-20-c7b9f4df-04-dpo-title 2026-10-20-c7b9f4df-04-dpo-desc">
+  <title id="2026-10-20-c7b9f4df-04-dpo-title">DPO Preference Dataset Construction Flow</title>
+  <desc id="2026-10-20-c7b9f4df-04-dpo-desc">A pipeline that starts from raw prompts, generates responses with multiple models, evaluates pairs with human labellers or an AI Judge, applies margin-based filtering, and produces a DPO training dataset.</desc>
+
+  <defs>
+    <!-- 배경 -->
+    <!-- 기본 화살표 (muted) -->
+    <marker id="2026-10-20-c7b9f4df-04-dpo-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <!-- 강조 화살표 (accent) -->
+    <marker id="2026-10-20-c7b9f4df-04-dpo-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+  </defs>
+
+  <!-- 배경 -->
+  <rect width="960" height="600" fill="#f8fafb"/>
+
+  <!-- ─────────────────────────────────────────────
+       CONNECTORS (drawn before boxes)
+  ───────────────────────────────────────────── -->
+
+  <!-- RAW → GEN (수직) -->
+  <line x1="480" y1="100" x2="480" y2="144" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-20-c7b9f4df-04-dpo-arrow)"/>
+
+  <!-- GEN → JUDGE (수직) -->
+  <line x1="480" y1="204" x2="480" y2="252" stroke="#0d5763" stroke-width="1" marker-end="url(#2026-10-20-c7b9f4df-04-dpo-arrow-accent)"/>
+
+  <!-- JUDGE → H (왼쪽 분기: 오른쪽 꺾기 → 수평 → 수직 내려가기) -->
+  <!-- JUDGE 중심: 480,292  H 중심: 280,376  -->
+  <!-- JUDGE 왼쪽 꼭짓점: 436,292 → 엘보: x=280, y=292 → H 상단: 280,352 -->
+  <path d="M436,292 L280,292 L280,352" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-20-c7b9f4df-04-dpo-arrow)"/>
+
+  <!-- JUDGE → AI (오른쪽 분기) -->
+  <!-- JUDGE 오른쪽 꼭짓점: 524,292 → 엘보: x=680, y=292 → AI 상단: 680,352 -->
+  <path d="M524,292 L680,292 L680,352" fill="none" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-20-c7b9f4df-04-dpo-arrow)"/>
+
+  <!-- H → FILTER (수직 + 수평 합류) -->
+  <!-- H 하단: 280,416 → 내려가기: 280,464 → 오른쪽: 400,464 → FILTER 왼쪽: 400,480(실제 Y는 같은 행이므로 수평만) -->
+  <!-- FILTER 중심: 480,480, 상단: 480,452 -->
+  <path d="M280,416 L280,452 L440,452" fill="none" stroke="#3f545c" stroke-width="1"/>
+  <line x1="440" y1="452" x2="472" y2="452" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-20-c7b9f4df-04-dpo-arrow)"/>
+
+  <!-- AI → FILTER -->
+  <!-- AI 하단: 680,416 → 내려가기: 680,452 → 왼쪽 → FILTER 오른쪽 상단: 520,452 -->
+  <path d="M680,416 L680,452 L520,452" fill="none" stroke="#3f545c" stroke-width="1"/>
+  <line x1="520" y1="452" x2="488" y2="452" stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-20-c7b9f4df-04-dpo-arrow)"/>
+
+  <!-- FILTER → DATASET (수직) -->
+  <!-- FILTER 하단: 480,508  DATASET 상단: 480,536 -->
+  <line x1="480" y1="508" x2="480" y2="528" stroke="#0d5763" stroke-width="1" marker-end="url(#2026-10-20-c7b9f4df-04-dpo-arrow-accent)"/>
+
+  <!-- ─────────────────────────────────────────────
+       ARROW LABELS
+  ───────────────────────────────────────────── -->
+
+  <!-- 인간 레이블 (JUDGE→H 수평 구간 중간: x≈358, y=292) -->
+  <rect x="326" y="280" width="64" height="14" rx="2" fill="#f8fafb"/>
+  <text x="358" y="291" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="500">Human Label</text>
+
+  <!-- AI Judge (JUDGE→AI 수평 구간 중간: x≈602, y=292) -->
+  <rect x="570" y="280" width="64" height="14" rx="2" fill="#f8fafb"/>
+  <text x="602" y="291" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle" font-weight="500">AI Judge</text>
+
+  <!-- ─────────────────────────────────────────────
+       NODES
+  ───────────────────────────────────────────── -->
+
+  <!-- RAW — 원시 프롬프트 (input 처리) -->
+  <rect x="376" y="52" width="208" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="376" y="52" width="208" height="48" rx="6" fill="rgba(62,84,92,0.10)" stroke="#6c8188" stroke-width="1"/>
+  <rect x="384" y="58" width="36" height="12" rx="2" fill="transparent" stroke="rgba(108,129,136,0.40)" stroke-width="0.8"/>
+  <text x="402" y="67" fill="rgba(108,129,136,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">INPUT</text>
+  <text x="480" y="82" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Raw Prompt</text>
+
+  <!-- GEN — 다수 모델로 응답 생성 (focal) -->
+  <rect x="356" y="144" width="248" height="60" rx="6" fill="#f8fafb"/>
+  <rect x="356" y="144" width="248" height="60" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="364" y="150" width="32" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="380" y="159" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">STEP</text>
+  <text x="480" y="176" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Multi-Model Response Gen</text>
+  <text x="480" y="194" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">SFT model × N candidates</text>
+
+  <!-- JUDGE — 심판 방식 (다이아몬드, focal) -->
+  <!-- 중심 480,292  반폭 44  반높이 40 -->
+  <polygon points="480,252 524,292 480,332 436,292" fill="#f8fafb"/>
+  <polygon points="480,252 524,292 480,332 436,292" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="480" y="287" fill="#122127" font-size="13" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Judge Type</text>
+  <text x="480" y="303" fill="#3f545c" font-size="10" font-family="'IBM Plex Sans KR', sans-serif" text-anchor="middle">preference</text>
+
+  <!-- H — 레이블러 쌍 비교 (backend) -->
+  <rect x="196" y="352" width="168" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="196" y="352" width="168" height="64" rx="6" fill="#ffffff" stroke="#122127" stroke-width="1"/>
+  <rect x="204" y="358" width="36" height="12" rx="2" fill="transparent" stroke="rgba(18,33,39,0.40)" stroke-width="0.8"/>
+  <text x="222" y="367" fill="rgba(18,33,39,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">HUMAN</text>
+  <text x="280" y="390" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Labeller Pair Review</text>
+  <text x="280" y="408" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">pairwise ranking</text>
+
+  <!-- AI — GPT-4 등 자동 채점 (store/state) -->
+  <rect x="596" y="352" width="168" height="64" rx="6" fill="#f8fafb"/>
+  <rect x="596" y="352" width="168" height="64" rx="6" fill="rgba(18,33,39,0.05)" stroke="#3f545c" stroke-width="1"/>
+  <rect x="604" y="358" width="40" height="12" rx="2" fill="transparent" stroke="rgba(63,84,92,0.40)" stroke-width="0.8"/>
+  <text x="624" y="367" fill="rgba(63,84,92,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">AI JUDGE</text>
+  <text x="680" y="390" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">GPT-4 Auto Scoring</text>
+  <text x="680" y="408" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">LLM-as-judge</text>
+
+  <!-- FILTER — 마진 기반 필터링 (focal) -->
+  <rect x="360" y="456" width="240" height="52" rx="6" fill="#f8fafb"/>
+  <rect x="360" y="456" width="240" height="52" rx="6" fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="368" y="462" width="52" height="12" rx="2" fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="394" y="471" fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">FILTER</text>
+  <text x="480" y="489" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">Margin-Based Filtering</text>
+  <text x="480" y="503" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">margin threshold</text>
+
+  <!-- DATASET — 학습 데이터셋 (store/state) -->
+  <rect x="320" y="528" width="320" height="52" rx="6" fill="#f8fafb"/>
+  <rect x="320" y="528" width="320" height="52" rx="6" fill="rgba(18,33,39,0.05)" stroke="#3f545c" stroke-width="1"/>
+  <rect x="328" y="534" width="52" height="12" rx="2" fill="transparent" stroke="rgba(63,84,92,0.40)" stroke-width="0.8"/>
+  <text x="354" y="543" fill="rgba(63,84,92,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace" text-anchor="middle" letter-spacing="0.08em">DATASET</text>
+  <text x="480" y="561" fill="#122127" font-size="14" font-weight="600" font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif" text-anchor="middle">DPO Training Dataset</text>
+  <text x="480" y="575" fill="#3f545c" font-size="11" font-family="'IBM Plex Mono', monospace" text-anchor="middle">prompt / chosen / rejected</text>
+
+  <!-- ─────────────────────────────────────────────
+       LEGEND STRIP
+  ───────────────────────────────────────────── -->
+  <!-- 범례는 viewBox=600 밖으로 나가므로 viewBox를 600까지 맞추고 하단 공간 활용 불가 — DATASET 하단 y=580, 범례 공간 없음 -->
+  <!-- 범례를 상단 우측에 floating이 아닌 별도 strip으로 넣을 공간이 없어, 레전드는 viewBox를 640으로 확장해 처리 -->
+
+</svg>
+</div>
+</body>
+</html>
