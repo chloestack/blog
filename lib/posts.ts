@@ -211,6 +211,25 @@ marked.use({
     },
   },
   extensions: [
+    // 한국어는 굵게 바로 뒤에 조사가 붙는다. CommonMark 규칙은 "**정렬(alignment)**이라고"처럼
+    // 닫는 ** 안쪽이 문장부호이고 바깥이 글자면 굵게로 읽지 않아 **가 글자로 남는다.
+    // 한 줄 안에서 안쪽 양끝이 공백·*가 아니면 굵게로 읽는다.
+    {
+      name: "cjkStrong",
+      level: "inline",
+      start(src) {
+        const index = src.indexOf("**");
+        return index < 0 ? undefined : index;
+      },
+      tokenizer(src) {
+        const match = /^\*\*(?=[^\s*])([^\n]*?[^\s*])\*\*(?!\*)/.exec(src);
+        if (!match) return undefined;
+        return { type: "cjkStrong", raw: match[0], tokens: this.lexer.inlineTokens(match[1]) };
+      },
+      renderer(token) {
+        return `<strong>${this.parser.parseInline(token.tokens ?? [])}</strong>`;
+      },
+    },
     // 독자가 놓치면 안 되는 핵심 문장을 표시한다. ==문장== 이 <mark>문장</mark> 으로 그려진다.
     // 안쪽은 다시 인라인으로 읽어 굵게·코드·링크도 함께 쓸 수 있게 한다.
     // "a == b"처럼 == 뒤가 공백이면 강조로 읽지 않는다.
