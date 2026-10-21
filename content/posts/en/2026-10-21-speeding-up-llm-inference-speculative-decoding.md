@@ -3,7 +3,7 @@ title: "Speeding Up LLM Inference with Speculative Decoding"
 date: "2026-10-21 10:40"
 category: "AI"
 tags: ["Speculative Decoding", "LLM inference optimization", "Draft model", "vLLM"]
-excerpt: "Speculative Decoding only beats a standalone target model when draft acceptance rates are high enough — here's how to know when it's worth it."
+excerpt: "Speculative Decoding speeds up LLM responses by letting a small model guess ahead while the large model checks the guesses in one pass. Why bad guesses make it slower, and how to pick the draft model and guess length."
 koSlug: "2026-10-21-Speculative-Decoding으로-LLM-추론-속도-높이기"
 ---
 
@@ -20,7 +20,7 @@ koSlug: "2026-10-21-Speculative-Decoding으로-LLM-추론-속도-높이기"
 
 ## Overview
 
-When draft model acceptance rates aren't high enough, Speculative Decoding is actually slower than running the target model alone. You need to nail down the judgment criteria first — shared vocabulary requirements, k value tuning, TTFT tradeoffs — before you can get any benefit from it in practice.
+Chatbot replies trickle out one word at a time because a large model has to re-read tens of gigabytes of weights from GPU memory for every token it produces. Speculative Decoding lets a small model guess the next few tokens and has the large model grade those guesses in a single pass, so responses get faster while the output stays exactly the same. The paper that introduced it reported a 2–3x speedup with identical outputs ([Leviathan et al., 2023](https://arxiv.org/abs/2211.17192)). But when the small model guesses wrong too often, the wasted work piles up and it ends up slower. This post covers how to pick the small model, how many tokens to let it guess at once, and how to check whether it is actually helping after you turn it on.
 
 Speculative Decoding is a technique for speeding up LLM inference. Large models like GPT-4o or Llama 70B generate tokens one at a time, in sequence (autoregressive), which means even generating a single sentence of response accumulates noticeable latency. Speculative Decoding works around this. A small draft model rapidly predicts several tokens ahead, then the large target model verifies those predictions in a single forward pass in parallel. Because verification runs in parallel, overall throughput increases compared to running the target model sequentially every step.
 
@@ -121,46 +121,47 @@ The output text from both paths is equivalent in meaning — Speculative Decodin
 
 The real-world speed benefit of Speculative Decoding is determined by the **acceptance rate** — the fraction of draft-proposed tokens that the target model actually adopts.
 
-A high acceptance rate means multiple tokens get confirmed in a single target forward pass. A low acceptance rate means you're just paying the draft model's compute cost for almost no gain. ==If throughput is lower than running the target alone because acceptance rate isn't high enough, you need to replace the draft model with a larger one or a domain-specialized one.==
+A high acceptance rate means multiple tokens get confirmed in a single target forward pass. A low acceptance rate means you're just paying the draft model's compute cost for almost no gain. ==If tokens/s with Speculative Decoding is lower than the target model alone, the acceptance rate is too low to pay off. Swap the draft model for a larger one from the same family or one tuned to your domain.==
 
-Acceptance rate varies significantly by prompt type. It's higher for tasks where the next token is reasonably predictable, like code completion, and lower for tasks with many valid continuations, like creative writing or open-ended questions. You can quickly compare acceptance rates across workloads with the code below.
+Acceptance rate varies significantly by prompt type. It's higher for tasks where the next token is reasonably predictable, like code completion, and lower for tasks with many valid continuations, like creative writing or open-ended questions. Hugging Face `generate()` doesn't report the acceptance rate directly, but what ultimately matters is speed. The code below runs the same prompt once without and once with the draft model and measures the speedup for each task type.
 
 ```python
+import time
 from transformers import AutoTokenizer, AutoModelForCausalLM
 import torch
 
-model = AutoModelForCausalLM.from_pretrained(
-    "meta-llama/Llama-3.1-8B-Instruct",
-    torch_dtype=torch.float16, device_map="auto"
+target = AutoModelForCausalLM.from_pretrained(
+    "meta-llama/Llama-3.1-8B-Instruct", torch_dtype=torch.float16, device_map="auto"
 )
-draft_model = AutoModelForCausalLM.from_pretrained(
-    "meta-llama/Llama-3.2-1B-Instruct",
-    torch_dtype=torch.float16, device_map="auto"
+# Same Llama 3 family, so the vocabulary (tokenizer) is shared
+draft = AutoModelForCausalLM.from_pretrained(
+    "meta-llama/Llama-3.2-1B-Instruct", torch_dtype=torch.float16, device_map="auto"
 )
 tokenizer = AutoTokenizer.from_pretrained("meta-llama/Llama-3.1-8B-Instruct")
 
-# Check how acceptance rate shifts across task types
 prompts = {
-    "Code completion":  "def binary_search(arr, target):",
-    "Factual query":    "What is the capital of France?",
+    "Code completion": "def binary_search(arr, target):",
+    "Factual query": "What is the capital of France? Explain its history briefly.",
     "Creative writing": "Write a poem about autumn leaves.",
 }
 
+def tokens_per_sec(inputs, **kwargs):
+    torch.cuda.synchronize()
+    start = time.perf_counter()
+    out = target.generate(**inputs, max_new_tokens=128, do_sample=False, **kwargs)
+    torch.cuda.synchronize()
+    new_tokens = out.shape[1] - inputs["input_ids"].shape[1]
+    return new_tokens / (time.perf_counter() - start)
+
 for label, prompt in prompts.items():
-    inputs = tokenizer(prompt, return_tensors="pt").to(model.device)
-    out = model.generate(
-        **inputs,
-        assistant_model=draft_model,
-        num_assistant_tokens=5,
-        max_new_tokens=60,
-        return_dict_in_generate=True,
-    )
-    # Use generated token count as an indirect indicator of throughput tendency
-    n_new = out.sequences.shape[1] - inputs["input_ids"].shape[1]
-    print(f"[{label}] tokens generated: {n_new}")
+    inputs = tokenizer(prompt, return_tensors="pt").to(target.device)
+    tokens_per_sec(inputs, max_new_tokens=8)  # Throw away one run to exclude warm-up cost
+    base = tokens_per_sec(inputs)
+    spec = tokens_per_sec(inputs, assistant_model=draft, num_assistant_tokens=5)
+    print(f"[{label}] alone {base:.1f} tok/s, speculative {spec:.1f} tok/s, speedup {spec / base:.2f}")
 ```
 
-Generation tends to be fastest for code completion, and the benefit tends to shrink for creative writing.
+Read one number: the speedup. Above 1, it's worth turning on for that task; around or below 1, the draft model is guessing wrong often enough that you're only adding work. The same draft model often splits across task types, so the place to start is a few dozen real prompts from your own service.
 
 ### Balancing draft length k against throughput
 
@@ -192,30 +193,31 @@ en/2026-10-21-39f56a15-03
 
 If memory is tight, quantizing the draft model to 4-bit is one option. Acceptance rate may drop slightly, but it reduces the memory burden.
 
-### Metrics to monitor
+### Checking the effect after you turn it on
 
-To judge whether Speculative Decoding is actually helping in production, watch these metrics together:
+Whether Speculative Decoding actually helps in production can **only be known by comparing against the numbers from before you turned it on**. Measure in this order and you'll also know what to change.
 
-| Metric | What it means | Target direction |
+| Step | What to measure | If you see this |
 |---|---|---|
-| Acceptance Rate | Fraction of draft tokens accepted | 50%+ recommended |
-| Tokens/s (target only) | Baseline | Measure first |
-| Tokens/s (Speculative) | Post-deployment throughput | Must exceed baseline to matter |
-| Draft Overhead | Fraction of time spent on draft generation | Lower is better |
-| TTFT | Time to first token | Check whether it increases after deployment |
+| 1. Before | Target-only tokens/s and TTFT (time to first token) | These two values are the baseline for every comparison after |
+| 2. After | tokens/s on the same traffic | Below baseline: go to 3. Above: go to 4 |
+| 3. Acceptance rate | Share of draft tokens that were accepted | If low, shorten the guess length k or swap the draft model |
+| 4. TTFT | TTFT after turning it on | If it went up and streaming responsiveness matters, decide which matters more: the throughput gain or the first-character delay |
+
+Say you attached it to an internal code assistant on vLLM. The first step is to split a day of traffic into before and after and compare tokens/s. If code requests with high acceptance are mixed with free-form questions with low acceptance, split by request type — otherwise the average hides where you're losing.
 
 ### Choosing a framework
 
-In production serving, most teams use Speculative Decoding support built into production frameworks rather than rolling their own.
+You'll rarely need to implement rejection sampling yourself. Start by checking whether the serving framework you already use supports a separate draft model. The table below follows each project's official docs (checked October 2026).
 
-| Framework | Supported | Notes | When to use |
+| Framework | Separate draft model | How to turn it on | Good fit when |
 |---|---|---|---|
-| vLLM | ✅ (0.3+) | `--speculative-model` parameter, batch optimization | When you need batch optimization |
-| TGI (Hugging Face) | ✅ | Draft model set via Docker args | Quick experiments and prototyping |
-| TensorRT-LLM | ✅ | NVIDIA-optimized, integrated draft-target | NVIDIA GPU, maximum performance |
-| llama.cpp | Partial | `--draft` flag, works on CPU | CPU and edge environments |
+| vLLM | Supported | `--speculative-config '{"method": "draft_model", "model": "<draft model>", "num_speculative_tokens": 5}'` ([docs](https://docs.vllm.ai/en/latest/features/speculative_decoding/)) | You already serve with vLLM. One setting gets you started |
+| TensorRT-LLM | Supported (Draft-Target) | Configure the draft and target models to run separately ([docs](https://nvidia.github.io/TensorRT-LLM/advanced/speculative-decoding.html)) | You need to squeeze latency on NVIDIA GPUs |
+| llama.cpp (`llama-server`) | Supported | `-md <draft model file>`, guess length via `--spec-draft-n-max` ([docs](https://github.com/ggml-org/llama.cpp/blob/master/tools/server/README.md)) | Local, CPU, or edge setups |
+| TGI (Hugging Face) | Not supported | Only Medusa-head models or n-gram (`--speculate`) ([docs](https://huggingface.co/docs/text-generation-inference/conceptual/speculation)) | If you need a separate draft model, pick another framework |
 
-vLLM is the right choice when you need batch optimization; TensorRT-LLM fits NVIDIA GPU-only environments where you want peak performance. With vLLM, specify `--speculative-model` and `--num-speculative-tokens` when starting the server. The framework handles batch scheduling, KV cache sharing, and dynamic adjustment based on acceptance rate. You'd only need to implement rejection sampling logic yourself for research purposes or when using a custom draft model.
+The decision usually ends with the stack you already run. If you serve with vLLM, add one `--speculative-config` line and compare in the order above. If you're on TGI, try n-gram speculation first instead of a separate draft model — for repetitive code and document work, that alone can help. If you're choosing fresh and need to push latency as low as possible on NVIDIA GPUs, TensorRT-LLM is a candidate, though it takes more setup than vLLM.
 
 ---
 
@@ -225,4 +227,4 @@ Speculative Decoding increases inference speed without changing the target model
 
 Three checks to run when deciding whether to adopt it: First, does a draft model exist that shares vocabulary with your target? Second, is there enough memory on the GPU to load the draft model on top of everything else (including KV cache and activation memory beyond just parameter storage)? Third, does your service prioritize maximizing overall throughput, or minimizing first-token latency?
 
-For tasks where the next token is reasonably predictable — code completion, document summarization — acceptance rates are high and the benefit is clear. For tasks with diverse distributions — creative generation, open-ended conversation — measure acceptance rate first before assuming any benefit. Speculative Decoding isn't a universal accelerator; it's a conditional optimization that only pays off when acceptance rates are high enough.
+For tasks where the next token is reasonably predictable — code completion, document summarization — acceptance rates are high and the benefit is clear. For tasks with diverse distributions — creative generation, open-ended conversation — measure acceptance rate first before assuming any benefit. Speculative Decoding isn't a universal accelerator; it's a conditional optimization that only pays off when tokens/s with it turned on comes out higher than the target alone.

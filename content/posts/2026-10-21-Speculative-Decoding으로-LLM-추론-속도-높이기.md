@@ -3,7 +3,7 @@ title: "Speculative Decoding으로 LLM 추론 속도 높이기"
 date: "2026-10-21 10:40"
 category: "AI"
 tags: ["Speculative Decoding", "LLM 추론 최적화", "Draft 모델", "vLLM"]
-excerpt: "Draft 모델 수용률이 충분히 높지 않으면 Speculative Decoding은 오히려 느려집니다. 어휘 공유 조건, k값 설정, TTFT 트레이드오프, 프레임워크 선택 기준까지 실제 적용에 필요한 판단 기준을 정리합니다."
+excerpt: "Speculative Decoding은 작은 모델이 먼저 짐작하고 큰 모델이 한 번에 채점해 LLM 응답을 빠르게 만듭니다. 짐작이 자주 틀리면 오히려 느려지는 이유와, Draft 모델·짐작 길이를 고르는 기준을 정리합니다."
 ---
 
 ## 목차
@@ -19,7 +19,7 @@ excerpt: "Draft 모델 수용률이 충분히 높지 않으면 Speculative Decod
 
 ## 개요
 
-Draft 모델 수용률이 충분히 높지 않으면, Speculative Decoding은 타깃 모델 단독보다 오히려 느려집니다. 어휘 공유 조건, k값 설정, TTFT 트레이드오프까지 실제로 적용할 때 필요한 판단 기준을 먼저 잡아야 효과를 볼 수 있습니다.
+챗봇 응답이 한 글자씩 느리게 찍히는 건, 큰 모델이 토큰 하나를 만들 때마다 수십 GB의 가중치를 GPU 메모리에서 다시 읽어야 하기 때문입니다. Speculative Decoding은 작은 모델이 다음 몇 토큰을 먼저 짐작하고 큰 모델이 그 짐작을 한 번에 채점하게 해서, 출력은 그대로 두고 응답만 빠르게 만듭니다. 이 기법을 제안한 논문은 같은 출력을 내면서 2~3배 빨라졌다고 보고했습니다([Leviathan et al., 2023](https://arxiv.org/abs/2211.17192)). 다만 작은 모델의 짐작이 자주 틀리면 버려지는 계산만 늘어 오히려 느려집니다. 이 글은 어떤 작은 모델을 고르고 한 번에 몇 토큰을 짐작하게 할지, 켠 뒤 효과가 있는지 어떻게 확인할지를 다룹니다.
 
 Speculative Decoding은 LLM 추론 속도를 높이는 기법입니다. GPT-4o나 Llama 70B 같은 대형 모델은 토큰을 하나씩 순서대로 생성하는 구조(자기회귀, autoregressive)로 만들어져, 응답 한 문장을 생성하는 데도 체감할 수 있는 지연이 쌓입니다. Speculative Decoding은 이 한계를 우회합니다. 작은 Draft 모델이 토큰 여러 개를 먼저 빠르게 예측하고, 큰 타깃 모델은 그 예측이 맞는지를 한 번의 포워드 패스로 병렬 검증합니다. 검증이 병렬로 이루어지기 때문에, 타깃 모델을 매번 순차 실행하는 것보다 전체 처리량이 늘어납니다.
 
@@ -120,46 +120,47 @@ print(f"Speculative Decoding: {t_spec:.2f}s")
 
 Speculative Decoding의 실질적인 속도 이점은 **수용률(acceptance rate)**에 따라 결정됩니다. 수용률이란 Draft 모델이 제안한 토큰 중 타깃 모델이 실제로 채택하는 비율입니다.
 
-수용률이 높으면 한 번의 타깃 포워드 패스로 여러 토큰을 확정할 수 있습니다. 수용률이 낮으면 Draft 모델의 연산 비용만 추가로 발생하고 이득은 거의 없습니다. ==수용률이 충분히 높지 않아 타깃 단독보다 처리량이 낮다면, Draft 모델을 더 크거나 도메인에 특화된 모델로 교체해야 합니다.==
+수용률이 높으면 한 번의 타깃 포워드 패스로 여러 토큰을 확정할 수 있습니다. 수용률이 낮으면 Draft 모델의 연산 비용만 추가로 발생하고 이득은 거의 없습니다. ==Speculative Decoding을 켠 뒤의 tokens/s가 타깃 모델 단독보다 낮다면, 수용률이 이득을 낼 만큼 높지 않다는 뜻입니다. Draft 모델을 타깃과 같은 계열의 더 큰 모델이나 도메인에 맞춘 모델로 바꿔야 합니다.==
 
-수용률은 프롬프트 유형에 따라 크게 달라집니다. 코드 자동완성처럼 다음 토큰이 어느 정도 예측 가능한 작업에서는 높아지고, 창의적 글쓰기나 오픈 엔드 질문처럼 여러 경로가 가능한 작업에서는 낮아집니다. 아래 코드로 워크로드별 수용률을 빠르게 비교할 수 있습니다.
+수용률은 프롬프트 유형에 따라 크게 달라집니다. 코드 자동완성처럼 다음 토큰이 어느 정도 예측 가능한 작업에서는 높아지고, 창의적 글쓰기나 오픈 엔드 질문처럼 여러 경로가 가능한 작업에서는 낮아집니다. 수용률 자체는 Hugging Face `generate()`가 따로 돌려주지 않지만, 결과적으로 중요한 것은 속도입니다. 아래 코드는 같은 프롬프트를 Draft 모델 없이 한 번, 있이 한 번 돌려 작업 유형별 속도비를 잽니다.
 
 ```python
+import time
 from transformers import AutoTokenizer, AutoModelForCausalLM
 import torch
 
-model = AutoModelForCausalLM.from_pretrained(
-    "meta-llama/Llama-3.1-8B-Instruct",
-    torch_dtype=torch.float16, device_map="auto"
+target = AutoModelForCausalLM.from_pretrained(
+    "meta-llama/Llama-3.1-8B-Instruct", torch_dtype=torch.float16, device_map="auto"
 )
-draft_model = AutoModelForCausalLM.from_pretrained(
-    "meta-llama/Llama-3.2-1B-Instruct",
-    torch_dtype=torch.float16, device_map="auto"
+# 같은 Llama 3 계열이라 어휘(토크나이저)를 공유합니다
+draft = AutoModelForCausalLM.from_pretrained(
+    "meta-llama/Llama-3.2-1B-Instruct", torch_dtype=torch.float16, device_map="auto"
 )
 tokenizer = AutoTokenizer.from_pretrained("meta-llama/Llama-3.1-8B-Instruct")
 
-# 작업 유형별로 수용률이 어떻게 달라지는지 확인합니다
 prompts = {
     "코드 자동완성": "def binary_search(arr, target):",
-    "사실 질의":    "What is the capital of France?",
+    "사실 질의": "What is the capital of France? Explain its history briefly.",
     "창의적 글쓰기": "Write a poem about autumn leaves.",
 }
 
+def tokens_per_sec(inputs, **kwargs):
+    torch.cuda.synchronize()
+    start = time.perf_counter()
+    out = target.generate(**inputs, max_new_tokens=128, do_sample=False, **kwargs)
+    torch.cuda.synchronize()
+    new_tokens = out.shape[1] - inputs["input_ids"].shape[1]
+    return new_tokens / (time.perf_counter() - start)
+
 for label, prompt in prompts.items():
-    inputs = tokenizer(prompt, return_tensors="pt").to(model.device)
-    out = model.generate(
-        **inputs,
-        assistant_model=draft_model,
-        num_assistant_tokens=5,
-        max_new_tokens=60,
-        return_dict_in_generate=True,
-    )
-    # 생성된 토큰 수로 처리 경향을 간접 확인합니다
-    n_new = out.sequences.shape[1] - inputs["input_ids"].shape[1]
-    print(f"[{label}] 생성 토큰: {n_new}")
+    inputs = tokenizer(prompt, return_tensors="pt").to(target.device)
+    tokens_per_sec(inputs, max_new_tokens=8)  # 첫 실행의 워밍업 비용을 빼기 위해 한 번 버립니다
+    base = tokens_per_sec(inputs)
+    spec = tokens_per_sec(inputs, assistant_model=draft, num_assistant_tokens=5)
+    print(f"[{label}] 단독 {base:.1f} tok/s, Speculative {spec:.1f} tok/s, 속도비 {spec / base:.2f}")
 ```
 
-코드 자동완성에서 생성 속도가 가장 빠른 경향이 있고, 창의적 글쓰기에서는 이점이 줄어드는 경향을 관찰할 수 있습니다.
+읽는 법은 속도비 하나입니다. 1보다 크면 그 작업에서는 켤 이유가 있고, 1 근처거나 1보다 작으면 Draft 모델이 짐작을 자주 틀려 계산만 늘고 있다는 뜻입니다. 같은 Draft 모델이라도 작업 유형에 따라 속도비가 갈리는 경우가 많으니, 자기 서비스의 실제 프롬프트 몇십 개로 재 보는 것이 출발점입니다.
 
 ### Draft 길이 k와 처리량의 균형
 
@@ -191,30 +192,31 @@ TTFT(Time-to-First-Token), 즉 첫 토큰까지 걸리는 시간도 주의해야
 
 메모리가 빠듯한 환경이라면 Draft 모델을 4비트 양자화해 올리는 것도 하나의 선택입니다. 수용률이 조금 낮아질 수 있지만 메모리 부담을 줄일 수 있습니다.
 
-### 모니터링해야 할 지표
+### 켠 뒤 효과를 확인하는 순서
 
-운영 환경에서 Speculative Decoding이 실제로 도움이 되는지 판단하려면 다음 지표를 함께 봐야 합니다.
+운영 환경에서 Speculative Decoding이 실제로 도움이 되는지는 **켜기 전 값과 비교해야만** 알 수 있습니다. 아래 순서대로 재면 무엇을 바꿔야 하는지까지 정해집니다.
 
-| 지표 | 의미 | 목표 방향 |
+| 순서 | 무엇을 재나 | 이렇게 나오면 |
 |---|---|---|
-| Acceptance Rate | Draft 토큰 수용 비율 | 50% 이상 권장 |
-| Tokens/s (타깃 단독) | 기준값 | 먼저 측정 필요 |
-| Tokens/s (Speculative) | 도입 후 처리량 | 기준보다 높아야 의미 있음 |
-| Draft Overhead | Draft 생성에 쓰는 시간 비율 | 낮을수록 좋음 |
-| TTFT | 첫 토큰까지 걸리는 시간 | 도입 후 증가 여부 반드시 확인 |
+| 1. 켜기 전 | 타깃 단독 tokens/s와 TTFT(첫 토큰까지 걸리는 시간) | 이 두 값이 이후 모든 비교의 기준입니다 |
+| 2. 켠 뒤 | 같은 트래픽에서 tokens/s | 기준보다 낮으면 3번으로, 높으면 4번으로 |
+| 3. 수용률 확인 | Draft 토큰 중 채택된 비율 | 낮으면 짐작 길이 k를 줄이거나 Draft 모델을 바꿉니다 |
+| 4. TTFT 비교 | 켠 뒤 TTFT | 늘었는데 스트리밍 응답이 중요한 서비스라면, 처리량 이득과 첫 글자 지연 중 무엇이 중요한지 정합니다 |
+
+예를 들어 사내 코드 어시스턴트에 vLLM으로 붙였다면, 하루 트래픽을 켜기 전과 켠 뒤로 나눠 tokens/s를 비교하는 것이 첫 단계입니다. 수용률이 높게 나오는 코드 요청과 낮게 나오는 자유 질문이 섞여 있다면, 요청 유형별로 나눠 봐야 평균에 가려진 손해를 찾을 수 있습니다.
 
 ### 프레임워크 선택
 
-현업 서빙 환경에서는 직접 구현보다 프로덕션 프레임워크의 Speculative Decoding 지원을 활용하는 경우가 많습니다.
+직접 기각 샘플링을 구현할 일은 거의 없습니다. 이미 쓰고 있는 서빙 프레임워크가 별도 Draft 모델을 지원하는지부터 확인하면 됩니다. 아래 표는 각 공식 문서 기준입니다(2026년 10월 확인).
 
-| 프레임워크 | 지원 여부 | 특징 | 권장 상황 |
+| 프레임워크 | 별도 Draft 모델 | 켜는 방법 | 이런 경우에 |
 |---|---|---|---|
-| vLLM | ✅ (0.3+) | `--speculative-model` 파라미터, 배치 최적화 | 배치 최적화가 필요할 때 |
-| TGI (Hugging Face) | ✅ | Docker 인자로 Draft 모델 지정 | 빠른 실험·프로토타이핑 |
-| TensorRT-LLM | ✅ | NVIDIA 환경 최적화, Draft-Target 통합 | NVIDIA GPU 전용 최대 성능 |
-| llama.cpp | 부분 지원 | `--draft` 플래그, CPU 환경 포함 | CPU·엣지 환경 |
+| vLLM | 지원 | `--speculative-config '{"method": "draft_model", "model": "<Draft 모델>", "num_speculative_tokens": 5}'` ([문서](https://docs.vllm.ai/en/latest/features/speculative_decoding/)) | 이미 vLLM으로 서빙 중일 때. 설정 한 줄로 시작할 수 있습니다 |
+| TensorRT-LLM | 지원 (Draft-Target) | Draft·타깃 두 모델을 따로 띄우도록 설정 ([문서](https://nvidia.github.io/TensorRT-LLM/advanced/speculative-decoding.html)) | NVIDIA GPU에서 지연을 끝까지 줄여야 할 때 |
+| llama.cpp (`llama-server`) | 지원 | `-md <Draft 모델 파일>`, 짐작 길이는 `--spec-draft-n-max` ([문서](https://github.com/ggml-org/llama.cpp/blob/master/tools/server/README.md)) | 로컬·CPU·엣지 환경 |
+| TGI (Hugging Face) | 미지원 | Medusa 헤드가 붙은 모델이나 n-gram(`--speculate`)만 ([문서](https://huggingface.co/docs/text-generation-inference/conceptual/speculation)) | 별도 Draft 모델 방식이 필요하면 다른 프레임워크를 고릅니다 |
 
-배치 최적화가 필요하면 vLLM, NVIDIA GPU 전용 환경에서 최대 성능을 끌어내려면 TensorRT-LLM이 적합합니다. vLLM을 쓴다면 서버 실행 시 `--speculative-model`과 `--num-speculative-tokens`를 지정하면 됩니다. 배치 스케줄링, KV 캐시 공유, 수용률에 따른 동적 조정을 프레임워크가 대부분 처리해 줍니다. 직접 기각 샘플링 로직을 구현할 일은 연구 목적이나 커스텀 Draft 모델을 쓰는 경우에 한합니다.
+결정은 대개 지금 쓰는 스택에서 끝납니다. 이미 vLLM으로 서빙 중이라면 `--speculative-config` 한 줄을 추가하고 위 순서대로 비교해 보면 됩니다. TGI를 쓰고 있다면 별도 Draft 모델 대신 n-gram 방식을 먼저 시험해 볼 수 있습니다. 반복이 많은 코드·문서 작업에서는 이것만으로도 효과를 볼 수 있습니다. 새로 고르는 상황이고 NVIDIA GPU에서 지연을 끝까지 줄여야 한다면 TensorRT-LLM이 후보지만, vLLM보다 설정할 것이 많습니다.
 
 ---
 
@@ -224,4 +226,4 @@ Speculative Decoding은 타깃 모델의 출력 분포를 전혀 바꾸지 않�
 
 적용 여부를 판단할 때 체크해야 할 기준은 세 가지입니다. 첫째, 타깃 모델과 어휘를 공유하는 Draft 모델이 존재하는가. 둘째, GPU에 Draft 모델을 추가로 올릴 메모리 여유가 있는가(파라미터 스토리지 하한 외에 KV 캐시·활성화 메모리까지 포함해서). 셋째, 서비스가 전체 처리량 최대화를 우선하는가, 아니면 첫 토큰 지연을 최소화하는가.
 
-코드 자동완성이나 문서 요약처럼 다음 토큰이 어느 정도 예측 가능한 작업에서는 수용률이 높아 이점이 뚜렷합니다. 창의적 생성이나 오픈 엔드 대화처럼 분포가 다양한 작업에서는 수용률을 먼저 측정해야 실제 이점을 확인할 수 있습니다. Speculative Decoding은 만능 가속기가 아니라, 수용률이 충분히 높을 때 비로소 효과가 나타나는 조건부 최적화 기법입니다.
+코드 자동완성이나 문서 요약처럼 다음 토큰이 어느 정도 예측 가능한 작업에서는 수용률이 높아 이점이 뚜렷합니다. 창의적 생성이나 오픈 엔드 대화처럼 분포가 다양한 작업에서는 수용률을 먼저 측정해야 실제 이점을 확인할 수 있습니다. Speculative Decoding은 만능 가속기가 아니라, 켠 뒤 tokens/s가 타깃 단독보다 높게 나올 때 비로소 효과가 나타나는 조건부 최적화 기법입니다.
