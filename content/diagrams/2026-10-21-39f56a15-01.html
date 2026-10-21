@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f8fafb; font-family: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; }
+  .diagram-wrap { width: 100%; max-width: 960px; margin: 0 auto; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<div class="diagram-wrap">
+<svg viewBox="0 0 960 360" xmlns="http://www.w3.org/2000/svg"
+     role="img" aria-labelledby="2026-10-21-39f56a15-01-sd-title 2026-10-21-39f56a15-01-sd-desc">
+  <title id="2026-10-21-39f56a15-01-sd-title">Speculative Decoding 흐름도</title>
+  <desc id="2026-10-21-39f56a15-01-sd-desc">Draft 모델이 k개 토큰을 예측하면 타깃 모델이 병렬로 검증하고, 수용 여부에 따라 토큰을 채택하거나 직전까지만 수락 후 재생성하는 과정을 보여주는 흐름도.</desc>
+
+  <defs>
+    <!-- 기본 화살표 -->
+    <marker id="2026-10-21-39f56a15-01-sd-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <!-- 수용 화살표 (teal) -->
+    <marker id="2026-10-21-39f56a15-01-sd-arrow-ok" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#286d50"/>
+    </marker>
+    <!-- 거부 화살표 (amber) -->
+    <marker id="2026-10-21-39f56a15-01-sd-arrow-warn" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#a96a08"/>
+    </marker>
+  </defs>
+
+  <!-- 배경 -->
+  <rect width="960" height="360" fill="#f8fafb"/>
+
+  <!-- ── 화살표 (노드보다 먼저) ── -->
+
+  <!-- Draft → Target: y=164, x=220→340 -->
+  <line x1="220" y1="164" x2="336" y2="164"
+        stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-21-39f56a15-01-sd-arrow)"/>
+  <!-- 화살표 레이블 -->
+  <rect x="228" y="148" width="72" height="12" rx="2" fill="#f8fafb"/>
+  <text x="264" y="158"
+        font-family="'IBM Plex Mono', ui-monospace, monospace"
+        font-size="8" fill="#6c8188" text-anchor="middle" letter-spacing="0.06em">후보 시퀀스</text>
+
+  <!-- Target → 다이아몬드: y=164, x=480→572 -->
+  <line x1="480" y1="164" x2="568" y2="164"
+        stroke="#3f545c" stroke-width="1" marker-end="url(#2026-10-21-39f56a15-01-sd-arrow)"/>
+
+  <!-- 다이아몬드 → OK (아래쪽): Q 중심(616,164), OK 중심(740,236) -->
+  <!-- 수직: (616,196)→(616,236), 수평: (616,236)→(700,236) -->
+  <polyline points="616,196 616,236 696,236"
+            fill="none" stroke="#286d50" stroke-width="1" marker-end="url(#2026-10-21-39f56a15-01-sd-arrow-ok)"/>
+  <!-- 레이블: 수직 구간 옆 -->
+  <rect x="620" y="200" width="28" height="12" rx="2" fill="#f8fafb"/>
+  <text x="634" y="210"
+        font-family="'IBM Plex Mono', ui-monospace, monospace"
+        font-size="8" fill="#286d50" text-anchor="middle" letter-spacing="0.06em">수용</text>
+
+  <!-- 다이아몬드 → REJ (위쪽): Q 중심(616,164), REJ 중심(740,92) -->
+  <!-- 수직: (616,132)→(616,92), 수평: (616,92)→(700,92) -->
+  <polyline points="616,132 616,92 696,92"
+            fill="none" stroke="#a96a08" stroke-width="1" marker-end="url(#2026-10-21-39f56a15-01-sd-arrow-warn)"/>
+  <!-- 레이블 -->
+  <rect x="620" y="100" width="28" height="12" rx="2" fill="#f8fafb"/>
+  <text x="634" y="110"
+        font-family="'IBM Plex Mono', ui-monospace, monospace"
+        font-size="8" fill="#a96a08" text-anchor="middle" letter-spacing="0.06em">거부</text>
+
+  <!-- ── 노드 ── -->
+
+  <!-- 1. Draft 모델 (focal, accent) x=60 y=120 w=160 h=88 -->
+  <rect x="60" y="120" width="160" height="88" rx="6" fill="#f8fafb"/>
+  <rect x="60" y="120" width="160" height="88" rx="6"
+        fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <!-- 타입 태그 -->
+  <rect x="68" y="128" width="36" height="12" rx="2"
+        fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="86" y="137"
+        font-family="'IBM Plex Mono', ui-monospace, monospace"
+        font-size="7" fill="rgba(13,87,99,0.8)" text-anchor="middle" letter-spacing="0.08em">DRAFT</text>
+  <!-- 노드 이름 -->
+  <text x="140" y="160"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        font-size="14" font-weight="600" fill="#122127" text-anchor="middle">Draft 모델</text>
+  <!-- 서브레이블 -->
+  <text x="140" y="180"
+        font-family="'IBM Plex Mono', ui-monospace, monospace"
+        font-size="11" fill="#3f545c" text-anchor="middle">k개 토큰 예측</text>
+
+  <!-- 2. 타깃 모델 (focal, accent) x=340 y=120 w=140 h=88 -->
+  <rect x="340" y="120" width="140" height="88" rx="6" fill="#f8fafb"/>
+  <rect x="340" y="120" width="140" height="88" rx="6"
+        fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <!-- 타입 태그 -->
+  <rect x="348" y="128" width="36" height="12" rx="2"
+        fill="transparent" stroke="rgba(13,87,99,0.40)" stroke-width="0.8"/>
+  <text x="366" y="137"
+        font-family="'IBM Plex Mono', ui-monospace, monospace"
+        font-size="7" fill="rgba(13,87,99,0.8)" text-anchor="middle" letter-spacing="0.08em">TARGET</text>
+  <!-- 노드 이름 -->
+  <text x="410" y="160"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        font-size="14" font-weight="600" fill="#122127" text-anchor="middle">타깃 모델</text>
+  <!-- 서브레이블 -->
+  <text x="410" y="180"
+        font-family="'IBM Plex Mono', ui-monospace, monospace"
+        font-size="11" fill="#3f545c" text-anchor="middle">병렬 검증</text>
+
+  <!-- 3. 수용 여부 다이아몬드 cx=616 cy=164 (반폭=48, 반높=32) -->
+  <polygon points="616,132 664,164 616,196 568,164"
+           fill="#f8fafb"/>
+  <polygon points="616,132 664,164 616,196 568,164"
+           fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="616" y="160"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        font-size="12" font-weight="600" fill="#122127" text-anchor="middle">수용</text>
+  <text x="616" y="176"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        font-size="12" font-weight="600" fill="#122127" text-anchor="middle">여부</text>
+
+  <!-- 4. OK 노드 (채택) x=696 y=196 w=176 h=80 -->
+  <rect x="696" y="196" width="176" height="80" rx="6" fill="#f8fafb"/>
+  <rect x="696" y="196" width="176" height="80" rx="6"
+        fill="#d6e9de" stroke="#286d50" stroke-width="1"/>
+  <!-- 타입 태그 -->
+  <rect x="704" y="204" width="24" height="12" rx="2"
+        fill="transparent" stroke="rgba(40,109,80,0.40)" stroke-width="0.8"/>
+  <text x="716" y="213"
+        font-family="'IBM Plex Mono', ui-monospace, monospace"
+        font-size="7" fill="rgba(40,109,80,0.8)" text-anchor="middle" letter-spacing="0.08em">OK</text>
+  <!-- 노드 이름 -->
+  <text x="784" y="240"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        font-size="14" font-weight="600" fill="#122127" text-anchor="middle">해당 토큰 채택</text>
+  <!-- 서브레이블 -->
+  <text x="784" y="260"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        font-size="11" fill="#3f545c" text-anchor="middle">다음 단계로</text>
+
+  <!-- 5. REJ 노드 (거부) x=696 y=52 w=196 h=80 -->
+  <rect x="696" y="52" width="196" height="80" rx="6" fill="#f8fafb"/>
+  <rect x="696" y="52" width="196" height="80" rx="6"
+        fill="#f5e8cc" stroke="#a96a08" stroke-width="1"/>
+  <!-- 타입 태그 -->
+  <rect x="704" y="60" width="28" height="12" rx="2"
+        fill="transparent" stroke="rgba(169,106,8,0.40)" stroke-width="0.8"/>
+  <text x="718" y="69"
+        font-family="'IBM Plex Mono', ui-monospace, monospace"
+        font-size="7" fill="rgba(169,106,8,0.8)" text-anchor="middle" letter-spacing="0.08em">RETRY</text>
+  <!-- 노드 이름 -->
+  <text x="794" y="92"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        font-size="14" font-weight="600" fill="#122127" text-anchor="middle">직전까지만 수락</text>
+  <!-- 서브레이블 -->
+  <text x="794" y="112"
+        font-family="'IBM Plex Mono', ui-monospace, monospace"
+        font-size="11" fill="#3f545c" text-anchor="middle">타깃으로 재생성</text>
+
+  <!-- ── 범례 구분선 ── -->
+  <line x1="32" y1="316" x2="928" y2="316"
+        stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+
+  <!-- 범례 텍스트 -->
+  <text x="32" y="332"
+        font-family="'IBM Plex Mono', ui-monospace, monospace"
+        font-size="10" fill="#6c8188" letter-spacing="0.14em">LEGEND</text>
+
+  <!-- 범례 항목 1: focal 노드 -->
+  <rect x="108" y="322" width="12" height="12" rx="2"
+        fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="126" y="332"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        font-size="11" fill="#3f545c">Draft / 타깃 모델</text>
+
+  <!-- 범례 항목 2: 수용 -->
+  <rect x="284" y="322" width="12" height="12" rx="2"
+        fill="#d6e9de" stroke="#286d50" stroke-width="1"/>
+  <text x="302" y="332"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        font-size="11" fill="#3f545c">토큰 채택</text>
+
+  <!-- 범례 항목 3: 거부 -->
+  <rect x="420" y="322" width="12" height="12" rx="2"
+        fill="#f5e8cc" stroke="#a96a08" stroke-width="1"/>
+  <text x="438" y="332"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        font-size="11" fill="#3f545c">거부 후 재생성</text>
+
+  <!-- 범례 항목 4: 판단 -->
+  <polygon points="582,322 594,328 582,334 570,328"
+           fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="600" y="332"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        font-size="11" fill="#3f545c">판단</text>
+
+</svg>
+</div>
+</body>
+</html>

@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>k value configuration flow</title>
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: #f8fafb; }
+  body { display: flex; justify-content: center; padding: 0; }
+  svg { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg"
+     viewBox="0 0 720 560"
+     role="img"
+     aria-labelledby="2026-10-21-39f56a15-02-kflow-title 2026-10-21-39f56a15-02-kflow-desc">
+
+  <title id="2026-10-21-39f56a15-02-kflow-title">Speculative Decoding k value configuration flow</title>
+  <desc id="2026-10-21-39f56a15-02-kflow-desc">As k increases, the gain on acceptance and the waste on rejection both grow. The decision flow determines whether to set k large based on a high acceptance rate, or to replace the Draft model.</desc>
+
+  <defs>
+    <!-- 화살표 마커 -->
+    <marker id="2026-10-21-39f56a15-02-kflow-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3f545c"/>
+    </marker>
+    <marker id="2026-10-21-39f56a15-02-kflow-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0d5763"/>
+    </marker>
+  </defs>
+
+  <!-- 배경 -->
+  <rect width="720" height="560" fill="#f8fafb"/>
+
+  <!-- ============================================================
+       화살표 (노드보다 먼저)
+       ============================================================ -->
+
+  <!-- K → B1 (왼쪽 아래 방향, 엘보우) -->
+  <!-- K 중심: (360, 76), 하단: (360, 100)
+       B1 중심: (216, 196), 상단: (216, 172) -->
+  <path d="M 340 100 Q 340 136 216 136 L 216 172"
+        fill="none" stroke="#3f545c" stroke-width="1"
+        marker-end="url(#2026-10-21-39f56a15-02-kflow-arrow)"/>
+
+  <!-- K → B2 (오른쪽 아래 방향, 엘보우) -->
+  <!-- B2 중심: (504, 196), 상단: (504, 172) -->
+  <path d="M 380 100 Q 380 136 504 136 L 504 172"
+        fill="none" stroke="#3f545c" stroke-width="1"
+        marker-end="url(#2026-10-21-39f56a15-02-kflow-arrow)"/>
+
+  <!-- B1 → DQ (아래) -->
+  <!-- B1 하단: (216, 220), DQ 좌측 꼭짓점: (288, 320) -->
+  <path d="M 216 220 L 216 288 Q 216 320 252 320 L 288 320"
+        fill="none" stroke="#3f545c" stroke-width="1"
+        marker-end="url(#2026-10-21-39f56a15-02-kflow-arrow)"/>
+
+  <!-- B2 → DQ (아래) -->
+  <!-- B2 하단: (504, 220), DQ 우측 꼭짓점: (432, 320) -->
+  <path d="M 504 220 L 504 288 Q 504 320 468 320 L 432 320"
+        fill="none" stroke="#3f545c" stroke-width="1"
+        marker-end="url(#2026-10-21-39f56a15-02-kflow-arrow)"/>
+
+  <!-- DQ →|예| OK (아래, 왼쪽) -->
+  <!-- DQ 좌하단 꼭짓점 근처: (340, 344), OK 상단 (216, 420) -->
+  <path d="M 328 344 Q 300 380 216 380 L 216 420"
+        fill="none" stroke="#0d5763" stroke-width="1.2"
+        marker-end="url(#2026-10-21-39f56a15-02-kflow-arrow-accent)"/>
+
+  <!-- DQ →|아니오| WARN (아래, 오른쪽) -->
+  <!-- DQ 우하단 꼭짓점 근처: (392, 344), WARN 상단 (504, 420) -->
+  <path d="M 392 344 Q 420 380 504 380 L 504 420"
+        fill="none" stroke="#3f545c" stroke-width="1"
+        marker-end="url(#2026-10-21-39f56a15-02-kflow-arrow)"/>
+
+  <!-- ============================================================
+       노드
+       ============================================================ -->
+
+  <!-- K: k 값 증가 — focal (accent) -->
+  <!-- 위치: x=284, y=52, w=152, h=48 -->
+  <rect x="284" y="52" width="152" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="284" y="52" width="152" height="48" rx="6"
+        fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <rect x="292" y="58" width="36" height="12" rx="2"
+        fill="transparent" stroke="rgba(13,87,99,0.4)" stroke-width="0.8"/>
+  <text x="310" y="67"
+        fill="rgba(13,87,99,0.8)" font-size="7" font-family="'IBM Plex Mono', monospace"
+        text-anchor="middle" letter-spacing="0.08em">INPUT</text>
+  <text x="360" y="82"
+        fill="#122127" font-size="14" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Increase k</text>
+
+  <!-- B1: 수용 시 이득 증가 -->
+  <!-- 위치: x=132, y=172, w=168, h=48 -->
+  <rect x="132" y="172" width="168" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="132" y="172" width="168" height="48" rx="6"
+        fill="rgba(13,87,99,0.04)" stroke="#6c8188" stroke-width="1"/>
+  <text x="216" y="192"
+        fill="#122127" font-size="13" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Higher acceptance gain</text>
+  <text x="216" y="210"
+        fill="#3f545c" font-size="11" font-weight="400"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">More tokens confirmed</text>
+
+  <!-- B2: 거부 시 낭비 증가 -->
+  <!-- 위치: x=420, y=172, w=168, h=48 -->
+  <rect x="420" y="172" width="168" height="48" rx="6" fill="#f8fafb"/>
+  <rect x="420" y="172" width="168" height="48" rx="6"
+        fill="rgba(13,87,99,0.04)" stroke="#6c8188" stroke-width="1"/>
+  <text x="504" y="192"
+        fill="#122127" font-size="13" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Higher rejection waste</text>
+  <text x="504" y="210"
+        fill="#3f545c" font-size="11" font-weight="400"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Draft compute discarded</text>
+
+  <!-- DQ: 수용률이 높은가 — 다이아몬드 -->
+  <!-- 중심: (360, 320), 폭 144, 높이 48 -->
+  <!-- 꼭짓점: 상(360,296) 우(432,320) 하(360,344) 좌(288,320) -->
+  <polygon points="360,296 432,296 432,344 288,344 288,296"
+           fill="#f8fafb"/>
+  <!-- 다이아몬드 근사: 마름모 -->
+  <polygon points="360,296 432,320 360,344 288,320"
+           fill="rgba(13,87,99,0.06)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="360" y="316"
+        fill="#122127" font-size="13" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Acceptance</text>
+  <text x="360" y="332"
+        fill="#122127" font-size="13" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">rate high?</text>
+
+  <!-- 화살표 라벨: 예 -->
+  <rect x="254" y="356" width="24" height="16" rx="2" fill="#f8fafb"/>
+  <text x="266" y="368"
+        fill="#0d5763" font-size="12" font-weight="500"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Yes</text>
+
+  <!-- 화살표 라벨: 아니오 -->
+  <rect x="420" y="356" width="48" height="16" rx="2" fill="#f8fafb"/>
+  <text x="444" y="368"
+        fill="#3f545c" font-size="12" font-weight="500"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">No</text>
+
+  <!-- OK: k 크게 설정 — focal (accent) -->
+  <!-- 위치: x=132, y=420, w=168, h=52 -->
+  <rect x="132" y="420" width="168" height="52" rx="6" fill="#f8fafb"/>
+  <rect x="132" y="420" width="168" height="52" rx="6"
+        fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1.2"/>
+  <text x="216" y="442"
+        fill="#122127" font-size="13" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Set k large</text>
+  <text x="216" y="460"
+        fill="#3f545c" font-size="11" font-weight="400"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Maximize throughput</text>
+
+  <!-- WARN: k 줄이거나 Draft 모델 교체 -->
+  <!-- 위치: x=420, y=420, w=168, h=52 -->
+  <rect x="420" y="420" width="168" height="52" rx="6" fill="#f8fafb"/>
+  <rect x="420" y="420" width="168" height="52" rx="6"
+        fill="rgba(45,49,66,0.04)" stroke="rgba(45,49,66,0.30)" stroke-width="1"/>
+  <text x="504" y="442"
+        fill="#122127" font-size="13" font-weight="600"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Reduce k or</text>
+  <text x="504" y="460"
+        fill="#3f545c" font-size="11" font-weight="400"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif"
+        text-anchor="middle">Replace Draft model</text>
+
+  <!-- ============================================================
+       범례 구분선 + 범례
+       ============================================================ -->
+  <line x1="36" y1="500" x2="684" y2="500"
+        stroke="rgba(18,33,39,0.12)" stroke-width="0.8"/>
+
+  <text x="36" y="514"
+        fill="#3f545c" font-size="10" font-family="'IBM Plex Mono', monospace"
+        letter-spacing="0.14em">LEGEND</text>
+
+  <!-- 범례 항목 1: 결정 노드 -->
+  <polygon points="108,524 124,516 140,524 124,532"
+           fill="rgba(13,87,99,0.06)" stroke="#0d5763" stroke-width="1"/>
+  <text x="148" y="528"
+        fill="#3f545c" font-size="11" font-weight="400"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">Decision</text>
+
+  <!-- 범례 항목 2: 결과 노드 (accent) -->
+  <rect x="220" y="516" width="36" height="20" rx="4"
+        fill="rgba(13,87,99,0.08)" stroke="#0d5763" stroke-width="1"/>
+  <text x="264" y="529"
+        fill="#3f545c" font-size="11" font-weight="400"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">Recommended</text>
+
+  <!-- 범례 항목 3: 일반 노드 -->
+  <rect x="360" y="516" width="36" height="20" rx="4"
+        fill="rgba(45,49,66,0.04)" stroke="rgba(45,49,66,0.30)" stroke-width="1"/>
+  <text x="404" y="529"
+        fill="#3f545c" font-size="11" font-weight="400"
+        font-family="'IBM Plex Sans KR', 'Apple SD Gothic Neo', sans-serif">Alt / Action</text>
+
+</svg>
+</body>
+</html>

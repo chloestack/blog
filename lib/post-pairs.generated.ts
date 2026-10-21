@@ -47,5 +47,6 @@ export const POST_PAIRS: Record<string, string> = {
   "2026-10-19-Archify란-코드를-인터랙티브-아키텍처-다이어그램으로-바꾸는-AI-에이전트-스킬": "2026-10-19-archify-ai-agent-interactive-architecture-diagrams",
   "2026-10-19-Graphify로-코드베이스를-지식-그래프로-전환하기": "2026-10-19-codebase-knowledge-graph-graphify",
   "2026-10-19-OpenAI-Agents-SDK로-멀티에이전트-핸드오프와-가드레일-구현하기": "2026-10-19-openai-agents-sdk-multi-agent-handoffs-guardrails",
-  "2026-10-20-DPO로-LLM-정렬-파인튜닝하기-—-RLHF-없이-선호도-학습-구현": "2026-10-20-llm-alignment-dpo-without-rlhf"
+  "2026-10-20-DPO로-LLM-정렬-파인튜닝하기-—-RLHF-없이-선호도-학습-구현": "2026-10-20-llm-alignment-dpo-without-rlhf",
+  "2026-10-21-Speculative-Decoding으로-LLM-추론-속도-높이기": "2026-10-21-speeding-up-llm-inference-speculative-decoding"
 };
