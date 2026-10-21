@@ -23,8 +23,8 @@ export function isLocale(value: string): value is Locale {
 
 /** 검색 결과와 공유 카드에 나가는 사이트 설명. 네이버 서치어드바이저 권장에 맞춰 80자 이내로 쓴다. */
 export const SITE_DESCRIPTION: Record<Locale, string> = {
-  ko: "소프트웨어 구조와 운영에서 내린 판단을 기록하는 기술 블로그입니다. Spring·Java·아키텍처·DevOps·AI 도구를 다룹니다.",
-  en: "A software engineering blog on structure, interfaces, and the judgment calls behind running systems. Spring, Java, architecture, DevOps, and AI tooling.",
+  ko: "백엔드 개발자가 AI 도구를 실무에 쓰고 서비스를 운영하며 겪은 일과 내린 판단을 기록합니다.",
+  en: "A backend developer's notes on using AI tools at work and running real services: what happened, and the calls made.",
 };
 
 /** og:locale에 쓰는 표기. */
@@ -84,7 +84,7 @@ export const STRINGS: Record<Locale, Strings> = {
     backToTop: "맨 위로 ↑",
     aboutTitle: "About",
     aboutCopy:
-      "Java/Spring 기반 백엔드 개발과 AI/RAG, 아키텍처, 개발 도구에 대한 실무 경험을 공유하고 새로운 기술을 탐구합니다.",
+      "Java/Spring 백엔드 개발자입니다. Claude Code 같은 AI 도구를 실무에 쓰고, 직접 만든 서비스를 운영하면서 겪은 일과 그때 내린 판단을 씁니다.",
     contactTitle: "Contact · 연락처",
     privacy: "개인정보처리방침",
     visitsToday: "오늘",
@@ -110,7 +110,7 @@ export const STRINGS: Record<Locale, Strings> = {
     backToTop: "Back to top ↑",
     aboutTitle: "About",
     aboutCopy:
-      "Notes from backend work in Java and Spring, plus AI/RAG, architecture, and the tools that go with them.",
+      "I'm a Java/Spring backend developer. I write about using AI tools like Claude Code at work and running services I've built: what went wrong, and the calls I made.",
     contactTitle: "Contact",
     privacy: "Privacy policy",
     visitsToday: "Today",

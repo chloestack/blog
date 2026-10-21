@@ -198,7 +198,7 @@ test("rows are stamped with the publish time instead of a running number", async
 test("every page describes itself for search results and share cards", async () => {
   const head = (await (await render()).text()).split("</head>")[0];
   for (const attr of ['name="description"', 'property="og:description"', 'name="twitter:description"']) {
-    assert.match(head, new RegExp(`<meta ${attr} content="소프트웨어 구조와 운영`), `homepage is missing ${attr}`);
+    assert.match(head, new RegExp(`<meta ${attr} content="백엔드 개발자가 AI 도구를`), `homepage is missing ${attr}`);
   }
   // 네이버 서치어드바이저는 80자를 넘는 설명문을 고치라고 지적한다.
   const description = head.match(/<meta name="description" content="([^"]+)"/)[1];
@@ -258,7 +258,7 @@ test("the footer introduces the site and labels the contact address", async () =
     const html = await (await render(pathname)).text();
     const footer = html.slice(html.indexOf("<footer"), html.indexOf("</footer>"));
     assert.match(footer, /About/, `no about section: ${pathname}`);
-    assert.match(footer, /Java\/Spring 기반 백엔드 개발과/, `no about copy: ${pathname}`);
+    assert.match(footer, /Java\/Spring 백엔드 개발자입니다/, `no about copy: ${pathname}`);
     assert.match(footer, /Contact · 연락처/, `the contact address has no label: ${pathname}`);
     assert.match(footer, /<a href="mailto:contact@pistamond\.dev">contact@pistamond\.dev<\/a>/, `no contact address: ${pathname}`);
     assert.match(footer, /href="\/privacy">개인정보처리방침</, `no privacy link: ${pathname}`);
