@@ -1,7 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { localeChoice, localeRedirect } from "@/lib/geo";
 import { LOCALE_COOKIE } from "@/lib/i18n";
-import removedPosts from "@/content/removed-posts.json";
+import movedPosts from "@/content/moved-posts.json";
 
 /** 목록과 글 주소에서만 돈다. API·정적 파일·사이트맵은 건드리지 않는다. */
 export const config = {
@@ -10,10 +10,11 @@ export const config = {
 
 const YEAR = 60 * 60 * 24 * 365;
 
-// 2026-10-21에 내린 글. 티스토리 소개 글이 아직 이 주소로 링크하므로 404 대신 목록으로 보낸다.
-const REMOVED = { ko: new Set(removedPosts.ko), en: new Set(removedPosts.en) };
+// 2026-10-21에 내린 글 중 남은 글과 주제가 같은 주소만 그 글로 영구 이동한다. 나머지는 404로
+// 둬서 색인에서 빠지게 한다 — 전부 목록으로 보내면 구글이 soft 404로 본다.
+const MOVED: Record<"ko" | "en", Record<string, string>> = movedPosts;
 
-function removedTarget(pathname: string): string | null {
+function movedTarget(pathname: string): string | null {
   const match = /^(\/en)?\/posts\/([^/]+)\/?$/.exec(pathname);
   if (!match) return null;
   let slug: string;
@@ -22,15 +23,16 @@ function removedTarget(pathname: string): string | null {
   } catch {
     return null;
   }
-  if (match[1]) return REMOVED.en.has(slug) ? "/en" : null;
-  return REMOVED.ko.has(slug) ? "/" : null;
+  const prefix = match[1] ?? "";
+  const target = (prefix ? MOVED.en : MOVED.ko)[slug];
+  return target ? `${prefix}/posts/${encodeURIComponent(target)}` : null;
 }
 
 export default function proxy(request: NextRequest) {
   const url = request.nextUrl;
 
-  const gone = removedTarget(url.pathname);
-  if (gone) return NextResponse.redirect(new URL(gone, url), 302);
+  const moved = movedTarget(url.pathname);
+  if (moved) return NextResponse.redirect(new URL(moved, url), 308);
 
   // 언어 전환 링크(`?lang=ko`)를 쿠키로 옮기고 파라미터 없는 주소로 다시 보낸다.
   const chosen = localeChoice(url.searchParams.get("lang"));
